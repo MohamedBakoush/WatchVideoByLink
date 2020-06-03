@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Watch Video By Provided Link</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" href="image/logo.png">
+    <script defer src="index.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+    <script src="https://unpkg.com/video.js/dist/video.js"></script>
+    <script src="https://unpkg.com/@videojs/http-streaming/dist/videojs-http-streaming.js"></script>
+  </head>
+  <body>
+    <!-- provide video link container -->
+    <section class="videoLink" id="videoLink">
+    </section>
+    <!-- video container -->
+    <video-js id="video" class="vjs-default-skin" controls autoplay preload="auto" width="640" height="268">
+    </video-js>
+  </body>
+</html>

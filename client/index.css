@@ -1,0 +1,33 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+video-js {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+body{
+  display: grid;
+  font-family: "Test", Arial, Helvetica, sans-serif;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+  outline: 0;
+  vertical-align: baseline;
+  background: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.videoLink{
+  margin: auto;
+  display: grid;
+  padding-top: 50vh;
+}
