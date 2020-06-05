@@ -3,7 +3,7 @@
 // load details into html using video and videoLink id
 function showDetails() {
   const videoID = document.getElementById("video");
-  const videoLink = document.getElementById("videoLink");
+  const videoLink = document.getElementById("videoLinkContainer");
   // create form
   const videoLinkForm = createSection(videoLink, "form");
   videoLinkForm.onsubmit = function(){
@@ -35,14 +35,45 @@ function showDetails() {
 
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
-  const videoID = document.getElementById("video");
-  var player = videojs(videoID);  // eslint-disable-line
-  player.play(); // play video on load
-  // player.muted(true); // mute video on load
-  player.src({  // video type and src
-    type: videoType,
-    src: videoSrc
-  });
+  if (videoType == "application/x-mpegURL") {
+    const videoID = document.getElementById("video");
+    var player = videojs(videoID, {  // eslint-disable-line
+      controls: true
+      });
+    player.play(); // play video on load
+    // player.muted(true); // mute video on load
+    player.src({  // video type and src
+      type: videoType,
+      src: videoSrc
+    });
+    // hide time from live video player
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .video-js .vjs-time-control{display:none;}
+      .video-js .vjs-remaining-time{display: none;}
+    `;
+    document.head.appendChild(style);
+  } else {
+    const videoID = document.getElementById("video");
+    var player = videojs(videoID, {  // eslint-disable-line
+      "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
+      controls: true,
+      techOrder: [ "chromecast", "html5" ],
+      plugins: {
+        chromecast: {},
+        seekButtons: {
+          forward: 30,
+          back: 10
+        }
+      }
+    });
+    player.play(); // play video on load
+    player.src({  // video type and src
+      type: videoType,
+      src: videoSrc
+    });
+  }
+
 }
 
 // create a input element

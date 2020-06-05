@@ -1,0 +1,115 @@
+.video-js .vjs-control-bar{
+  font-size:12px;
+  text-shadow:none!important
+}
+
+@media only screen and (max-width: 700px){
+  .video-js .vjs-control-bar{
+    font-size:10px
+  }
+}
+
+@media only screen and (max-width: 700px){
+  .video-js .vjs-control-bar{
+    font-size:10px
+  }
+}
+
+.video-js .vjs-control-bar{
+  margin-top:20px;
+  background-color:transparent;
+  background:-moz-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(0,0,0,0.5) 120%);
+  background:-webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(0,0,0,0.5) 120%);
+  background:-o-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(0,0,0,0.5) 120%);
+  background:-ms-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(0,0,0,0.5) 120%);
+  background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(0,0,0,0.5) 120%)
+}
+
+.vjs-control-bar:hover .vjs-progress-control{
+  padding-top:11px
+}
+
+.vjs-control-bar:hover .vjs-progress-control .vjs-progress-holder{
+  font-size:3em
+}
+
+.vjs-control-bar .vjs-live-control{
+  display:flex!important;
+  visibility:hidden
+}
+
+.vjs-has-started.vjs-no-flex .vjs-control-bar{
+  display:block
+}
+
+.video-js.vjs-no-flex .vjs-control-bar{
+  text-align:right;
+  background-color:#000;
+  background-color:rgba(0,0,0,.8)
+}
+
+.vjs-no-flex .vjs-control-bar .vjs-live-control{
+  display:none!important
+}
+
+@media only screen and (max-width: 340px){
+  .video-js .vjs-control-bar .vjs-playback-rate,.video-js .vjs-control-bar .vjs-captions-button{
+    display:none
+  }
+}
+
+@media only screen and  (max-width:480px) {
+  .video-js .vjs-control-bar .vjs-playback-rate{
+    display: none;
+  }
+}
+
+@media only screen and  (max-width:420px) {
+  .video-js .vjs-control-bar .vjs-share-control{
+    display: none;
+  }
+}
+
+@media only screen and  (max-width:390px) {
+  .video-js .vjs-control-bar .vjs-seek-button{
+    display: none;
+  }
+}
+
+
+@media only screen and  (max-width:290px) {
+  .video-js .vjs-control-bar .vjs-time-divider,
+  .video-js .vjs-control-bar .vjs-current-time  {
+    display: none;
+  }
+}
+
+.video-js .vjs-control-bar {
+  background-color: rgba(0,0,0,0.3) !important;
+  color: #ffffff;
+}
+
+.video-js .vjs-control-bar .vjs-button .vjs-menu{
+  color:#fff
+}
+
+.video-js .vjs-control-bar .vjs-progress-control{
+  position:absolute;
+  top:-19px;
+  left:0;
+  width:100%;
+  height:20px;
+  padding-top:14px
+}
+
+@media only screen and (max-width: 440px){
+ .video-js .vjs-control-bar .vjs-ol-button{
+   display: none;
+ }
+}
+
+@media only screen and (max-width: 630px){
+ .video-js .vjs-control-bar .vjs-remaining-time{
+   display: none;
+ }
+}

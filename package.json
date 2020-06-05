@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@silvermine/videojs-chromecast": "^1.2.1",
     "@videojs/http-streaming": "^1.13.3",
     "eslint": "^7.1.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "videojs-seek-buttons": "^1.6.0"
   }
 }

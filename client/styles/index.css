@@ -4,10 +4,10 @@
 }
 
 video-js {
-    max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 body{
@@ -20,13 +20,14 @@ body{
   padding: 0;
   border: 0 solid;
   outline: 0;
+  overflow: hidden;
   vertical-align: baseline;
   background: transparent;
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.videoLink{
+.videoLinkContainer{
   margin: auto;
   display: grid;
   padding-top: 50vh;
