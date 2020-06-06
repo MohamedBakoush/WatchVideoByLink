@@ -7,11 +7,23 @@
     "start": "node svr",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohamedBakoush/WatchVideoByLink.git"
+  },
+  "author": "Mohamed Bakoush",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MohamedBakoush/WatchVideoByLink/issues"
+  },
+  "homepage": "https://github.com/MohamedBakoush/WatchVideoByLink#readme",
   "dependencies": {
+    "@silvermine/videojs-chromecast": "^1.2.1",
     "@videojs/http-streaming": "^1.13.3",
-    "eslint": "^7.1.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "videojs-seek-buttons": "^1.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0"
   }
 }

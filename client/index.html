@@ -2,21 +2,37 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <!-- page title -->
     <title>Watch Video By Provided Link</title>
+    <!-- mobile friendly -->
     <meta name="viewport" content="width=device-width">
-    <link rel="icon" href="image/logo.png">
-    <script defer src="index.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="index.css">
+    <!-- page logo -->
+    <link rel="icon" href="images/logo.png">
+    <!-- video-js -->
     <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
     <script src="https://unpkg.com/video.js/dist/video.js"></script>
+    <!-- videojs-http-streaming -->
     <script src="https://unpkg.com/@videojs/http-streaming/dist/videojs-http-streaming.js"></script>
+    <!-- videojs-seek-button -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/videojs-seek-buttons/dist/videojs-seek-buttons.css">
+    <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons/dist/videojs-seek-buttons.min.js"></script>
+    <!-- videojs-chromecast -->
+    <script src="https://cdn.jsdelivr.net/npm/@silvermine/videojs-chromecast@1.2.1/dist/silvermine-videojs-chromecast.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+    <!-- local js -->
+    <script defer src="/scripts/index.js" charset="utf-8"></script>
+    <!-- local style -->
+    <link rel="stylesheet" href="/styles/index.css">
+    <link rel="stylesheet" href="/styles/videojs-player.css">
+    <link rel="stylesheet" href="/styles/videojs-chromecast.css">
+    <link rel="stylesheet" href="/styles/videojs-control-bar.css">
   </head>
   <body>
     <!-- provide video link container -->
-    <section class="videoLink" id="videoLink">
+    <section class="videoLinkContainer" id="videoLinkContainer">
     </section>
     <!-- video container -->
-    <video-js id="video" class="vjs-default-skin" controls autoplay preload="auto" width="640" height="268">
+    <video-js id="video" class="vjs-default-skin vjs-big-play-centered" preload="auto" width="640" height="268">
     </video-js>
   </body>
 </html>
