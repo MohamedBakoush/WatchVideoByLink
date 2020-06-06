@@ -20,7 +20,7 @@ function showDetails() {
   createOption(videoTypeSelect, "option", "video/mp4", "mp4");
   createOption(videoTypeSelect, "option", "application/x-mpegURL", "x-mpegURL");
   // submit video button
-  const sumbitVideo = createInput(videoLinkForm, "submit", "Watch Video", undefined , undefined);
+  const sumbitVideo = createInput(videoLinkForm, "submit", "Watch Video", undefined , "watchVideoButton");
   // once sumbitVideo button is clicked
   sumbitVideo.onclick = function(){
     // remove videoLink from client

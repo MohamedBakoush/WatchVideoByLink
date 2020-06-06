@@ -32,3 +32,15 @@ body{
   display: grid;
   padding-top: 50vh;
 }
+
+.videoLinkContainer form{
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   grid-gap:  1rem;
+   padding:  0.5rem;
+}
+
+.watchVideoButton{
+  grid-column-start:  1;
+  grid-column-end:  3;
+}
