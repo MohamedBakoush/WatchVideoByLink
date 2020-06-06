@@ -8,8 +8,7 @@ Reason For Creation
 
 The reason why this repository exists is to watch a video with a provided video link, currently works with video/mp4 and application/x-mpegURL video types.
 
-I been working with different types of videos files for personal projects and I keep needing to create video player every time to check if the video file work, to speed up the process I have created this repository to view video .mp4 files or .m3u8 files by a simple URL link.
-
+When working with various types of video files for personal projects, the process of creating a new video element to test out HLS files and MP4 files keeps occurring, to speed up the process of testing if a video files works the creation of this repository was created by allowing an individual to view .mp4 files or .m3u8 files by a simple URL link.
 
 Installation
 ------------
