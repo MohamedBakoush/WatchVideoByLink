@@ -1,9 +1,20 @@
 "use strict";
 
+// identify elements from html
+const videoID = document.getElementById("video");
+const videoLink = document.getElementById("videoLinkContainer");
+
+function showVideoFromUrl(url) {
+    // split url to get video and video type
+    const hostname_typeVideo = url.split("?t=");
+    const type_video = hostname_typeVideo[1].split( "?v=");
+    const type = type_video[0];
+    const video = type_video[1];
+    // put video src and type in video player
+    showVideo(video, type);
+}
 // load details into html using video and videoLink id
 function showDetails() {
-  const videoID = document.getElementById("video");
-  const videoLink = document.getElementById("videoLinkContainer");
   // create form
   const videoLinkForm = createSection(videoLink, "form");
   videoLinkForm.onsubmit = function(){
@@ -11,7 +22,7 @@ function showDetails() {
   };
   // video src
   createLabel(videoLinkForm, "Video Link: ");
-  const videoLinkInput = inputType(videoLinkForm, "text", "videoLink");
+  const videoLinkInput = inputType(videoLinkForm, "text", "videoLink", true);
   videoLinkInput.placeholder = "Enter Video Link";
   // video type
   createLabel(videoLinkForm, "Video Type: ");
@@ -20,9 +31,11 @@ function showDetails() {
   createOption(videoTypeSelect, "option", "video/mp4", "mp4");
   createOption(videoTypeSelect, "option", "application/x-mpegURL", "x-mpegURL");
   // submit video button
-  const sumbitVideo = createInput(videoLinkForm, "submit", "Watch Video", undefined , "watchVideoButton");
+  createInput(videoLinkForm, "submit", "Watch Video", undefined , "watchVideoButton");
   // once sumbitVideo button is clicked
-  sumbitVideo.onclick = function(){
+  videoLinkForm.onsubmit = function(){
+    // puts video type and video file in url
+    history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
     // remove videoLink from client
     videoLink.remove();
     // video styleing
@@ -38,7 +51,9 @@ function showVideo(videoSrc, videoType) {
   if (videoType == "application/x-mpegURL") {
     const videoID = document.getElementById("video");
     var player = videojs(videoID, {  // eslint-disable-line
-      controls: true
+      controls: true,
+      autoplay: true,
+      preload: "auto"
       });
     player.play(); // play video on load
     // player.muted(true); // mute video on load
@@ -78,7 +93,7 @@ function showVideo(videoSrc, videoType) {
 
 // create a input element
 // with type, id
-function inputType(container, type, idHere){
+function inputType(container, type, idHere, required){
   try {
     const inputType = document.createElement("input");
     if (type != undefined) { // assign type to inputType
@@ -86,6 +101,9 @@ function inputType(container, type, idHere){
     }
     if (idHere != undefined) { // assign id to inputType
       inputType.id = idHere;
+    }
+    if (required != undefined) { // assign accept to inputType
+      inputType.required = required;
     }
     container.appendChild(inputType);
     return inputType;
@@ -175,7 +193,17 @@ function createSection(container, dataType, classHere, idHere, string){
 
 // all the functions that are to load when the page loads
 function pageLoaded() {
-  showDetails();
+    const url = window.location.href;
+    if (url.includes("?t=") && url.includes("?v=")) {
+      // remove videoLink from client
+      videoLink.remove();
+      // video styleing
+      videoID.style.width = "100vw";
+      videoID.style.height = "100vh";
+      showVideoFromUrl(url);
+    } else {
+      showDetails();
+    }
  }
 
 // load pageLoaded when html page loads
