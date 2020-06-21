@@ -12,7 +12,7 @@ WatchVideoByLink takes a public video/mp4, application/x-mpegURL or application/
 When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
 
 ## Features 
-- Shareable Link Gets provided in URL when video is viewable.
+- Shareable link gets provided in the address bar when video is viewable.
 - Video Type: MP4 Supports:
   - .mp4 files
   - playbackRates
