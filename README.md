@@ -1,18 +1,33 @@
-# WatchVideoByLink
+# WatchVideoByLink 
+  
+<p align="center">
+  <img src="/client/images/logo.png">
+</p>
 
-WatchVideoByLink - Watch Videos With A Provided Video Link
+WatchVideoByLink takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
 
 
 Reason For Creation
 ------------
 
-The reason why this repository exists is to watch a video with a provided video link, currently works with video/mp4 and application/x-mpegURL video types.
+When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
 
-When working with various types of video files for personal projects, the process of creating a new video element to test out HLS files and MP4 files keeps occurring, to speed up the process of testing if a video files works the creation of this repository was created by allowing an individual to view .mp4 files or .m3u8 files by a simple URL link.
-
+## Features 
+- Shareable Link Gets provided in URL when video is viewable.
+- Video Type: MP4 Supports:
+  - .mp4 files
+  - playbackRates
+  - seek-buttons
+  - chromecast
+- Video Type: HLS Supports:
+  - .m3u8 files
+- Video Type: MPEG-DASH Supports:
+  - .mpd files
+   
+ 
 Installation
 ------------
-
+You can clone the repository to a local destination using git:
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
 cd WatchVideoByLink
@@ -24,7 +39,7 @@ Alternatively you may download and unpack the [zip](https://github.com/MohamedBa
 
 Start Server
 ------------
-Run the Server by typing:
+Run Server by:
 
 ```
 npm start
