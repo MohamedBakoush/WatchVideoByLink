@@ -28,8 +28,9 @@ function showDetails() {
   createLabel(videoLinkForm, "Video Type: ");
   const videoTypeSelect = createSection(videoLinkForm, "select", undefined, "select");
   // all the diffrent types of video that can be choosen
-  createOption(videoTypeSelect, "option", "video/mp4", "mp4");
-  createOption(videoTypeSelect, "option", "application/x-mpegURL", "x-mpegURL");
+  createOption(videoTypeSelect, "option", "video/mp4", "MP4 (.mp4)");
+  createOption(videoTypeSelect, "option", "application/x-mpegURL", "HLS (.m3u8)");
+  createOption(videoTypeSelect, "option", "application/dash+xml", "MPEG-DASH (.mpd)");
   // submit video button
   createInput(videoLinkForm, "submit", "Watch Video", undefined , "watchVideoButton");
   // once sumbitVideo button is clicked
@@ -48,7 +49,7 @@ function showDetails() {
 
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
-  if (videoType == "application/x-mpegURL") {
+  if (videoType == "application/x-mpegURL" || videoType == "application/dash+xml" ) {
     const videoID = document.getElementById("video");
     var player = videojs(videoID, {  // eslint-disable-line
       controls: true,
