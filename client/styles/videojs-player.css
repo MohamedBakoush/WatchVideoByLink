@@ -1,6 +1,16 @@
+@import url("videojs-chromecast.css");
+@import url("videojs-control-bar.css");
+
 :root {
   --progress-hover-bg-color: #08e108;
   --slider-loaded-bg-color: rgba(115, 159, 118, 0.75);
+}
+
+video-js {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 .vjs-v7 .vjs-button.vjs-share-control .vjs-icon-placeholder:hover,

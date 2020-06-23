@@ -3,13 +3,6 @@
   padding: 0;
 }
 
-video-js {
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
-
 body{
   display: grid;
   font-family: "Test", Arial, Helvetica, sans-serif;

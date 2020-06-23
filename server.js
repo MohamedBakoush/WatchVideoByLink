@@ -1,6 +1,11 @@
 "use strict";
+const path = require("path");
 const express = require("express");
+const favicon = require("serve-favicon");
 const app = express();
+
+// show website icon on tab
+app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
 
 // adds html as extensions, dont need to write index.html
 app.use(express.static("client", { extensions: ["html"] }));

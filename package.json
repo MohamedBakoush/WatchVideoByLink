@@ -1,10 +1,10 @@
 {
-  "name": "watchvideo",
+  "name": "WatchVideoByLink ",
   "version": "0.0.1",
-  "description": "watch video by provided url",
+  "description": "Watch Videos By A Public Video Link",
   "main": "index.html",
   "scripts": {
-    "start": "node svr",
+    "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/MohamedBakoush/WatchVideoByLink.git"
   },
   "author": "Mohamed Bakoush",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/MohamedBakoush/WatchVideoByLink/issues"
   },
@@ -21,6 +21,7 @@
     "@silvermine/videojs-chromecast": "^1.2.1",
     "@videojs/http-streaming": "^1.13.3",
     "express": "^4.17.1",
+    "serve-favicon": "^2.5.0",
     "videojs-seek-buttons": "^1.6.0"
   },
   "devDependencies": {
