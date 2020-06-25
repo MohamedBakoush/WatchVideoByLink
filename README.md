@@ -1,11 +1,12 @@
-# WatchVideoByLink
+<h1 align="center">Welcome to WatchVideoByLink</h1>
 
 <p align="center">
-  <img src="/client/images/favicon/favicon.png">
+  <img src="/client/images/favicon/favicon.png" alt="WatchVideoByLink"> 
 </p>
 
-WatchVideoByLink takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
-
+<p> 
+  <b>WatchVideoByLink</b> takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
+</p>
 
 ## Reason For Creation
 
