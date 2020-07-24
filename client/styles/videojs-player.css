@@ -1,8 +1,24 @@
+@import url("videojs-chromecast.css");
+@import url("videojs-control-bar.css");
+
 :root {
   --progress-hover-bg-color: #08e108;
   --slider-loaded-bg-color: rgba(115, 159, 118, 0.75);
+  --record-button-color: red;
 }
 
+video-js {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.vjs-downloadVideo-active{
+  color:  #08e108 !important;
+}
+
+.vjs-downloadVideo:hover, .backToHomePageButton:hover,
 .vjs-v7 .vjs-button.vjs-share-control .vjs-icon-placeholder:hover,
 .vjs-v6 .vjs-button.vjs-share-control .vjs-icon-placeholder:hover,
 .video-js .vjs-fullscreen-control .vjs-icon-placeholder:hover,
@@ -101,7 +117,9 @@
   background-color:transparent;
   width:12em;
   left:-1.5em;
-  padding-bottom:.5em
+  padding-bottom:.5em;
+  max-height: 250px;
+  overflow: hidden;
 }
 
 .video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-item,.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-title{
@@ -228,4 +246,36 @@
 
 .video-js .vjs-picture-in-picture-control {
     display: none;
+}
+
+.video-js .vjs-icon-record-start:hover,
+.video-js .vjs-icon-stop-record{
+  color: var(--record-button-color);;
+}
+
+.vjs-downloadVideo, .vjs-downloadVideo-active, .vjs-icon-stop-record, .vjs-icon-record-start{
+  cursor: pointer;
+}
+
+.backToHomePageContainer{
+  top: 0;
+  height: 0 !important;
+  margin-top: 0 !important;
+}
+.backToHomePageButton {
+  height: 3em !important;
+  width: 4em !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  cursor: pointer;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+.vjs-downloadVideo, .vjs-downloadVideo-active{
+  position: absolute  !important;
+  height: 3em !important;
+  width: 4em !important;
+  font-size: 16px !important;
+  right: 4em !important;
 }

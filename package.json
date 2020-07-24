@@ -4,7 +4,7 @@
   "description": "watch video by provided url",
   "main": "index.html",
   "scripts": {
-    "start": "node svr",
+    "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +21,9 @@
     "@silvermine/videojs-chromecast": "^1.2.1",
     "@videojs/http-streaming": "^1.13.3",
     "express": "^4.17.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "serve-favicon": "^2.5.0",
+    "uuid": "^8.2.0",
     "videojs-seek-buttons": "^1.6.0"
   },
   "devDependencies": {

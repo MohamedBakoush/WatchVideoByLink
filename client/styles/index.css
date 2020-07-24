@@ -3,13 +3,6 @@
   padding: 0;
 }
 
-video-js {
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
-
 body{
   display: grid;
   font-family: "Test", Arial, Helvetica, sans-serif;
@@ -43,4 +36,27 @@ body{
 .watchVideoButton{
   grid-column-start:  1;
   grid-column-end:  3;
+}
+
+.button {
+  font-weight: bold;
+  color: rgb(0,0,0);
+  text-align: center;
+  font-size: .75rem;
+  cursor: pointer;
+}
+.watchVideoButton{
+  color: #000;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.44444;
+  height: 2.1875rem;
+  min-width: 3.75rem;
+  border: 1px solid #000;
+  transition: border-radius .15s linear;
+}
+.watchVideoButton:hover{
+  border-radius: 2em;
 }
