@@ -53,7 +53,7 @@ function showDetails() {
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
   const Button = videojs.getComponent("Button"); // eslint-disable-line
-  if (videoType == "application/x-mpegURL" || videoType == "application/dash+xml" ) {
+  if (videoType == "application/x-mpegURL") {
     const videoID = document.getElementById("video");
     const player = videojs(videoID, {  // eslint-disable-line
       controls: true,
@@ -108,6 +108,29 @@ function showVideo(videoSrc, videoType) {
 
     videojs.registerComponent("RecButton", RecButton);  // eslint-disable-line
     player.getChild("controlBar").addChild("RecButton", {}, 1);
+
+    const topControls = videoButton.topPageControlBarContainer(player);
+    videoButton.backToHomePageButton(topControls); //  closes player
+    player.play(); // play video on load
+    player.muted(true); // mute video on load
+    player.src({  // video type and src
+      type: videoType,
+      src: videoSrc
+    });
+    // hide time from live video player
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .video-js .vjs-time-control{display:none;}
+      .video-js .vjs-remaining-time{display: none;}
+    `;
+    document.head.appendChild(style);
+  } else if ( videoType == "application/dash+xml" ) {
+    const videoID = document.getElementById("video");
+    const player = videojs(videoID, {  // eslint-disable-line
+      controls: true,
+      autoplay: true,
+      preload: "auto"
+    });
 
     const topControls = videoButton.topPageControlBarContainer(player);
     videoButton.backToHomePageButton(topControls); //  closes player
