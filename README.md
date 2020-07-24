@@ -19,8 +19,10 @@ When working with various types of video files for personal projects, the proces
   - playbackRates
   - seek-buttons
   - chromecast
+  - download video
 - Video Type: HLS Supports:
   - .m3u8 files
+  - record stream
 - Video Type: MPEG-DASH Supports:
   - .mpd files
 
