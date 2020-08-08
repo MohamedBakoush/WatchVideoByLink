@@ -14,12 +14,13 @@ When working with various types of video files for personal projects, the proces
 
 ## Features
 - Shareable link gets provided in the address bar when video is viewable.
+- When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - Video Type: MP4 Supports:
   - .mp4 files
   - playbackRates
   - seek-buttons
   - chromecast
-  - download video
+  - download full video or by specified start and end times
 - Video Type: HLS Supports:
   - .m3u8 files
   - record stream
