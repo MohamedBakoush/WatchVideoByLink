@@ -162,7 +162,27 @@ function showVideo(videoSrc, videoType) {
       }
     });
     const topControls = videoButton.topPageControlBarContainer(player);
-    videoButton.downloadVideoButton(topControls, videoSrc, videoType);  // download video
+    const downloadVideoContainer = basic.createSection(topControls, "div", "vjs-downloadVideo-container");
+    const downloadVideoButton = basic.createSection(downloadVideoContainer, "button", "vjs-downloadVideo fa fa-download vjs-control vjs-button", "downloadVideoButton");
+    downloadVideoButton.title = "Download Video";
+
+    const downloadVideoMenu = basic.createSection(downloadVideoContainer, "section", "vjs-menu vjs-downloadVideo-menu");
+    downloadVideoMenu.style.display = "none";
+    const downloadVideoMenuContent = basic.createSection(downloadVideoMenu, "div", "vjs-menu-content");
+
+    videoButton.downloadVideoButton(downloadVideoMenuContent, videoSrc, videoType);
+    videoButton.createTrimVideo(downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);
+
+    downloadVideoContainer.onmouseover = function(){
+      document.getElementById("downloadVideoButton").focus();
+      downloadVideoMenu.style.display = "block";
+      document.getElementById("downloadVideoButton").onclick = document.getElementById("downloadVideoButton").blur();
+    };
+    downloadVideoContainer.onmouseout = function(){
+      document.getElementById("downloadVideoButton").blur();
+      downloadVideoMenu.style.display = "none";
+    };
+
     videoButton.backToHomePageButton(topControls); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load

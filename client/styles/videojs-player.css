@@ -1,6 +1,6 @@
 @import url("videojs-chromecast.css");
 @import url("videojs-control-bar.css");
-
+@import url("trimVideo.css");
 :root {
   --progress-hover-bg-color: #08e108;
   --slider-loaded-bg-color: rgba(115, 159, 118, 0.75);
@@ -17,7 +17,7 @@ video-js {
 .vjs-downloadVideo-active{
   color:  #08e108 !important;
 }
-
+ #downloadVideoButton:focus, .backToMainVideoButton:hover,
 .vjs-downloadVideo:hover, .backToHomePageButton:hover,
 .vjs-v7 .vjs-button.vjs-share-control .vjs-icon-placeholder:hover,
 .vjs-v6 .vjs-button.vjs-share-control .vjs-icon-placeholder:hover,
@@ -35,6 +35,28 @@ video-js {
   color:var(--progress-hover-bg-color)
 }
 
+.backToMainVideoButton{
+
+    height: 3em !important;
+    width: 4em !important;
+    font-size: 16px !important;
+    padding: 0 !important;
+    cursor: pointer;
+    display: block !important;
+    position: absolute;
+    right: 0;
+    background: none;
+    color: white;
+    border: none;
+
+}
+
+
+ .downloadVideoMenuContentItem:hover{
+  background-color: var(--slider-loaded-bg-color);
+  color: var(--progress-hover-bg-color);
+  text-shadow: none!important;
+}
 .video-js .vjs-poster{
   z-index:1
 }
@@ -253,6 +275,7 @@ video-js {
   color: var(--record-button-color);;
 }
 
+.vjs-menu-content button,
 .vjs-downloadVideo, .vjs-downloadVideo-active, .vjs-icon-stop-record, .vjs-icon-record-start{
   cursor: pointer;
 }
@@ -278,4 +301,32 @@ video-js {
   width: 4em !important;
   font-size: 16px !important;
   right: 4em !important;
+}
+
+.vjs-downloadVideo-container{
+  z-index: 1;
+}
+
+.vjs-downloadVideo-menu{
+  position: absolute  !important;
+  padding: 4.2em 0 0 0;
+  z-index: -1;
+  /* height: 3em !important;
+  width: 4em !important;
+  font-size: 16px !important; */
+  right: 4em !important;
+}
+.vjs-menu-content button{
+  text-transform: capitalize;
+    background-color: rgba(0,0,0,0.3);
+    color: #fff;
+    margin: .3em 0;
+    padding: 1em;
+    border-radius: .3em;
+  }
+ .vjs-menu-content{
+   display: grid !important;
+ }
+.backToHomePageButton, .vjs-downloadVideo, .vjs-downloadVideo-active{
+  background-image: radial-gradient( circle closest-side, rgba(0,0,0,0.05), rgba(0,0,0,0) )  !important;
 }

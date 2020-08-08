@@ -28,6 +28,11 @@ function downloadVideo(req, res){
   streamVideoFile.downloadVideo(req, res);
 }
 
+app.post("/trimVideo", express.json(), trimVideo);
+function trimVideo(req, res){
+  streamVideoFile.trimVideo(req, res);
+}
+
 app.post("/stopDownloadVideoStream", express.json(), stopDownloadVideoStream);
 function stopDownloadVideoStream(req, res){
   streamVideoFile.stopDownloadVideoStream(req, res);

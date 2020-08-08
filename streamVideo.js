@@ -103,7 +103,7 @@ async function downloadVideoStream(req, res) {
           videos[`${fileName}`] = {
             "originalVideoSrc": req.body.videoSrc,
             "originalVideoType": req.body.videoType,
-            "download": "starting"
+            "download": "starting stream download"
           };
 
           const newVideoData = JSON.stringify(videos, null, 2);
@@ -175,6 +175,14 @@ async function downloadVideo(req, res) {
     command.addInput(videofile)
       .on("start", function() {
           res.json(fileName);
+          videos[`${fileName}`] = {
+            "originalVideoSrc": req.body.videoSrc,
+            "originalVideoType": req.body.videoType,
+            "download": "starting full video download"
+          };
+
+          const newVideoData = JSON.stringify(videos, null, 2);
+          FileSystem.writeFileSync("data/videos.json", newVideoData);
       })
       .on("progress", function(data) {
           /// do stuff with progress data if you wan
@@ -215,10 +223,78 @@ async function downloadVideo(req, res) {
     }
 }
 
+async function trimVideo(req, res) {
+  const command = new ffmpeg();
+  const videofile = req.body.videoSrc;
+  const start = req.body.newStartTime;
+  const end = req.body.newEndTime;
+  const filepath = "media/video/";
+  const fileName = uuidv4();
+  const fileType = ".mp4";
+  console.log(videofile);
+  console.log(start);
+  console.log(end);
+  const videoDetails = await findVideosByID(fileName);
+  if (videoDetails == undefined) {
+    command.addInput(videofile)
+      .on("start", function() {
+          res.json(fileName);
+          videos[`${fileName}`] = {
+            "originalVideoSrc": req.body.videoSrc,
+            "originalVideoType": req.body.videoType,
+            "download": "starting trim video download"
+          };
+
+          const newVideoData = JSON.stringify(videos, null, 2);
+          FileSystem.writeFileSync("data/videos.json", newVideoData);
+      })
+      .on("progress", function(data) {
+          /// do stuff with progress data if you wan
+          console.log("progress", data);
+          videos[`${fileName}`] = {
+            "originalVideoSrc": req.body.videoSrc,
+            "originalVideoType": req.body.videoType,
+            "newVideoStartTime": req.body.newStartTime,
+            "newVideoEndTime": req.body.newEndTime,
+            "download": data.percent
+          };
+
+          const newVideo = JSON.stringify(videos, null, 2);
+          FileSystem.writeFileSync("data/videos.json", newVideo);
+      })
+      .on("end", function() {
+        videos[`${fileName}`] = {
+          "originalVideoSrc": req.body.videoSrc,
+          "originalVideoType": req.body.videoType,
+          "newVideoStartTime": req.body.newStartTime,
+          "newVideoEndTime": req.body.newEndTime,
+          path: filepath+fileName+fileType,
+          "videoType": "video/mp4",
+          "download": "complete"
+        };
+
+        const newVideo = JSON.stringify(videos, null, 2);
+        FileSystem.writeFileSync("data/videos.json", newVideo);
+        console.log("Video Transcoding succeeded !");
+      })
+      .on("error", function(error) {
+          /// error handling
+          console.log(`Encoding Error: ${error.message}`);
+      })
+      // .addInputOption("-y")
+      .outputOptions([`-ss ${start}`, `-t ${(end-start)}`, "-vcodec copy", "-acodec copy"])
+      .output(`${filepath}${fileName}${fileType}`)
+      .run();
+    } else {
+      console.log("videoDetails exits");
+    }
+}
+
 module.exports = { // export modules
   streamVideo,
   downloadVideoStream,
   downloadVideo,
   stopDownloadVideoStream,
+  trimVideo,
   findVideosByID
 };
