@@ -1,10 +1,10 @@
 <h1 align="center">Welcome to WatchVideoByLink</h1>
 
 <p align="center">
-  <img src="/client/images/favicon/favicon.png" alt="WatchVideoByLink"> 
+  <img src="/client/images/favicon/favicon.png" alt="WatchVideoByLink">
 </p>
 
-<p> 
+<p>
   <b>WatchVideoByLink</b> takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
 </p>
 
@@ -14,13 +14,16 @@ When working with various types of video files for personal projects, the proces
 
 ## Features
 - Shareable link gets provided in the address bar when video is viewable.
+- When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - Video Type: MP4 Supports:
   - .mp4 files
   - playbackRates
   - seek-buttons
   - chromecast
+  - download full video or by specified start and end times
 - Video Type: HLS Supports:
   - .m3u8 files
+  - record stream
 - Video Type: MPEG-DASH Supports:
   - .mpd files
 

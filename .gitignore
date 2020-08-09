@@ -1,1 +1,5 @@
+# Dependency directory
 node_modules/
+
+# video files
+*.mp4
