@@ -79,6 +79,8 @@ function showVideo(videoSrc, videoType) {
            this.hide();
            videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
            player.getChild("controlBar").addChild("RecButton", {}, 1);
+
+           videoButton.removeStopDownloadOnWindowClose();
          });
       }
     });
@@ -102,6 +104,7 @@ function showVideo(videoSrc, videoType) {
            videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
            player.getChild("controlBar").addChild("StopRecButton", {}, 1);
 
+           videoButton.addStopDownloadOnWindowClose();
        });
       }
     });

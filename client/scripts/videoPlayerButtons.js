@@ -71,6 +71,26 @@ export async function stopDownloadVideoStream(bool) {
   }
 }
 
+function stopDownloadVideoStreamOnWindowsClose(event) {
+  // when windows closes
+  event.preventDefault();
+  stopDownloadVideoStream(true);
+  // dont show popup
+  delete event["returnValue"];
+}
+
+export function addStopDownloadOnWindowClose() {
+  console.log("addStopDownloadOnWindowClose");
+  window.addEventListener("beforeunload", stopDownloadVideoStreamOnWindowsClose);
+
+}
+
+export function removeStopDownloadOnWindowClose() {
+  console.log("removeStopDownloadOnWindowClose");
+  window.removeEventListener("beforeunload", stopDownloadVideoStreamOnWindowsClose);
+}
+
+
 export async function downloadVideoStream(videoSrc, videoType) {
   const payload = {
     videoSrc: videoSrc,
