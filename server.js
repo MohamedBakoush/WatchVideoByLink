@@ -3,10 +3,16 @@ const path = require("path");
 const express = require("express");
 const favicon = require("serve-favicon");
 const streamVideoFile = require("./streamVideo");
+const streamImageFile = require("./streamImage");
 const app = express();
 
 // show website icon on tab
 app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
+
+app.get("/thumbnail/:fileID/:thumbnailID", streamImageById);
+function streamImageById(req, res){
+  streamImageFile.streamThumbnail(req, res, req.params.fileID, req.params.thumbnailID);
+}
 
 app.get("/video/:id", streamVideoById);
 function streamVideoById(req, res){
@@ -48,6 +54,6 @@ app.get("*", function(req, res){
 
 // application runs on port 8080
 app.set("port", (process.env.PORT || 8080));
-app.listen(app.get("port"), function() {
+app.listen(app.get("port"), function() { 
   console.log("Server running at:" + app.get("port"));
 });

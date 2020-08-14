@@ -91,10 +91,14 @@ async function downloadVideoStream(req, res) {
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
+  const newFilePath = `${filepath}${fileName}/`;
 
   const videoDetails = await findVideosByID(fileName);
 
   if (videoDetails == undefined) {
+    if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+        FileSystem.mkdirSync(`${filepath}${fileName}/`);
+    }
     command.addInput(videofile)
       .on("start", function() {
           // res.json("downloadingVideoFile");
@@ -137,15 +141,18 @@ async function downloadVideoStream(req, res) {
           videos[`${fileName}`] = {
             "originalVideoSrc": req.body.videoSrc,
             "originalVideoType": req.body.videoType,
-            path: filepath+fileName+fileType,
+            path: newFilePath+fileName+fileType,
             "videoType": "video/mp4",
-            "download": "complete"
+            "download": "completed",
+            thumbnailFilePath: {},
+            thumbnailDownload: "starting"
           };
 
           const newData = JSON.stringify(videos, null, 2);
           FileSystem.writeFileSync("data/videos.json", newData);
-
           console.log("Video Transcoding succeeded !");
+          const path = newFilePath+fileName+fileType;
+          createThumbnail(path, newFilePath, fileName);
       })
       .on("error", function(error) {
           /// error handling
@@ -154,7 +161,7 @@ async function downloadVideoStream(req, res) {
       // .addInputOption('-i')
       .outputOptions(["-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
       // .outputOptions(['-c copy'])
-      .output(`${filepath}${fileName}${fileType}`)
+      .output(`${newFilePath}${fileName}${fileType}`)
       .run();
     } else {
       console.log("videoDetails exits");
@@ -168,10 +175,13 @@ async function downloadVideo(req, res) {
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
-
+  const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await findVideosByID(fileName);
 
   if (videoDetails == undefined) {
+    if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+        FileSystem.mkdirSync(`${filepath}${fileName}/`);
+    }
     command.addInput(videofile)
       .on("start", function() {
           res.json(fileName);
@@ -202,21 +212,25 @@ async function downloadVideo(req, res) {
           videos[`${fileName}`] = {
             "originalVideoSrc": req.body.videoSrc,
             "originalVideoType": req.body.videoType,
-            path: filepath+fileName+fileType,
+            path: newFilePath+fileName+fileType,
             "videoType": "video/mp4",
-            "download": "complete"
+            "download": "completed",
+            thumbnailFilePath: {},
+            thumbnailDownload: "starting"
           };
 
           const newVideo = JSON.stringify(videos, null, 2);
           FileSystem.writeFileSync("data/videos.json", newVideo);
           console.log("Video Transcoding succeeded !");
+          const path = newFilePath+fileName+fileType;
+          createThumbnail(path, newFilePath, fileName);
       })
       .on("error", function(error) {
           /// error handling
           console.log(`Encoding Error: ${error.message}`);
       })
       .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
-      .output(`${filepath}${fileName}${fileType}`)
+      .output(`${newFilePath}${fileName}${fileType}`)
       .run();
     } else {
       console.log("videoDetails exits");
@@ -231,11 +245,12 @@ async function trimVideo(req, res) {
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
-  console.log(videofile);
-  console.log(start);
-  console.log(end);
+  const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await findVideosByID(fileName);
   if (videoDetails == undefined) {
+    if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+        FileSystem.mkdirSync(`${filepath}${fileName}/`);
+    }
     command.addInput(videofile)
       .on("start", function() {
           res.json(fileName);
@@ -268,14 +283,17 @@ async function trimVideo(req, res) {
           "originalVideoType": req.body.videoType,
           "newVideoStartTime": req.body.newStartTime,
           "newVideoEndTime": req.body.newEndTime,
-          path: filepath+fileName+fileType,
+          path: newFilePath+fileName+fileType,
           "videoType": "video/mp4",
-          "download": "complete"
+          "download": "completed",
+          thumbnailFilePath: {},
+          thumbnailDownload: "starting"
         };
-
         const newVideo = JSON.stringify(videos, null, 2);
         FileSystem.writeFileSync("data/videos.json", newVideo);
         console.log("Video Transcoding succeeded !");
+        const path = newFilePath+fileName+fileType;
+        createThumbnail(path, newFilePath, fileName);
       })
       .on("error", function(error) {
           /// error handling
@@ -283,11 +301,63 @@ async function trimVideo(req, res) {
       })
       // .addInputOption("-y")
       .outputOptions([`-ss ${start}`, `-t ${(end-start)}`, "-vcodec copy", "-acodec copy"])
-      .output(`${filepath}${fileName}${fileType}`)
+      .output(`${newFilePath}${fileName}${fileType}`)
       .run();
     } else {
       console.log("videoDetails exits");
     }
+}
+
+
+async function createThumbnail(videofile, newFilePath, fileName) {
+  const imageFileName = "thumbnail";
+  const fileType = ".jpg";
+  const numberOfImages = 8;
+  let duration = 0;
+
+  ffmpeg.ffprobe(videofile, (error, metadata) => {
+    duration = metadata.format.duration;
+    console.log(duration);
+    if (duration > 0) {
+      const command = new ffmpeg();
+        command.addInput(videofile)
+          .on("start", () => {
+            console.log("start createThumbnail");
+          })
+          .on("progress", (data) => {
+              /// do stuff with progress data if you wan
+              videos[`${fileName}`].thumbnailDownload =  data.percent;
+              const newVideo = JSON.stringify(videos, null, 2);
+              FileSystem.writeFileSync("data/videos.json", newVideo);
+              console.log("progress", data);
+          })
+          .on("end", () => {
+              /// encoding is complete, so callback or move on at this point
+              videos[`${fileName}`].thumbnailFilePath = {
+                1 : `${newFilePath}${imageFileName}001${fileType}`,
+                2 : `${newFilePath}${imageFileName}002${fileType}`,
+                3 : `${newFilePath}${imageFileName}003${fileType}`,
+                5 : `${newFilePath}${imageFileName}004${fileType}`,
+                4 : `${newFilePath}${imageFileName}005${fileType}`,
+                6 : `${newFilePath}${imageFileName}006${fileType}`,
+                7 : `${newFilePath}${imageFileName}007${fileType}`,
+                8 : `${newFilePath}${imageFileName}008${fileType}`
+              };
+              videos[`${fileName}`].thumbnailDownload = "completed";
+              const newVideo = JSON.stringify(videos, null, 2);
+              FileSystem.writeFileSync("data/videos.json", newVideo);
+              console.log("Image Thumbnails succeeded !");
+              // console.log(videos[`${fileName}`]["thumbnailFilePath"]["1"]);
+          })
+          .on("error", (error) => {
+              /// error handling
+              console.log(`Encoding Error: ${error.message}`);
+          })
+          .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
+          .output(`${newFilePath}${imageFileName}%03d${fileType}`)
+          .run();
+    }
+  });
 }
 
 module.exports = { // export modules
