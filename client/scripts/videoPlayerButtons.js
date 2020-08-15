@@ -32,15 +32,22 @@ export function downloadVideoButton(container, videoSrc, videoType) {
           const response = await fetch(`data-video/${fileNameID}`);
           if (response.ok) {
             const downloadStatus = await response.json();
-            console.log(downloadStatus.download);
-            if (downloadStatus.download == "complete") {
-              clearInterval(checkDownloadStatus);
-              downloadVideoButtonText.innerHTML = "Download Video";
-              alert("Video Download Completed");
-              downloadVideoButton.disabled = false;
-              // downloadVideoButton.remove();
+            console.log(downloadStatus.video.download);
+            if (downloadStatus.video.download == "completed") {
+              if (downloadStatus.thumbnail.download == "completed") {
+                clearInterval(checkDownloadStatus);
+                downloadVideoButtonText.innerHTML = "Download Video";
+                alert("Video Download Completed");
+                downloadVideoButton.disabled = false;
+              } else if (downloadStatus.thumbnail.download == "starting"){
+                  downloadVideoButtonText.innerHTML = "Thumbnail";
+              } else {
+                downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.thumbnail.download)}%`;
+              }
+            } else if(downloadStatus.video.download == "starting full video download") {
+              downloadVideoButtonText.innerHTML = "Full Video";
             } else {
-              downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.download)}%`;
+              downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.video.download)}%`;
             }
             return "downloading";
           } else {
