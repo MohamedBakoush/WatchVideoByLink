@@ -393,6 +393,22 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 8 : `${newFilePath}${imageFileName}008${fileType}`
               };
               videos[`${fileName}`]["thumbnail"].download = "completed";
+
+              videos[`${fileName}`].info = {
+                id : fileName,
+                videoLink: `/video/${fileName}`,
+                thumbnailLink: {
+                  1 : `/thumbnail/${fileName}/1`,
+                  2 : `/thumbnail/${fileName}/2`,
+                  3 : `/thumbnail/${fileName}/3`,
+                  5 : `/thumbnail/${fileName}/4`,
+                  4 : `/thumbnail/${fileName}/5`,
+                  6 : `/thumbnail/${fileName}/6`,
+                  7 : `/thumbnail/${fileName}/7`,
+                  8 : `/thumbnail/${fileName}/8`,
+                }
+              };
+
               const newVideo = JSON.stringify(videos, null, 2);
               FileSystem.writeFileSync("data/videos.json", newVideo);
               console.log("Image Thumbnails succeeded !");
