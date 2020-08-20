@@ -1,0 +1,28 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+.savedVideosThumbnailContainer{
+    padding: 0.5rem 0 0 0;
+}
+
+.videoThumbnailContainer{
+  color: rgb(0,0,0);
+  text-align: center;
+  text-decoration: none;
+}
+
+.videoThumbnailContainer:hover{
+  text-decoration: underline;
+}
+
+.videoThumbnailContainer {
+  width: 18.75rem;
+  float: left;
+  position: relative;
+  padding: 0.5rem 0 0 0.5rem;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  overflow: hidden;
+}

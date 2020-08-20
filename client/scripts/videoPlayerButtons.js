@@ -29,7 +29,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
       downloadVideoButton.className = "vjs-menu-item downloadVideoMenuContentItem";
       downloadVideoButtonText.innerHTML = "0%";
         const checkDownloadStatus = setInterval( async function(){
-          const response = await fetch(`data-video/${fileNameID}`);
+          const response = await fetch(`../video-data/${fileNameID}`);
           if (response.ok) {
             const downloadStatus = await response.json();
             console.log(downloadStatus.video.download);

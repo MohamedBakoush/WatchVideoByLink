@@ -2,7 +2,7 @@
 const path = require("path");
 const express = require("express");
 const favicon = require("serve-favicon");
-const streamVideoFile = require("./streamVideo"); 
+const streamVideoFile = require("./streamVideo");
 const app = express();
 
 // show website icon on tab
@@ -18,10 +18,17 @@ function streamVideoById(req, res){
   streamVideoFile.streamVideo(req, res, req.params.id);
 }
 
-app.get("/data-video/:id", findVideosByID);
+app.get("/video-data/:id", findVideosByID);
 function findVideosByID(req, res){
   res.json(streamVideoFile.findVideosByID(req.params.id));
 }
+
+
+app.get("/all-available-video-data", getAllAvailableVideos);
+function getAllAvailableVideos(req, res){
+  res.json(streamVideoFile.getAllAvailableVideos());
+}
+
 
 app.post("/downloadVideoStream", express.json(), downloadVideoStream);
 function downloadVideoStream(req, res){
