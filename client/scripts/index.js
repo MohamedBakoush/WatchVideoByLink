@@ -2,10 +2,7 @@ import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as basic from "../scripts/basics.js";
 "use strict";
 
-// identify elements from html
-const videoID = document.getElementById("video");
-const videoLink = document.getElementById("videoLinkContainer");
-
+// show video from url
 function showVideoFromUrl(url) {
     // split url to get video and video type
     const hostname_typeVideo = url.split("?t=");
@@ -18,6 +15,8 @@ function showVideoFromUrl(url) {
 
 // load details into html using video and videoLink id
 function showDetails() {
+  // input video link container
+  const videoLink = basic.createSection(document.body, "section", "videoLinkContainer", "videoLinkContainer");
   // create form
   const videoLinkForm = basic.createSection(videoLink, "form");
   videoLinkForm.onsubmit = function(){
@@ -42,9 +41,6 @@ function showDetails() {
     history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
     // remove videoLink from client
     videoLink.remove();
-    // video styleing
-    videoID.style.width = "100vw";
-    videoID.style.height = "100vh";
     // put video src and type in video player
     showVideo(videoLinkInput.value, videoTypeSelect.value);
   };
@@ -52,10 +48,12 @@ function showDetails() {
 
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
+  const videoPlayer = basic.createSection(document.body, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
+  videoPlayer.style.width = "100vw";
+  videoPlayer.style.height = "100vh";
   const Button = videojs.getComponent("Button"); // eslint-disable-line
   if (videoType == "application/x-mpegURL") {
-    const videoID = document.getElementById("video");
-    const player = videojs(videoID, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
       preload: "auto"
@@ -83,8 +81,7 @@ function showVideo(videoSrc, videoType) {
     `;
     document.head.appendChild(style);
   } else if ( videoType == "application/dash+xml" ) {
-    const videoID = document.getElementById("video");
-    const player = videojs(videoID, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
       preload: "auto"
@@ -105,9 +102,8 @@ function showVideo(videoSrc, videoType) {
       .video-js .vjs-remaining-time{display: none;}
     `;
     document.head.appendChild(style);
-  } else {
-    const videoID = document.getElementById("video");
-    var player = videojs(videoID, {  // eslint-disable-line
+  } else { 
+    var player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
       techOrder: [ "chromecast", "html5" ],
@@ -155,11 +151,6 @@ function showVideo(videoSrc, videoType) {
 function pageLoaded() {
     const url = window.location.href;
     if (url.includes("?t=") && url.includes("?v=")) {
-      // remove videoLink from client
-      videoLink.remove();
-      // video styleing
-      videoID.style.width = "100vw";
-      videoID.style.height = "100vh";
       showVideoFromUrl(url);
     } else {
       showDetails();
