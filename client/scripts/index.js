@@ -61,53 +61,8 @@ function showVideo(videoSrc, videoType) {
       preload: "auto"
     });
 
-    const StopRecButton = videojs.extend(Button, { // eslint-disable-line
-      constructor: function() {
-          Button.apply(this, arguments);
-          /* initialize your button */
-          this.controlText("Stop Record");
-      },
-      createEl: function() {
-        return Button.prototype.createEl("button", {
-          className: "vjs-icon-stop-record fas fa-square vjs-control vjs-button"
-        });
-      },
-      handleClick: function() {
-            /* do something on click */
-         videoButton.stopDownloadVideoStream(true).then( () => {
-           console.log("stop downloading");
-           this.hide();
-           videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
-           player.getChild("controlBar").addChild("RecButton", {}, 1);
-
-           videoButton.removeStopDownloadOnWindowClose();
-         });
-      }
-    });
-
-    const RecButton = videojs.extend(Button, { // eslint-disable-line
-      constructor: function() {
-          Button.apply(this, arguments);
-          /* initialize your button */
-          this.controlText("Record");
-      },
-      createEl: function() {
-          return Button.prototype.createEl("button", {
-          className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button"
-        });
-      },
-      handleClick: function() {
-        /* do something on click */
-       videoButton.downloadVideoStream(videoSrc, videoType).then( () => {
-         console.log("downloading");
-           this.hide();
-           videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
-           player.getChild("controlBar").addChild("StopRecButton", {}, 1);
-
-           videoButton.addStopDownloadOnWindowClose();
-       });
-      }
-    });
+    const StopRecButton = videoButton.stopRecStreamButton(player, Button);
+    const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
 
     videojs.registerComponent("RecButton", RecButton);  // eslint-disable-line
     player.getChild("controlBar").addChild("RecButton", {}, 1);

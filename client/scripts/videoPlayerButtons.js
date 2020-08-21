@@ -110,10 +110,94 @@ export async function downloadVideoStream(videoSrc, videoType) {
   });
   if (response.ok) {
     fileNameID = await response.json();
-    return "downloading";
+    return fileNameID;
   } else {
     return "failed record video file";
   }
+}
+
+export function recordingStreamCheck(player, RecButton) {
+  let timemark = "00:00:00.00";
+  const checkRecordingStatus = setInterval( async function(){
+    const response = await fetch(`../video-data/${fileNameID}`);
+    if (response.ok) {
+      const downloadStatus = await response.json();
+      console.log(downloadStatus.video.download);
+      if (downloadStatus.video.timemark !== undefined) {
+        timemark = downloadStatus.video.timemark;
+      }
+      if (downloadStatus.video.download == "completed") {
+        // hide stop rec button
+        player.getChild("controlBar").getChild("StopRecButton").hide();
+        // create rec button
+        videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
+        player.getChild("controlBar").addChild("RecButton", {}, 1);
+        // stop interval
+        clearInterval(checkRecordingStatus);
+        console.log(timemark);
+        alert(`Stopped Recording\nTotal Recording Time: ${timemark}`);
+        console.log("stopped rec");
+      }
+      return "downloading";
+    } else {
+      console.log("failed");
+      return "failed";
+    }
+  }, 500);
+  return checkRecordingStatus;
+}
+
+export function stopRecStreamButton(player, Button) {
+  const StopRecButton = videojs.extend(Button, { // eslint-disable-line
+    constructor: function() {
+        Button.apply(this, arguments);
+        /* initialize your button */
+        this.controlText("Stop Record");
+    },
+    createEl: function() {
+      return Button.prototype.createEl("button", {
+        className: "vjs-icon-stop-record fas fa-square vjs-control vjs-button"
+      });
+    },
+    handleClick: function() {
+          /* do something on click */
+        stopDownloadVideoStream(true).then( () => {
+         console.log("stop downloading");
+         // stop remove download on windows close
+         removeStopDownloadOnWindowClose();
+       });
+    }
+  });
+  return StopRecButton;
+}
+
+export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoType) {
+  const RecButton = videojs.extend(Button, { // eslint-disable-line
+    constructor: function() {
+        Button.apply(this, arguments);
+        /* initialize your button */
+        this.controlText("Record");
+    },
+    createEl: function() {
+        return Button.prototype.createEl("button", {
+        className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button"
+      });
+    },
+    handleClick: function() {
+      /* do something on click */
+     downloadVideoStream(videoSrc, videoType).then( () => {
+       console.log("downloading");
+       // hide rec button when stop rec is avtive
+         player.getChild("controlBar").getChild("RecButton").hide();
+         // create stop rec button
+         videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
+         player.getChild("controlBar").addChild("StopRecButton", {}, 1);
+         recordingStreamCheck(player, RecButton);
+         addStopDownloadOnWindowClose();
+     });
+    }
+  });
+  return RecButton;
 }
 
 export async function downloadVideo(videoSrc, videoType) {
