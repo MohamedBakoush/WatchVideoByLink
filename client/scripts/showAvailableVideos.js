@@ -1,6 +1,8 @@
 import * as basic from "../scripts/basics.js";
 "use strict";
 
+const websiteContentContainer = document.getElementById("websiteContentContainer");
+
 async function loadVideoDetails() {
   const response = await fetch("../all-available-video-data");
   let availablevideoDetails;
@@ -13,20 +15,19 @@ async function loadVideoDetails() {
 }
 
 function eachAvailableVideoDetails(videoDetails) {
+  const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
   Object.keys(videoDetails).forEach(function(videoInfo_ID) {
     if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
-      showDetails(videoInfo_ID, videoDetails[videoInfo_ID]);
+      showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
     }
   });
 }
 
 // load video thumbnail
-function showDetails(videoInfo_ID, videoDetails) {
+function showDetails(container, videoInfo_ID, videoDetails) {
   const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
   const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
-  const container = document.getElementById("savedVideosThumbnailContainer");
-
-  const linkContainer = basic.createLink(container,   `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, videoInfo_ID, "videoThumbnailContainer");
+  const linkContainer = basic.createLink(container, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, videoInfo_ID, "videoThumbnailContainer");
   const thumbnailContainer = basic.createSection(linkContainer, "section");
   const imageContainer = basic.createSection(thumbnailContainer, "section", undefined, undefined);
 
@@ -75,8 +76,6 @@ function appendImg(container, src, width, height, videoInfo_ID) {
   }
 }
 
-function pageLoaded() {
+ export function pageLoaded() {
   loadVideoDetails();
 }
-
-window.addEventListener("load", pageLoaded);

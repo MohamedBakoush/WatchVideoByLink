@@ -50,6 +50,12 @@ function stopDownloadVideoStream(req, res){
   streamVideoFile.stopDownloadVideoStream(req, res);
 }
 
+// load path name /saved/videos with index.html page
+app.all("/saved/videos", savedVideos);
+function savedVideos(req, res){
+  res.sendFile(path.join(__dirname, "client", "index.html"));
+}
+
 // adds html as extensions, dont need to write index.html
 app.use(express.static("client", { extensions: ["html"] }));
 
