@@ -155,15 +155,20 @@ function showVideo(videoSrc, videoType) {
 
 // all the functions that are to load when the page loads
 function pageLoaded() {
+    // when active history entry changes load location.herf
+    window.onpopstate = function() {
+      window.location.href = location.href;
+    };
+    // url herf and pathname
     const url_href = window.location.href;
     const url_pathname = window.location.pathname;
+    // only play video
     if (url_href.includes("?t=") && url_href.includes("?v=")) {
       showVideoFromUrl(url_href);
-    } else if (url_pathname === "/saved/videos") {
-      console.log("haha");
+    } else if (url_pathname === "/saved/videos") { // show saved video
       navigationBar.loadNavigationBar("/saved/videos");
       showAvailableVideos.pageLoaded();
-    } else {
+    } else { // show homepage
       navigationBar.loadNavigationBar();
       showDetails();
     }
