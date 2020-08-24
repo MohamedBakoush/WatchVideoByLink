@@ -27,6 +27,10 @@ article, body{
   display: grid;
   padding-top: 38.75vh;
 }
+.noAvailableVideosContainer{
+  margin: auto;
+  padding-top: 40vh;
+}
 
 .videoLinkContainer form{
    display: grid;

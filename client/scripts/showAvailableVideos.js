@@ -15,12 +15,17 @@ async function loadVideoDetails() {
 }
 
 function eachAvailableVideoDetails(videoDetails) {
-  const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-  Object.keys(videoDetails).forEach(function(videoInfo_ID) {
-    if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
-      showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
-    }
-  });
+  if (Object.keys(videoDetails).length == 0) { // no available videos
+    const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
+    basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+  } else {
+    const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+    Object.keys(videoDetails).forEach(function(videoInfo_ID) {
+      if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
+        showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
+      }
+    });
+  }
 }
 
 // load video thumbnail
