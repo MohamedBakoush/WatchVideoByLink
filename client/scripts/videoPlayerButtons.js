@@ -12,7 +12,9 @@ export function backToHomePageButton(container) {
   const backToHomePage = document.createElement("button");
   backToHomePage.title = "Close Player";
   backToHomePage.className =  "backToHomePageButton fa fa-times vjs-control vjs-button";
-  backToHomePage.onclick = function(){window.location = "/";};
+  backToHomePage.onclick = function() { 
+       history.back();
+  };
   container.appendChild(backToHomePage);
 }
 export function downloadVideoButton(container, videoSrc, videoType) {
