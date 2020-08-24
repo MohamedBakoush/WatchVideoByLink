@@ -27,7 +27,7 @@ article, body{
   display: grid;
   padding-top: 38.75vh;
 }
-.noAvailableVideosContainer{
+.noAvailableVideosContainer, .responseErrorAvailableVideo{
   margin: auto;
   padding-top: 40vh;
 }

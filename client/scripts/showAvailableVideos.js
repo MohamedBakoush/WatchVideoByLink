@@ -4,13 +4,18 @@ import * as basic from "../scripts/basics.js";
 const websiteContentContainer = document.getElementById("websiteContentContainer");
 
 async function loadVideoDetails() {
-  const response = await fetch("../all-available-video-data");
-  let availablevideoDetails;
-  if (response.ok) {
-    availablevideoDetails = await response.json();
-    eachAvailableVideoDetails(availablevideoDetails);
-  } else {
-    availablevideoDetails = { msg: "failed to load messages" };
+  try {
+    const response = await fetch("../all-available-video-data");
+    let availablevideoDetails;
+    if (response.ok) {
+      availablevideoDetails = await response.json();
+      eachAvailableVideoDetails(availablevideoDetails);
+    } else {
+      availablevideoDetails = { msg: "failed to load messages" };
+    }
+  } catch (e) {
+    const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo");
+    basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
   }
 }
 
