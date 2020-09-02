@@ -435,6 +435,48 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   });
 }
 
+async function deletevideoData(request, response, videoID) {
+    const filepath = `media/video/${videoID}`;
+  // check if videoid is valid
+  const videoDetails = await findVideosByID(videoID);
+  // if video dosent exist redirect to home page
+  if (videoDetails == undefined) {
+    response.status(404).redirect("/");
+  } else {
+     try {
+       // move video file to deleted-videos folder
+       // if video is active it will make the video not viewable if someone wants to view it
+       FileSystem.rename(videoDetails.video.path, `media/deleted-videos/deleted-${videoID}.mp4`,  (err) => {
+         if (err) throw err;
+        console.log(`\n moved ${videoDetails.video.path} to  media/deleted-videos/deleted-${videoID}.mp4 \n`);
+        //  delete the video
+        FileSystem.unlink(`media/deleted-videos/deleted-${videoID}.mp4`, (err) => {
+          if (err) throw err;
+          console.log(`\n unlinked media/deleted-videos/deleted-${videoID}.mp4 video file \n`);
+        });
+        //  delete folder Content
+        FileSystem.rmdir(filepath, { recursive: true }, (err) => {
+          if (err) throw err;
+          console.log(`\n removed ${filepath} dir \n`);
+        });
+        // delete video data from database
+         delete videoData[videoID];
+         delete availableVideos[videoID];
+
+         const newVideoData = JSON.stringify(videoData, null, 2);
+         FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+         const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+         FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+         console.log(`\n ${filepath} is deleted! \n`);
+         response.json(`video-id-${videoID}-data-permanently-deleted`);
+      });
+     } catch (e) {
+       console.log(`failed to delete ${videoDetails.video.path}`);
+     }
+  }
+}
+
 module.exports = { // export modules
   streamVideo,
   downloadVideoStream,
@@ -443,5 +485,6 @@ module.exports = { // export modules
   trimVideo,
   findVideosByID,
   getAllAvailableVideos,
-  streamThumbnail
+  streamThumbnail,
+  deletevideoData
 };

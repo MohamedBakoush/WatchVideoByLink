@@ -13,6 +13,11 @@ function streamImageById(req, res){
   streamVideoFile.streamThumbnail(req, res, req.params.videoID, req.params.thumbnailID);
 }
 
+app.get("/delete-video-data-permanently/:id", deletevideoData);
+function deletevideoData(req, res){
+  streamVideoFile.deletevideoData(req, res, req.params.id);
+}
+
 app.get("/video/:id", streamVideoById);
 function streamVideoById(req, res){
   streamVideoFile.streamVideo(req, res, req.params.id);

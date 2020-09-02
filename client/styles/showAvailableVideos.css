@@ -1,3 +1,4 @@
+@import url("video-edit-settings.css");
 .savedVideosThumbnailContainer{
     padding: 0.5rem 0 0 0;
     /* display: flex;
@@ -22,4 +23,67 @@
   padding: 0.5rem 0 0 0.5rem;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.thumbnail-option-menu{
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  position: absolute ;
+  height: 3em ;
+  width: 3em ;
+  font-size: 16px ;
+  background: none;
+  border: none;
+  color: inherit;
+  display: inline-block;
+  font-size: inherit;
+  line-height: inherit;
+  text-transform: none;
+  text-decoration: none;
+  transition: none;
+  color: #ffffff;
+  background-image: radial-gradient( circle closest-side, rgba(0,0,0,0.1), rgba(0,0,0,0) ) !important;
+}
+
+.thumbnail-option-menu:hover {
+  color: #08e108;
+}
+.thumbnail-options-container{
+  width: 290px;
+  height: 165px;
+  top: .15rem;
+  right: 0;
+  position: absolute;
+  padding: 0.1rem 0 0 0rem;
+  background: rgba(0,0,0,0.5);
+  display: grid;
+  grid-gap: 1ch;
+  grid-template-rows: repeat(2,2.1875rem);
+}
+
+.option-play, .option-delete{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.44444;
+  padding: 0 1em;
+  height: 2.1875rem;
+  min-width: 3.75rem;
+  border: 1px solid #000;
+  transition: border-radius .15s linear;
+  text-decoration: none;
+  margin: 3rem 1em auto 1em;
+  background: #fff;
+}
+
+.option-play:hover, .option-delete:hover{
+  border-radius: 2em;
+}
+
+.option-play{
+  grid-row: 1;
+}
+.option-delete{
+    grid-row: 2;
 }
