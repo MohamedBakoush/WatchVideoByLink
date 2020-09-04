@@ -48,6 +48,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
   const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars");
   option_menu.onclick = function(e){
     e.preventDefault();
+    linkContainer.removeAttribute("href");
     option_menu.disabled = true;
     option_menu.classList = "thumbnail-option-menu";
     // option_menu_container
@@ -70,6 +71,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
     option_menu_edit.onclick = function(e){
       e.preventDefault();
+      linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu_container.remove();
       close_option_menu.remove();
@@ -112,6 +114,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     const close_option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-times");
     close_option_menu.onclick = function(e){
       e.preventDefault();
+      linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu.disabled = false;
       option_menu_container.remove();
@@ -126,6 +129,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         console.log(hovered ? "hovered" : "not hovered");
         checkHover.hovered = hovered;
         if (hovered === false) {
+          linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
            option_menu.classList = "thumbnail-option-menu fa fa-bars";
            option_menu.disabled = false;
            option_menu_container.remove();
@@ -137,8 +141,9 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     document.addEventListener("mousemove", checkHoverFunction);
   };
 
-  // video title
-  basic.createSection(thumbnailContainer, "h1", undefined, undefined, video_name);
+  // video title container - if user want to be redirected to video player even if menu is active when onclick
+  const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, undefined, "thumbnailTitleContainer");
+  basic.createSection(thumbnailTitleContainer, "h1", undefined, undefined, video_name);
 
   let loopTroughThumbnails;
   let mainThumbnailNumber = 1;

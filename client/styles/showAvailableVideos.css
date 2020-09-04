@@ -6,7 +6,7 @@
     justify-content: flex-end;  */
 }
 
-.videoThumbnailContainer{
+.videoThumbnailContainer, .thumbnailTitleContainer{
   color: rgb(0,0,0);
   text-align: center;
   text-decoration: none;
@@ -60,6 +60,7 @@
   display: grid;
   grid-gap: 1ch;
   grid-template-rows: repeat(2,2.1875rem);
+  cursor: default;
 }
 
 .option-play, .option-delete{
