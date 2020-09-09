@@ -8,6 +8,12 @@ const app = express();
 // show website icon on tab
 app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
 
+ 
+app.post("/getVideoLinkFromUrl", express.json(), videoLinkFromUrl);
+function videoLinkFromUrl(req, res){
+  streamVideoFile.getVideoLinkFromUrl(req, res);
+}
+
 // get video thumbnail by video id and thumbnail number header
 app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
 function streamImageById(req, res){

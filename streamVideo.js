@@ -3,6 +3,7 @@ const FileSystem = require("fs");
 const stream = require("stream");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
+const youtubedl = require("youtube-dl");
 const data_videos  = FileSystem.readFileSync("data/data-videos.json");
 let videoData = JSON.parse(data_videos);
 const available_videos  = FileSystem.readFileSync("data/available-videos.json");
@@ -477,6 +478,37 @@ async function deletevideoData(request, response, videoID) {
   }
 }
 
+async function getVideoLinkFromUrl(req, res) {
+  const url = req.body.url;
+  // Optional arguments passed to youtube-dl.
+  const options = ["--skip-download"];
+  youtubedl.getInfo(url, options, function(err, info) {
+    if (err) {
+     res.json("failed-get-video-url-from-provided-url");
+    }
+   // info.protocol
+   // protocol: https == video/mp4
+   // protocol: http_dash_segments == application/dash+xml
+   // protocol: m3u8 == application/x-mpegURL
+   
+   let videoFileFormat;
+   if (info.protocol == "https") {
+     videoFileFormat = "video/mp4";
+   } else if (info.protocol == "m3u8") {
+     videoFileFormat = "application/x-mpegURL";
+   } else if (info.protocol == "http_dash_segments") {
+     videoFileFormat = "application/dash+xml";
+   }
+   const videoDataFromUrl = {
+     input_url_link: url,
+     video_url: info.url,
+     video_file_format: videoFileFormat
+   };
+
+   res.json(videoDataFromUrl);
+  });
+}
+
 module.exports = { // export modules
   streamVideo,
   downloadVideoStream,
@@ -486,5 +518,6 @@ module.exports = { // export modules
   findVideosByID,
   getAllAvailableVideos,
   streamThumbnail,
-  deletevideoData
+  deletevideoData,
+  getVideoLinkFromUrl
 };

@@ -13,6 +13,8 @@ header{
   background: transparent;
   background-repeat: no-repeat;
   background-position: center;
+  grid-row-start: 1;
+  grid-row-end: 1;
 }
 
 

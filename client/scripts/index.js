@@ -34,6 +34,7 @@ export function showDetails() {
   basic.createSection(videoLinkForm, "h4", undefined, undefined,  "Video Type: ");
   const videoTypeSelect = basic.createSection(videoLinkForm, "select", "videoTypeSelect", "select");
   // all the diffrent types of video that can be choosen
+  basic.createOption(videoTypeSelect, "option", "Automatic", "Automatic");
   basic.createOption(videoTypeSelect, "option", "video/mp4", "MP4 (.mp4)");
   basic.createOption(videoTypeSelect, "option", "application/x-mpegURL", "HLS (.m3u8)");
   basic.createOption(videoTypeSelect, "option", "application/dash+xml", "MPEG-DASH (.mpd)");
@@ -41,14 +42,22 @@ export function showDetails() {
   basic.createInput(videoLinkForm, "submit", "Watch Video", undefined , "button watchVideoButton");
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
-    // puts video type and video file in url
-    history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
-    // remove videoLink from client
-    videoLink.remove();
-    // remove navBar
-    document.getElementById("headerContainer").remove();
-    // put video src and type in video player
-    showVideo(videoLinkInput.value, videoTypeSelect.value);
+    if (videoTypeSelect.value === "Automatic") {
+      getVideoUrlAuto(videoLinkInput.value);
+      // remove videoLink from client
+      videoLink.remove();
+      // remove navBar
+      document.getElementById("headerContainer").remove();
+    } else {
+      // puts video type and video file in url
+      history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
+      // remove videoLink from client
+      videoLink.remove();
+      // remove navBar
+      document.getElementById("headerContainer").remove();
+      // put video src and type in video player
+      showVideo(videoLinkInput.value, videoTypeSelect.value);
+    }
   };
 }
 
@@ -153,6 +162,60 @@ function showVideo(videoSrc, videoType) {
   }
 }
 
+function getVideoUrlAuto(url_link) {
+  history.pushState(null, "", `?auto=${url_link}`);
+  const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
+  basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
+  getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
+}
+
+async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer) {
+  const payload = {
+    url: url_link
+  };
+  const response = await fetch("../getVideoLinkFromUrl", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  console.log("waiting for video url and file type");
+  let getVideoLinkFromUrl;
+  const headerContainer = document.getElementById("headerContainer");
+  if (response.ok) {
+    getVideoLinkFromUrl = await response.json();
+    // puts video type and video file in url
+    if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
+      console.log("failed");
+      alert("Invalid Url Link.");
+      history.pushState(null, "", "/");
+      // replace
+      if(headerContainer){
+        navigationBar.loadNavigationBar();
+        showDetails();
+      } else{
+        basic.createSection(document.body, "header", undefined, "headerContainer");
+        navigationBar.loadNavigationBar();
+        showDetails();
+      }
+      searchingForVideoLinkMessageContainer.remove();
+    } else {
+      if (headerContainer) {
+        headerContainer.remove();
+      }
+      // document.getElementById("headerContainer").remove();
+      searchingForVideoLinkMessageContainer.remove();
+      websiteContentContainer.innerHTML = "";
+      history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
+      // put video src and type in video player
+      showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format);
+    }
+  } else {
+    getVideoLinkFromUrl = { msg: "failed to load messages" };
+  }
+
+ return getVideoLinkFromUrl;
+}
+
 // all the functions that are to load when the page loads
 function pageLoaded() {
     // when active history entry changes load location.herf
@@ -165,6 +228,9 @@ function pageLoaded() {
     // only play video
     if (url_href.includes("?t=") && url_href.includes("?v=")) {
       showVideoFromUrl(url_href);
+    } else if (url_href.includes("?auto=")) {
+      const url_link_from_auto = url_href.split("?auto=")[1];
+      getVideoUrlAuto(url_link_from_auto);
     } else if (url_pathname === "/saved/videos") { // show saved video
       navigationBar.loadNavigationBar("/saved/videos");
       showAvailableVideos.pageLoaded();

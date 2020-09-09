@@ -21,6 +21,9 @@ article, body{
   background-repeat: no-repeat;
   background-position: center;
 }
+body{
+  display: grid;
+}
 
 .videoLinkContainer{
   margin: auto;
@@ -30,6 +33,11 @@ article, body{
 .noAvailableVideosContainer, .responseErrorAvailableVideo{
   margin: auto;
   padding-top: 40vh;
+}
+
+.getVideoUrlAutoMessageConatinaer {
+  margin: auto;
+  padding-top: 51.15vh;
 }
 
 .videoLinkContainer form{
