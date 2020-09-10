@@ -63,6 +63,7 @@ export function showDetails() {
 
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
+  document.title = "Watching Video By Provided Link";
   const videoPlayer = basic.createSection(websiteContentContainer, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
   videoPlayer.style.width = "100vw";
   videoPlayer.style.height = "100vh";
@@ -164,6 +165,7 @@ function showVideo(videoSrc, videoType) {
 
 function getVideoUrlAuto(url_link) {
   history.pushState(null, "", `?auto=${url_link}`);
+  document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
   const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
   basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
   getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
@@ -183,6 +185,7 @@ async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContain
   const headerContainer = document.getElementById("headerContainer");
   if (response.ok) {
     getVideoLinkFromUrl = await response.json();
+    document.title = "Watch Video By Provided Link";
     // puts video type and video file in url
     if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
       console.log("failed");

@@ -13,9 +13,11 @@ export function loadNavigationBar(path) {
   const item = basic.createSection(nav, "li");
   let homeButton, savedVideosPage;
   if (path == "/saved/videos") {
+    document.title = "saved videos - Watch Video By Provided Link";
     homeButton = basic.createLink(item, undefined, undefined, "button category-link", "WatchVideoByLink");
     savedVideosPage = basic.createLink(item, undefined, undefined, "button is-selected", "/saved/videos");
   } else {
+    document.title = "Watch Video By Provided Link";
     homeButton = basic.createLink(item, undefined, undefined, "button is-selected", "WatchVideoByLink");
     savedVideosPage = basic.createLink(item, undefined, undefined, "button category-link", "/saved/videos");
   }
@@ -25,6 +27,7 @@ export function loadNavigationBar(path) {
     homeButton.classList = "button is-selected";
     savedVideosPage.classList = "button category-link";
     history.pushState(null, "", "/");
+    document.title = "Watch Video By Provided Link";
     index.showDetails();
   };
   savedVideosPage.onclick = () => {
@@ -32,6 +35,7 @@ export function loadNavigationBar(path) {
     homeButton.classList = "button category-link";
     savedVideosPage.classList = "button is-selected";
     history.pushState(null, "", "/saved/videos");
+    document.title = "saved videos - Watch Video By Provided Link";
     showAvailableVideos.pageLoaded();
   };
   savedVideosPage.style.margin = "0 0 0 1.25rem";
