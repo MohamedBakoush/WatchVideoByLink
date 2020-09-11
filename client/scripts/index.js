@@ -64,6 +64,8 @@ export function showDetails() {
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
   document.title = "Watching Video By Provided Link";
+  document.body.classList = "watching-video-body";
+  websiteContentContainer.classList = "watching-video-websiteContentContainer";
   const videoPlayer = basic.createSection(websiteContentContainer, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
   videoPlayer.style.width = "100vw";
   videoPlayer.style.height = "100vh";
@@ -166,6 +168,8 @@ function showVideo(videoSrc, videoType) {
 function getVideoUrlAuto(url_link) {
   history.pushState(null, "", `?auto=${url_link}`);
   document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
+  document.body.classList = "index-body";
+  websiteContentContainer.classList = "index-websiteContentContainer";
   const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
   basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
   getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);

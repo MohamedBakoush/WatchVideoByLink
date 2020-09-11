@@ -5,12 +5,19 @@
   padding: 0;
 }
 
-article, body{
-  display: grid;
-  font-family: "Test", Arial, Helvetica, sans-serif;
+body{
+  font-family: "WatchVideoByLink", Arial, Helvetica, sans-serif;
   line-height: 1.4;
   letter-spacing: 0.5px;
   font-size: 12px;
+}
+
+body, .index-body, .index-websiteContentContainer,
+.saved-videos-body, .saved-videos-websiteContentContainer {
+  display: grid;
+}
+
+.watching-video-body{
   margin: 0;
   padding: 0;
   border: 0 solid;
@@ -20,9 +27,6 @@ article, body{
   background: transparent;
   background-repeat: no-repeat;
   background-position: center;
-}
-body{
-  display: grid;
 }
 
 .videoLinkContainer{

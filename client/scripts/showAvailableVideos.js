@@ -75,7 +75,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu_container.remove();
       close_option_menu.remove();
-
+      document.body.style.overflow ="hidden";
       const video_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
       const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body");
       backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu, option_menu_container,close_option_menu);
@@ -102,6 +102,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         e.preventDefault();
         const confirmVideoDelete = confirm("Press OK to permanently delete video");
         if (confirmVideoDelete) {
+          document.body.style.removeProperty("overflow");
           video_edit_container.remove();
           document.getElementById(videoInfo_ID).remove();
           deleteVideoDataPermanently(videoInfo_ID);
@@ -190,6 +191,7 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container) {
   backToMainVideoButton.title = "Close Edit mode";
   backToMainVideoButton.className =  "backToViewAvailableVideoButton fa fa-times";
   backToMainVideoButton.onclick = function(){
+    document.body.style.removeProperty("overflow");
     video_edit_container.remove();
   };
   video_edit_body.appendChild(backToMainVideoButton);

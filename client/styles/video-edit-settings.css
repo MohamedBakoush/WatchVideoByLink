@@ -39,10 +39,10 @@
 }
 .video_edit_container{
   width: 100vw;
-    position: absolute;
-    top: 0;
-    height: 100vh;
-    background-color: rgba(0,0,0,0.3) !important;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.3) !important;
 }
 
 .dangerZone-settingsContainer{
