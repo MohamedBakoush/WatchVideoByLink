@@ -33,8 +33,8 @@ When working with various types of video files for personal projects, the proces
     - using /?auto=URL will also activate the search
 - /saved/videos
   - shows all available videos by their thumbnails and video id as the title 
-    - if thumbail is hovered over a series of images from the video will be displayed to show what the video is about
-    - if thumbanil is clicked it will redirect the user to the specifed video
+    - if the thumbnail is hovered over a series of images from the video will be displayed to show what the video is about
+    - if the thumbnail is clicked it will redirect the user to the specifed video
   - menu button is available on the top right corner of each availabe thumbnail which if clicked shows
     - Get sharable link button
       - if clicked video url link will be copied for ease of shareability
