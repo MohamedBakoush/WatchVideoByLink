@@ -1,14 +1,23 @@
+@import url("NavigationBar.css");
+@import url("showAvailableVideos.css");
 *{
   margin: 0;
   padding: 0;
 }
 
 body{
-  display: grid;
-  font-family: "Test", Arial, Helvetica, sans-serif;
+  font-family: "WatchVideoByLink", Arial, Helvetica, sans-serif;
   line-height: 1.4;
   letter-spacing: 0.5px;
   font-size: 12px;
+}
+
+body, .index-body, .index-websiteContentContainer,
+.saved-videos-body, .saved-videos-websiteContentContainer {
+  display: grid;
+}
+
+.watching-video-body{
   margin: 0;
   padding: 0;
   border: 0 solid;
@@ -23,7 +32,16 @@ body{
 .videoLinkContainer{
   margin: auto;
   display: grid;
-  padding-top: 50vh;
+  padding-top: 38.75vh;
+}
+.noAvailableVideosContainer, .responseErrorAvailableVideo{
+  margin: auto;
+  padding-top: 40vh;
+}
+
+.getVideoUrlAutoMessageConatinaer {
+  margin: auto;
+  padding-top: 51.15vh;
 }
 
 .videoLinkContainer form{

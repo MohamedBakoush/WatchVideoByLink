@@ -3,3 +3,5 @@ node_modules/
 
 # video files
 *.mp4
+
+media/video/**

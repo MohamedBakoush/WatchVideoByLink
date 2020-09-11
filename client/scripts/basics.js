@@ -102,3 +102,27 @@ export function createSection(container, dataType, classHere, idHere, string){
     return "createSection didnt work";
   }
 }
+
+// create an a element
+// with href, classList and id
+export function createLink(container, herf, idHere, classHere, textContent) {
+  try {  // if inputs are valid
+    const linkContainer = document.createElement("a"); // create element
+    if (herf != undefined) {
+      linkContainer.href = herf; // create herf
+    }
+    if (idHere != undefined) {
+      linkContainer.id = idHere; // create id
+    }
+    if (classHere != undefined) {
+      linkContainer.classList = classHere; // create class
+    }
+    if (textContent != undefined) {
+      linkContainer.textContent = textContent;
+    }
+    container.appendChild(linkContainer); // append section in container
+    return linkContainer; // return linkContainer
+  } catch (e) { // return fail
+    return "createLink didnt work";
+  }
+}

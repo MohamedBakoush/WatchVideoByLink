@@ -1,11 +1,12 @@
 import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as basic from "../scripts/basics.js";
+import * as navigationBar from "../scripts/navigationBar.js";
+import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 "use strict";
 
-// identify elements from html
-const videoID = document.getElementById("video");
-const videoLink = document.getElementById("videoLinkContainer");
+const websiteContentContainer = document.getElementById("websiteContentContainer");
 
+// show video from url
 function showVideoFromUrl(url) {
     // split url to get video and video type
     const hostname_typeVideo = url.split("?t=");
@@ -17,7 +18,9 @@ function showVideoFromUrl(url) {
 }
 
 // load details into html using video and videoLink id
-function showDetails() {
+export function showDetails() {
+  // input video link container
+  const videoLink = basic.createSection(websiteContentContainer, "section", "videoLinkContainer", "videoLinkContainer");
   // create form
   const videoLinkForm = basic.createSection(videoLink, "form");
   videoLinkForm.onsubmit = function(){
@@ -31,6 +34,7 @@ function showDetails() {
   basic.createSection(videoLinkForm, "h4", undefined, undefined,  "Video Type: ");
   const videoTypeSelect = basic.createSection(videoLinkForm, "select", "videoTypeSelect", "select");
   // all the diffrent types of video that can be choosen
+  basic.createOption(videoTypeSelect, "option", "Automatic", "Automatic");
   basic.createOption(videoTypeSelect, "option", "video/mp4", "MP4 (.mp4)");
   basic.createOption(videoTypeSelect, "option", "application/x-mpegURL", "HLS (.m3u8)");
   basic.createOption(videoTypeSelect, "option", "application/dash+xml", "MPEG-DASH (.mpd)");
@@ -38,76 +42,43 @@ function showDetails() {
   basic.createInput(videoLinkForm, "submit", "Watch Video", undefined , "button watchVideoButton");
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
-    // puts video type and video file in url
-    history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
-    // remove videoLink from client
-    videoLink.remove();
-    // video styleing
-    videoID.style.width = "100vw";
-    videoID.style.height = "100vh";
-    // put video src and type in video player
-    showVideo(videoLinkInput.value, videoTypeSelect.value);
+    if (videoTypeSelect.value === "Automatic") {
+      getVideoUrlAuto(videoLinkInput.value);
+      // remove videoLink from client
+      videoLink.remove();
+      // remove navBar
+      document.getElementById("headerContainer").remove();
+    } else {
+      // puts video type and video file in url
+      history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
+      // remove videoLink from client
+      videoLink.remove();
+      // remove navBar
+      document.getElementById("headerContainer").remove();
+      // put video src and type in video player
+      showVideo(videoLinkInput.value, videoTypeSelect.value);
+    }
   };
 }
 
 // assign video src and type to video id
 function showVideo(videoSrc, videoType) {
+  document.title = "Watching Video By Provided Link";
+  document.body.classList = "watching-video-body";
+  websiteContentContainer.classList = "watching-video-websiteContentContainer";
+  const videoPlayer = basic.createSection(websiteContentContainer, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
+  videoPlayer.style.width = "100vw";
+  videoPlayer.style.height = "100vh";
   const Button = videojs.getComponent("Button"); // eslint-disable-line
   if (videoType == "application/x-mpegURL") {
-    const videoID = document.getElementById("video");
-    const player = videojs(videoID, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
       preload: "auto"
     });
 
-    const StopRecButton = videojs.extend(Button, { // eslint-disable-line
-      constructor: function() {
-          Button.apply(this, arguments);
-          /* initialize your button */
-          this.controlText("Stop Record");
-      },
-      createEl: function() {
-        return Button.prototype.createEl("button", {
-          className: "vjs-icon-stop-record fas fa-square vjs-control vjs-button"
-        });
-      },
-      handleClick: function() {
-            /* do something on click */
-         videoButton.stopDownloadVideoStream(true).then( () => {
-           console.log("stop downloading");
-           this.hide();
-           videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
-           player.getChild("controlBar").addChild("RecButton", {}, 1);
-
-           videoButton.removeStopDownloadOnWindowClose();
-         });
-      }
-    });
-
-    const RecButton = videojs.extend(Button, { // eslint-disable-line
-      constructor: function() {
-          Button.apply(this, arguments);
-          /* initialize your button */
-          this.controlText("Record");
-      },
-      createEl: function() {
-          return Button.prototype.createEl("button", {
-          className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button"
-        });
-      },
-      handleClick: function() {
-        /* do something on click */
-       videoButton.downloadVideoStream(videoSrc, videoType).then( () => {
-         console.log("downloading");
-           this.hide();
-           videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
-           player.getChild("controlBar").addChild("StopRecButton", {}, 1);
-
-           videoButton.addStopDownloadOnWindowClose();
-       });
-      }
-    });
+    const StopRecButton = videoButton.stopRecStreamButton(player, Button);
+    const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
 
     videojs.registerComponent("RecButton", RecButton);  // eslint-disable-line
     player.getChild("controlBar").addChild("RecButton", {}, 1);
@@ -128,8 +99,7 @@ function showVideo(videoSrc, videoType) {
     `;
     document.head.appendChild(style);
   } else if ( videoType == "application/dash+xml" ) {
-    const videoID = document.getElementById("video");
-    const player = videojs(videoID, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
       preload: "auto"
@@ -151,8 +121,7 @@ function showVideo(videoSrc, videoType) {
     `;
     document.head.appendChild(style);
   } else {
-    const videoID = document.getElementById("video");
-    var player = videojs(videoID, {  // eslint-disable-line
+    var player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
       techOrder: [ "chromecast", "html5" ],
@@ -196,17 +165,84 @@ function showVideo(videoSrc, videoType) {
   }
 }
 
+function getVideoUrlAuto(url_link) {
+  history.pushState(null, "", `?auto=${url_link}`);
+  document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
+  document.body.classList = "index-body";
+  websiteContentContainer.classList = "index-websiteContentContainer";
+  const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
+  basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
+  getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
+}
+
+async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer) {
+  const payload = {
+    url: url_link
+  };
+  const response = await fetch("../getVideoLinkFromUrl", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  console.log("waiting for video url and file type");
+  let getVideoLinkFromUrl;
+  const headerContainer = document.getElementById("headerContainer");
+  if (response.ok) {
+    getVideoLinkFromUrl = await response.json();
+    document.title = "Watch Video By Provided Link";
+    // puts video type and video file in url
+    if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
+      console.log("failed");
+      alert("Invalid Url Link.");
+      history.pushState(null, "", "/");
+      // replace
+      if(headerContainer){
+        navigationBar.loadNavigationBar();
+        showDetails();
+      } else{
+        basic.createSection(document.body, "header", undefined, "headerContainer");
+        navigationBar.loadNavigationBar();
+        showDetails();
+      }
+      searchingForVideoLinkMessageContainer.remove();
+    } else {
+      if (headerContainer) {
+        headerContainer.remove();
+      }
+      // document.getElementById("headerContainer").remove();
+      searchingForVideoLinkMessageContainer.remove();
+      websiteContentContainer.innerHTML = "";
+      history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
+      // put video src and type in video player
+      showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format);
+    }
+  } else {
+    getVideoLinkFromUrl = { msg: "failed to load messages" };
+  }
+
+ return getVideoLinkFromUrl;
+}
+
 // all the functions that are to load when the page loads
 function pageLoaded() {
-    const url = window.location.href;
-    if (url.includes("?t=") && url.includes("?v=")) {
-      // remove videoLink from client
-      videoLink.remove();
-      // video styleing
-      videoID.style.width = "100vw";
-      videoID.style.height = "100vh";
-      showVideoFromUrl(url);
-    } else {
+    // when active history entry changes load location.herf
+    window.onpopstate = function() {
+      window.location.href = location.href;
+    };
+    // url herf and pathname
+    const url_href = window.location.href;
+    const url_pathname = window.location.pathname;
+    // only play video
+    if (url_href.includes("?t=") && url_href.includes("?v=")) {
+      showVideoFromUrl(url_href);
+    } else if (url_href.includes("?auto=")) {
+      const url_link_from_auto = url_href.split("?auto=")[1];
+      getVideoUrlAuto(url_link_from_auto);
+    } else if (url_pathname === "/saved/videos") { // show saved video
+      navigationBar.loadNavigationBar("/saved/videos");
+      showAvailableVideos.pageLoaded();
+    } else { // show homepage
+      navigationBar.loadNavigationBar();
       showDetails();
     }
  }
