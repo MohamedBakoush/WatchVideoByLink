@@ -46,8 +46,10 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
   // menu options
   const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars");
+  option_menu.title = "menu";
   option_menu.onclick = function(e){
     e.preventDefault();
+      option_menu.title = "";
     linkContainer.removeAttribute("href");
     option_menu.disabled = true;
     option_menu.classList = "thumbnail-option-menu";
@@ -56,6 +58,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
     // copy video link
     const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
+    option_menu_copy.title = "Get shareable link";
     option_menu_copy.onclick = function(e){
       e.preventDefault();
       const tempCopyLink = document.createElement("textarea");
@@ -69,6 +72,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
     // show video edit info menu
     const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
+    option_menu_edit.title = "Edit menu";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
@@ -113,8 +117,10 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
     // close video edit info menu
     const close_option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-times");
+    close_option_menu.title = "Close menu";
     close_option_menu.onclick = function(e){
       e.preventDefault();
+      option_menu.title = "menu";
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu.disabled = false;
@@ -130,6 +136,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         console.log(hovered ? "hovered" : "not hovered");
         checkHover.hovered = hovered;
         if (hovered === false) {
+           option_menu.title = "menu";
           linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
            option_menu.classList = "thumbnail-option-menu fa fa-bars";
            option_menu.disabled = false;
@@ -186,8 +193,9 @@ function appendImg(container, src, width, height, videoInfo_ID) {
   }
 }
 
-function backToViewAvailableVideoButton(video_edit_body, video_edit_container) {
+function backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu) {
   const backToMainVideoButton = document.createElement("button");
+  option_menu.title = "menu";
   backToMainVideoButton.title = "Close Edit mode";
   backToMainVideoButton.className =  "backToViewAvailableVideoButton fa fa-times";
   backToMainVideoButton.onclick = function(){
