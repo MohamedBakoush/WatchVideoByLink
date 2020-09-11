@@ -15,7 +15,7 @@ When working with various types of video files for personal projects, the proces
 ## Features
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
-- using /?t=videoType?v=videoSrc can be used to play specifed videoSrc if the videoType is supported
+- using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
 - video players
   - Video Type: MP4 Supports:
     - .mp4 files
@@ -29,18 +29,18 @@ When working with various types of video files for personal projects, the proces
   - Video Type: MPEG-DASH Supports:
     - .mpd files
   - Video Type: Automatic:
-    - takes url link and trys to find videoSrc and videoType if successful it will be shown in the correct video player
+    - takes a URL link and tries to find the videoSrc and videoType if successful it will be shown in the correct video player
     - using /?auto=URL will also activate the search
 - /saved/videos
   - shows all available videos by their thumbnails and video id as the title 
     - if the thumbnail is hovered over a series of images from the video will be displayed to show what the video is about
-    - if the thumbnail is clicked it will redirect the user to the specifed video
-  - menu button is available on the top right corner of each availabe thumbnail which if clicked shows
+    - if the thumbnail is clicked it will redirect the user to the specified video
+  - menu button is available on the top right corner of each available thumbnail which if clicked shows
     - Get sharable link button
-      - if clicked video url link will be copied for ease of shareability
+      - if clicked the video URL link will be copied for ease of shareability
     - Edit button
       - if clicked Edit mode will be shown with such features as 
-        - Delete this video which once clicked deletes the video plus all its data permanently from the system
+        - Delete this video which once clicked deletes the video plus all its data permanently from the system 
 
 
 ## Installation
