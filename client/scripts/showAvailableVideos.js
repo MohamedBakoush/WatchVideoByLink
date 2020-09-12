@@ -72,7 +72,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
     // show video edit info menu
     const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
-    option_menu_edit.title = "Edit menu";
+    option_menu_edit.title = "Edit";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
