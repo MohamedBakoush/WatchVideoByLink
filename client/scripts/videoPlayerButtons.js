@@ -8,15 +8,22 @@ export function topPageControlBarContainer(player) {
   player.el().appendChild(topPageControlBarContainer);
   return topPageControlBarContainer;
 }
-export function backToHomePageButton(container) {
+export function backToHomePageButton(container, videoLinkFromUrl) { 
   const backToHomePage = document.createElement("button");
   backToHomePage.title = "Close Player";
   backToHomePage.className =  "backToHomePageButton fa fa-times vjs-control vjs-button";
-  backToHomePage.onclick = function() { 
+  backToHomePage.onclick = function() {
+    if (videoLinkFromUrl == "Automatic") {
+      window.location = "/";
+    } else if (document.referrer.indexOf(window.location.host) !== -1) {
        history.back();
+     } else {
+        window.location = "/";
+     }
   };
   container.appendChild(backToHomePage);
 }
+
 export function downloadVideoButton(container, videoSrc, videoType) {
   const downloadVideoButton = basic.createSection(container, "button", "vjs-menu-item downloadVideoMenuContentItem", "downloadVideoButton");
   const downloadVideoButtonText = basic.createSection(downloadVideoButton, "span", "vjs-menu-item-text", undefined, "Download Video");

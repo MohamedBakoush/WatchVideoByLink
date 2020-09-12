@@ -62,7 +62,7 @@ export function showDetails() {
 }
 
 // assign video src and type to video id
-function showVideo(videoSrc, videoType) {
+function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   document.title = "Watching Video By Provided Link";
   document.body.classList = "watching-video-body";
   websiteContentContainer.classList = "watching-video-websiteContentContainer";
@@ -84,7 +84,7 @@ function showVideo(videoSrc, videoType) {
     player.getChild("controlBar").addChild("RecButton", {}, 1);
 
     const topControls = videoButton.topPageControlBarContainer(player);
-    videoButton.backToHomePageButton(topControls); //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load
     player.src({  // video type and src
@@ -106,7 +106,7 @@ function showVideo(videoSrc, videoType) {
     });
 
     const topControls = videoButton.topPageControlBarContainer(player);
-    videoButton.backToHomePageButton(topControls); //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load
     player.src({  // video type and src
@@ -155,7 +155,7 @@ function showVideo(videoSrc, videoType) {
       downloadVideoMenu.style.display = "none";
     };
 
-    videoButton.backToHomePageButton(topControls); //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load
     player.src({  // video type and src
@@ -214,7 +214,7 @@ async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContain
       websiteContentContainer.innerHTML = "";
       history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
       // put video src and type in video player
-      showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format);
+      showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
     }
   } else {
     getVideoLinkFromUrl = { msg: "failed to load messages" };
