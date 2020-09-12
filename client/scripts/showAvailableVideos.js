@@ -109,7 +109,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
           document.body.style.removeProperty("overflow");
           video_edit_container.remove();
           document.getElementById(videoInfo_ID).remove();
-          deleteVideoDataPermanently(videoInfo_ID);
+          deleteVideoDataPermanently(videoInfo_ID, container);
           console.log("deleted");
         }
       };
@@ -205,13 +205,18 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container, o
   video_edit_body.appendChild(backToMainVideoButton);
 }
 
-async function deleteVideoDataPermanently(videoID) {
+async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
     const response = await fetch(`../delete-video-data-permanently/${videoID}`);
 
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
-        alert(`video ${videoID} has been deleted`);
+        alert(`video ${videoID} has been deleted`); 
+        if (savedVideosThumbnailContainer.childElementCount == 0) {
+          savedVideosThumbnailContainer.remove();
+          const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
+          basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+        }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
         alert(`failed to deleted ${videoID} video`);
       }
