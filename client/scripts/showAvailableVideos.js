@@ -25,7 +25,7 @@ function eachAvailableVideoDetails(videoDetails) {
     basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
   } else {
     const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-    Object.keys(videoDetails).forEach(function(videoInfo_ID) {
+    Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
       if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
         showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
       }
@@ -211,7 +211,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
-        alert(`video ${videoID} has been deleted`); 
+        alert(`video ${videoID} has been deleted`);
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           savedVideosThumbnailContainer.remove();
           const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
