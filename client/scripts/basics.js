@@ -1,7 +1,7 @@
 "use strict";
 
 // create a input element
-// with type, id
+// with optional input type, id, classList and if required or not
 export function inputType(container, type, idHere, classHere, required){
   try {
     const inputType = document.createElement("input");
@@ -14,7 +14,7 @@ export function inputType(container, type, idHere, classHere, required){
     if (classHere != undefined) { // assign class to input
       inputType.classList = classHere;
     }
-    if (required != undefined) { // assign accept to inputType
+    if (required != undefined) { // assign required to inputType
       inputType.required = required;
     }
     container.appendChild(inputType);
@@ -25,7 +25,7 @@ export function inputType(container, type, idHere, classHere, required){
 }
 
 // create a label element
-// with textContent
+// with optional textContent
 export function createLabel(container, string){ // label maker
  try { // if inputs are valid
    const label = document.createElement("label"); // create input
@@ -40,7 +40,7 @@ export function createLabel(container, string){ // label maker
 }
 
 // create a input element
-// with type, value, id and classlist
+// with optional input type, value, id and classlist
 export function createInput(container, type, value, idHere, classHere) {
   try {
     const input = document.createElement("input");
@@ -65,7 +65,7 @@ export function createInput(container, type, value, idHere, classHere) {
 }
 
 // create a option element
-// with value, textContent
+// with optional value and textContent
 export function createOption(container, dataType, value, textContent){
   try {  // if inputs are valid
     const option = document.createElement("option"); // create element
@@ -83,7 +83,7 @@ export function createOption(container, dataType, value, textContent){
 }
 
 // create a section element
-// with classList, id and textContent
+// with optional classList, id and textContent
 export function createSection(container, dataType, classHere, idHere, string){
   try {  // if inputs are valid
     const section = document.createElement(dataType); // create element
@@ -104,23 +104,23 @@ export function createSection(container, dataType, classHere, idHere, string){
 }
 
 // create an a element
-// with href, classList and id
+// with optional href, classList, id and textContent
 export function createLink(container, herf, idHere, classHere, textContent) {
   try {  // if inputs are valid
     const linkContainer = document.createElement("a"); // create element
     if (herf != undefined) {
-      linkContainer.href = herf; // create herf
+      linkContainer.href = herf; // create herf to linkContainer
     }
     if (idHere != undefined) {
-      linkContainer.id = idHere; // create id
+      linkContainer.id = idHere; // create id to linkContainer
     }
     if (classHere != undefined) {
-      linkContainer.classList = classHere; // create class
+      linkContainer.classList = classHere; // create class to linkContainer
     }
-    if (textContent != undefined) {
+    if (textContent != undefined) {  // assign string to linkContainer
       linkContainer.textContent = textContent;
     }
-    container.appendChild(linkContainer); // append section in container
+    container.appendChild(linkContainer); // append linkContainer in container
     return linkContainer; // return linkContainer
   } catch (e) { // return fail
     return "createLink didnt work";
