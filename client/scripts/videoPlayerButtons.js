@@ -276,6 +276,20 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
     if(player.isFullscreen()){
       player.exitFullscreen();
     }
+    // if downloadTrimButton has been clicked and then the user clicks on fullscreen mode, remove trimVideoBody 
+    window.addEventListener("resize", function checkIfFullscreenWhenResize() {
+      if (player.isFullscreen()) {
+        trimVideoBody.remove();
+        // make downloadVideo option active
+        downloadTrimButton.disabled = false;
+        downloadVideoContainer.onmouseover = function(){
+          downloadVideoMenu.style.display = "block";
+        };
+        downloadVideoButton.title = "Download Video";
+        // remove event listener
+        window.removeEventListener("resize", checkIfFullscreenWhenResize);
+      }
+    });
     // to stop extram trim containers to  display while active
     downloadTrimButton.disabled = true;
     downloadVideoContainer.onmouseover = function(){
