@@ -267,11 +267,15 @@ function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, down
   trimVideoBody.appendChild(backToMainVideoButton);
 }
 
-export function createTrimVideo(downloadVideoContainer, downloadVideoMenu, downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType) {
+export function createTrimVideo(player, downloadVideoContainer, downloadVideoMenu, downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType) {
   const downloadTrimButton =  basic.createSection(downloadVideoMenuContent, "button", "vjs-menu-item downloadVideoMenuContentItem");
   downloadTrimButton.title = "Trim Video";
   basic.createSection(downloadTrimButton, "span", "vjs-menu-item-text", undefined, "Trim Video");
   downloadTrimButton.onclick = function(){
+    // if video player is in fullscreen mode when downloadTrimButton is clicked, exit full screen mode
+    if(player.isFullscreen()){
+      player.exitFullscreen();
+    }
     // to stop extram trim containers to  display while active
     downloadTrimButton.disabled = true;
     downloadVideoContainer.onmouseover = function(){

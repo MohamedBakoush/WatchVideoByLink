@@ -144,7 +144,7 @@ function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     const downloadVideoMenuContent = basic.createSection(downloadVideoMenu, "div", "vjs-menu-content");
 
     videoButton.downloadVideoButton(downloadVideoMenuContent, videoSrc, videoType);
-    videoButton.createTrimVideo(downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);
+    videoButton.createTrimVideo(player, downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);
 
     downloadVideoContainer.onmouseover = function(){
       document.getElementById("downloadVideoButton").focus();
