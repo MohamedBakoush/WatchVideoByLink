@@ -26,6 +26,7 @@ export function backToHomePageButton(container, videoLinkFromUrl) {
 
 export function downloadVideoButton(container, videoSrc, videoType) {
   const downloadVideoButton = basic.createSection(container, "button", "vjs-menu-item downloadVideoMenuContentItem", "downloadVideoButton");
+  downloadVideoButton.title = "Download Video";
   const downloadVideoButtonText = basic.createSection(downloadVideoButton, "span", "vjs-menu-item-text", undefined, "Download Video");
   downloadVideoButton.onclick = function(){
     const downloadConfirm = confirm("Press OK to Download Full Video");
@@ -268,6 +269,7 @@ function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, down
 
 export function createTrimVideo(downloadVideoContainer, downloadVideoMenu, downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType) {
   const downloadTrimButton =  basic.createSection(downloadVideoMenuContent, "button", "vjs-menu-item downloadVideoMenuContentItem");
+  downloadTrimButton.title = "Trim Video";
   basic.createSection(downloadTrimButton, "span", "vjs-menu-item-text", undefined, "Trim Video");
   downloadTrimButton.onclick = function(){
     // to stop extram trim containers to  display while active
@@ -329,6 +331,7 @@ export function createTrimVideo(downloadVideoContainer, downloadVideoMenu, downl
         const trimVideoButtonContainer = basic.createSection(trimVideoButtonBody, "section", "trimVideoButtonContainer");
         // trimVideoButton
         const trimVideoButton = basic.createInput(trimVideoButtonContainer, "submit", "Trim Video", undefined, "button trimVideoButton");
+        trimVideoButton.title = "Trim Video";
         trimVideoButton.onclick = function(){
           const downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
           if (downloadConfirm) {
