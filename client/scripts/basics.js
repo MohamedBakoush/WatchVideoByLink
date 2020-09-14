@@ -17,9 +17,9 @@ export function inputType(container, type, idHere, classHere, required){
     if (required != undefined) { // assign required to inputType
       inputType.required = required;
     }
-    container.appendChild(inputType);
-    return inputType;
-  } catch (e) {
+    container.appendChild(inputType); // append inputType inside container
+    return inputType; // return inputType
+  } catch (e) { // return fail
       return "inputType didnt work";
   }
 }
