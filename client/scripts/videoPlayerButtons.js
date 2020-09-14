@@ -8,7 +8,7 @@ export function topPageControlBarContainer(player) {
   player.el().appendChild(topPageControlBarContainer);
   return topPageControlBarContainer;
 }
-export function backToHomePageButton(container, videoLinkFromUrl) { 
+export function backToHomePageButton(container, videoLinkFromUrl) {
   const backToHomePage = document.createElement("button");
   backToHomePage.title = "Close Player";
   backToHomePage.className =  "backToHomePageButton fa fa-times vjs-control vjs-button";
@@ -251,7 +251,7 @@ export async function trimVideo(videoSrc, videoType, startTime, endTime) {
 }
 
 
-function backToMainVideoButton(downloadVideoContainer, downloadVideoMenu, downloadTrimButton, trimVideoBody) {
+function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody) {
   const backToMainVideoButton = document.createElement("button");
   backToMainVideoButton.title = "Close Trim Video";
   backToMainVideoButton.className =  "backToMainVideoButton fa fa-times";
@@ -280,7 +280,7 @@ export function createTrimVideo(downloadVideoContainer, downloadVideoMenu, downl
     document.getElementById("video_html5_api").pause();
     const trimVideoBody =  basic.createSection(document.body, "section", "trimVideoBody");
     // close trim video button
-    backToMainVideoButton(downloadVideoContainer, downloadVideoMenu, downloadTrimButton, trimVideoBody);
+    backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody);
 
     const trimVideoArticle = basic.createSection(trimVideoBody, "section", "trimVideoArticle");
     const trimVideoContainer = basic.createSection(trimVideoArticle, "section", "trimVideoContainer");
