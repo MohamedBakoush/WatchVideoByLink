@@ -28,12 +28,11 @@ export function downloadVideoButton(container, videoSrc, videoType) {
   const downloadVideoButton = basic.createSection(container, "button", "vjs-menu-item downloadVideoMenuContentItem", "downloadVideoButton");
   downloadVideoButton.title = "Download Video";
   const downloadVideoButtonText = basic.createSection(downloadVideoButton, "span", "vjs-menu-item-text", undefined, "Download Video");
-  downloadVideoButton.onclick = function(){
+  const downloadVideoConfirmation = function (){
     const downloadConfirm = confirm("Press OK to Download Full Video");
     if (downloadConfirm) {
       //Logic to download video
-      downloadVideoButton.disabled = true;
-      downloadVideo(videoSrc, videoType).then( () => {
+      downloadVideo(videoSrc, videoType).then( () => { // downloading video
       console.log("downloading");
       downloadVideoButton.title = "Download Status";
       downloadVideoButton.className = "vjs-menu-item downloadVideoMenuContentItem";
@@ -43,21 +42,38 @@ export function downloadVideoButton(container, videoSrc, videoType) {
           if (response.ok) {
             const downloadStatus = await response.json();
             console.log(downloadStatus.video.download);
-            if (downloadStatus.video.download == "completed") {
-              if (downloadStatus.thumbnail.download == "completed") {
+            if (downloadStatus.video.download == "completed") { // if the video portion has finished downloading
+              if (downloadStatus.thumbnail.download == "completed") {// completed thumbnail download
                 clearInterval(checkDownloadStatus);
                 downloadVideoButtonText.innerHTML = "Download Video";
+                downloadVideoButton.title = "Download Video";
+                downloadVideoButton.onclick = downloadVideoConfirmation;
                 alert("Video Download Completed");
-                downloadVideoButton.disabled = false;
-              } else if (downloadStatus.thumbnail.download == "starting"){
+              } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
                   downloadVideoButtonText.innerHTML = "Thumbnail";
-              } else {
+                  downloadVideoButton.title =  "Thumbnail";
+                  downloadVideoButton.onclick = function(){
+                    alert("Thumbnail Progress: preparing to create thumbnails");
+                  };
+              } else { // downloading thumbnails
                 downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.thumbnail.download)}%`;
+                downloadVideoButton.title =  "Creating Thumbnails";
+                downloadVideoButton.onclick = function(){
+                  alert(`Thumbnail Progress: ${Math.trunc(downloadStatus.thumbnail.download)}%`);
+                };
               }
-            } else if(downloadStatus.video.download == "starting full video download") {
+            } else if(downloadStatus.video.download == "starting full video download") { // starting full video downloa msg
               downloadVideoButtonText.innerHTML = "Full Video";
-            } else {
+              downloadVideoButton.title = "Full Video";
+              downloadVideoButton.onclick = function(){
+                alert("Video Progress: preparing to download video");
+              };
+            } else { // the percentage for video fthat has been  downloaded msg
               downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.video.download)}%`;
+              downloadVideoButton.title =  "Downloading Video";
+              downloadVideoButton.onclick = function(){
+                alert(`Video Progress: ${Math.trunc(downloadStatus.video.download)}%`);
+              };
             }
             return "downloading";
           } else {
@@ -67,6 +83,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
       });
     }
   };
+  downloadVideoButton.onclick = downloadVideoConfirmation;
   container.appendChild(downloadVideoButton);
 }
 
@@ -276,7 +293,7 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
     if(player.isFullscreen()){
       player.exitFullscreen();
     }
-    // if downloadTrimButton has been clicked and then the user clicks on fullscreen mode, remove trimVideoBody 
+    // if downloadTrimButton has been clicked and then the user clicks on fullscreen mode, remove trimVideoBody
     window.addEventListener("resize", function checkIfFullscreenWhenResize() {
       if (player.isFullscreen()) {
         trimVideoBody.remove();
