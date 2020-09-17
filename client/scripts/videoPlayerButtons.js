@@ -31,7 +31,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
   const downloadVideoConfirmation = function (){
     const downloadConfirm = confirm("Press OK to Download Full Video");
     if (downloadConfirm) {
-      //Logic to download video
+      // if user confirms download full video then send videoSrc, videoType to the server as a post request by downloadVideo
       downloadVideo(videoSrc, videoType).then( () => { // downloading video
       console.log("downloading");
       downloadVideoButton.title = "Download Status";
