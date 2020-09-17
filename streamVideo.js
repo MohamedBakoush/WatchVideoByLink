@@ -436,6 +436,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   });
 }
 
+// deletes everything that is available in the system related to video id, video file, all available video data ...
 async function deletevideoData(request, response, videoID) {
     const filepath = `media/video/${videoID}`;
   // check if videoid is valid
@@ -478,6 +479,7 @@ async function deletevideoData(request, response, videoID) {
   }
 }
 
+// using youtube-dl it converts url link to video type and video src
 async function getVideoLinkFromUrl(req, res) {
   const url = req.body.url;
   // Optional arguments passed to youtube-dl.
@@ -490,7 +492,7 @@ async function getVideoLinkFromUrl(req, res) {
    // protocol: https == video/mp4
    // protocol: http_dash_segments == application/dash+xml
    // protocol: m3u8 == application/x-mpegURL
-   
+
    let videoFileFormat;
    if (info.protocol == "https") {
      videoFileFormat = "video/mp4";
