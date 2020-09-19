@@ -13,9 +13,13 @@ async function loadVideoDetails() {
     } else {
       availablevideoDetails = { msg: "failed to load messages" };
     }
-  } catch (e) {
-    const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo");
-    basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+  } catch (e) { // when an error occurs
+    // if responseErrorAvailableVideo id dosent exist
+    if (!document.getElementById("responseErrorAvailableVideo")) {
+      // show error msg
+      const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
+      basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+    }
   }
 }
 
@@ -188,7 +192,7 @@ function appendImg(container, src, width, height, videoInfo_ID) {
       document.getElementById(videoInfo_ID).remove();  // remove image container
     };
     return image;
-  } catch (e) {
+  } catch (e) { // when an error occurs
     return "appendImg didnt work";
   }
 }

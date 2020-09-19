@@ -184,58 +184,77 @@ function getVideoUrlAuto(url_link) {
 
 // trys to fetch video data from provided url_link
 async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer) {
-  const payload = {  // data sending in fetch request
-    url: url_link
-  };
-  const response = await fetch("../getVideoLinkFromUrl", { // look for video data from provided url_link
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  console.log("waiting for video url and file type");
-  let getVideoLinkFromUrl;
-  const headerContainer = document.getElementById("headerContainer");
-  // fetch response
-  if (response.ok) {
-    // get json data from response
-    getVideoLinkFromUrl = await response.json();
-    // change document title
-    document.title = "Watch Video By Provided Link";
-    // if url_link provided failed to get required video data
-    if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
-      // invalid url alert msg
-      alert("Invalid Url Link.");
-      // change address bar
-      history.pushState(null, "", "/");
-      // load index details into html
-      if(headerContainer){ // if headerContainer exists
-        navigationBar.loadNavigationBar();
-        showDetails();
-      } else{ // if headerContainer dosnet exists
-        basic.createSection(document.body, "header", undefined, "headerContainer");
-        navigationBar.loadNavigationBar();
-        showDetails();
+  try {
+    const payload = {  // data sending in fetch request
+      url: url_link
+    };
+    const response = await fetch("../getVideoLinkFromUrl", { // look for video data from provided url_link
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    console.log("waiting for video url and file type");
+    let getVideoLinkFromUrl;
+    const headerContainer = document.getElementById("headerContainer");
+    // fetch response
+    if (response.ok) {
+      // get json data from response
+      getVideoLinkFromUrl = await response.json();
+      // change document title
+      document.title = "Watch Video By Provided Link";
+      // if url_link provided failed to get required video data
+      if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
+        // invalid url alert msg
+        alert("Invalid Url Link.");
+        // change address bar
+        history.pushState(null, "", "/");
+        // load index details into html
+        if(headerContainer){ // if headerContainer exists
+          navigationBar.loadNavigationBar();
+          showDetails();
+        } else{ // if headerContainer dosnet exists
+          basic.createSection(document.body, "header", undefined, "headerContainer");
+          navigationBar.loadNavigationBar();
+          showDetails();
+        }
+        // reamove searching for viddeo link msg
+        searchingForVideoLinkMessageContainer.remove();
+      } else { // if url_link provided is good
+        if (headerContainer) { // if headerContainer exists remove headerContainer
+          headerContainer.remove();
+        }
+        // reamove searching for viddeo link msg
+        searchingForVideoLinkMessageContainer.remove();
+        // make sure that websiteContentContainer is empty
+        websiteContentContainer.innerHTML = "";
+        // change address bar
+        history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
+        // put video src and type in video player
+        showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
       }
-      // reamove searching for viddeo link msg
-      searchingForVideoLinkMessageContainer.remove();
-    } else { // if url_link provided is good
-      if (headerContainer) { // if headerContainer exists remove headerContainer
-        headerContainer.remove();
-      }
-      // reamove searching for viddeo link msg
-      searchingForVideoLinkMessageContainer.remove();
-      // make sure that websiteContentContainer is empty
-      websiteContentContainer.innerHTML = "";
-      // change address bar
-      history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
-      // put video src and type in video player
-      showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
+    } else { // give getVideoLinkFromUrl failed response msg
+      getVideoLinkFromUrl = { msg: "failed to load messages" };
     }
-  } else { // give getVideoLinkFromUrl failed response msg
-    getVideoLinkFromUrl = { msg: "failed to load messages" };
+    // return getVideoLinkFromUrl
+    return getVideoLinkFromUrl;
+  } catch (e) { // when an error occurs
+    // if responseErrorAvailableVideo id dosent exist
+    if (!document.getElementById("responseErrorAvailableVideo")) {
+      // remove searchingForVideoLinkMessageContainer
+      searchingForVideoLinkMessageContainer.remove();
+      // change document title
+      document.title = "Watch Video By Provided Link";
+      // change addressbar
+      history.pushState(null, "", "/");
+      // add back header to document body
+      basic.createSection(document.body, "header", undefined, "headerContainer");
+      // naviagtionbar content
+      navigationBar.loadNavigationBar();
+      // show error msg
+      const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
+      basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+    }
   }
-  // return getVideoLinkFromUrl
-  return getVideoLinkFromUrl;
 }
 
 // all the functions that are to load when the page loads

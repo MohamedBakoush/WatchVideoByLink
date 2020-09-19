@@ -32,54 +32,75 @@ export function downloadVideoButton(container, videoSrc, videoType) {
     const downloadConfirm = confirm("Press OK to Download Full Video");
     if (downloadConfirm) {
       // if user confirms download full video then send videoSrc, videoType to the server as a post request by downloadVideo
-      downloadVideo(videoSrc, videoType).then( () => { // downloading video
-      console.log("downloading");
-      downloadVideoButton.title = "Download Status";
-      downloadVideoButton.className = "vjs-menu-item downloadVideoMenuContentItem";
-      downloadVideoButtonText.innerHTML = "0%";
-        const checkDownloadStatus = setInterval( async function(){
-          const response = await fetch(`../video-data/${fileNameID}`);
-          if (response.ok) {
-            const downloadStatus = await response.json();
-            console.log(downloadStatus.video.download);
-            if (downloadStatus.video.download == "completed") { // if the video portion has finished downloading
-              if (downloadStatus.thumbnail.download == "completed") {// completed thumbnail download
+      downloadVideo(videoSrc, videoType).then( (returnValue) => { // downloading video
+        let number_of_errors = 0;
+        if (returnValue == "failed download video file") {
+          console.log("failed download video file");
+          alert("Error Connection Refused.");
+        } else {
+          console.log("downloading");
+          downloadVideoButton.title = "Download Status";
+          downloadVideoButton.className = "vjs-menu-item downloadVideoMenuContentItem";
+          downloadVideoButtonText.innerHTML = "0%";
+          const checkDownloadStatus = setInterval( async function(){
+            try {
+              const response = await fetch(`../video-data/${fileNameID}`);
+              if (response.ok) {
+                const downloadStatus = await response.json();
+                console.log(downloadStatus.video.download);
+                if (downloadStatus.video.download == "completed") { // if the video portion has finished downloading
+                  if (downloadStatus.thumbnail.download == "completed") {// completed thumbnail download
+                    clearInterval(checkDownloadStatus);
+                    downloadVideoButtonText.innerHTML = "Download Video";
+                    downloadVideoButton.title = "Download Video";
+                    downloadVideoButton.onclick = downloadVideoConfirmation;
+                    alert("Video Download Completed");
+                  } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
+                      downloadVideoButtonText.innerHTML = "Thumbnail";
+                      downloadVideoButton.title =  "Thumbnail";
+                      downloadVideoButton.onclick = function(){
+                        alert("Thumbnail Progress: preparing to create thumbnails");
+                      };
+                  } else { // downloading thumbnails
+                    downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.thumbnail.download)}%`;
+                    downloadVideoButton.title =  "Creating Thumbnails";
+                    downloadVideoButton.onclick = function(){
+                      alert(`Thumbnail Progress: ${Math.trunc(downloadStatus.thumbnail.download)}%`);
+                    };
+                  }
+                } else if(downloadStatus.video.download == "starting full video download") { // starting full video downloa msg
+                  downloadVideoButtonText.innerHTML = "Full Video";
+                  downloadVideoButton.title = "Full Video";
+                  downloadVideoButton.onclick = function(){
+                    alert("Video Progress: preparing to download video");
+                  };
+                } else { // the percentage for video fthat has been  downloaded msg
+                  downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.video.download)}%`;
+                  downloadVideoButton.title =  "Downloading Video";
+                  downloadVideoButton.onclick = function(){
+                    alert(`Video Progress: ${Math.trunc(downloadStatus.video.download)}%`);
+                  };
+                }
+                return "downloading";
+              } else {
+                return "failed";
+              }
+            } catch (e) { // when an error occurs
+              number_of_errors = number_of_errors + 1;
+              console.log("number_of_errors", number_of_errors);
+              // when number of error become one
+              // number_of_errors == 1 is created becouse setInterval could try to run the async function more then once and fail
+              // since it could cause more then one error the change record buttons/alert would also run more then once
+              if (number_of_errors == 1) {
                 clearInterval(checkDownloadStatus);
                 downloadVideoButtonText.innerHTML = "Download Video";
                 downloadVideoButton.title = "Download Video";
                 downloadVideoButton.onclick = downloadVideoConfirmation;
-                alert("Video Download Completed");
-              } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
-                  downloadVideoButtonText.innerHTML = "Thumbnail";
-                  downloadVideoButton.title =  "Thumbnail";
-                  downloadVideoButton.onclick = function(){
-                    alert("Thumbnail Progress: preparing to create thumbnails");
-                  };
-              } else { // downloading thumbnails
-                downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.thumbnail.download)}%`;
-                downloadVideoButton.title =  "Creating Thumbnails";
-                downloadVideoButton.onclick = function(){
-                  alert(`Thumbnail Progress: ${Math.trunc(downloadStatus.thumbnail.download)}%`);
-                };
+                alert("Error Connection Refused.");
               }
-            } else if(downloadStatus.video.download == "starting full video download") { // starting full video downloa msg
-              downloadVideoButtonText.innerHTML = "Full Video";
-              downloadVideoButton.title = "Full Video";
-              downloadVideoButton.onclick = function(){
-                alert("Video Progress: preparing to download video");
-              };
-            } else { // the percentage for video fthat has been  downloaded msg
-              downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.video.download)}%`;
-              downloadVideoButton.title =  "Downloading Video";
-              downloadVideoButton.onclick = function(){
-                alert(`Video Progress: ${Math.trunc(downloadStatus.video.download)}%`);
-              };
             }
-            return "downloading";
-          } else {
-            return "failed";
-          }
-        }, 500);
+          }, 500);
+        }
       });
     }
   };
@@ -126,49 +147,82 @@ export function removeStopDownloadOnWindowClose() {
 
 
 export async function downloadVideoStream(videoSrc, videoType) {
-  const payload = {
-    videoSrc: videoSrc,
-    videoType: videoType,
-  };
-  const response = await fetch("downloadVideoStream", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (response.ok) {
-    fileNameID = await response.json();
-    return fileNameID;
-  } else {
+  try {
+    const payload = {
+      videoSrc: videoSrc,
+      videoType: videoType,
+    };
+    const response = await fetch("downloadVideoStream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (response.ok) {
+      fileNameID = await response.json();
+      return fileNameID;
+    } else {
+      return "failed record video file";
+    }
+  } catch (e) { // when an error occurs
     return "failed record video file";
   }
 }
 
 export function recordingStreamCheck(player, RecButton) {
   let timemark = "00:00:00.00";
+  let number_of_errors = 0;
   const checkRecordingStatus = setInterval( async function(){
-    const response = await fetch(`../video-data/${fileNameID}`);
-    if (response.ok) {
-      const downloadStatus = await response.json();
-      console.log(downloadStatus.video.download);
-      if (downloadStatus.video.timemark !== undefined) {
-        timemark = downloadStatus.video.timemark;
+    try {
+      const response = await fetch(`../video-data/${fileNameID}`);
+      if (response.ok) {
+        const downloadStatus = await response.json();
+        console.log(downloadStatus.video.download);
+        if (downloadStatus.video.timemark !== undefined) {
+          timemark = downloadStatus.video.timemark;
+        }
+        if (downloadStatus.video.download == "completed") {
+          // hide StopRecButton
+          player.getChild("controlBar").getChild("StopRecButton").hide();
+          // RecButton
+          if (document.getElementById("RecButton")) { // if RecButton exists then show
+            player.getChild("controlBar").getChild("RecButton").show();
+          } else { // create rec button
+            videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
+            player.getChild("controlBar").addChild("RecButton", {}, 1);
+          }
+
+          // stop interval
+          clearInterval(checkRecordingStatus);
+          console.log(timemark);
+          alert(`Stopped Recording\nTotal Recording Time: ${timemark}`);
+          console.log("stopped rec");
+        }
+        return "downloading";
+      } else {
+        console.log("failed");
+        return "failed";
       }
-      if (downloadStatus.video.download == "completed") {
-        // hide stop rec button
+    } catch (e) { // when an error occurs
+      number_of_errors = number_of_errors + 1;
+      console.log("number_of_errors", number_of_errors);
+      // when number of error become one
+      // number_of_errors == 1 is created becouse setInterval could try to run the async function more then once and fail
+      // since it could cause more then one error the change record buttons/alert would also run more then once
+      if (number_of_errors == 1) {
+        // hide StopRecButton
         player.getChild("controlBar").getChild("StopRecButton").hide();
-        // create rec button
-        videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
-        player.getChild("controlBar").addChild("RecButton", {}, 1);
+        // RecButton
+        if (document.getElementById("RecButton")) { // if RecButton exists then show
+          player.getChild("controlBar").getChild("RecButton").show();
+        } else { // create rec button
+          videojs.registerComponent("RecButton", RecButton); // eslint-disable-line
+          player.getChild("controlBar").addChild("RecButton", {}, 1);
+        }
         // stop interval
         clearInterval(checkRecordingStatus);
-        console.log(timemark);
-        alert(`Stopped Recording\nTotal Recording Time: ${timemark}`);
-        console.log("stopped rec");
+        alert("Error Connection Refused.");
+        console.log("recordingStreamCheck failed");
       }
-      return "downloading";
-    } else {
-      console.log("failed");
-      return "failed";
     }
   }, 500);
   return checkRecordingStatus;
@@ -183,7 +237,8 @@ export function stopRecStreamButton(player, Button) {
     },
     createEl: function() {
       return Button.prototype.createEl("button", {
-        className: "vjs-icon-stop-record fas fa-square vjs-control vjs-button"
+        className: "vjs-icon-stop-record fas fa-square vjs-control vjs-button",
+        id: "StopRecButton"
       });
     },
     handleClick: function() {
@@ -207,20 +262,30 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
     },
     createEl: function() {
         return Button.prototype.createEl("button", {
-        className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button"
+        className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button",
+        id: "RecButton"
       });
     },
     handleClick: function() {
       /* do something on click */
-     downloadVideoStream(videoSrc, videoType).then( () => {
-       console.log("downloading");
-       // hide rec button when stop rec is avtive
-         player.getChild("controlBar").getChild("RecButton").hide();
-         // create stop rec button
-         videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
-         player.getChild("controlBar").addChild("StopRecButton", {}, 1);
-         recordingStreamCheck(player, RecButton);
-         addStopDownloadOnWindowClose();
+     downloadVideoStream(videoSrc, videoType).then( (returnValue) => {
+       if (returnValue == "failed record video file") {
+        console.log("failed record video file");
+        alert("Error Connection Refused.");
+      } else {
+        console.log("downloading");
+        // hide rec button when stop rec is avtive
+        player.getChild("controlBar").getChild("RecButton").hide();
+        // StopRecButton
+        if (document.getElementById("StopRecButton")) { // if StopRecButton exists then show
+          player.getChild("controlBar").getChild("StopRecButton").show();
+        } else { // create stop rec button
+          videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
+          player.getChild("controlBar").addChild("StopRecButton", {}, 1);
+        }
+        recordingStreamCheck(player, RecButton);
+        addStopDownloadOnWindowClose();
+      }
      });
     }
   });
@@ -228,43 +293,51 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
 }
 
 export async function downloadVideo(videoSrc, videoType) {
-  const payload = {
-    videoSrc: videoSrc,
-    videoType: videoType,
-  };
-  const response = await fetch("downloadVideo", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (response.ok) {
-    fileNameID = await response.json();
-    console.log(fileNameID);
-    return fileNameID;
-  } else {
-    return "failed record video file";
+  try {
+    const payload = {
+      videoSrc: videoSrc,
+      videoType: videoType,
+    };
+    const response = await fetch("downloadVideo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (response.ok) {
+      fileNameID = await response.json();
+      console.log(fileNameID);
+      return fileNameID;
+    } else {
+      return "failed download video file";
+    }
+  } catch (e) { // when an error occurs
+    return "failed download video file";
   }
 }
 
 export async function trimVideo(videoSrc, videoType, startTime, endTime) {
-  const payload = {
-    videoSrc: videoSrc,
-    videoType: videoType,
-    newStartTime: startTime,
-    newEndTime: endTime,
-  };
+  try {
+    const payload = {
+      videoSrc: videoSrc,
+      videoType: videoType,
+      newStartTime: startTime,
+      newEndTime: endTime,
+    };
 
-  const response = await fetch("../trimVideo", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (response.ok) {
-    fileNameID = await response.json();
-    console.log(fileNameID);
-    return fileNameID;
-  } else {
-    return "failed record video file";
+    const response = await fetch("../trimVideo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (response.ok) {
+      fileNameID = await response.json();
+      console.log(fileNameID);
+      return fileNameID;
+    } else {
+      return "failed download trimed video file";
+    }
+  } catch (e) { // when an error occurs
+    return "failed download trimed video file";
   }
 }
 
@@ -371,15 +444,20 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
           const downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
           if (downloadConfirm) {
            //Logic to download video
-            trimVideo(videoSrc, videoType, inputLeft.value, inputRight.value).then( () => {
-            console.log("Download Trimed Video Start");
-            trimVideoBody.remove();
-            // make downloadVideo option active
-            downloadTrimButton.disabled = false;
-            downloadVideoContainer.onmouseover = function(){
-              downloadVideoMenu.style.display = "block";
-            };
-            downloadVideoButton.title = "Download Video";
+            trimVideo(videoSrc, videoType, inputLeft.value, inputRight.value).then( (returnValue) => {
+              if (returnValue ==  "failed download trimed video file") {
+                console.log("failed download trimed video file");
+                alert("Error Connection Refused.");
+              } else {
+                console.log("Download Trimed Video Start");
+              }
+              trimVideoBody.remove();
+              // make downloadVideo option active
+              downloadTrimButton.disabled = false;
+              downloadVideoContainer.onmouseover = function(){
+                downloadVideoMenu.style.display = "block";
+              };
+              downloadVideoButton.title = "Download Video";
             });
           }
         };
