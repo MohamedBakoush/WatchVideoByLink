@@ -13,9 +13,13 @@ async function loadVideoDetails() {
     } else {
       availablevideoDetails = { msg: "failed to load messages" };
     }
-  } catch (e) {
-    const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo");
-    basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+  } catch (e) { // when an error occurs
+    // if responseErrorAvailableVideo id dosent exist
+    if (!document.getElementById("responseErrorAvailableVideo")) {
+      // show error msg
+      const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
+      basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+    }
   }
 }
 
@@ -25,7 +29,7 @@ function eachAvailableVideoDetails(videoDetails) {
     basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
   } else {
     const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-    Object.keys(videoDetails).forEach(function(videoInfo_ID) {
+    Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
       if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
         showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
       }
@@ -72,7 +76,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
     // show video edit info menu
     const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
-    option_menu_edit.title = "Edit menu";
+    option_menu_edit.title = "Edit";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
@@ -109,7 +113,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
           document.body.style.removeProperty("overflow");
           video_edit_container.remove();
           document.getElementById(videoInfo_ID).remove();
-          deleteVideoDataPermanently(videoInfo_ID);
+          deleteVideoDataPermanently(videoInfo_ID, container);
           console.log("deleted");
         }
       };
@@ -188,7 +192,7 @@ function appendImg(container, src, width, height, videoInfo_ID) {
       document.getElementById(videoInfo_ID).remove();  // remove image container
     };
     return image;
-  } catch (e) {
+  } catch (e) { // when an error occurs
     return "appendImg didnt work";
   }
 }
@@ -205,13 +209,18 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container, o
   video_edit_body.appendChild(backToMainVideoButton);
 }
 
-async function deleteVideoDataPermanently(videoID) {
+async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
     const response = await fetch(`../delete-video-data-permanently/${videoID}`);
 
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
         alert(`video ${videoID} has been deleted`);
+        if (savedVideosThumbnailContainer.childElementCount == 0) {
+          savedVideosThumbnailContainer.remove();
+          const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
+          basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+        }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
         alert(`failed to deleted ${videoID} video`);
       }

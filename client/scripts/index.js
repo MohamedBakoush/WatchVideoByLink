@@ -62,7 +62,7 @@ export function showDetails() {
 }
 
 // assign video src and type to video id
-function showVideo(videoSrc, videoType) {
+function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   document.title = "Watching Video By Provided Link";
   document.body.classList = "watching-video-body";
   websiteContentContainer.classList = "watching-video-websiteContentContainer";
@@ -77,6 +77,7 @@ function showVideo(videoSrc, videoType) {
       preload: "auto"
     });
 
+    // record stream
     const StopRecButton = videoButton.stopRecStreamButton(player, Button);
     const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
 
@@ -84,7 +85,7 @@ function showVideo(videoSrc, videoType) {
     player.getChild("controlBar").addChild("RecButton", {}, 1);
 
     const topControls = videoButton.topPageControlBarContainer(player);
-    videoButton.backToHomePageButton(topControls); //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load
     player.src({  // video type and src
@@ -106,7 +107,7 @@ function showVideo(videoSrc, videoType) {
     });
 
     const topControls = videoButton.topPageControlBarContainer(player);
-    videoButton.backToHomePageButton(topControls); //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load
     player.src({  // video type and src
@@ -143,7 +144,7 @@ function showVideo(videoSrc, videoType) {
     const downloadVideoMenuContent = basic.createSection(downloadVideoMenu, "div", "vjs-menu-content");
 
     videoButton.downloadVideoButton(downloadVideoMenuContent, videoSrc, videoType);
-    videoButton.createTrimVideo(downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);
+    videoButton.createTrimVideo(player, downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);
 
     downloadVideoContainer.onmouseover = function(){
       document.getElementById("downloadVideoButton").focus();
@@ -155,7 +156,7 @@ function showVideo(videoSrc, videoType) {
       downloadVideoMenu.style.display = "none";
     };
 
-    videoButton.backToHomePageButton(topControls); //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
     player.muted(true); // mute video on load
     player.src({  // video type and src
@@ -165,62 +166,95 @@ function showVideo(videoSrc, videoType) {
   }
 }
 
+// video type Automatic activated function
 function getVideoUrlAuto(url_link) {
+  // change address bar
   history.pushState(null, "", `?auto=${url_link}`);
+  // change document title
   document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
+  // change css
   document.body.classList = "index-body";
   websiteContentContainer.classList = "index-websiteContentContainer";
+  // searchingForVideoLinkMessage
   const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
   basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
+  // look for video data from url_link
   getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
 }
 
+// trys to fetch video data from provided url_link
 async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer) {
-  const payload = {
-    url: url_link
-  };
-  const response = await fetch("../getVideoLinkFromUrl", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  console.log("waiting for video url and file type");
-  let getVideoLinkFromUrl;
-  const headerContainer = document.getElementById("headerContainer");
-  if (response.ok) {
-    getVideoLinkFromUrl = await response.json();
-    document.title = "Watch Video By Provided Link";
-    // puts video type and video file in url
-    if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
-      console.log("failed");
-      alert("Invalid Url Link.");
-      history.pushState(null, "", "/");
-      // replace
-      if(headerContainer){
-        navigationBar.loadNavigationBar();
-        showDetails();
-      } else{
-        basic.createSection(document.body, "header", undefined, "headerContainer");
-        navigationBar.loadNavigationBar();
-        showDetails();
+  try {
+    const payload = {  // data sending in fetch request
+      url: url_link
+    };
+    const response = await fetch("../getVideoLinkFromUrl", { // look for video data from provided url_link
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    console.log("waiting for video url and file type");
+    let getVideoLinkFromUrl;
+    const headerContainer = document.getElementById("headerContainer");
+    // fetch response
+    if (response.ok) {
+      // get json data from response
+      getVideoLinkFromUrl = await response.json();
+      // change document title
+      document.title = "Watch Video By Provided Link";
+      // if url_link provided failed to get required video data
+      if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
+        // invalid url alert msg
+        alert("Invalid Url Link.");
+        // change address bar
+        history.pushState(null, "", "/");
+        // load index details into html
+        if(headerContainer){ // if headerContainer exists
+          navigationBar.loadNavigationBar();
+          showDetails();
+        } else{ // if headerContainer dosnet exists
+          basic.createSection(document.body, "header", undefined, "headerContainer");
+          navigationBar.loadNavigationBar();
+          showDetails();
+        }
+        // reamove searching for viddeo link msg
+        searchingForVideoLinkMessageContainer.remove();
+      } else { // if url_link provided is good
+        if (headerContainer) { // if headerContainer exists remove headerContainer
+          headerContainer.remove();
+        }
+        // reamove searching for viddeo link msg
+        searchingForVideoLinkMessageContainer.remove();
+        // make sure that websiteContentContainer is empty
+        websiteContentContainer.innerHTML = "";
+        // change address bar
+        history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
+        // put video src and type in video player
+        showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
       }
-      searchingForVideoLinkMessageContainer.remove();
-    } else {
-      if (headerContainer) {
-        headerContainer.remove();
-      }
-      // document.getElementById("headerContainer").remove();
-      searchingForVideoLinkMessageContainer.remove();
-      websiteContentContainer.innerHTML = "";
-      history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
-      // put video src and type in video player
-      showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format);
+    } else { // give getVideoLinkFromUrl failed response msg
+      getVideoLinkFromUrl = { msg: "failed to load messages" };
     }
-  } else {
-    getVideoLinkFromUrl = { msg: "failed to load messages" };
+    // return getVideoLinkFromUrl
+    return getVideoLinkFromUrl;
+  } catch (e) { // when an error occurs
+    // if responseErrorAvailableVideo id dosent exist
+    if (!document.getElementById("responseErrorAvailableVideo")) {
+      // remove searchingForVideoLinkMessageContainer
+      searchingForVideoLinkMessageContainer.remove();
+      // change document title
+      document.title = "Watch Video By Provided Link";
+      // change addressbar
+      history.pushState(null, "", "/");
+      // add back header to document body
+      basic.createSection(document.body, "header", undefined, "headerContainer");
+      // naviagtionbar content
+      navigationBar.loadNavigationBar();
+      // show error msg
+      const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
+      basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+    }
   }
-
- return getVideoLinkFromUrl;
 }
 
 // all the functions that are to load when the page loads
@@ -232,10 +266,10 @@ function pageLoaded() {
     // url herf and pathname
     const url_href = window.location.href;
     const url_pathname = window.location.pathname;
-    // only play video
-    if (url_href.includes("?t=") && url_href.includes("?v=")) {
+    // show website content depending on url_href/url_pathname
+    if (url_href.includes("?t=") && url_href.includes("?v=")) { // play specified video
       showVideoFromUrl(url_href);
-    } else if (url_href.includes("?auto=")) {
+    } else if (url_href.includes("?auto=")) { // find video data from url link
       const url_link_from_auto = url_href.split("?auto=")[1];
       getVideoUrlAuto(url_link_from_auto);
     } else if (url_pathname === "/saved/videos") { // show saved video

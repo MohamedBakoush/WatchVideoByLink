@@ -16,17 +16,18 @@ export function loadNavigationBar(path) {
     document.title = "saved videos - Watch Video By Provided Link";
     document.body.classList = "saved-videos-body";
     websiteContentContainer.classList = "saved-videos-websiteContentContainer";
-    homeButton = basic.createLink(item, undefined, undefined, "button category-link", "WatchVideoByLink");
-    savedVideosPage = basic.createLink(item, undefined, undefined, "button is-selected", "/saved/videos");
+    homeButton = basic.createLink(item, "/", undefined, "button category-link", "WatchVideoByLink");
+    savedVideosPage = basic.createLink(item, "/saved/videos", undefined, "button is-selected", "/saved/videos");
   } else {
     document.title = "Watch Video By Provided Link";
     document.body.classList = "index-body";
     websiteContentContainer.classList = "index-websiteContentContainer";
-    homeButton = basic.createLink(item, undefined, undefined, "button is-selected", "WatchVideoByLink");
-    savedVideosPage = basic.createLink(item, undefined, undefined, "button category-link", "/saved/videos");
+    homeButton = basic.createLink(item, "/", undefined, "button is-selected", "WatchVideoByLink");
+    savedVideosPage = basic.createLink(item, "/saved/videos", undefined, "button category-link", "/saved/videos");
   }
 
-  homeButton.onclick = () => {
+  homeButton.onclick = (e) => {
+    e.preventDefault();
     websiteContentContainer.innerHTML = "";
     homeButton.classList = "button is-selected";
     savedVideosPage.classList = "button category-link";
@@ -36,7 +37,8 @@ export function loadNavigationBar(path) {
     websiteContentContainer.classList = "index-websiteContentContainer";
     index.showDetails();
   };
-  savedVideosPage.onclick = () => {
+  savedVideosPage.onclick = (e) => {
+    e.preventDefault(); 
     websiteContentContainer.innerHTML = "";
     homeButton.classList = "button category-link";
     savedVideosPage.classList = "button is-selected";
