@@ -53,6 +53,12 @@ npm install
 
 Alternatively you may download and unpack the [zip](https://github.com/MohamedBakoush/WatchVideoByLink/archive/master.zip)
 
+## Restoration: when a video goes bad/corrupt
+I would recommend trying <b>untrunc</b> - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video.
+
+Original Repo: [ponchio/untrunc](https://github.com/ponchio/untrunc).
+
+Improved version of ponchio/untrunc: [anthwlock/untrunc](https://github.com/anthwlock/untrunc).
 
 ## Start Server
 Run Server by:
