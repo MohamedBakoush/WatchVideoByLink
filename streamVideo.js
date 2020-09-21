@@ -481,34 +481,48 @@ async function deletevideoData(request, response, videoID) {
 
 // using youtube-dl it converts url link to video type and video src
 async function getVideoLinkFromUrl(req, res) {
-  const url = req.body.url;
-  // Optional arguments passed to youtube-dl.
-  const options = ["--skip-download"];
-  youtubedl.getInfo(url, options, function(err, info) {
-    if (err) {
-     res.json("failed-get-video-url-from-provided-url");
-    }
-   // info.protocol
-   // protocol: https == video/mp4
-   // protocol: http_dash_segments == application/dash+xml
-   // protocol: m3u8 == application/x-mpegURL
-
-   let videoFileFormat;
-   if (info.protocol == "https") {
-     videoFileFormat = "video/mp4";
-   } else if (info.protocol == "m3u8") {
-     videoFileFormat = "application/x-mpegURL";
-   } else if (info.protocol == "http_dash_segments") {
-     videoFileFormat = "application/dash+xml";
-   }
-   const videoDataFromUrl = {
-     input_url_link: url,
-     video_url: info.url,
-     video_file_format: videoFileFormat
-   };
-
-   res.json(videoDataFromUrl);
-  });
+  try {
+    const url = req.body.url;
+    // Optional arguments passed to youtube-dl.
+    const options = ["--skip-download"];
+    youtubedl.getInfo(url, options, function(err, info) { 
+     // info.protocol
+     // protocol: https or http == video/mp4
+     // protocol: http_dash_segments == application/dash+xml
+     // protocol: m3u8 == application/x-mpegURL
+     let videoFileFormat, videoUrlLink;
+     if (info !== undefined) {
+       if (info.protocol == "https" || info.protocol == "http") {
+         videoUrlLink = info.url;
+         videoFileFormat = "video/mp4";
+       } else if (info.protocol == "m3u8") {
+         videoUrlLink = info.url;
+         videoFileFormat = "application/x-mpegURL";
+       } else if (info.protocol == "http_dash_segments") {
+         videoUrlLink = info.url;
+         videoFileFormat = "application/dash+xml";
+       } else {
+         videoUrlLink = "not-supported";
+         videoFileFormat = "not-supported";
+       }
+     } else {
+       videoUrlLink = "not-supported";
+       videoFileFormat = "not-supported";
+     }
+     const videoDataFromUrl = {
+       input_url_link: url,
+       video_url: videoUrlLink,
+       video_file_format: videoFileFormat
+     };
+     if (videoUrlLink !== "not-supported" || videoFileFormat !== "not-supported") {
+       res.json(videoDataFromUrl);
+     } else {
+       res.json("failed-get-video-url-from-provided-url");
+     }
+    });
+  } catch (e) {
+    res.json("failed-get-video-url-from-provided-url");
+  }
 }
 
 module.exports = { // export modules
