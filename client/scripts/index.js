@@ -113,14 +113,7 @@ function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     player.src({  // video type and src
       type: videoType,
       src: videoSrc
-    });
-    // hide time from live video player
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .video-js .vjs-time-control{display:none;}
-      .video-js .vjs-remaining-time{display: none;}
-    `;
-    document.head.appendChild(style);
+    }); 
   } else {
     var player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
