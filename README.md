@@ -50,6 +50,14 @@ I would recommend trying <b>untrunc</b> - Restore a damaged (truncated) mp4, m4v
 Original Repo: [ponchio/untrunc](https://github.com/ponchio/untrunc).\
 Improved version of ponchio/untrunc: [anthwlock/untrunc](https://github.com/anthwlock/untrunc).
 
+## Requirements to run WatchVideoByLink
+  - [Node.js](https://nodejs.org/en/) - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+    1. [Download Node.js from https://nodejs.org/en/](https://nodejs.org/en/) 
+    2. To check if node.js has been downloaded open command prompt for windows or terminal for macOS/Linux and enter `node -v` this will tell you what version of Node.js has been installed.
+  - [FFmpeg](https://ffmpeg.org/) - A complete, cross-platform solution to record, convert and stream audio and video.
+    1. [Download FFmpeg from https://ffmpeg.org/download.html](https://ffmpeg.org/download.html) 
+    2. Once FFmpeg has been downloaded drop ffmpeg.exe and ffprobe.exe files (which could be found in ffmpeg\bin folder) in WatchVideoByLink folder.
+  
 ## Installation
 You can clone the repository to a local destination using git:
 ```
