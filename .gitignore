@@ -4,4 +4,11 @@ node_modules/
 # video files
 *.mp4
 
+# Downloaded video files
+media/deleted-videos/**
 media/video/**
+
+# FFmpeg files
+ffmpeg.exe
+ffprobe.exe
+ffplay.exe
