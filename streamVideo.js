@@ -224,58 +224,65 @@ async function downloadVideo(req, res) {
     }
     command.addInput(videofile)
       .on("start", function() {
-          res.json(fileName);
-          videoData[`${fileName}`] = {
-            video : {
-              originalVideoSrc : req.body.videoSrc,
-              originalVideoType : req.body.videoType,
-              download : "starting full video download"
-            }
-          };
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+        res.json(fileName);
+        videoData[`${fileName}`] = {
+          video : {
+            originalVideoSrc : req.body.videoSrc,
+            originalVideoType : req.body.videoType,
+            download : "starting full video download"
+          }
+        };
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
       })
       .on("progress", function(data) {
-          /// do stuff with progress data if you wan
-          console.log("progress", data);
-          videoData[`${fileName}`] = {
-            video : {
-              originalVideoSrc : req.body.videoSrc,
-              originalVideoType: req.body.videoType,
-              download: data.percent
-            }
-          };
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
+        /// do stuff with progress data if you wan
+        console.log("progress", data);
+        videoData[`${fileName}`] = {
+          video : {
+            originalVideoSrc : req.body.videoSrc,
+            originalVideoType: req.body.videoType,
+            download: data.percent
+          }
+        };
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
       })
       .on("end", function() {
-          /// encoding is complete, so callback or move on at this point
-          videoData[`${fileName}`] = {
-            video: {
-              originalVideoSrc : req.body.videoSrc,
-              originalVideoType : req.body.videoType,
-              path: newFilePath+fileName+fileType,
-              videoType : "video/mp4",
-              download : "completed",
-            },
-            thumbnail: {
-              path: {},
-              download: "starting"
-            }
-          };
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-          console.log("Video Transcoding succeeded !");
-          const path = newFilePath+fileName+fileType;
-          createThumbnail(path, newFilePath, fileName);
+        /// encoding is complete, so callback or move on at this point
+        videoData[`${fileName}`] = {
+          video: {
+            originalVideoSrc : req.body.videoSrc,
+            originalVideoType : req.body.videoType,
+            path: newFilePath+fileName+fileType,
+            videoType : "video/mp4",
+            download : "completed",
+          },
+          thumbnail: {
+            path: {},
+            download: "starting"
+          }
+        };
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+        console.log("Video Transcoding succeeded !");
+        const path = newFilePath+fileName+fileType;
+        createThumbnail(path, newFilePath, fileName);
       })
       .on("error", function(error) {
-          /// error handling
-          console.log(`Encoding Error: ${error.message}`);
+        /// error handling
+        console.log("[streamVideo.js-downloadVideo]", `Encoding Error: ${error.message}`);
+        if (error.message === "Cannot find ffmpeg") {
+          FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
+            if (err) throw err;
+            console.log(`\n removed ${newFilePath} dir \n`);
+          });
+          res.json("Cannot-find-ffmpeg");
+        } else {
+          // there could be diffrent types of errors that exists and some may contain content in the newly created path
+          // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+          res.json("ffmpeg-failed");
+        }
       })
       .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
       .output(`${newFilePath}${fileName}${fileType}`)
@@ -485,7 +492,7 @@ async function getVideoLinkFromUrl(req, res) {
     const url = req.body.url;
     // Optional arguments passed to youtube-dl.
     const options = ["--skip-download"];
-    youtubedl.getInfo(url, options, function(err, info) { 
+    youtubedl.getInfo(url, options, function(err, info) {
      // info.protocol
      // protocol: https or http == video/mp4
      // protocol: http_dash_segments == application/dash+xml

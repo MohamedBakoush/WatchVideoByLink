@@ -37,6 +37,12 @@ export function downloadVideoButton(container, videoSrc, videoType) {
         if (returnValue == "failed download video file") {
           console.log("failed download video file");
           alert("Error Connection Refused.");
+        } else if (returnValue == "Cannot-find-ffmpeg") {
+          console.log("Encoding Error: Cannot find ffmpeg");
+          alert("Encoding Error: Cannot find ffmpeg");
+        } else if (returnValue == "ffmpeg-failed") {
+          console.log("Encoding Error: ffmpeg failed");
+          alert("Encoding Error: ffmpeg failed");
         } else {
           console.log("downloading");
           downloadVideoButton.title = "Download Status";
