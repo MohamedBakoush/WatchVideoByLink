@@ -262,12 +262,12 @@ export function stopRecStreamButton(player, Button) {
 export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoType) {
   const RecButton = videojs.extend(Button, { // eslint-disable-line
     constructor: function() {
-        Button.apply(this, arguments);
-        /* initialize your button */
-        this.controlText("Record");
+      Button.apply(this, arguments);
+      /* initialize your button */
+      this.controlText("Record");
     },
     createEl: function() {
-        return Button.prototype.createEl("button", {
+      return Button.prototype.createEl("button", {
         className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button",
         id: "RecButton"
       });
@@ -278,6 +278,12 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
        if (returnValue == "failed record video file") {
         console.log("failed record video file");
         alert("Error Connection Refused.");
+      } else if (returnValue == "Cannot-find-ffmpeg") {
+        console.log("Encoding Error: Cannot find ffmpeg");
+        alert("Encoding Error: Cannot find ffmpeg");
+      } else if (returnValue == "ffmpeg-failed") {
+        console.log("Encoding Error: ffmpeg failed");
+        alert("Encoding Error: ffmpeg failed");
       } else {
         console.log("downloading");
         // hide rec button when stop rec is avtive
