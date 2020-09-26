@@ -308,33 +308,33 @@ async function trimVideo(req, res) {
     }
     command.addInput(videofile)
       .on("start", function() {
-          res.json(fileName);
-          videoData[`${fileName}`] = {
-            video:{
-              originalVideoSrc : req.body.videoSrc,
-              originalVideoType : req.body.videoType,
-              download : "starting trim video download"
-            }
-          };
+        res.json(fileName);
+        videoData[`${fileName}`] = {
+          video:{
+            originalVideoSrc : req.body.videoSrc,
+            originalVideoType : req.body.videoType,
+            download : "starting trim video download"
+          }
+        };
 
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
       })
       .on("progress", function(data) {
-          /// do stuff with progress data if you wan
-          console.log("progress", data);
-          videoData[`${fileName}`] = {
-            video : {
-              originalVideoSrc: req.body.videoSrc,
-              originalVideoType: req.body.videoType,
-              newVideoStartTime: req.body.newStartTime,
-              newVideoEndTime: req.body.newEndTime,
-              download: data.percent
-            }
-          };
+        /// do stuff with progress data if you wan
+        console.log("progress", data);
+        videoData[`${fileName}`] = {
+          video : {
+            originalVideoSrc: req.body.videoSrc,
+            originalVideoType: req.body.videoType,
+            newVideoStartTime: req.body.newStartTime,
+            newVideoEndTime: req.body.newEndTime,
+            download: data.percent
+          }
+        };
 
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
       })
       .on("end", function() {
         videoData[`${fileName}`] = {
@@ -359,8 +359,19 @@ async function trimVideo(req, res) {
         createThumbnail(path, newFilePath, fileName);
       })
       .on("error", function(error) {
-          /// error handling
-          console.log(`Encoding Error: ${error.message}`);
+        /// error handling
+        console.log("[streamVideo.js-trimVideo]", `Encoding Error: ${error.message}`);
+        if (error.message === "Cannot find ffmpeg") {
+          FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
+            if (err) throw err;
+            console.log(`\n removed ${newFilePath} dir \n`);
+          });
+          res.json("Cannot-find-ffmpeg");
+        } else {
+          // there could be diffrent types of errors that exists and some may contain content in the newly created path
+          // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+          res.json("ffmpeg-failed");
+        }
       })
       // .addInputOption("-y")
       .outputOptions([`-ss ${start}`, `-t ${(end-start)}`, "-vcodec copy", "-acodec copy"])
