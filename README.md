@@ -12,6 +12,9 @@
 
 When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
 
+## WatchVideoByLink BREAKDOWN STRUCTURE (Still Under Construction)
+Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/1dR5ptZmkQISnky_iB1gta190fLzKpL84u4xgNpXJ2_M/edit#gid=0)
+ 
 ## Features
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
@@ -41,12 +44,20 @@ When working with various types of video files for personal projects, the proces
     - Edit button
       - if clicked Edit mode will be shown with such features as 
         - Delete this video which once clicked deletes the video plus all its data permanently from the system 
-
+ 
 ## Restoration: when a video goes bad/corrupt
 I would recommend trying <b>untrunc</b> - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video.\
 Original Repo: [ponchio/untrunc](https://github.com/ponchio/untrunc).\
 Improved version of ponchio/untrunc: [anthwlock/untrunc](https://github.com/anthwlock/untrunc).
 
+## Requirements to run WatchVideoByLink
+  - [Node.js](https://nodejs.org/en/) - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+    1. [Download Node.js from https://nodejs.org/en/](https://nodejs.org/en/) 
+    2. To check if node.js has been downloaded open command prompt for windows or terminal for macOS/Linux and enter `node -v` this will tell you what version of Node.js has been installed.
+  - [FFmpeg](https://ffmpeg.org/) - A complete, cross-platform solution to record, convert and stream audio and video.
+    1. [Download FFmpeg from https://ffmpeg.org/download.html](https://ffmpeg.org/download.html) 
+    2. Once FFmpeg has been downloaded drop ffmpeg.exe and ffprobe.exe files (which could be found in ffmpeg\bin folder) in WatchVideoByLink folder.
+  
 ## Installation
 You can clone the repository to a local destination using git:
 ```

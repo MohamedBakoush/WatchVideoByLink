@@ -8,7 +8,8 @@ const data_videos  = FileSystem.readFileSync("data/data-videos.json");
 let videoData = JSON.parse(data_videos);
 const available_videos  = FileSystem.readFileSync("data/available-videos.json");
 let availableVideos = JSON.parse(available_videos);
-
+const ffprobe_path = "./ffprobe.exe";
+const ffmpeg_path = "./ffmpeg.exe";
 // check if id provided is corresponding to videos
 function findVideosByID(id){
   if (videoData[id] === undefined) { // if id is invalid
@@ -124,16 +125,14 @@ async function downloadVideoStream(req, res) {
   const fileName = uuidv4();
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
-
   const videoDetails = await findVideosByID(fileName);
-
-  if (videoDetails == undefined) {
-    if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
-        FileSystem.mkdirSync(`${filepath}${fileName}/`);
-    }
-    command.addInput(videofile)
-      .on("start", function() {
-          // res.json("downloadingVideoFile");
+  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
+    if (videoDetails == undefined) {
+      if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+          FileSystem.mkdirSync(`${filepath}${fileName}/`);
+      }
+      command.addInput(videofile)
+        .on("start", function() {
           res.json(fileName);
           /// log something maybe
           videoData[`${fileName}`] = {
@@ -146,8 +145,8 @@ async function downloadVideoStream(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-      })
-      .on("progress", function(data) {
+        })
+        .on("progress", function(data) {
           /// do stuff with progress data if you wan
           videoData[`${fileName}`] = {
             video: {
@@ -157,7 +156,6 @@ async function downloadVideoStream(req, res) {
               download : "downloading"
             }
           };
-
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
@@ -170,10 +168,9 @@ async function downloadVideoStream(req, res) {
               stopVideoFileBool = false;
             }
           }
-      })
-      .on("end", function() {
+        })
+        .on("end", function() {
           /// encoding is complete, so callback or move on at this point
-
           videoData[`${fileName}`] = {
             video : {
               originalVideoSrc : req.body.videoSrc,
@@ -193,19 +190,41 @@ async function downloadVideoStream(req, res) {
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           createThumbnail(path, newFilePath, fileName);
-      })
-      .on("error", function(error) {
+        })
+        .on("error", function(error) {
           /// error handling
-          console.log(`Encoding Error: ${error.message}`);
-      })
-      // .addInputOption('-i')
-      .outputOptions(["-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
-      // .outputOptions(['-c copy'])
-      .output(`${newFilePath}${fileName}${fileType}`)
-      .run();
-    } else {
-      console.log("videoDetails exits");
-    }
+          console.log("[streamVideo.js-downloadVideoStream]", `Encoding Error: ${error.message}`);
+          if (error.message === "Cannot find ffmpeg") {
+            FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
+              if (err) throw err;
+              console.log(`\n removed ${newFilePath} dir \n`);
+            });
+            res.json("Cannot-find-ffmpeg");
+          } else {
+            // there could be diffrent types of errors that exists and some may contain content in the newly created path
+            // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+            res.json("ffmpeg-failed");
+          }
+        })
+        // .addInputOption('-i')
+        .outputOptions(["-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
+        // .outputOptions(['-c copy'])
+        .output(`${newFilePath}${fileName}${fileType}`)
+        .run();
+      } else {
+        // TODO: create new fileName and try again
+        console.log("videoDetails already exists");
+      }
+  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
+    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+    res.json("Cannot-find-ffmpeg-ffprobe");
+  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+    res.json("Cannot-find-ffmpeg");
+  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
+    res.json("Cannot-find-ffprobe");
+  }
 }
 
 
@@ -217,13 +236,13 @@ async function downloadVideo(req, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await findVideosByID(fileName);
-
-  if (videoDetails == undefined) {
-    if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
-        FileSystem.mkdirSync(`${filepath}${fileName}/`);
-    }
-    command.addInput(videofile)
-      .on("start", function() {
+  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
+    if (videoDetails == undefined) {
+      if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+          FileSystem.mkdirSync(`${filepath}${fileName}/`);
+      }
+      command.addInput(videofile)
+        .on("start", function() {
           res.json(fileName);
           videoData[`${fileName}`] = {
             video : {
@@ -232,11 +251,10 @@ async function downloadVideo(req, res) {
               download : "starting full video download"
             }
           };
-
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-      })
-      .on("progress", function(data) {
+        })
+        .on("progress", function(data) {
           /// do stuff with progress data if you wan
           console.log("progress", data);
           videoData[`${fileName}`] = {
@@ -246,12 +264,10 @@ async function downloadVideo(req, res) {
               download: data.percent
             }
           };
-
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
-      })
-      .on("end", function() {
+        })
+        .on("end", function() {
           /// encoding is complete, so callback or move on at this point
           videoData[`${fileName}`] = {
             video: {
@@ -266,23 +282,44 @@ async function downloadVideo(req, res) {
               download: "starting"
             }
           };
-
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           createThumbnail(path, newFilePath, fileName);
-      })
-      .on("error", function(error) {
+        })
+        .on("error", function(error) {
           /// error handling
-          console.log(`Encoding Error: ${error.message}`);
-      })
-      .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
-      .output(`${newFilePath}${fileName}${fileType}`)
-      .run();
-    } else {
-      console.log("videoDetails exits");
-    }
+          console.log("[streamVideo.js-downloadVideo]", `Encoding Error: ${error.message}`);
+          if (error.message === "Cannot find ffmpeg") {
+            FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
+              if (err) throw err;
+              console.log(`\n removed ${newFilePath} dir \n`);
+            });
+            res.json("Cannot-find-ffmpeg");
+          } else {
+            // there could be diffrent types of errors that exists and some may contain content in the newly created path
+            // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+            res.json("ffmpeg-failed");
+          }
+        })
+        .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
+        .output(`${newFilePath}${fileName}${fileType}`)
+        .run();
+      } else {
+        // TODO: create new fileName and try again
+        console.log("videoDetails already exists");
+      }
+  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
+    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+    res.json("Cannot-find-ffmpeg-ffprobe");
+  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+    res.json("Cannot-find-ffmpeg");
+  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
+    res.json("Cannot-find-ffprobe");
+  }
 }
 
 async function trimVideo(req, res) {
@@ -295,12 +332,13 @@ async function trimVideo(req, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await findVideosByID(fileName);
-  if (videoDetails == undefined) {
-    if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
-        FileSystem.mkdirSync(`${filepath}${fileName}/`);
-    }
-    command.addInput(videofile)
-      .on("start", function() {
+  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
+    if (videoDetails == undefined) {
+      if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+          FileSystem.mkdirSync(`${filepath}${fileName}/`);
+      }
+      command.addInput(videofile)
+        .on("start", function() {
           res.json(fileName);
           videoData[`${fileName}`] = {
             video:{
@@ -312,8 +350,8 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-      })
-      .on("progress", function(data) {
+        })
+        .on("progress", function(data) {
           /// do stuff with progress data if you wan
           console.log("progress", data);
           videoData[`${fileName}`] = {
@@ -328,40 +366,62 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-      })
-      .on("end", function() {
-        videoData[`${fileName}`] = {
-          video: {
-            originalVideoSrc: req.body.videoSrc,
-            originalVideoType: req.body.videoType,
-            newVideoStartTime: req.body.newStartTime,
-            newVideoEndTime: req.body.newEndTime,
-            path: newFilePath+fileName+fileType,
-            videoType: "video/mp4",
-            download: "completed"
-          },
-          thumbnail: {
-            path: {},
-            download: "starting"
-          }
-        };
-        const newVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-        console.log("Video Transcoding succeeded !");
-        const path = newFilePath+fileName+fileType;
-        createThumbnail(path, newFilePath, fileName);
-      })
-      .on("error", function(error) {
+        })
+        .on("end", function() {
+          videoData[`${fileName}`] = {
+            video: {
+              originalVideoSrc: req.body.videoSrc,
+              originalVideoType: req.body.videoType,
+              newVideoStartTime: req.body.newStartTime,
+              newVideoEndTime: req.body.newEndTime,
+              path: newFilePath+fileName+fileType,
+              videoType: "video/mp4",
+              download: "completed"
+            },
+            thumbnail: {
+              path: {},
+              download: "starting"
+            }
+          };
+          const newVideoData = JSON.stringify(videoData, null, 2);
+          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+          console.log("Video Transcoding succeeded !");
+          const path = newFilePath+fileName+fileType;
+          createThumbnail(path, newFilePath, fileName);
+        })
+        .on("error", function(error) {
           /// error handling
-          console.log(`Encoding Error: ${error.message}`);
-      })
-      // .addInputOption("-y")
-      .outputOptions([`-ss ${start}`, `-t ${(end-start)}`, "-vcodec copy", "-acodec copy"])
-      .output(`${newFilePath}${fileName}${fileType}`)
-      .run();
-    } else {
-      console.log("videoDetails exits");
-    }
+          console.log("[streamVideo.js-trimVideo]", `Encoding Error: ${error.message}`);
+          if (error.message === "Cannot find ffmpeg") {
+            FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
+              if (err) throw err;
+              console.log(`\n removed ${newFilePath} dir \n`);
+            });
+            res.json("Cannot-find-ffmpeg");
+          } else {
+            // there could be diffrent types of errors that exists and some may contain content in the newly created path
+            // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+            res.json("ffmpeg-failed");
+          }
+        })
+        // .addInputOption("-y")
+        .outputOptions([`-ss ${start}`, `-t ${(end-start)}`, "-vcodec copy", "-acodec copy"])
+        .output(`${newFilePath}${fileName}${fileType}`)
+        .run();
+      } else {
+        // TODO: create new fileName and try again
+        console.log("videoDetails already exists");
+      }
+  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
+    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+    res.json("Cannot-find-ffmpeg-ffprobe");
+  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+    res.json("Cannot-find-ffmpeg");
+  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
+    res.json("Cannot-find-ffprobe");
+  }
 }
 
 
@@ -481,34 +541,48 @@ async function deletevideoData(request, response, videoID) {
 
 // using youtube-dl it converts url link to video type and video src
 async function getVideoLinkFromUrl(req, res) {
-  const url = req.body.url;
-  // Optional arguments passed to youtube-dl.
-  const options = ["--skip-download"];
-  youtubedl.getInfo(url, options, function(err, info) {
-    if (err) {
-     res.json("failed-get-video-url-from-provided-url");
-    }
-   // info.protocol
-   // protocol: https == video/mp4
-   // protocol: http_dash_segments == application/dash+xml
-   // protocol: m3u8 == application/x-mpegURL
-
-   let videoFileFormat;
-   if (info.protocol == "https") {
-     videoFileFormat = "video/mp4";
-   } else if (info.protocol == "m3u8") {
-     videoFileFormat = "application/x-mpegURL";
-   } else if (info.protocol == "http_dash_segments") {
-     videoFileFormat = "application/dash+xml";
-   }
-   const videoDataFromUrl = {
-     input_url_link: url,
-     video_url: info.url,
-     video_file_format: videoFileFormat
-   };
-
-   res.json(videoDataFromUrl);
-  });
+  try {
+    const url = req.body.url;
+    // Optional arguments passed to youtube-dl.
+    const options = ["--skip-download"];
+    youtubedl.getInfo(url, options, function(err, info) {
+     // info.protocol
+     // protocol: https or http == video/mp4
+     // protocol: http_dash_segments == application/dash+xml
+     // protocol: m3u8 == application/x-mpegURL
+     let videoFileFormat, videoUrlLink;
+     if (info !== undefined) {
+       if (info.protocol == "https" || info.protocol == "http") {
+         videoUrlLink = info.url;
+         videoFileFormat = "video/mp4";
+       } else if (info.protocol == "m3u8") {
+         videoUrlLink = info.url;
+         videoFileFormat = "application/x-mpegURL";
+       } else if (info.protocol == "http_dash_segments") {
+         videoUrlLink = info.url;
+         videoFileFormat = "application/dash+xml";
+       } else {
+         videoUrlLink = "not-supported";
+         videoFileFormat = "not-supported";
+       }
+     } else {
+       videoUrlLink = "not-supported";
+       videoFileFormat = "not-supported";
+     }
+     const videoDataFromUrl = {
+       input_url_link: url,
+       video_url: videoUrlLink,
+       video_file_format: videoFileFormat
+     };
+     if (videoUrlLink !== "not-supported" || videoFileFormat !== "not-supported") {
+       res.json(videoDataFromUrl);
+     } else {
+       res.json("failed-get-video-url-from-provided-url");
+     }
+    });
+  } catch (e) {
+    res.json("failed-get-video-url-from-provided-url");
+  }
 }
 
 module.exports = { // export modules

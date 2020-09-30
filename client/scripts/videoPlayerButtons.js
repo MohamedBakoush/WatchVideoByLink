@@ -34,39 +34,57 @@ export function downloadVideoButton(container, videoSrc, videoType) {
       // if user confirms download full video then send videoSrc, videoType to the server as a post request by downloadVideo
       downloadVideo(videoSrc, videoType).then( (returnValue) => { // downloading video
         let number_of_errors = 0;
+        let isDownloading = true;
         if (returnValue == "failed download video file") {
           console.log("failed download video file");
           alert("Error Connection Refused.");
+        } else if (returnValue == "Cannot-find-ffmpeg-ffprobe") {
+          console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+          alert("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+        } else if (returnValue == "Cannot-find-ffmpeg") {
+          console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+          alert("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+        } else if (returnValue == "Cannot-find-ffprobe") {
+          console.log("Encoding Error: Cannot find ffprobe");
+          alert("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
+        } else if (returnValue == "ffmpeg-failed") {
+          console.log("Encoding Error: ffmpeg failed");
+          alert("Encoding Error: ffmpeg failed");
         } else {
-          console.log("downloading");
+          console.log("Download Full Video Start");
           downloadVideoButton.title = "Download Status";
           downloadVideoButton.className = "vjs-menu-item downloadVideoMenuContentItem";
           downloadVideoButtonText.innerHTML = "0%";
           const checkDownloadStatus = setInterval( async function(){
             try {
-              const response = await fetch(`../video-data/${fileNameID}`);
+              const response = await fetch(`../video-data/${returnValue}`);
               if (response.ok) {
                 const downloadStatus = await response.json();
-                console.log(downloadStatus.video.download);
                 if (downloadStatus.video.download == "completed") { // if the video portion has finished downloading
                   if (downloadStatus.thumbnail.download == "completed") {// completed thumbnail download
                     clearInterval(checkDownloadStatus);
                     downloadVideoButtonText.innerHTML = "Download Video";
                     downloadVideoButton.title = "Download Video";
                     downloadVideoButton.onclick = downloadVideoConfirmation;
-                    alert("Video Download Completed");
+                    if (isDownloading) {
+                      isDownloading = false;
+                      alert(`${returnValue}:\nFull Video Download Completed`);
+                      console.log(returnValue, "Full Video Download Completed");
+                    }
                   } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
                       downloadVideoButtonText.innerHTML = "Thumbnail";
                       downloadVideoButton.title =  "Thumbnail";
                       downloadVideoButton.onclick = function(){
                         alert("Thumbnail Progress: preparing to create thumbnails");
                       };
+                      console.log(returnValue, "Thumbnail Progress: preparing to create thumbnails");
                   } else { // downloading thumbnails
                     downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.thumbnail.download)}%`;
                     downloadVideoButton.title =  "Creating Thumbnails";
                     downloadVideoButton.onclick = function(){
                       alert(`Thumbnail Progress: ${Math.trunc(downloadStatus.thumbnail.download)}%`);
                     };
+                    console.log(returnValue, `Thumbnail Progress: ${Math.trunc(downloadStatus.thumbnail.download)}%`);
                   }
                 } else if(downloadStatus.video.download == "starting full video download") { // starting full video downloa msg
                   downloadVideoButtonText.innerHTML = "Full Video";
@@ -74,12 +92,14 @@ export function downloadVideoButton(container, videoSrc, videoType) {
                   downloadVideoButton.onclick = function(){
                     alert("Video Progress: preparing to download video");
                   };
+                  console.log(returnValue, "Video Progress: preparing to download video");
                 } else { // the percentage for video fthat has been  downloaded msg
                   downloadVideoButtonText.innerHTML = `${Math.trunc(downloadStatus.video.download)}%`;
                   downloadVideoButton.title =  "Downloading Video";
                   downloadVideoButton.onclick = function(){
                     alert(`Video Progress: ${Math.trunc(downloadStatus.video.download)}%`);
                   };
+                  console.log(returnValue, `Video Progress: ${Math.trunc(downloadStatus.video.download)}%`);
                 }
                 return "downloading";
               } else {
@@ -87,7 +107,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
               }
             } catch (e) { // when an error occurs
               number_of_errors = number_of_errors + 1;
-              console.log("number_of_errors", number_of_errors);
+              console.log(returnValue, "number_of_errors", number_of_errors);
               // when number of error become one
               // number_of_errors == 1 is created becouse setInterval could try to run the async function more then once and fail
               // since it could cause more then one error the change record buttons/alert would also run more then once
@@ -96,7 +116,8 @@ export function downloadVideoButton(container, videoSrc, videoType) {
                 downloadVideoButtonText.innerHTML = "Download Video";
                 downloadVideoButton.title = "Download Video";
                 downloadVideoButton.onclick = downloadVideoConfirmation;
-                alert("Error Connection Refused.");
+                alert(`${returnValue}: Error Connection Refused.`);
+                console.log(returnValue, "Error Connection Refused.");
               }
             }
           }, 500);
@@ -256,12 +277,12 @@ export function stopRecStreamButton(player, Button) {
 export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoType) {
   const RecButton = videojs.extend(Button, { // eslint-disable-line
     constructor: function() {
-        Button.apply(this, arguments);
-        /* initialize your button */
-        this.controlText("Record");
+      Button.apply(this, arguments);
+      /* initialize your button */
+      this.controlText("Record");
     },
     createEl: function() {
-        return Button.prototype.createEl("button", {
+      return Button.prototype.createEl("button", {
         className: "vjs-icon-circle vjs-icon-record-start vjs-control vjs-button",
         id: "RecButton"
       });
@@ -272,6 +293,18 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
        if (returnValue == "failed record video file") {
         console.log("failed record video file");
         alert("Error Connection Refused.");
+      } else if (returnValue == "Cannot-find-ffmpeg-ffprobe") {
+        console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+        alert("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+      } else if (returnValue == "Cannot-find-ffmpeg") {
+        console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+        alert("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+      } else if (returnValue == "Cannot-find-ffprobe") {
+        console.log("Encoding Error: Cannot find ffprobe");
+        alert("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
+      } else if (returnValue == "ffmpeg-failed") {
+        console.log("Encoding Error: ffmpeg failed");
+        alert("Encoding Error: ffmpeg failed");
       } else {
         console.log("downloading");
         // hide rec button when stop rec is avtive
@@ -445,12 +478,66 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
           if (downloadConfirm) {
            //Logic to download video
             trimVideo(videoSrc, videoType, inputLeft.value, inputRight.value).then( (returnValue) => {
+              let number_of_errors = 0;
+              let isDownloading = true;
               if (returnValue ==  "failed download trimed video file") {
                 console.log("failed download trimed video file");
                 alert("Error Connection Refused.");
+              } else if (returnValue == "Cannot-find-ffmpeg-ffprobe") {
+                console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+                alert("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+              } else if (returnValue == "Cannot-find-ffmpeg") {
+                console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+                alert("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+              } else if (returnValue == "Cannot-find-ffprobe") {
+                console.log("Encoding Error: Cannot find ffprobe");
+                alert("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
+              } else if (returnValue == "ffmpeg-failed") {
+                console.log("Encoding Error: ffmpeg failed");
+                alert("Encoding Error: ffmpeg failed");
               } else {
-                console.log("Download Trimed Video Start");
-              }
+               console.log("Download Trimed Video Start");
+               const checkDownloadStatus = setInterval( async function(){
+                 try {
+                   const response = await fetch(`../video-data/${returnValue}`);
+                   if (response.ok) {
+                     const downloadStatus = await response.json();
+                     if (downloadStatus.video.download == "completed") { // if the video portion has finished downloading
+                       if (downloadStatus.thumbnail.download == "completed") {// completed thumbnail download
+                         clearInterval(checkDownloadStatus);
+                         if (isDownloading) {
+                           isDownloading = false;
+                           alert(`${returnValue}:\nTrim Video Download from ${secondsToHms(inputLeft.value)} to ${secondsToHms(inputRight.value)} Completed`);
+                           console.log(returnValue, `Trim Video Download from ${secondsToHms(inputLeft.value)} to ${secondsToHms(inputRight.value)} Completed`);
+                         }
+                       } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
+                         console.log(returnValue, "Thumbnail Progress: preparing to create thumbnails");
+                       } else { // downloading thumbnails
+                         console.log(returnValue, `Thumbnail Progress: ${Math.trunc(downloadStatus.thumbnail.download)}%`);
+                       }
+                     } else if(downloadStatus.video.download == "starting full video download") { // starting full video downloa msg
+                       console.log(returnValue, "Video Progress: preparing to download video");
+                     } else { // the percentage for video fthat has been  downloaded msg
+                       console.log(returnValue, `Video Progress: ${Math.trunc(downloadStatus.video.download)}%`);
+                     }
+                     return "downloading";
+                   } else {
+                     return "failed";
+                   }
+                 } catch (e) { // when an error occurs
+                   number_of_errors = number_of_errors + 1;
+                   console.log(returnValue, "number_of_errors", number_of_errors);
+                   // when number of error become one
+                   // number_of_errors == 1 is created becouse setInterval could try to run the async function more then once and fail
+                   // since it could cause more then one error the change record buttons/alert would also run more then once
+                   if (number_of_errors == 1) {
+                     clearInterval(checkDownloadStatus);
+                     console.log(returnValue, "Error Connection Refused.");
+                     alert(`${returnValue}: Error Connection Refused.`);
+                   }
+                 }
+               }, 500);
+             }
               trimVideoBody.remove();
               // make downloadVideo option active
               downloadTrimButton.disabled = false;
