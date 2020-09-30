@@ -293,9 +293,15 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
        if (returnValue == "failed record video file") {
         console.log("failed record video file");
         alert("Error Connection Refused.");
+      } else if (returnValue == "Cannot-find-ffmpeg-ffprobe") {
+        console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+        alert("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
       } else if (returnValue == "Cannot-find-ffmpeg") {
-        console.log("Encoding Error: Cannot find ffmpeg");
-        alert("Encoding Error: Cannot find ffmpeg");
+        console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+        alert("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+      } else if (returnValue == "Cannot-find-ffprobe") {
+        console.log("Encoding Error: Cannot find ffprobe");
+        alert("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
       } else if (returnValue == "ffmpeg-failed") {
         console.log("Encoding Error: ffmpeg failed");
         alert("Encoding Error: ffmpeg failed");
