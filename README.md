@@ -14,6 +14,8 @@ When working with various types of video files for personal projects, the proces
 
 ## WatchVideoByLink BREAKDOWN STRUCTURE (Still Under Construction)
 Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/1dR5ptZmkQISnky_iB1gta190fLzKpL84u4xgNpXJ2_M/edit#gid=0)
+
+Document: [HLS streaming server with NGINX on a Ubuntu (Linux) Virtual Machine](https://docs.google.com/document/d/1tX_mrZiXoogILrApajvrsbWbkt3BEla8LAA3CHZl3Po/edit#)
  
 ## Features
 - Shareable link gets provided in the address bar when video is viewable.
