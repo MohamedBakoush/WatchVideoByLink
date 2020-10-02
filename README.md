@@ -81,4 +81,4 @@ Then open `http://localhost:8080` in your preferred browser.
 
 ## License
 
-  [MIT](LICENSE)
+  [Apache License 2.0](LICENSE)
