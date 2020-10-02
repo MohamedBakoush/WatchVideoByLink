@@ -5,7 +5,7 @@ import * as index from "../scripts/index.js";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
 
-// load header details into html using header2 id
+// load header details into html using headerContainer id
 export function loadNavigationBar(path) {
   const header = document.getElementById("headerContainer");
   const navBar = basic.createSection(header, "nav", "NavigationBar", "navBar");
@@ -38,7 +38,7 @@ export function loadNavigationBar(path) {
     index.showDetails();
   };
   savedVideosPage.onclick = (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     websiteContentContainer.innerHTML = "";
     homeButton.classList = "button category-link";
     savedVideosPage.classList = "button is-selected";

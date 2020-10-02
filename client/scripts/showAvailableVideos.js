@@ -211,7 +211,6 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container, o
 
 async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
     const response = await fetch(`../delete-video-data-permanently/${videoID}`);
-
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {

@@ -8,6 +8,7 @@ export function topPageControlBarContainer(player) {
   player.el().appendChild(topPageControlBarContainer);
   return topPageControlBarContainer;
 }
+
 export function backToHomePageButton(container, videoLinkFromUrl) {
   const backToHomePage = document.createElement("button");
   backToHomePage.title = "Close Player";
@@ -165,7 +166,6 @@ export function removeStopDownloadOnWindowClose() {
   console.log("removeStopDownloadOnWindowClose");
   window.removeEventListener("beforeunload", stopDownloadVideoStreamOnWindowsClose);
 }
-
 
 export async function downloadVideoStream(videoSrc, videoType) {
   try {
@@ -373,7 +373,6 @@ export async function trimVideo(videoSrc, videoType, startTime, endTime) {
     return "failed download trimed video file";
   }
 }
-
 
 function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody) {
   const backToMainVideoButton = document.createElement("button");
