@@ -10,6 +10,7 @@ const available_videos  = FileSystem.readFileSync("data/available-videos.json");
 let availableVideos = JSON.parse(available_videos);
 const ffprobe_path = "./ffprobe.exe";
 const ffmpeg_path = "./ffmpeg.exe";
+
 // check if id provided is corresponding to videos
 function findVideosByID(id){
   if (videoData[id] === undefined) { // if id is invalid
@@ -19,10 +20,12 @@ function findVideosByID(id){
   }
 }
 
+// returns all availableVideos data
 function getAllAvailableVideos(){
-    return availableVideos;
+  return availableVideos;
 }
 
+// if video videoId is valid then stream video
 async function streamVideo(request, response, videoID){
   // check if videoid is valid
   const videoDetails = await findVideosByID(videoID);
@@ -81,6 +84,7 @@ async function streamVideo(request, response, videoID){
   }
 }
 
+// streams available thumbnail images  provided by videoID and thumbnailID
 async function streamThumbnail(request, response, videoID, thumbnailID) {
   const videoDetails = await findVideosByID(videoID);
   if (videoDetails == undefined) {
@@ -106,6 +110,7 @@ async function streamThumbnail(request, response, videoID, thumbnailID) {
   }
 }
 
+// ends ffmpeg (finishes download video)
 const stop = (stream) => {
   return stream.ffmpegProc.stdin.write("q");
 };
@@ -118,6 +123,7 @@ function stopDownloadVideoStream(req, res) {
    res.json("stopedVideoFileFromDownloading");
 }
 
+// downloads live video stream
 async function downloadVideoStream(req, res) {
   const command = new ffmpeg();
   const videofile = req.body.videoSrc;
@@ -227,7 +233,7 @@ async function downloadVideoStream(req, res) {
   }
 }
 
-
+// download full video
 async function downloadVideo(req, res) {
   const command = new ffmpeg();
   const videofile = req.body.videoSrc;
@@ -322,6 +328,7 @@ async function downloadVideo(req, res) {
   }
 }
 
+// downlaod trimed video
 async function trimVideo(req, res) {
   const command = new ffmpeg();
   const videofile = req.body.videoSrc;
@@ -424,7 +431,7 @@ async function trimVideo(req, res) {
   }
 }
 
-
+// creates images from provided video
 async function createThumbnail(videofile, newFilePath, fileName) {
   const imageFileName = "thumbnail";
   const fileType = ".jpg";
