@@ -8,7 +8,7 @@ const app = express();
 // show website icon on tab
 app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
 
- 
+// converts url link to video link
 app.post("/getVideoLinkFromUrl", express.json(), videoLinkFromUrl);
 function videoLinkFromUrl(req, res){
   streamVideoFile.getVideoLinkFromUrl(req, res);

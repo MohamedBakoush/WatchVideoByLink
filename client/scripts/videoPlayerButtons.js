@@ -2,12 +2,15 @@ import * as basic from "../scripts/basics.js";
 "use strict";
 let fileNameID;
 
+// controlBar at the top of the video player
 export function topPageControlBarContainer(player) {
   const topPageControlBarContainer =  document.createElement("div");
   topPageControlBarContainer.className = "vjs-control-bar backToHomePageContainer";
   player.el().appendChild(topPageControlBarContainer);
   return topPageControlBarContainer;
 }
+
+// close video player button, go back to homepage/ previous page
 export function backToHomePageButton(container, videoLinkFromUrl) {
   const backToHomePage = document.createElement("button");
   backToHomePage.title = "Close Player";
@@ -24,6 +27,7 @@ export function backToHomePageButton(container, videoLinkFromUrl) {
   container.appendChild(backToHomePage);
 }
 
+// dowload full video button
 export function downloadVideoButton(container, videoSrc, videoType) {
   const downloadVideoButton = basic.createSection(container, "button", "vjs-menu-item downloadVideoMenuContentItem", "downloadVideoButton");
   downloadVideoButton.title = "Download Video";
@@ -129,6 +133,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
   container.appendChild(downloadVideoButton);
 }
 
+// request to stop download video srteam
 export async function stopDownloadVideoStream(bool) {
   console.log(fileNameID);
   const payload = {
@@ -147,6 +152,7 @@ export async function stopDownloadVideoStream(bool) {
   }
 }
 
+// if the window closes then stop download of video stream
 function stopDownloadVideoStreamOnWindowsClose(event) {
   // when windows closes
   event.preventDefault();
@@ -155,18 +161,20 @@ function stopDownloadVideoStreamOnWindowsClose(event) {
   delete event["returnValue"];
 }
 
+// add function stop download video stream when winodw closes
 export function addStopDownloadOnWindowClose() {
   console.log("addStopDownloadOnWindowClose");
   window.addEventListener("beforeunload", stopDownloadVideoStreamOnWindowsClose);
 
 }
 
+// remove function stop download video stream when winodw closes
 export function removeStopDownloadOnWindowClose() {
   console.log("removeStopDownloadOnWindowClose");
   window.removeEventListener("beforeunload", stopDownloadVideoStreamOnWindowsClose);
 }
 
-
+// request to start download video stream
 export async function downloadVideoStream(videoSrc, videoType) {
   try {
     const payload = {
@@ -189,6 +197,7 @@ export async function downloadVideoStream(videoSrc, videoType) {
   }
 }
 
+// check if video stream is still being recorded
 export function recordingStreamCheck(player, RecButton) {
   let timemark = "00:00:00.00";
   let number_of_errors = 0;
@@ -249,6 +258,7 @@ export function recordingStreamCheck(player, RecButton) {
   return checkRecordingStatus;
 }
 
+// Stop recoding video button
 export function stopRecStreamButton(player, Button) {
   const StopRecButton = videojs.extend(Button, { // eslint-disable-line
     constructor: function() {
@@ -274,6 +284,7 @@ export function stopRecStreamButton(player, Button) {
   return StopRecButton;
 }
 
+// Record video stream button
 export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoType) {
   const RecButton = videojs.extend(Button, { // eslint-disable-line
     constructor: function() {
@@ -325,6 +336,7 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
   return RecButton;
 }
 
+// request to download full video
 export async function downloadVideo(videoSrc, videoType) {
   try {
     const payload = {
@@ -348,6 +360,7 @@ export async function downloadVideo(videoSrc, videoType) {
   }
 }
 
+// requet to downlaod video with specifed start and end time
 export async function trimVideo(videoSrc, videoType, startTime, endTime) {
   try {
     const payload = {
@@ -374,7 +387,7 @@ export async function trimVideo(videoSrc, videoType, startTime, endTime) {
   }
 }
 
-
+// close trim video inerface button
 function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody) {
   const backToMainVideoButton = document.createElement("button");
   backToMainVideoButton.title = "Close Trim Video";
@@ -390,6 +403,7 @@ function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, down
   trimVideoBody.appendChild(backToMainVideoButton);
 }
 
+// trim video interace
 export function createTrimVideo(player, downloadVideoContainer, downloadVideoMenu, downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType) {
   const downloadTrimButton =  basic.createSection(downloadVideoMenuContent, "button", "vjs-menu-item downloadVideoMenuContentItem");
   downloadTrimButton.title = "Trim Video";
@@ -637,6 +651,7 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
   };
 }
 
+// converts seconds to hours:min:sec
 function secondsToHms(sec) {
   let hours = Math.floor(sec/3600);
   (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";

@@ -6,7 +6,7 @@ import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
 
-// show video from url
+// get video link and video type from the url
 function showVideoFromUrl(url) {
     // split url to get video and video type
     const hostname_typeVideo = url.split("?t=");
@@ -113,7 +113,7 @@ function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     player.src({  // video type and src
       type: videoType,
       src: videoSrc
-    }); 
+    });
   } else {
     var player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],

@@ -3,6 +3,7 @@ import * as basic from "../scripts/basics.js";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
 
+// try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 async function loadVideoDetails() {
   try {
     const response = await fetch("../all-available-video-data");
@@ -23,6 +24,8 @@ async function loadVideoDetails() {
   }
 }
 
+// if there is available videoDetails then get each video Details and send the data to showDetails
+// if there are no videoDetails then show  noAvailableVideos msg
 function eachAvailableVideoDetails(videoDetails) {
   if (Object.keys(videoDetails).length == 0) { // no available videos
     const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
@@ -37,7 +40,7 @@ function eachAvailableVideoDetails(videoDetails) {
   }
 }
 
-// load video thumbnail
+// load video details to user which include thumbnail image, video id as title and option menu
 function showDetails(container, videoInfo_ID, videoDetails) {
   const video_name = videoInfo_ID;
   const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
@@ -179,11 +182,16 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
 }
 
+// append image to container with features as, src, onload, onerror and optional  height, width
 function appendImg(container, src, width, height, videoInfo_ID) {
   try {
     const image = document.createElement("img"); // create image element
-    image.height = height; // create height
-    image.width = width; // create width
+    if (height != undefined) { // create height
+      image.height = height;
+    }
+    if (width != undefined) { // create height
+      image.width = width;
+    }
     image.src = src; // create src
     image.onload = function () {
      container.appendChild(image); // append image in container
@@ -197,6 +205,7 @@ function appendImg(container, src, width, height, videoInfo_ID) {
   }
 }
 
+// close edit menu button
 function backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu) {
   const backToMainVideoButton = document.createElement("button");
   option_menu.title = "menu";
@@ -209,9 +218,9 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container, o
   video_edit_body.appendChild(backToMainVideoButton);
 }
 
+// send request to server to delete video and all video data permently from the system
 async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
     const response = await fetch(`../delete-video-data-permanently/${videoID}`);
-
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
@@ -228,6 +237,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
     }
 }
 
- export function pageLoaded() {
+// load pageLoaded to html page when requested
+export function pageLoaded() {
   loadVideoDetails();
 }

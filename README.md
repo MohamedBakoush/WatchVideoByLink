@@ -74,6 +74,14 @@ npm start
 
 Then open `http://localhost:8080` in your preferred browser.
 
+## Help/Support
+
+#### Contributing
+WatchVideoByLink is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features.
+
+#### Donation
+If this software helped you please consider donating [here](http://paypal.me/pakonsy)!
+
 ## License
 
-  [MIT](LICENSE)
+WatchVideoByLink is [licensed](LICENSE) under the Apache License, Version 2.0.

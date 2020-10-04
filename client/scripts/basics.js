@@ -1,7 +1,7 @@
 "use strict";
 
 // create a input element
-// with optional input type, id, classList and if required or not
+// with optional input type, id, classList and if input type is required or not
 export function inputType(container, type, idHere, classHere, required){
   try {
     const inputType = document.createElement("input");
