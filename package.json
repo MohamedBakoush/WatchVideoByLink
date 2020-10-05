@@ -12,7 +12,7 @@
     "url": "git+https://github.com/MohamedBakoush/WatchVideoByLink.git"
   },
   "author": "Mohamed Bakoush",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/MohamedBakoush/WatchVideoByLink/issues"
   },
