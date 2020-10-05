@@ -84,4 +84,4 @@ If this software helped you please consider donating [here](http://paypal.me/pak
 
 ## License
 
-WatchVideoByLink is [licensed](LICENSE) under the MIT License.
+WatchVideoByLink is [licensed](LICENSE) under the Apache License, Version 2.0.
