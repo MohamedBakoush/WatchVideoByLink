@@ -12,7 +12,11 @@
 
 When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
 
-## Features
+## WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)
+
+Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/16rSYlLbNQtZzAzoa6HURpE8C5gtYVG4WVPpvIGOPHjo/edit#gid=0) 
+
+## Features 
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
