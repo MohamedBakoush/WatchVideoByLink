@@ -8,11 +8,20 @@
   <b>WatchVideoByLink</b> takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
 </p>
 
+## Help/Support
+WatchVideoByLink has not been forgotten but i [MohamedBakoush](https://github.com/MohamedBakoush) am going to be busy for the next few months due to school meaning i wont be able to add new features to WatchVideoByLink on a weekly/monthly basis if you would like to contribute in any way possible please dont hesitate.
+
+Donations can be made [here](http://paypal.me/pakonsy) and promptly converted into beer.
+
 ## Reason For Creation
 
 When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
 
-## Features
+## WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)
+
+Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/16rSYlLbNQtZzAzoa6HURpE8C5gtYVG4WVPpvIGOPHjo/edit#gid=0) 
+
+## Features 
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
@@ -73,14 +82,6 @@ npm start
 ```
 
 Then open `http://localhost:8080` in your preferred browser.
-
-## Help/Support
-
-#### Contributing
-WatchVideoByLink is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features.
-
-#### Donation
-If this software helped you please consider donating [here](http://paypal.me/pakonsy)!
 
 ## License
 
