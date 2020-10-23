@@ -49,7 +49,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
   const thumbnailContainer = basic.createSection(linkContainer, "section");
   const imageContainer = basic.createSection(thumbnailContainer, "section");
 
-  const thumbnail = appendImg(imageContainer, mainThumbnail, "290.5", "165.4", videoInfo_ID);
+  const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, undefined, "thumbnail-image", videoInfo_ID);
 
   // menu options
   const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars");
@@ -183,7 +183,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 }
 
 // append image to container with features as, src, onload, onerror and optional  height, width
-function appendImg(container, src, width, height, videoInfo_ID) {
+function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
   try {
     const image = document.createElement("img"); // create image element
     if (height != undefined) { // create height
@@ -192,6 +192,12 @@ function appendImg(container, src, width, height, videoInfo_ID) {
     if (width != undefined) { // create height
       image.width = width;
     }
+    if (idHere != undefined) { // assign id
+      image.id = idHere;
+    }
+    if (classHere != undefined) { // assign class
+      image.classList = classHere;
+    }  
     image.src = src; // create src
     image.onload = function () {
      container.appendChild(image); // append image in container

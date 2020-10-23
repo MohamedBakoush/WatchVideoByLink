@@ -25,6 +25,11 @@
   overflow: hidden;
 }
 
+.thumbnail-image{
+  height: 165px;
+  width: 290px;
+}
+
 .thumbnail-option-menu{
   top: 5px;
   right: 5px;
