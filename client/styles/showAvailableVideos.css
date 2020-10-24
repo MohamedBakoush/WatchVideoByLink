@@ -1,9 +1,43 @@
 @import url("video-edit-settings.css");
+
 .savedVideosThumbnailContainer{
-    padding: 0.5rem 0 0 0;
-    /* display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;  */
+    padding: 0.5rem 0.25rem 0 0.25rem; 
+    display: grid;
+    margin: auto;
+}
+
+.savedVideosThumbnailContainer{ 
+  grid-template-columns: repeat(6 , auto); 
+}
+
+@media only screen and (max-width: 1820px){
+  .savedVideosThumbnailContainer{ 
+    grid-template-columns: repeat(5, auto); 
+  }
+}
+
+@media only screen and (max-width: 1520px){
+  .savedVideosThumbnailContainer{ 
+    grid-template-columns: repeat(4, auto); 
+  }
+}
+
+@media only screen and (max-width: 1218px){
+  .savedVideosThumbnailContainer{ 
+    grid-template-columns: repeat(3, auto); 
+  }
+}
+
+@media only screen and (max-width: 920px){
+  .savedVideosThumbnailContainer{ 
+    grid-template-columns: repeat(2, auto); 
+  }
+}
+
+@media only screen and (max-width: 620px){
+  .savedVideosThumbnailContainer{ 
+    grid-template-columns: repeat(1, auto); 
+  }
 }
 
 .videoThumbnailContainer, .thumbnailTitleContainer{
@@ -16,18 +50,20 @@
   text-decoration: underline;
 }
 
-.videoThumbnailContainer {
-  width: 18.75rem;
+.videoThumbnailContainer { 
+  width: 290px; 
   float: left;
   position: relative;
-  padding: 0.5rem 0 0 0.5rem;
+  padding: 0.5rem 0.25rem 0 0.25rem; 
   border-radius: 4px;
   overflow: hidden;
 }
 
-.thumbnail-image{
+.thumbnail-image{ 
+  width: 100%;
   height: 165px;
-  width: 290px;
+  object-fit: contain;
+  background: rgb(0,0,0);
 }
 
 .thumbnail-option-menu{
@@ -54,6 +90,7 @@
 .thumbnail-option-menu:hover {
   color: #08e108;
 }
+
 .thumbnail-options-container{
   width: 290px;
   height: 165px;
@@ -90,6 +127,8 @@
 .option-play{
   grid-row: 1;
 }
+
 .option-delete{
     grid-row: 2;
 }
+ 

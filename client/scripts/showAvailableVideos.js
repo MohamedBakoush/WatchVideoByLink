@@ -56,7 +56,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
   option_menu.title = "menu";
   option_menu.onclick = function(e){
     e.preventDefault();
-      option_menu.title = "";
+    option_menu.title = "";
     linkContainer.removeAttribute("href");
     option_menu.disabled = true;
     option_menu.classList = "thumbnail-option-menu";
@@ -197,9 +197,9 @@ function appendImg(container, src, width, height, idHere, classHere, videoInfo_I
     }
     if (classHere != undefined) { // assign class
       image.classList = classHere;
-    }  
+    }   
     image.src = src; // create src
-    image.onload = function () {
+    image.onload = function () { 
      container.appendChild(image); // append image in container
     };
     image.onerror = function () {
