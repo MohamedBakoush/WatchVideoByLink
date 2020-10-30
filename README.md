@@ -23,11 +23,11 @@ When working with various types of video files for personal projects, the proces
 
 ## How WatchVideoByLink Works
 
-WatchVideoByLink takes a public video URL link and display the video in a custom video player depending on the video type, WatchVideoByLink currently supports video/mp4 (MP4), application/x-mpegURL (HLS) or application/dash+xml (MPEG-DASH) URL Link, Automatic video type is also available but works a little bit differently as the system will try to get a video type and video url link from the provided url link.
+WatchVideoByLink takes a public video URL link and display the video in a custom video player depending on the video type, WatchVideoByLink currently supports video/mp4 (MP4), application/x-mpegURL (HLS) or application/dash+xml (MPEG-DASH) URL Links, Automatic video type is also available but works a little bit differently as the system will try to get a video type and video link from the provided URL link.
 
-Inside each video player there are diffrent features which makes the watching experience an enjoyable process but what video/mp4 (MP4) and application/x-mpegURL (HLS) have in common is the ability to download/record the provided video for as long of a video duration that the user wants provided by how long the provided video is.
+Inside each video player there are diffrent features which makes the watching experience an enjoyable process but what video/mp4 (MP4) and application/x-mpegURL (HLS) have in common is the ability to download/record the provided video for as long of a video duration that the user wants provided by how long the original video is.
 
-After the downloaded/recorded video has finished downloading, snapshots of the video in different locations will be taken (aka create thumbnails) and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
+After the downloaded/recorded video has finish downloading, snapshots of the video in different locations will be taken (aka create thumbnails) and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
 
 ## Features 
 - Shareable link gets provided in the address bar when video is viewable.
