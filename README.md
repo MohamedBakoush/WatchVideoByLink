@@ -13,7 +13,7 @@
 * [Features](#features)
 * [Breakdown Structure](#watchvideobylink-breakdown-structure-under-construction)
 * [Installation](#installation) 
-* [Restoration: when a video goes bad/corrupt](restoration-when-a-video-goes-badcorrupt) 
+* [Restoration: when a video goes bad/corrupt](#restoration-when-a-video-goes-badcorrupt) 
 * [Help/Support](#helpsupport)
 * [License](#license)
 
