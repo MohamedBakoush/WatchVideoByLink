@@ -3,23 +3,23 @@
 <p align="center">
   <img src="/client/images/favicon/favicon.png" alt="WatchVideoByLink">
 </p>
-
 <p>
   <b>WatchVideoByLink</b> takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
 </p>
 
-## Help/Support
-WatchVideoByLink has not been forgotten but i [MohamedBakoush](https://github.com/MohamedBakoush) am going to be busy for the next few months due to school meaning i wont be able to add new features to WatchVideoByLink on a weekly/monthly basis if you would like to contribute in any way possible please dont hesitate.
+## Table of Contents
+* [Reason For Creation](#reason-for-creation)
+* [Features](#features)
+* [Breakdown Structure](#watchvideobylink-breakdown-structure-under-construction)
+* [Installation](#installation) 
+* [Restoration: when a video goes bad/corrupt](restoration-when-a-video-goes-badcorrupt) 
+* [Help/Support](#helpsupport)
+* [License](#license)
 
-Donations can be made [here](http://paypal.me/pakonsy) and promptly converted into beer.
 
 ## Reason For Creation
 
 When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
-
-## WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)
-
-Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/16rSYlLbNQtZzAzoa6HURpE8C5gtYVG4WVPpvIGOPHjo/edit#gid=0) 
 
 ## Features 
 - Shareable link gets provided in the address bar when video is viewable.
@@ -50,13 +50,14 @@ Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spre
     - Edit button
       - if clicked Edit mode will be shown with such features as 
         - Delete this video which once clicked deletes the video plus all its data permanently from the system 
- 
-## Restoration: when a video goes bad/corrupt
-I would recommend trying <b>untrunc</b> - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video.\
-Original Repo: [ponchio/untrunc](https://github.com/ponchio/untrunc).\
-Improved version of ponchio/untrunc: [anthwlock/untrunc](https://github.com/anthwlock/untrunc).
 
-## Requirements to run WatchVideoByLink
+## WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)
+
+Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/16rSYlLbNQtZzAzoa6HURpE8C5gtYVG4WVPpvIGOPHjo/edit#gid=0) 
+
+## Installation
+
+### Requirements
   - [Node.js](https://nodejs.org/en/) - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
     1. [Download Node.js from https://nodejs.org/en/](https://nodejs.org/en/) 
     2. To check if node.js has been downloaded open command prompt for windows or terminal for macOS/Linux and enter `node -v` this will tell you what version of Node.js has been installed.
@@ -64,7 +65,8 @@ Improved version of ponchio/untrunc: [anthwlock/untrunc](https://github.com/anth
     1. [Download FFmpeg from https://ffmpeg.org/download.html](https://ffmpeg.org/download.html) 
     2. Once FFmpeg has been downloaded drop ffmpeg.exe and ffprobe.exe files (which could be found in ffmpeg\bin folder) in WatchVideoByLink folder.
   
-## Installation
+  
+### Clone Repository
 You can clone the repository to a local destination using git:
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
@@ -74,7 +76,7 @@ npm install
 
 Alternatively you may download and unpack the [zip](https://github.com/MohamedBakoush/WatchVideoByLink/archive/master.zip)
 
-## Start Server
+### Start Server
 Run Server by:
 
 ```
@@ -82,6 +84,17 @@ npm start
 ```
 
 Then open `http://localhost:8080` in your preferred browser.
+
+## Restoration: when a video goes bad/corrupt
+I would recommend trying <b>untrunc</b> - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video.\
+Original Repo: [ponchio/untrunc](https://github.com/ponchio/untrunc).\
+Improved version of ponchio/untrunc: [anthwlock/untrunc](https://github.com/anthwlock/untrunc).
+
+
+## Help/Support
+WatchVideoByLink has not been forgotten but i [MohamedBakoush](https://github.com/MohamedBakoush) am going to be busy for the next few months due to school meaning i wont be able to add new features to WatchVideoByLink on a weekly/monthly basis if you would like to contribute in any way possible please dont hesitate.
+
+Donations can be made [here](http://paypal.me/pakonsy) and promptly converted into beer.
 
 ## License
 
