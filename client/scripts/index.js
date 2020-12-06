@@ -2,6 +2,7 @@ import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as basic from "../scripts/basics.js";
 import * as navigationBar from "../scripts/navigationBar.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 "use strict";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
@@ -42,6 +43,10 @@ export function showDetails() {
   basic.createInput(videoLinkForm, "submit", "Watch Video", undefined , "button watchVideoButton");
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
+    if(document.getElementById("download-status-container"))  {
+      document.getElementById("download-status-container").remove();
+      currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+    }
     if (videoTypeSelect.value === "Automatic") {
       getVideoUrlAuto(videoLinkInput.value);
       // remove videoLink from client

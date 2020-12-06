@@ -1,4 +1,5 @@
 @import url("NavigationBar.css");
+@import url("current-downloads.css");
 @import url("showAvailableVideos.css");
 *{
   margin: 0;

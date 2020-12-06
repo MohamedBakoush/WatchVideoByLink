@@ -2,7 +2,7 @@
   "name": "WatchVideoByLink",
   "version": "1.0.0",
   "description": "Watch Videos By A Public Video Link",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
     "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"

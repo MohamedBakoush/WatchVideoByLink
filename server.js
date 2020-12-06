@@ -74,6 +74,12 @@ function savedVideos(req, res){
   res.sendFile(path.join(__dirname, "client", "index.html"));
 }
 
+//show current downloads
+app.get("/current-video-downloads", currentDownloads);
+function currentDownloads(req, res){
+  res.json(streamVideoFile.currentDownloads());
+}
+
 // adds html as extensions, dont need to write index.html
 app.use(express.static("client", { extensions: ["html"] }));
 

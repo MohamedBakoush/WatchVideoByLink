@@ -8,6 +8,8 @@ const data_videos  = FileSystem.readFileSync("data/data-videos.json");
 let videoData = JSON.parse(data_videos);
 const available_videos  = FileSystem.readFileSync("data/available-videos.json");
 let availableVideos = JSON.parse(available_videos);
+const current_download_videos = FileSystem.readFileSync("data/current-download-videos.json");
+let currentDownloadVideos = JSON.parse(current_download_videos);
 const ffprobe_path = "./ffprobe.exe";
 const ffmpeg_path = "./ffmpeg.exe";
 
@@ -23,6 +25,11 @@ function findVideosByID(id){
 // returns all availableVideos data
 function getAllAvailableVideos(){
   return availableVideos;
+}
+
+// returns current video downloads
+function currentDownloads(){
+  return currentDownloadVideos;
 }
 
 // if video videoId is valid then stream video
@@ -151,6 +158,17 @@ async function downloadVideoStream(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+          
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : "starting stream download"
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
         })
         .on("progress", function(data) {
           /// do stuff with progress data if you wan
@@ -165,6 +183,17 @@ async function downloadVideoStream(req, res) {
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : data.timemark
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
+          
           console.log("progress", data);
           if (stopVideoFileBool === true  && fileNameID == fileName) {
             try {
@@ -193,6 +222,18 @@ async function downloadVideoStream(req, res) {
 
           const newData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newData);
+          
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : "completed"
+            },
+            thumbnail : { 
+              "download-status" : "starting thumbnail download"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           createThumbnail(path, newFilePath, fileName);
@@ -259,6 +300,18 @@ async function downloadVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : "starting video download"
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+
         })
         .on("progress", function(data) {
           /// do stuff with progress data if you wan
@@ -272,6 +325,17 @@ async function downloadVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" :  `${data.percent.toFixed(2)}%`
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
         })
         .on("end", function() {
           /// encoding is complete, so callback or move on at this point
@@ -290,6 +354,19 @@ async function downloadVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+                    
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : "completed"
+            },
+            thumbnail : { 
+              "download-status" : "starting thumbnail download"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           createThumbnail(path, newFilePath, fileName);
@@ -357,6 +434,18 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+          
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : "starting trim video download"
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
         })
         .on("progress", function(data) {
           /// do stuff with progress data if you wan
@@ -373,6 +462,17 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : `${data.percent.toFixed(2)}%`
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
         })
         .on("end", function() {
           videoData[`${fileName}`] = {
@@ -392,6 +492,19 @@ async function trimVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+                    
+          currentDownloadVideos[`${fileName}`] = {
+            video : { 
+              "download-status" : "completed"
+            },
+            thumbnail : { 
+              "download-status" : "starting thumbnail download"
+            } 
+          };
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           createThumbnail(path, newFilePath, fileName);
@@ -454,6 +567,18 @@ async function createThumbnail(videofile, newFilePath, fileName) {
               videoData[`${fileName}`]["thumbnail"].download =  data.percent;
               const newVideoData = JSON.stringify(videoData, null, 2);
               FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+                                            
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : "completed"
+                },
+                thumbnail : { 
+                  "download-status" : `${data.percent.toFixed(2)}%`
+                } 
+              };
+              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+
               console.log("progress", data);
           })
           .on("end", () => {
@@ -491,6 +616,11 @@ async function createThumbnail(videofile, newFilePath, fileName) {
               const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
               FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
               console.log("Image Thumbnails succeeded !");
+              
+              delete currentDownloadVideos[`${fileName}`] 
+              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+
           })
           .on("error", (error) => {
               /// error handling
@@ -602,5 +732,6 @@ module.exports = { // export modules
   getAllAvailableVideos,
   streamThumbnail,
   deletevideoData,
-  getVideoLinkFromUrl
+  getVideoLinkFromUrl,
+  currentDownloads
 };

@@ -1,4 +1,5 @@
 import * as basic from "../scripts/basics.js";
+import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 "use strict";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
@@ -82,6 +83,10 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     option_menu_edit.title = "Edit";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
+      if(document.getElementById("download-status-container"))  { 
+        document.getElementById("download-status-container").remove();
+        currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      }
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu_container.remove();
