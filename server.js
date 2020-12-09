@@ -90,6 +90,8 @@ app.get("*", function(req, res){
 
 // application runs on port 8080
 app.set("port", (process.env.PORT || 8080));
-app.listen(app.get("port"), function() {
+app.listen(app.get("port"), function() { 
   console.log("Server running at:" + app.get("port"));
+  // cheack for available unfinished video downloads
+  streamVideoFile.cheackForAvailabeUnFinishedVideoDownloads();
 });

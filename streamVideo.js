@@ -32,6 +32,37 @@ function currentDownloads(){
   return currentDownloadVideos;
 }
 
+// finnish download video/thumbnail (if not completed) when the application get started 
+function cheackForAvailabeUnFinishedVideoDownloads(){ 
+  if(Object.keys(currentDownloads()).length !== 0){  // if there is available data in currentDownloads()
+    Object.keys(currentDownloads()).forEach(function(fileName) { // for each currentDownloads get id as fileName
+      const filepath = "media/video/";
+      const fileType = ".mp4";
+      const newFilePath = `${filepath}${fileName}/`; 
+      const path = newFilePath+fileName+fileType;
+      const videoProgress = currentDownloadVideos[fileName].video["download-status"];
+      const thumbnailProgress = currentDownloadVideos[fileName].thumbnail["download-status"];
+      if(videoProgress == "completed"){ // when video has already been finnished downloading 
+        if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
+          delete currentDownloadVideos[`${fileName}`] 
+          const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+        } else{ // redownload thumbnails
+          createThumbnail(path, newFilePath, fileName);
+          // to make createThumbnail complete faster one option is by taking keeping existing available thumbanils and only downloading what is needed
+        }
+      } else{ 
+        // TODO
+        // finnish download video
+          // option one: redownload video file (wont work for stream downloads and may cause problems if video url link is no longer valid)
+          // option two: recover video file using untrunc (or something similar)
+          // using option two there would be a need for a working video file that stays in repo 
+        // create thumbnails 
+      }
+    });  
+  }
+}
+
 // if video videoId is valid then stream video
 async function streamVideo(request, response, videoID){
   // check if videoid is valid
@@ -733,5 +764,6 @@ module.exports = { // export modules
   streamThumbnail,
   deletevideoData,
   getVideoLinkFromUrl,
-  currentDownloads
+  currentDownloads,
+  cheackForAvailabeUnFinishedVideoDownloads
 };
