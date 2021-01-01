@@ -207,13 +207,34 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           delete videoData[`${fileName}`] 
           const deleteVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
-        }  
-        // delete created folder if exist
-        if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+        }   
+        
+        // check if there is a video file
+        if(FileSystem.existsSync(`./media/video/${fileName}/${fileName}.mp4`)){
+          //rename video file to another folder
+          FileSystem.rename(`./media/video/${fileName}/${fileName}.mp4`, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
+            if (err) throw err;  
+            console.log(`\n moved ./media/video/${fileName}/${fileName}.mp4 to  media/deleted-videos/deleted-${fileName}.mp4 \n`);
+            //  delete the video
+            FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
+              if (err) throw err;
+              console.log(`\n unlinked media/deleted-videos/deleted-${fileName}.mp4 video file \n`);
+            });
+            // delete created folder if exist
+            if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+              FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                if (err) throw err; 
+              });
+            } 
+          }); 
+          // check if folder exists
+        } else if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+          // delete folder
           FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
             if (err) throw err; 
-          });
-        } 
+          }); 
+        }
+
       } else{ // update video is unfinnished
         currentDownloadVideos[fileName]["video"]["download-status"] = "unfinished download";
         const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -543,7 +564,7 @@ async function downloadVideo(req, res) {
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
  
-          if(data.percent < 0 || data.percent == "undefined"){ 
+          if(data.percent < 0){ 
             currentDownloadVideos[`${fileName}`] = {
               video : { 
                 "download-status" :  "0.00%"
@@ -690,7 +711,7 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-          if(data.percent < 0 || data.percent == "undefined"){ 
+          if(data.percent < 0){ 
             currentDownloadVideos[`${fileName}`] = {
               video : { 
                 "download-status" : "0.00%"
@@ -699,7 +720,16 @@ async function trimVideo(req, res) {
                 "download-status" : "waiting for video"
               } 
             };
-          }else{ 
+          }else if(data.percent == "undefined"){
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : `${data.percent}%`
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          } else{
             currentDownloadVideos[`${fileName}`] = {
               video : { 
                 "download-status" : `${data.percent.toFixed(2)}%`
@@ -708,7 +738,7 @@ async function trimVideo(req, res) {
                 "download-status" : "waiting for video"
               } 
             };
-          }
+          } 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
         })

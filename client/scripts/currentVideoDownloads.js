@@ -21,25 +21,47 @@ async function loadVideoDetails() {
 
 // Split fetch data into individual video download details or show no availabe video dowloads
 function eachAvailableVideoDownloadDetails(videoDownloadDetails) {     
-  let container;
+  let container, videoDownloadStatusContainer;
   if (Object.keys(videoDownloadDetails).length == 0){  
-    if(document.getElementById("download-status-container"))  {
-      document.getElementById("download-status-container").remove();
+    // No current downloads msg 
+    if(!document.getElementById("download-status-container"))  {  
       container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+    } else {
+      container = document.getElementById("download-status-container");
     }
-     else{  
-      container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
-    } 
-    showDetailsifDownloadDetailsNotAvailable(container);
+    container.innerHTML = "";
+    videoDownloadStatusContainer = document.getElementById("no-current-dowloads-available");
+    if(!videoDownloadStatusContainer){ 
+      videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "no-current-dowloads-available"); 
+      basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "No Current Dowloads");  
+    }
   } else  {
-    if(document.getElementById("download-status-container"))  {
-      document.getElementById("download-status-container").remove();
-      container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
-    } else{  
+    // available downloads
+    if(!document.getElementById("download-status-container"))  {  
       container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
     }
-    Object.keys(videoDownloadDetails).reverse().forEach(function(videoInfo_ID) {   
-      showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID].video , videoDownloadDetails[videoInfo_ID].thumbnail);      
+ 
+    Object.keys(videoDownloadDetails).reverse().forEach(function(videoInfo_ID) {    
+      videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);
+      
+      // if video download ahs been completed then remove videoDownloadStatusContainer
+      if(videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "100.00%"){
+        videoDownloadStatusContainer.remove();
+      }
+
+      // if videoDownloadStatusContainer dosent exist
+      if(!videoDownloadStatusContainer){
+        showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID].video , videoDownloadDetails[videoInfo_ID].thumbnail);      
+      } else if(videoDownloadDetails[videoInfo_ID].video["download-status"] !== "unfinished download" && videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] !== "unfinished download"){
+        // clear videoDownloadStatusContainer
+        videoDownloadStatusContainer.innerHTML = "";
+        // video id (title)
+        basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${videoInfo_ID}`); 
+        // videoProgressContainer
+        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID].video["download-status"]}`);
+        // thubnailProgressContainer
+        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID].thumbnail ["download-status"]}`);     
+      }   
     });
   }
 } 
@@ -49,17 +71,18 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
   const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
   const videoID_Container = basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${video_ID}`); 
   if(thumbnailProgress["download-status"] == "unfinished download" || videoProgress["download-status"] == "unfinished download") {
-    const a = basic.createLink(videoDownloadStatusContainer, "javascript:;", undefined, "button completeVideoDownloadButton", "Complete Download"); 
+    const completeDownloadButton = basic.createLink(videoDownloadStatusContainer, "javascript:;", `${video_ID}-complete-download-button`, "button completeVideoDownloadButton", "Complete Download"); 
 
-    a.onclick = (e) => {
+    completeDownloadButton.onclick = (e) => {
       e.preventDefault(); 
       completeDownloadRequest(video_ID);  
     }; 
+
   } else{
     // videoProgressContainer
-    basic.createSection(videoDownloadStatusContainer, "p", undefined, undefined,`Video Progress: ${videoProgress["download-status"]}`);
+    basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-video`,`Video Progress: ${videoProgress["download-status"]}`);
     // thubnailProgressContainer
-    basic.createSection(videoDownloadStatusContainer, "p", undefined, undefined,`Thubnail Progress: ${thumbnailProgress["download-status"]}`);
+    basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-thubnail`,`Thubnail Progress: ${thumbnailProgress["download-status"]}`);
   }  
 }
 
@@ -83,18 +106,12 @@ async function completeDownloadRequest(filename) {
   } catch (e) { // when an error occurs
     console.log("error"); 
   }  
-} 
-
-// No current downloads msg
-function showDetailsifDownloadDetailsNotAvailable(container) { 
-  const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container"); 
-  basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "No Current Dowloads"); 
-}
+}  
 
 let VideoDownloadDetailsInterval;
 // Start Fetching Available Video Download Details
 export function loadAvailableVideoDownloadDetails(){
-  VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 500);
+  VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 100);
 }
 // Stop Fetching Available Video Download Details
 export function stopAvailableVideoDownloadDetails(){
