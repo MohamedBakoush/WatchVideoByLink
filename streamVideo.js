@@ -563,26 +563,36 @@ async function downloadVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
- 
+
           if(data.percent < 0){ 
             currentDownloadVideos[`${fileName}`] = {
               video : { 
-                "download-status" :  "0.00%"
+                "download-status" : "0.00%"
               },
               thumbnail : { 
                 "download-status" : "waiting for video"
               } 
             };
-          }else{
+          } else if(data.percent == "undefined"){
             currentDownloadVideos[`${fileName}`] = {
               video : { 
-                "download-status" :  `${data.percent.toFixed(2)}%`
+                "download-status" : `${data.percent}%`
               },
               thumbnail : { 
                 "download-status" : "waiting for video"
               } 
             };
-          }
+          } else{
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : `${data.percent.toFixed(2)}%`
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          } 
+          
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
         })
