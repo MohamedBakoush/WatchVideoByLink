@@ -1,17 +1,35 @@
 .video-download-status-container{
-    display: grid; 
-    padding: 1rem 1rem 0.5rem 1rem;
-  }
-  .download-status-container{
-    background-color: #fff;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    border-color: #000000;
-    max-width: 17.18rem; 
-    /* display: none; */
-    position: absolute;
-    top: 3.5rem;
-    right: 1.95em;
-    z-index: 1;
-  }
-  
+  display: grid; 
+  padding: 1rem 1rem 0.5rem 1rem;
+}
+.download-status-container{
+  background-color: #fff;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  border-color: #000000;
+  max-width: 17.65rem;
+  /* display: none; */
+  position: absolute;
+  top: 3.5rem;
+  right: 1.95em;
+  z-index: 1;
+}
+
+.completeTumbnailDownloadButton, .completeVideoDownloadButton{  
+  justify-content: center;
+  text-decoration: none;
+  padding: 0.25rem 0.75rem 0 0.75rem;
+  color: #fff !important;
+  background: #000 !important;
+  border-radius: 2em; 
+  border: 1px solid #000;
+  transition: border-radius .2s linear;
+  display: inline-flex;
+  align-items: center;
+  height: 2.1875rem;
+}
+
+.completeTumbnailDownloadButton:hover, .completeVideoDownloadButton:hover{
+  color: #000 !important;
+  background: #fff !important; 
+}

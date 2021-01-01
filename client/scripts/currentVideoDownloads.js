@@ -20,7 +20,7 @@ async function loadVideoDetails() {
 } 
 
 // Split fetch data into individual video download details or show no availabe video dowloads
-function eachAvailableVideoDownloadDetails(videoDownloadDetails) {      
+function eachAvailableVideoDownloadDetails(videoDownloadDetails) {     
   let container;
   if (Object.keys(videoDownloadDetails).length == 0){  
     if(document.getElementById("download-status-container"))  {
@@ -46,11 +46,44 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
 
 // show video downoad details
 function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgress, thumbnailProgress) { 
-  const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container"); 
-  const videoID_Container = basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${video_ID}`);
-  const videoProgressContainer = basic.createSection(videoDownloadStatusContainer, "p", undefined, undefined,`Video Progress: ${videoProgress["download-status"]}`);
-  const thubnailProgressContainer = basic.createSection(videoDownloadStatusContainer, "p", undefined, undefined,`Thubnail Progress: ${thumbnailProgress["download-status"]}`);
+  const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
+  const videoID_Container = basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${video_ID}`); 
+  if(thumbnailProgress["download-status"] == "unfinished download" || videoProgress["download-status"] == "unfinished download") {
+    const a = basic.createLink(videoDownloadStatusContainer, "javascript:;", undefined, "button completeVideoDownloadButton", "Complete Download"); 
+
+    a.onclick = (e) => {
+      e.preventDefault(); 
+      completeDownloadRequest(video_ID);  
+    }; 
+  } else{
+    // videoProgressContainer
+    basic.createSection(videoDownloadStatusContainer, "p", undefined, undefined,`Video Progress: ${videoProgress["download-status"]}`);
+    // thubnailProgressContainer
+    basic.createSection(videoDownloadStatusContainer, "p", undefined, undefined,`Thubnail Progress: ${thumbnailProgress["download-status"]}`);
+  }  
 }
+
+ 
+async function completeDownloadRequest(filename) {
+  try { 
+    const payload = { 
+      id: filename
+    };
+    const response = await fetch(`../complete-unfinnished-video-download`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      return "all good";
+    } else {
+      return "failed";
+    }
+  } catch (e) { // when an error occurs
+    console.log("error"); 
+  }  
+} 
 
 // No current downloads msg
 function showDetailsifDownloadDetailsNotAvailable(container) { 
@@ -61,7 +94,7 @@ function showDetailsifDownloadDetailsNotAvailable(container) {
 let VideoDownloadDetailsInterval;
 // Start Fetching Available Video Download Details
 export function loadAvailableVideoDownloadDetails(){
-  VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 100);
+  VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 500);
 }
 // Stop Fetching Available Video Download Details
 export function stopAvailableVideoDownloadDetails(){

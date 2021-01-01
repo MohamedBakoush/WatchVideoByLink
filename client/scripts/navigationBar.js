@@ -19,14 +19,14 @@ export function loadNavigationBar(path) {
     websiteContentContainer.classList = "saved-videos-websiteContentContainer";
     homeButton = basic.createLink(item, "/", undefined, "button category-link", "WatchVideoByLink");
     savedVideosPage = basic.createLink(item, "/saved/videos", undefined, "button is-selected", "/saved/videos");
-    currentDownloads = basic.createLink(item, "/current/downloads", undefined, "button current-dowloads-nav fa fa-download");
+    currentDownloads = basic.createLink(item, "javascript:;", undefined, "button current-dowloads-nav fa fa-download");
   } else {
     document.title = "Watch Video By Provided Link";
     document.body.classList = "index-body";
     websiteContentContainer.classList = "index-websiteContentContainer";
     homeButton = basic.createLink(item, "/", undefined, "button is-selected", "WatchVideoByLink");
     savedVideosPage = basic.createLink(item, "/saved/videos", undefined, "button category-link", "/saved/videos");
-    currentDownloads = basic.createLink(item, undefined, undefined, "button current-dowloads-nav fa fa-download");
+    currentDownloads = basic.createLink(item, "javascript:;", undefined, "button current-dowloads-nav fa fa-download");
   } 
   homeButton.onclick = (e) => {
     e.preventDefault(); 

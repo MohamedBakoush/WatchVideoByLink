@@ -80,6 +80,12 @@ function currentDownloads(req, res){
   res.json(streamVideoFile.currentDownloads());
 }
 
+// complete download unfinnished video by specified video id header
+app.post("/complete-unfinnished-video-download",  express.json(), completeUnfinnishedVideoDownload);
+function completeUnfinnishedVideoDownload(req, res){
+  streamVideoFile.completeUnfinnishedVideoDownload(req, res);
+} 
+
 // adds html as extensions, dont need to write index.html
 app.use(express.static("client", { extensions: ["html"] }));
 

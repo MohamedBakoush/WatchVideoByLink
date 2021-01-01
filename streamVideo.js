@@ -1,6 +1,7 @@
 "use strict";
 const FileSystem = require("fs");
 const stream = require("stream");
+const { exec } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
 const youtubedl = require("youtube-dl");
@@ -12,6 +13,7 @@ const current_download_videos = FileSystem.readFileSync("data/current-download-v
 let currentDownloadVideos = JSON.parse(current_download_videos);
 const ffprobe_path = "./ffprobe.exe";
 const ffmpeg_path = "./ffmpeg.exe";
+const untrunc_path = "untrunc.exe";
 
 // check if id provided is corresponding to videos
 function findVideosByID(id){
@@ -32,14 +34,151 @@ function currentDownloads(){
   return currentDownloadVideos;
 }
 
-// finnish download video/thumbnail (if not completed) when the application get started 
-function cheackForAvailabeUnFinishedVideoDownloads(){ 
+function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
+  if(FileSystem.existsSync(fileName_original_ending) == true){  
+    exec(`${untrunc_path} ./media/video/working-video/video.mp4 ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
+      if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
+          return;
+      }
+      console.log(`stdout: ${stdout}`);
+    }); 
+  } else if(FileSystem.existsSync(fileName_fixed_ending) == true){ 
+    const renameFilePath = setInterval(function(){ 
+      FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  (err) => { 
+        clearInterval(renameFilePath);
+        // if (err) throw err; 
+        exec(`${untrunc_path} ./media/video/working-video/video.mp4 ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
+          if (error) {
+              console.log(`error: ${error.message}`);
+              return;
+          }
+          if (stderr) {
+              console.log(`stderr: ${stderr}`);
+              downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
+              return;
+          }
+          console.log(`stdout: ${stdout}`);
+        }); 
+      });
+    }, 50);
+  } else{ 
+    // delete currentDownloadVideos from server if exist
+    if(currentDownloadVideos.hasOwnProperty(fileName)){  
+      delete currentDownloadVideos[`${fileName}`] 
+      const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+      FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+    }
+    // delete videoData from server if exist
+    if (videoData.hasOwnProperty(fileName)) {
+      delete videoData[`${fileName}`] 
+      const deleteVideoData = JSON.stringify(videoData, null, 2);
+      FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
+    }  
+    // delete created folder if exist
+    if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+      FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+        if (err) throw err; 
+      });
+    }      
+  }
+}
+
+function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
+  ffmpeg.ffprobe(fileName_fixed_ending, (error, metadata) => {   
+    // update currentDownloadVideos
+    currentDownloadVideos[`${fileName}`] = {
+      video : { 
+        "download-status" : "Untrunc"
+      },
+      thumbnail : { 
+        "download-status" : "waiting for video"
+      } 
+    };
+    const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+    // check if fileName_fixed_ending video has finnished downloading by checking if metadata exits
+    const checkIfMetadataExists = setInterval(function(){ 
+      //code goes here that will be run every intrerval.    
+      if(metadata !== "undefined"){ // video finnished restoring
+        clearInterval(checkIfMetadataExists) // stop check if video finnished restoring  
+        // move video file to deleted-videos folder
+        // if video is active it will make the video not viewable if someone wants to view it 
+        const renameBadVideoFile = setInterval(function(){ 
+          FileSystem.rename(fileName_original_ending, `./media/video/${fileName}/delete_soon.mp4`, (err) => { 
+            clearInterval(renameBadVideoFile) // stop interval
+            if (FileSystem.existsSync(`./media/video/${fileName}/delete_soon.mp4`) == true) { 
+              //file exists   
+              const renameFixedVideoTillOrignialName = setInterval(function(){                        
+                FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  (err) => { 
+                  clearInterval(renameFixedVideoTillOrignialName) // stop interval
+                  if (FileSystem.existsSync(fileName_original_ending)) {
+                    console.log(`\n rename ${fileName_fixed_ending} to ${fileName_original_ending} \n`);
+                    /// encoding is complete, so callback or move on at this point
+                    videoData[`${fileName}`] = {
+                      video : {
+                        originalVideoSrc : "unknown",
+                        originalVideoType : "unknown",
+                        path: newFilePath+fileName+fileType,
+                        videoType : "video/mp4",
+                        download : "completed",
+                      },
+                      thumbnail: {
+                        path: {},
+                        download: "starting"
+                      }
+                    };
+
+                    const newData = JSON.stringify(videoData, null, 2);
+                    FileSystem.writeFileSync("data/data-videos.json", newData);
+                    
+                    currentDownloadVideos[`${fileName}`] = {
+                      video : { 
+                        "download-status" : "completed"
+                      },
+                      thumbnail : { 
+                        "download-status" : "starting thumbnail download"
+                      } 
+                    };
+                    const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+                    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+
+                    console.log("Video Transcoding succeeded !"); 
+                    createThumbnail(path, newFilePath, fileName); 
+                  }
+
+                  if(FileSystem.existsSync(`./media/video/${fileName}/delete_soon.mp4`) == true){
+                    FileSystem.unlink(`./media/video/${fileName}/delete_soon.mp4`, (err) => {
+                      if (err) throw err;
+                      console.log(`\n unlinked media/video/${fileName}/delete_soon.mp4 video file \n`);
+                    });
+                  }
+
+                  if(FileSystem.existsSync(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`) == true){
+                    FileSystem.unlink(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`, (err) => {
+                      if (err) throw err;
+                      console.log(`\n unlinked media/video/${fileName}/${fileName}.mp4_fixed.mp4 video file \n`);
+                    });
+                  }
+                });        
+              }, 50);  
+            } 
+          });   
+        }, 50);  
+      }
+    }, 50); 
+  });
+}
+
+// check for unfinnished video/thumbnail download when the application get started 
+function cheackForAvailabeUnFinishedVideoDownloads(){  
   if(Object.keys(currentDownloads()).length !== 0){  // if there is available data in currentDownloads()
-    Object.keys(currentDownloads()).forEach(function(fileName) { // for each currentDownloads get id as fileName
-      const filepath = "media/video/";
-      const fileType = ".mp4";
-      const newFilePath = `${filepath}${fileName}/`; 
-      const path = newFilePath+fileName+fileType;
+    Object.keys(currentDownloads()).forEach(function(fileName) { // for each currentDownloads get id as fileName 
       const videoProgress = currentDownloadVideos[fileName].video["download-status"];
       const thumbnailProgress = currentDownloadVideos[fileName].thumbnail["download-status"];
       if(videoProgress == "completed"){ // when video has already been finnished downloading 
@@ -47,19 +186,66 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           delete currentDownloadVideos[`${fileName}`] 
           const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
-        } else{ // redownload thumbnails
-          createThumbnail(path, newFilePath, fileName);
-          // to make createThumbnail complete faster one option is by taking keeping existing available thumbanils and only downloading what is needed
+        } else{ // update thumbanil is unfinnished
+          currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "unfinished download";
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
         }
-      } else{ 
-        // TODO
-        // finnish download video
-          // option one: redownload video file (wont work for stream downloads and may cause problems if video url link is no longer valid)
-          // option two: recover video file using untrunc (or something similar)
-          // using option two there would be a need for a working video file that stays in repo 
-        // create thumbnails 
+      } else if(currentDownloadVideos[fileName]["video"]["download-status"] == "starting stream download" ||
+                currentDownloadVideos[fileName]["video"]["download-status"] == "starting video download" ||
+                currentDownloadVideos[fileName]["video"]["download-status"] == "starting trim video download" 
+                )
+        { // if the video download hasent started
+        // delete currentDownloadVideos from server if exist
+        if(currentDownloadVideos.hasOwnProperty(fileName)){ 
+          delete currentDownloadVideos[`${fileName}`] 
+          const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+        }
+        // delete videoData from server if exist
+        if (videoData.hasOwnProperty(fileName)) {
+          delete videoData[`${fileName}`] 
+          const deleteVideoData = JSON.stringify(videoData, null, 2);
+          FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
+        }  
+        // delete created folder if exist
+        if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+          FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+            if (err) throw err; 
+          });
+        } 
+      } else{ // update video is unfinnished
+        currentDownloadVideos[fileName]["video"]["download-status"] = "unfinished download";
+        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+        FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
       }
     });  
+  }
+}
+
+// finnish download video/thumbnail (if not completed) when the application get started 
+function completeUnfinnishedVideoDownload(req, res){ 
+  const fileName = req.body.id; 
+  const filepath = "media/video/";
+  const fileType = ".mp4";
+  const newFilePath = `${filepath}${fileName}/`; 
+  const path = newFilePath+fileName+fileType;
+  const videoProgress = currentDownloadVideos[fileName].video["download-status"];
+  const thumbnailProgress = currentDownloadVideos[fileName].thumbnail["download-status"];
+  if(videoProgress == "completed"){ // when video has already been finnished downloading 
+    if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
+      delete currentDownloadVideos[`${fileName}`] 
+      const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+      FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+    } else{ // redownload thumbnails 
+      createThumbnail(path, newFilePath, fileName); 
+    }
+  } else{  
+    const fileName_path = `./media/video/${fileName}/${fileName}`,
+    fileName_original_ending = `${fileName_path}.mp4`,
+    fileName_fixed_ending = `${fileName_path}.mp4_fixed.mp4`
+    // untrunc broke video 
+    untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending)  
   }
 }
 
@@ -356,15 +542,26 @@ async function downloadVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" :  `${data.percent.toFixed(2)}%`
-            },
-            thumbnail : { 
-              "download-status" : "waiting for video"
-            } 
-          };
+ 
+          if(data.percent < 0 || data.percent == "undefined"){ 
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" :  "0.00%"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          }else{
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" :  `${data.percent.toFixed(2)}%`
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
         })
@@ -465,7 +662,6 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
           
           currentDownloadVideos[`${fileName}`] = {
             video : { 
@@ -477,6 +673,7 @@ async function trimVideo(req, res) {
           };
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+        
         })
         .on("progress", function(data) {
           /// do stuff with progress data if you wan
@@ -493,15 +690,25 @@ async function trimVideo(req, res) {
 
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : `${data.percent.toFixed(2)}%`
-            },
-            thumbnail : { 
-              "download-status" : "waiting for video"
-            } 
-          };
+          if(data.percent < 0 || data.percent == "undefined"){ 
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : "0.00%"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          }else{ 
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : `${data.percent.toFixed(2)}%`
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
         })
@@ -597,16 +804,26 @@ async function createThumbnail(videofile, newFilePath, fileName) {
               /// do stuff with progress data if you wan
               videoData[`${fileName}`]["thumbnail"].download =  data.percent;
               const newVideoData = JSON.stringify(videoData, null, 2);
-              FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-                                            
-              currentDownloadVideos[`${fileName}`] = {
-                video : { 
-                  "download-status" : "completed"
-                },
-                thumbnail : { 
-                  "download-status" : `${data.percent.toFixed(2)}%`
-                } 
-              };
+              FileSystem.writeFileSync("data/data-videos.json", newVideoData); 
+              if(data.percent < 0){ 
+                currentDownloadVideos[`${fileName}`] = {
+                  video : { 
+                    "download-status" : "completed"
+                  },
+                  thumbnail : { 
+                    "download-status" : "0.00%"
+                  } 
+                };
+              }else{
+                currentDownloadVideos[`${fileName}`] = {
+                  video : { 
+                    "download-status" : "completed"
+                  },
+                  thumbnail : { 
+                    "download-status" : `${data.percent.toFixed(2)}%`
+                  } 
+                };
+              }
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
 
@@ -673,34 +890,62 @@ async function deletevideoData(request, response, videoID) {
   if (videoDetails == undefined) {
     response.status(404).redirect("/");
   } else {
-     try {
-       // move video file to deleted-videos folder
-       // if video is active it will make the video not viewable if someone wants to view it
-       FileSystem.rename(videoDetails.video.path, `media/deleted-videos/deleted-${videoID}.mp4`,  (err) => {
-         if (err) throw err;
-        console.log(`\n moved ${videoDetails.video.path} to  media/deleted-videos/deleted-${videoID}.mp4 \n`);
-        //  delete the video
-        FileSystem.unlink(`media/deleted-videos/deleted-${videoID}.mp4`, (err) => {
-          if (err) throw err;
-          console.log(`\n unlinked media/deleted-videos/deleted-${videoID}.mp4 video file \n`);
-        });
-        //  delete folder Content
-        FileSystem.rmdir(filepath, { recursive: true }, (err) => {
-          if (err) throw err;
-          console.log(`\n removed ${filepath} dir \n`);
-        });
-        // delete video data from database
-         delete videoData[videoID];
-         delete availableVideos[videoID];
+     try {  
+      if (FileSystem.existsSync(videoDetails.video.path)) { 
+        // move video file to deleted-videos folder
+        // if video is active it will make the video not viewable if someone wants to view it
+        FileSystem.rename(videoDetails.video.path, `media/deleted-videos/deleted-${videoID}.mp4`,  (err) => {
+          if (err) throw err;  
+          console.log(`\n moved ${videoDetails.video.path} to  media/deleted-videos/deleted-${videoID}.mp4 \n`);
+          //  delete the video
+          FileSystem.unlink(`media/deleted-videos/deleted-${videoID}.mp4`, (err) => {
+            if (err) throw err;
+            console.log(`\n unlinked media/deleted-videos/deleted-${videoID}.mp4 video file \n`);
+          });
+          //  delete folder Content
+          FileSystem.rmdir(filepath, { recursive: true }, (err) => {
+            if (err) throw err;
+            console.log(`\n removed ${filepath} dir \n`);
+          });
+          // delete video data from database
+          delete videoData[videoID];
+          delete availableVideos[videoID];
 
-         const newVideoData = JSON.stringify(videoData, null, 2);
-         FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+          const newVideoData = JSON.stringify(videoData, null, 2);
+          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
-         const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-         FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-         console.log(`\n ${filepath} is deleted! \n`);
-         response.json(`video-id-${videoID}-data-permanently-deleted`);
-      });
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+          console.log(`\n ${filepath} is deleted! \n`);
+          response.json(`video-id-${videoID}-data-permanently-deleted`);
+        });
+      } else{ // if seposed video path dosent exits delete data/video folder 
+        if (FileSystem.existsSync(filepath)) { 
+          //  delete folder Content
+          FileSystem.rmdir(filepath, { recursive: true }, (err) => {
+            if (err) throw err;
+            console.log(`\n removed ${filepath} dir \n`);
+          });
+        };
+        if(availableVideos.hasOwnProperty(videoID)){
+          delete availableVideos[videoID];
+
+          const newVideoData = JSON.stringify(videoData, null, 2);
+          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+        }
+
+        if(videoData.hasOwnProperty(videoID)){
+          delete availableVideos[videoID];
+
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+          console.log(`\n ${filepath} is deleted! \n`);
+        }
+
+        console.log(`\n ${filepath} is deleted! \n`);
+        response.json(`video-id-${videoID}-data-permanently-deleted`);
+      }
+
      } catch (e) {
        console.log(`failed to delete ${videoDetails.video.path}`);
      }
@@ -765,5 +1010,6 @@ module.exports = { // export modules
   deletevideoData,
   getVideoLinkFromUrl,
   currentDownloads,
-  cheackForAvailabeUnFinishedVideoDownloads
+  cheackForAvailabeUnFinishedVideoDownloads,
+  completeUnfinnishedVideoDownload
 };
