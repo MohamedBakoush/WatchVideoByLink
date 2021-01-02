@@ -193,7 +193,8 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
         }
       } else if(currentDownloadVideos[fileName]["video"]["download-status"] == "starting stream download" ||
                 currentDownloadVideos[fileName]["video"]["download-status"] == "starting video download" ||
-                currentDownloadVideos[fileName]["video"]["download-status"] == "starting trim video download" 
+                currentDownloadVideos[fileName]["video"]["download-status"] == "starting trim video download" ||
+                currentDownloadVideos[fileName]["video"]["download-status"] == "0.00%"
                 )
         { // if the video download hasent started
         // delete currentDownloadVideos from server if exist
