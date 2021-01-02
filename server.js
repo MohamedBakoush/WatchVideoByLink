@@ -14,6 +14,18 @@ function videoLinkFromUrl(req, res){
   streamVideoFile.getVideoLinkFromUrl(req, res);
 }
 
+// update video player volume settings
+app.post("/updateVideoPlayerVolume", express.json(), updateVideoPlayerVolume);
+function updateVideoPlayerVolume(req, res) {
+  streamVideoFile.updateVideoPlayerVolume(req, res);
+}
+
+// get video player settings
+app.get("/getVideoPlayerSettings", getVideoPlayerSettings);
+function getVideoPlayerSettings(req, res) {
+  res.json(streamVideoFile.getVideoPlayerSettings());
+}
+
 // get video thumbnail by video id and thumbnail number header
 app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
 function streamImageById(req, res){

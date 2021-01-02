@@ -5,6 +5,8 @@ const { exec } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
 const youtubedl = require("youtube-dl");
+const user_settings = FileSystem.readFileSync("data/user-settings.json");
+let userSettings = JSON.parse(user_settings);
 const data_videos  = FileSystem.readFileSync("data/data-videos.json");
 let videoData = JSON.parse(data_videos);
 const available_videos  = FileSystem.readFileSync("data/available-videos.json");
@@ -354,6 +356,29 @@ async function streamThumbnail(request, response, videoID, thumbnailID) {
       response.status(404).redirect("/");
     }
   }
+}
+
+// update video player volume settings
+function updateVideoPlayerVolume(req, res) {
+  try { // update video volume settings
+    const videoPlayerVolume = req.body.updatedVideoPlayerVolume;
+    const videoPlayerMuted = req.body.updatedVideoPlayerMuted;     
+
+    userSettings["videoPlayer"].volume = videoPlayerVolume;
+    userSettings["videoPlayer"].muted = videoPlayerMuted;
+
+    const newUserSettings = JSON.stringify(userSettings, null, 2);
+    FileSystem.writeFileSync("data/user-settings.json", newUserSettings);  
+
+    res.json("updated-video-player-volume");
+  } catch (e) { // failed to update video volume settings
+    res.json("failed-to-update-video-player-volume");
+  }
+}
+
+// get video player settings
+function getVideoPlayerSettings() { 
+  return userSettings["videoPlayer"];
 }
 
 // ends ffmpeg (finishes download video)
@@ -1041,6 +1066,7 @@ async function getVideoLinkFromUrl(req, res) {
 
 module.exports = { // export modules
   streamVideo,
+  updateVideoPlayerVolume,
   downloadVideoStream,
   downloadVideo,
   stopDownloadVideoStream,
@@ -1050,6 +1076,7 @@ module.exports = { // export modules
   streamThumbnail,
   deletevideoData,
   getVideoLinkFromUrl,
+  getVideoPlayerSettings,
   currentDownloads,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload
