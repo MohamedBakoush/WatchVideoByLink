@@ -45,6 +45,10 @@ body, .index-body, .index-websiteContentContainer,
   padding-top: 51.15vh;
 }
 
+.noAvailableVideosHeader, .getVideoUrlAutoMessageHeader{
+  text-align: center;
+}
+
 .videoLinkContainer form{
    display: grid;
    grid-template-columns: repeat(2, 1fr);

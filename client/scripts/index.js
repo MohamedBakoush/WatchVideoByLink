@@ -228,7 +228,7 @@ function getVideoUrlAuto(url_link) {
   websiteContentContainer.classList = "index-websiteContentContainer";
   // searchingForVideoLinkMessage
   const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
-  basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
+  basic.createSection(searchingForVideoLinkMessageContainer, "h1", "getVideoUrlAutoMessageHeader", undefined,  `Searching for video link: ${url_link}`);
   // look for video data from url_link
   getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
 }

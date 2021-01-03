@@ -609,14 +609,25 @@ async function downloadVideo(req, res) {
               } 
             };
           } else{
-            currentDownloadVideos[`${fileName}`] = {
-              video : { 
-                "download-status" : `${data.percent.toFixed(2)}%`
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            };
+            try {
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : `${data.percent.toFixed(2)}%`
+                },
+                thumbnail : { 
+                  "download-status" : "waiting for video"
+                } 
+              };  
+            } catch (error) {
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : `${data.percent}%`
+                },
+                thumbnail : { 
+                  "download-status" : "waiting for video"
+                } 
+              };    
+            }
           } 
           
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -766,14 +777,25 @@ async function trimVideo(req, res) {
               } 
             };
           } else{
-            currentDownloadVideos[`${fileName}`] = {
-              video : { 
-                "download-status" : `${data.percent.toFixed(2)}%`
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            };
+            try {
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : `${data.percent.toFixed(2)}%`
+                },
+                thumbnail : { 
+                  "download-status" : "waiting for video"
+                } 
+              };  
+            } catch (error) {
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : `${data.percent}%`
+                },
+                thumbnail : { 
+                  "download-status" : "waiting for video"
+                } 
+              };    
+            }
           } 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
@@ -866,34 +888,41 @@ async function createThumbnail(videofile, newFilePath, fileName) {
           })
 
           .on("progress", (data) => {
-              numberOfCreatedScreenshots = data.frames;
-              /// do stuff with progress data if you wan
-              videoData[`${fileName}`]["thumbnail"].download =  data.percent;
-              const newVideoData = JSON.stringify(videoData, null, 2);
-              FileSystem.writeFileSync("data/data-videos.json", newVideoData); 
-              if(data.percent < 0){ 
-                currentDownloadVideos[`${fileName}`] = {
-                  video : { 
-                    "download-status" : "completed"
-                  },
-                  thumbnail : { 
-                    "download-status" : "0.00%"
-                  } 
-                };
-              }else{
-                currentDownloadVideos[`${fileName}`] = {
-                  video : { 
-                    "download-status" : "completed"
-                  },
-                  thumbnail : { 
-                    "download-status" : `${data.percent.toFixed(2)}%`
-                  } 
-                };
-              }
-              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            // update numberOfCreatedScreenshots
+            numberOfCreatedScreenshots = data.frames; 
 
-              console.log("progress", data);
+            if(data.percent < 0){ // if data.percent is less then 0 then show 0.00%
+              videoData[`${fileName}`]["thumbnail"].download =  0.00;
+
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : "completed"
+                },
+                thumbnail : { 
+                  "download-status" : "0.00%"
+                } 
+              };
+            }else{ //update data with with data.percent
+              videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+
+              currentDownloadVideos[`${fileName}`] = {
+                video : { 
+                  "download-status" : "completed"
+                },
+                thumbnail : { 
+                  "download-status" : `${data.percent.toFixed(2)}%`
+                } 
+              };
+            }
+
+            // update data to database
+            const newVideoData = JSON.stringify(videoData, null, 2);
+            FileSystem.writeFileSync("data/data-videos.json", newVideoData); 
+
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+
+            console.log("progress", data);
           })
           .on("end", () => {
               /// encoding is complete, so callback or move on at this point

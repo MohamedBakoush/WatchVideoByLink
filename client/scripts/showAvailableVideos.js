@@ -30,7 +30,7 @@ async function loadVideoDetails() {
 function eachAvailableVideoDetails(videoDetails) {
   if (Object.keys(videoDetails).length == 0) { // no available videos
     const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
-    basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+    basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
   } else {
     const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
     Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
@@ -239,7 +239,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           savedVideosThumbnailContainer.remove();
           const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
-          basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
         }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
         alert(`failed to deleted ${videoID} video`);

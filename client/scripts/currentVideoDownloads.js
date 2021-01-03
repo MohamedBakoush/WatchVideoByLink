@@ -33,6 +33,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
     videoDownloadStatusContainer = document.getElementById("no-current-dowloads-available");
     // No current downloads msg
     if(!videoDownloadStatusContainer){ 
+      container.innerHTML = "";
       videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "no-current-dowloads-available"); 
       basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "No Current Dowloads");  
     }
