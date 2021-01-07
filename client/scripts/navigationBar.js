@@ -31,8 +31,10 @@ export function loadNavigationBar(path) {
   homeButton.onclick = (e) => {
     e.preventDefault(); 
     if(document.getElementById("download-status-container"))  {
-      document.getElementById("download-status-container").remove();
-      currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      if(stopInterval == "cleared Interval"){
+        document.getElementById("download-status-container").remove();   
+      }
     }
     websiteContentContainer.innerHTML = "";
     homeButton.classList = "button is-selected";
@@ -46,8 +48,10 @@ export function loadNavigationBar(path) {
   savedVideosPage.onclick = (e) => {
     e.preventDefault(); 
     if(document.getElementById("download-status-container"))  { 
-      document.getElementById("download-status-container").remove();
-      currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      if(stopInterval == "cleared Interval"){
+        document.getElementById("download-status-container").remove();   
+      }
     }
     websiteContentContainer.innerHTML = "";
     homeButton.classList = "button category-link";

@@ -60,7 +60,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
         // videoProgressContainer
         basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID].video["download-status"]}`);
         // thubnailProgressContainer
-        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID].thumbnail ["download-status"]}`);     
+        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID].thumbnail["download-status"]}`);     
       }   
     });
   }
@@ -72,14 +72,20 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
   const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
   //  title
   basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${video_ID}`); 
-  if(thumbnailProgress["download-status"] == "unfinished download" || videoProgress["download-status"] == "unfinished download") {
-    const completeDownloadButton = basic.createLink(videoDownloadStatusContainer, "javascript:;", `${video_ID}-complete-download-button`, "button completeVideoDownloadButton", "Complete Download"); 
+  if(videoProgress["download-status"] == "unfinished download") {
+    const completeVideoDownloadButton = basic.createLink(videoDownloadStatusContainer, "javascript:;", `${video_ID}-complete-download-button`, "button completeVideoDownloadButton", "Restore damaged video"); 
     // action on button click
-    completeDownloadButton.onclick = (e) => {
+    completeVideoDownloadButton.onclick = (e) => {
       e.preventDefault(); 
       completeDownloadRequest(video_ID);  
     }; 
-
+  } else if(thumbnailProgress["download-status"] == "unfinished download" ){
+    const completeVideoDownloadButton = basic.createLink(videoDownloadStatusContainer, "javascript:;", `${video_ID}-complete-download-button`, "button completeVideoDownloadButton", "Generate thumbnails"); 
+    // action on button click
+    completeVideoDownloadButton.onclick = (e) => {
+      e.preventDefault(); 
+      completeDownloadRequest(video_ID);  
+    }; 
   } else{
     // videoProgressContainer
     basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-video`,`Video Progress: ${videoProgress["download-status"]}`);
@@ -118,4 +124,5 @@ export function loadAvailableVideoDownloadDetails(){
 // Stop Fetching Available Video Download Details
 export function stopAvailableVideoDownloadDetails(){
   clearInterval(VideoDownloadDetailsInterval); 
+  return("cleared Interval")
 }

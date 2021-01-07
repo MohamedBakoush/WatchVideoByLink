@@ -84,8 +84,10 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     option_menu_edit.onclick = function(e){
       e.preventDefault();
       if(document.getElementById("download-status-container"))  { 
-        document.getElementById("download-status-container").remove();
-        currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+        const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+        if(stopInterval == "cleared Interval"){
+          document.getElementById("download-status-container").remove();   
+        }
       }
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";

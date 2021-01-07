@@ -1,1 +1,9 @@
-{}
+{
+  "1155a051-d1ac-4293-82dd-06d9c1677c5e": {
+    "video": {
+      "originalVideoSrc": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      "originalVideoType": "video/mp4",
+      "download": 24.488940564254865
+    }
+  }
+}
