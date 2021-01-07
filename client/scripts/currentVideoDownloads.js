@@ -1,6 +1,7 @@
 import * as basic from "../scripts/basics.js";
 "use strict";
 
+let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 const websiteContentContainer = document.getElementById("websiteContentContainer");
 
 // try to fetch for current-video-downloads if successful send data to currentVideoDownloads function else show error msg
@@ -10,12 +11,32 @@ async function loadVideoDetails() {
     let currentVideoDownloads;
     if (response.ok) {
       currentVideoDownloads = await response.json();
-      eachAvailableVideoDownloadDetails(currentVideoDownloads);
+      if(show_current_downloads_clicked == true){ // show current_downloads when show_current_downloads is supposed to be active
+        eachAvailableVideoDownloadDetails(currentVideoDownloads);      
+      }
     } else {
       currentVideoDownloads = { msg: "failed to load messages" };
     }
-  } catch (e) { // when an error occurs
-    console.log("error"); 
+  } catch (e) { // when an error occurs  
+    let container, videoDownloadStatusContainer; 
+    if(!document.getElementById("download-status-container"))  {  
+      container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+    } else {
+      container = document.getElementById("download-status-container");
+    }   
+    if(show_current_downloads_clicked == false){ // stop showing current_downloads when show_current_downloads is no longer supposed to be active
+      container.remove();
+      clearInterval(VideoDownloadDetailsInterval); 
+    } else {
+      // assign videoDownloadStatusContainer Failed fetch current downloads msg conainer
+      videoDownloadStatusContainer = document.getElementById("failed-fetch-available-download-details");
+      // No current downloads msg
+      if(!videoDownloadStatusContainer){ 
+        container.innerHTML = "";
+        videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "failed-fetch-available-download-details"); 
+        basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "Error: Failed fetch download details");  
+      } 
+    }
   }
 } 
 
@@ -35,7 +56,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
     if(!videoDownloadStatusContainer){ 
       container.innerHTML = "";
       videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "no-current-dowloads-available"); 
-      basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "No Current Dowloads");  
+      basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "No current available dowloads");  
     }
   } else  {
     // available downloads
@@ -116,13 +137,14 @@ async function completeDownloadRequest(filename) {
   }  
 }  
 
-let VideoDownloadDetailsInterval;
-// Start Fetching Available Video Download Details
-export function loadAvailableVideoDownloadDetails(){
+// Start Fetching Available Video Download Details 
+export function loadAvailableVideoDownloadDetails(show_current_downloads){ 
+  show_current_downloads_clicked = show_current_downloads;
   VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 50);
 }
 // Stop Fetching Available Video Download Details
-export function stopAvailableVideoDownloadDetails(){
+export function stopAvailableVideoDownloadDetails(show_current_downloads){
+  show_current_downloads_clicked = show_current_downloads;
   clearInterval(VideoDownloadDetailsInterval); 
   return("cleared Interval")
 }

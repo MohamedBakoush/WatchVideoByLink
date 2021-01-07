@@ -44,7 +44,7 @@ export function showDetails() {
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
     if(document.getElementById("download-status-container"))  {
-      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
       if(stopInterval == "cleared Interval"){
         document.getElementById("download-status-container").remove();   
       }

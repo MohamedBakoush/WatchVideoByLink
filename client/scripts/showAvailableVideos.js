@@ -84,7 +84,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     option_menu_edit.onclick = function(e){
       e.preventDefault();
       if(document.getElementById("download-status-container"))  { 
-        const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+        const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
         if(stopInterval == "cleared Interval"){
           document.getElementById("download-status-container").remove();   
         }

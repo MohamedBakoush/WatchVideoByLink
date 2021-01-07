@@ -31,7 +31,7 @@ export function loadNavigationBar(path) {
   homeButton.onclick = (e) => {
     e.preventDefault(); 
     if(document.getElementById("download-status-container"))  {
-      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
       if(stopInterval == "cleared Interval"){
         document.getElementById("download-status-container").remove();   
       }
@@ -48,7 +48,7 @@ export function loadNavigationBar(path) {
   savedVideosPage.onclick = (e) => {
     e.preventDefault(); 
     if(document.getElementById("download-status-container"))  { 
-      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
       if(stopInterval == "cleared Interval"){
         document.getElementById("download-status-container").remove();   
       }
@@ -68,9 +68,9 @@ export function loadNavigationBar(path) {
     e.preventDefault(); 
       if (document.getElementById("download-status-container")){ 
           document.getElementById("download-status-container").remove();
-          currentVideoDownloads.stopAvailableVideoDownloadDetails();  
+          currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
       } else {
-        currentVideoDownloads.loadAvailableVideoDownloadDetails();
+        currentVideoDownloads.loadAvailableVideoDownloadDetails(true);
       } 
   };
 }
