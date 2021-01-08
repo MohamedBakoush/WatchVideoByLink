@@ -254,6 +254,10 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
         currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
         const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
         FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+      } else if(!FileSystem.existsSync("./media/working-video/video.mp4")){//update working-video/video.mp4 is unavailable
+        currentDownloadVideos[fileName]["video"]["download-status"] = "working video for untrunc is unavailable";  
+        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+        FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
       } else{ // update video is unfinnished
         currentDownloadVideos[fileName]["video"]["download-status"] = "unfinished download";
         const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
