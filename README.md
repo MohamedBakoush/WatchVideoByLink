@@ -90,11 +90,18 @@ cd WatchVideoByLink
 
 Alternatively you may download and unpack the [zip](https://github.com/MohamedBakoush/WatchVideoByLink/archive/master.zip)
 
-### Install dependencies
+### Install Dependencies
 Install dependencies by:
 
 ```
 npm install
+```
+
+### Download Working Videos For Unturnc
+Download working videos for untrunc by:
+
+```
+npm run-script download-working-videos-for-unturnc 
 ```
 
 ### Start Server
