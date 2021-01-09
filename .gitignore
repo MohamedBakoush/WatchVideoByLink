@@ -8,10 +8,6 @@ node_modules/
 media/deleted-videos/**
 media/video/**
 
-# Dont ignore working video folder content
-# !media/working-video/video.mp4
-# !media/working-video/video-info.txt
-
 # FFmpeg files
 ffmpeg.exe
 ffprobe.exe
