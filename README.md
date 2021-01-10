@@ -33,7 +33,7 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
-- All current video/thubnail downloads is viewable from homepage, top right conrner
+- All current video/thubnail downloads is viewable from homepage, top right corner
 - Video players
   - Video Type: MP4 Supports:
     - .mp4 files
