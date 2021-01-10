@@ -1,4 +1,5 @@
 import * as basic from "../scripts/basics.js";
+import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 "use strict";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
@@ -29,7 +30,7 @@ async function loadVideoDetails() {
 function eachAvailableVideoDetails(videoDetails) {
   if (Object.keys(videoDetails).length == 0) { // no available videos
     const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
-    basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+    basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
   } else {
     const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
     Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
@@ -82,6 +83,12 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     option_menu_edit.title = "Edit";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
+      if(document.getElementById("download-status-container"))  { 
+        const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
+        if(stopInterval == "cleared Interval"){
+          document.getElementById("download-status-container").remove();   
+        }
+      }
       linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu_container.remove();
@@ -234,7 +241,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           savedVideosThumbnailContainer.remove();
           const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
-          basic.createSection(noAvailableVideosContainer, "h1", undefined, undefined,  "There has been no recorded/downloaded videos.");
+          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
         }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
         alert(`failed to deleted ${videoID} video`);

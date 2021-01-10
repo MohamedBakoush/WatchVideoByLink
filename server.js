@@ -14,6 +14,18 @@ function videoLinkFromUrl(req, res){
   streamVideoFile.getVideoLinkFromUrl(req, res);
 }
 
+// update video player volume settings
+app.post("/updateVideoPlayerVolume", express.json(), updateVideoPlayerVolume);
+function updateVideoPlayerVolume(req, res) {
+  streamVideoFile.updateVideoPlayerVolume(req, res);
+}
+
+// get video player settings
+app.get("/getVideoPlayerSettings", getVideoPlayerSettings);
+function getVideoPlayerSettings(req, res) {
+  res.json(streamVideoFile.getVideoPlayerSettings());
+}
+
 // get video thumbnail by video id and thumbnail number header
 app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
 function streamImageById(req, res){
@@ -74,6 +86,18 @@ function savedVideos(req, res){
   res.sendFile(path.join(__dirname, "client", "index.html"));
 }
 
+//show current downloads
+app.get("/current-video-downloads", currentDownloads);
+function currentDownloads(req, res){
+  res.json(streamVideoFile.currentDownloads());
+}
+
+// complete download unfinnished video by specified video id header
+app.post("/complete-unfinnished-video-download",  express.json(), completeUnfinnishedVideoDownload);
+function completeUnfinnishedVideoDownload(req, res){
+  streamVideoFile.completeUnfinnishedVideoDownload(req, res);
+} 
+
 // adds html as extensions, dont need to write index.html
 app.use(express.static("client", { extensions: ["html"] }));
 
@@ -84,6 +108,8 @@ app.get("*", function(req, res){
 
 // application runs on port 8080
 app.set("port", (process.env.PORT || 8080));
-app.listen(app.get("port"), function() {
+app.listen(app.get("port"), function() { 
   console.log("Server running at:" + app.get("port"));
+  // cheack for available unfinished video downloads
+  streamVideoFile.cheackForAvailabeUnFinishedVideoDownloads();
 });

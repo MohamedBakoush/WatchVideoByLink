@@ -12,3 +12,13 @@ media/video/**
 ffmpeg.exe
 ffprobe.exe
 ffplay.exe
+
+# unturnc files
+untrunc.exe
+SWRESAMPLE-2.DLL
+LIBWINPTHREAD-1.DLL
+LIBSTDC++-6.DLL
+LIBGCC_S_SEH-1.DLL
+AVUTIL-55.DLL
+AVFORMAT-57.DLL
+AVCODEC-57.DLL

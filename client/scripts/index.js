@@ -2,6 +2,7 @@ import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as basic from "../scripts/basics.js";
 import * as navigationBar from "../scripts/navigationBar.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 "use strict";
 
 const websiteContentContainer = document.getElementById("websiteContentContainer");
@@ -42,6 +43,12 @@ export function showDetails() {
   basic.createInput(videoLinkForm, "submit", "Watch Video", undefined , "button watchVideoButton");
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
+    if(document.getElementById("download-status-container"))  {
+      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
+      if(stopInterval == "cleared Interval"){
+        document.getElementById("download-status-container").remove();   
+      }
+    }
     if (videoTypeSelect.value === "Automatic") {
       getVideoUrlAuto(videoLinkInput.value);
       // remove videoLink from client
@@ -62,10 +69,14 @@ export function showDetails() {
 }
 
 // assign video src and type to video id
-function showVideo(videoSrc, videoType, videoLinkFromUrl) {
-  document.title = "Watching Video By Provided Link";
+async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
+  // fetch video settings
+  const videoPlayerSettings = await getVideoPlayerSettings(); 
+  // update info
+  document.title = "Watching Video By Provided Link"; 
   document.body.classList = "watching-video-body";
   websiteContentContainer.classList = "watching-video-websiteContentContainer";
+  // create video player
   const videoPlayer = basic.createSection(websiteContentContainer, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
   videoPlayer.style.width = "100vw";
   videoPlayer.style.height = "100vh";
@@ -87,7 +98,11 @@ function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     const topControls = videoButton.topPageControlBarContainer(player);
     videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
-    player.muted(true); // mute video on load
+    player.muted(videoPlayerSettings.muted); // set mute video settings on load
+    player.volume(videoPlayerSettings.volume);  // set volume video settings on load
+    document.getElementById("video_html5_api").onvolumechange = (event) => {  // update global video player volume/mute settings
+      updateVideoPlayerVolume(player.volume(), player.muted()); 
+    };
     player.src({  // video type and src
       type: videoType,
       src: videoSrc
@@ -109,7 +124,11 @@ function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     const topControls = videoButton.topPageControlBarContainer(player);
     videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
-    player.muted(true); // mute video on load
+    player.muted(videoPlayerSettings.muted); // set mute video settings on load
+    player.volume(videoPlayerSettings.volume);  // set volume video settings on load
+    document.getElementById("video_html5_api").onvolumechange = (event) => {  // update global video player volume/mute settings
+      updateVideoPlayerVolume(player.volume(), player.muted()); 
+    };
     player.src({  // video type and src
       type: videoType,
       src: videoSrc
@@ -151,11 +170,52 @@ function showVideo(videoSrc, videoType, videoLinkFromUrl) {
 
     videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
-    player.muted(true); // mute video on load
+    player.muted(videoPlayerSettings.muted); // set mute video settings on load
+    player.volume(videoPlayerSettings.volume);  // set volume video settings on load 
+    document.getElementById("video_html5_api").onvolumechange = (event) => { // update global video player volume/mute settings
+      updateVideoPlayerVolume(player.volume(), player.muted()); 
+    };  
     player.src({  // video type and src
       type: videoType,
       src: videoSrc
     });
+  }
+}
+
+// get video player settings
+async function getVideoPlayerSettings() {
+  const response = await fetch(`../getVideoPlayerSettings`);
+  let videoPlayerSettings
+  if(response.ok){
+    videoPlayerSettings = await response.json();  
+    return videoPlayerSettings;
+  }else {
+    // failed to fetch video settings
+    videoPlayerSettings = {
+      volume: 1.0,
+      muted: false
+    } 
+    return videoPlayerSettings; 
+  }
+}
+
+// update video player volume settings
+async function updateVideoPlayerVolume(volume, muted) {
+  const payload = {  // data sending in fetch request
+    updatedVideoPlayerVolume : volume,
+    updatedVideoPlayerMuted : muted
+  };
+  const response = await fetch("../updateVideoPlayerVolume", { // look for video data from provided url_link
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  let updatedVideoPlayerVolume;
+  if (response.ok) { 
+    updatedVideoPlayerVolume = await response.json(); 
+  }else {
+    updatedVideoPlayerVolume = { msg: "failed to update video volume messages" };
   }
 }
 
@@ -170,7 +230,7 @@ function getVideoUrlAuto(url_link) {
   websiteContentContainer.classList = "index-websiteContentContainer";
   // searchingForVideoLinkMessage
   const searchingForVideoLinkMessageContainer = basic.createSection(websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
-  basic.createSection(searchingForVideoLinkMessageContainer, "h1", undefined, undefined,  `Searching for video link: ${url_link}`);
+  basic.createSection(searchingForVideoLinkMessageContainer, "h1", "getVideoUrlAutoMessageHeader", undefined,  `Searching for video link: ${url_link}`);
   // look for video data from url_link
   getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
 }

@@ -24,6 +24,8 @@ header{
 }
 .NavigationBar ul{
     /* padding-left: 96.2px; */
+    display: grid;
+    width: 100vw;
 }
 .NavigationBar ul li{
     padding: 1rem;
@@ -37,7 +39,6 @@ header{
 @media (max-width: 990px) {
   .NavigationBar ul{
     padding-left: 0;
-    display: grid;
     grid-template-columns: 1fr;
     margin: auto;
     justify-content: center;
@@ -81,3 +82,23 @@ border-radius: 2em;
   font-size: .75rem;
   cursor: pointer;
 }
+
+.current-dowloads-nav{
+  float: right;
+  margin: 0px .5rem 0px 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.44444;
+  padding: 0 1em;
+  height: 2.1875rem; 
+  border: 1px solid #fff;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2em;
+}
+.current-dowloads-nav:hover{
+  border-radius: 0em;
+  border: 1px solid #000;
+  transition: border-radius .3s linear;
+  }

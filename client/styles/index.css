@@ -1,4 +1,5 @@
 @import url("NavigationBar.css");
+@import url("current-downloads.css");
 @import url("showAvailableVideos.css");
 *{
   margin: 0;
@@ -42,6 +43,10 @@ body, .index-body, .index-websiteContentContainer,
 .getVideoUrlAutoMessageConatinaer {
   margin: auto;
   padding-top: 51.15vh;
+}
+
+.noAvailableVideosHeader, .getVideoUrlAutoMessageHeader{
+  text-align: center;
 }
 
 .videoLinkContainer form{

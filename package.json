@@ -2,9 +2,10 @@
   "name": "WatchVideoByLink",
   "version": "1.0.0",
   "description": "Watch Videos By A Public Video Link",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
     "start": "node server",
+    "download-working-videos-for-unturnc": "node download-working-videos-for-unturnc.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
