@@ -1,5 +1,7 @@
 "use strict";
 
+export const websiteContentContainer = document.getElementById("websiteContentContainer");
+
 // create a input element
 // with optional input type, id, classList and if input type is required or not
 export function inputType(container, type, idHere, classHere, required){
@@ -124,5 +126,68 @@ export function createLink(container, herf, idHere, classHere, textContent) {
     return linkContainer; // return linkContainer
   } catch (e) { // return fail
     return "createLink didnt work";
+  }
+}
+
+export function notify(type,message){
+  (()=>{
+
+    if(!document.getElementById("notification-area")){
+      createSection(websiteContentContainer, "section" , undefined, "notification-area");
+    }
+
+    // clear what was there before
+    // shows only one icon at a time 
+    document.getElementById("notification-area").innerHTML = "";
+
+    // create new 
+    let n = document.createElement("div");
+    let id = Math.random().toString(36).substr(2,10);
+    n.setAttribute("id",id);
+    n.classList.add("notification",type);
+    n.innerText = message;
+    document.getElementById("notification-area").appendChild(n);
+    var timer = new Timer(()=>{
+      var notifications = document.getElementById("notification-area").getElementsByClassName("notification");
+      for(let i=0;i<notifications.length;i++){
+        if(notifications[i].getAttribute("id") == id){
+          notifications[i].remove();
+          break;
+        }
+      } 
+    },5000);
+    const checkIfHasFocus = setInterval(function(){  
+      if(document.hasFocus()){
+        clearInterval(checkIfHasFocus);
+      }else{
+        timer.change(5000); // change time to five seconds
+      }
+    }, 1000);
+ 
+  })();
+}
+
+function Timer(callback, time) {
+  this.setTimeout(callback, time);
+}
+
+Timer.prototype.setTimeout = function(callback, time) {
+  var self = this;
+  if(this.timer) {
+      clearTimeout(this.timer);
+  }
+  this.finished = false;
+  this.callback = callback;
+  this.time = time;
+  this.timer = setTimeout(function() {
+      self.finished = true;
+      callback();
+  }, time);
+  this.start = Date.now();
+}
+
+Timer.prototype.change = function(time) {
+  if(!this.finished) {
+      this.setTimeout(this.callback, time);
   }
 }

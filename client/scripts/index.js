@@ -258,7 +258,7 @@ async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContain
       // if url_link provided failed to get required video data
       if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
         // invalid url alert msg
-        alert("Invalid Url Link.");
+        basic.notify("error",`Invalid Url Link`);
         // change address bar
         history.pushState(null, "", "/");
         // load index details into html

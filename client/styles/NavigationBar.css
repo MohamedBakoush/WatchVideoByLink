@@ -20,7 +20,7 @@ header{
 
 .NavigationBar{
   display: grid;
-  justify-content: space-between;
+  justify-content: space-between; 
 }
 .NavigationBar ul{
     /* padding-left: 96.2px; */
@@ -92,7 +92,7 @@ border-radius: 2em;
   line-height: 1.44444;
   padding: 0 1em;
   height: 2.1875rem; 
-  border: 1px solid #fff;
+  border: 1px solid #fff0;
   text-decoration: none;
   cursor: pointer;
   border-radius: 2em;

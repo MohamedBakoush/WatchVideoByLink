@@ -237,14 +237,14 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
-        alert(`video ${videoID} has been deleted`);
+        basic.notify("success",`Deleted: ${videoID}`);
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           savedVideosThumbnailContainer.remove();
           const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
           basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
         }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
-        alert(`failed to deleted ${videoID} video`);
+        basic.notify("error",`Failed Delete: ${videoID}`);
       }
       return "videoDataDeletedPermanently";
     }

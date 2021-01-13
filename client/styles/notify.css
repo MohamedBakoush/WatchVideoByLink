@@ -1,0 +1,39 @@
+#notification-area {
+    position:fixed; 
+    right:10px;
+    width:250px; 
+    bottom: calc(20px + 3em);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+}
+
+#notification-area .notification { 
+    position: relative;  
+    font-family: "Raleway";
+    font-size: 14px;
+    font-weight: 600; 
+    margin: 5px 0px;
+    opacity: 0;
+    padding: 1rem 1rem 0.5rem 1rem;
+    left: 20px;
+    animation: showNotification 500ms ease-in-out forwards;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    border-color: #000000;
+}
+
+@keyframes showNotification {
+    to {
+        opacity:1;
+        left:0px;
+    }
+}
+
+#notification-area .notification.success {
+    background:#fff;
+}
+
+#notification-area .notification.error {
+    background:#f9cccc;
+} 
