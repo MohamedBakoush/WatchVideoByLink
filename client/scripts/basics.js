@@ -130,47 +130,47 @@ export function createLink(container, herf, idHere, classHere, textContent) {
 }
 
 export function notify(type,message){
-  (()=>{
+  // create notification_area if not available
+  let notification_area;
+  if(!document.getElementById("notification-area")){
+    notification_area = createSection(websiteContentContainer, "section" , undefined, "notification-area");
+  } else{
+    notification_area = document.getElementById("notification-area");
+  }
 
-    if(!document.getElementById("notification-area")){
-      createSection(websiteContentContainer, "section" , undefined, "notification-area");
-    }
+  // clear what was their before, only only one notification at a time 
+  notification_area.innerHTML = "";
 
-    // clear what was there before
-    // shows only one icon at a time 
-    document.getElementById("notification-area").innerHTML = "";
+  // create new notification
+  const id = Math.random().toString(36).substr(2,10); 
+  createSection(notification_area, "section", `notification ${type}`, id, message);
 
-    // create new 
-    let n = document.createElement("div");
-    let id = Math.random().toString(36).substr(2,10);
-    n.setAttribute("id",id);
-    n.classList.add("notification",type);
-    n.innerText = message;
-    document.getElementById("notification-area").appendChild(n);
-    var timer = new Timer(()=>{
-      var notifications = document.getElementById("notification-area").getElementsByClassName("notification");
-      for(let i=0;i<notifications.length;i++){
-        if(notifications[i].getAttribute("id") == id){
-          notifications[i].remove();
-          break;
-        }
-      } 
-    },5000);
-    const checkIfHasFocus = setInterval(function(){  
-      if(document.hasFocus()){
-        clearInterval(checkIfHasFocus);
-      }else{
-        timer.change(5000); // change time to five seconds
+  // after a certin number of time, remove notifications
+  const timer = new Timer(()=>{
+    const notifications = notification_area.getElementsByClassName("notification");
+    for(let i=0;i<notifications.length;i++){
+      if(notifications[i].getAttribute("id") == id){
+        notifications[i].remove();
+        break;
       }
-    }, 1000);
- 
-  })();
+    } 
+  },5000);
+  //check if user is focued on webpage, if not repeate time for timer
+  const checkIfHasFocus = setInterval(function(){  
+    if(document.hasFocus()){
+      clearInterval(checkIfHasFocus);
+    }else{
+      timer.change(5000); // change time to five seconds
+    }
+  }, 1000); 
 }
 
+// create a timer
 function Timer(callback, time) {
   this.setTimeout(callback, time);
 }
 
+// set setTimeout
 Timer.prototype.setTimeout = function(callback, time) {
   var self = this;
   if(this.timer) {
@@ -186,6 +186,7 @@ Timer.prototype.setTimeout = function(callback, time) {
   this.start = Date.now();
 }
 
+// change setTimeout time
 Timer.prototype.change = function(time) {
   if(!this.finished) {
       this.setTimeout(this.callback, time);
