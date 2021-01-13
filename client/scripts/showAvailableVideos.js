@@ -2,8 +2,6 @@ import * as basic from "../scripts/basics.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 "use strict";
 
-const websiteContentContainer = document.getElementById("websiteContentContainer");
-
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 async function loadVideoDetails() {
   try {
@@ -19,7 +17,7 @@ async function loadVideoDetails() {
     // if responseErrorAvailableVideo id dosent exist
     if (!document.getElementById("responseErrorAvailableVideo")) {
       // show error msg
-      const responseError = basic.createSection(websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
+      const responseError = basic.createSection(basic.websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
       basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
     }
   }
@@ -29,10 +27,10 @@ async function loadVideoDetails() {
 // if there are no videoDetails then show  noAvailableVideos msg
 function eachAvailableVideoDetails(videoDetails) {
   if (Object.keys(videoDetails).length == 0) { // no available videos
-    const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
+    const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
     basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
   } else {
-    const container = basic.createSection(websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+    const container = basic.createSection(basic.websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
     Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
       if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
         showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
@@ -240,7 +238,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
         basic.notify("success",`Deleted: ${videoID}`);
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           savedVideosThumbnailContainer.remove();
-          const noAvailableVideosContainer = basic.createSection(websiteContentContainer, "section", "noAvailableVideosContainer");
+          const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
           basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
         }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
