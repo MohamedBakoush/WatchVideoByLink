@@ -151,7 +151,6 @@ export function notify(type,message){
     for(let i=0;i<notifications.length;i++){
       if(notifications[i].getAttribute("id") == id){
         notifications[i].remove();
-        break;
       }
     } 
   },5000);
