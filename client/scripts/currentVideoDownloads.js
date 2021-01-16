@@ -2,7 +2,6 @@ import * as basic from "../scripts/basics.js";
 "use strict";
 
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
-const websiteContentContainer = document.getElementById("websiteContentContainer");
 
 // try to fetch for current-video-downloads if successful send data to currentVideoDownloads function else show error msg
 async function loadVideoDetails() {
@@ -20,7 +19,7 @@ async function loadVideoDetails() {
   } catch (e) { // when an error occurs  
     let container, videoDownloadStatusContainer; 
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+      container = basic.createSection(basic.websiteContentContainer, "section", "download-status-container", "download-status-container"); 
     } else {
       container = document.getElementById("download-status-container");
     }   
@@ -46,7 +45,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
   if (Object.keys(videoDownloadDetails).length == 0){  
     // make sure container exists
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+      container = basic.createSection(basic.websiteContentContainer, "section", "download-status-container", "download-status-container"); 
     } else {
       container = document.getElementById("download-status-container");
     } 
@@ -61,7 +60,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
   } else  {
     // available downloads
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+      container = basic.createSection(basic.websiteContentContainer, "section", "download-status-container", "download-status-container"); 
     }
     // check each data from videoDownloadDetails in reverse order
     Object.keys(videoDownloadDetails).reverse().forEach(function(videoInfo_ID) {    
