@@ -1,6 +1,7 @@
 "use strict";
 
 export const websiteContentContainer = document.getElementById("websiteContentContainer");
+export const favicon = document.getElementById('favicon');
 
 // create a input element
 // with optional input type, id, classList and if input type is required or not
@@ -145,6 +146,12 @@ export function notify(type,message){
   const id = Math.random().toString(36).substr(2,10); 
   createSection(notification_area, "section", `notification ${type}`, id, message);
 
+  // if user is not focued on webpage
+  if(!document.hasFocus()){
+    // change favicon
+    addFaviconNotificationBadge()
+  }
+  
   // after a certin number of time, remove notifications
   const timer = new Timer(()=>{
     const notifications = notification_area.getElementsByClassName("notification");
@@ -154,9 +161,13 @@ export function notify(type,message){
       }
     } 
   },5000);
+
   //check if user is focued on webpage, if not repeate time for timer
   const checkIfHasFocus = setInterval(function(){  
     if(document.hasFocus()){
+      // change favicon
+      originalFavicon();
+      // clear checkIfHasFocus
       clearInterval(checkIfHasFocus);
     }else{
       timer.change(5000); // change time to five seconds
@@ -165,7 +176,7 @@ export function notify(type,message){
 }
 
 // create a timer
-function Timer(callback, time) {
+export function Timer(callback, time) {
   this.setTimeout(callback, time);
 }
 
@@ -190,4 +201,36 @@ Timer.prototype.change = function(time) {
   if(!this.finished) {
       this.setTimeout(this.callback, time);
   }
+}
+
+// replace favicon with original favicon
+export function originalFavicon() { 
+  favicon.href = "../favicon.ico";
+}
+
+// change favicon with a red circle bottom at left of favicon
+export function addFaviconNotificationBadge() {  
+  const faviconSize = 32; 
+
+  const canvas = document.createElement('canvas');
+  canvas.width = faviconSize;
+  canvas.height = faviconSize;
+
+  const context = canvas.getContext('2d');
+  const img = document.createElement('img');
+  img.src = favicon.href;
+
+  img.onload = () => {
+    // Draw Original Favicon as Background
+    context.drawImage(img, 0, 0, faviconSize, faviconSize);
+
+    // Draw Notification Circle
+    context.beginPath();
+    context.arc( canvas.width - faviconSize / 4 , canvas.height - faviconSize / 4, faviconSize / 4, 0, 2*Math.PI);
+    context.fillStyle = '#e84545';
+    context.fill();
+
+    // Replace favicon
+    favicon.href = canvas.toDataURL('image/png');
+  };
 }
