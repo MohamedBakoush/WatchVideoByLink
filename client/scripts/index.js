@@ -159,7 +159,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       src: videoSrc
     });
   } else {
-    var player = videojs(videoPlayer, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
       techOrder: [ "chromecast", "html5" ],
