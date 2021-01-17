@@ -86,6 +86,24 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       preload: "auto"
     });
 
+    // video hotkeys
+    videojs(videoPlayer).ready(function() {
+      this.hotkeys({
+        volumeStep: 0.05,
+        seekStep: false,
+        enableModifiersForNumbers: false,
+        // just in case seekStep is active, switch forwardKey and rewindKey hotkeys
+        forwardKey: function(event, player) {
+          // override forwardKey to trigger when pressing Ctrl+Alt+i+forwardKey
+          return ((event.ctrlKey && event.altKey && event.which === 73 && event.which === 39));
+        },
+        rewindKey: function(event, player) { 
+          // override forwardKey to trigger when pressing Ctrl+Alt+i+rewindKey
+          return ((event.ctrlKey && event.altKey && event.which === 73 && event.which === 37));
+        }
+      });
+    });
+
     // record stream
     const StopRecButton = videoButton.stopRecStreamButton(player, Button);
     const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
@@ -119,6 +137,15 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       preload: "auto"
     });
 
+    // video hotkeys
+    videojs(videoPlayer).ready(function() {
+      this.hotkeys({
+        volumeStep: 0.05,
+        seekStep: 5,
+        enableModifiersForNumbers: false
+      });
+    });
+
     const topControls = videoButton.topPageControlBarContainer(player);
     videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
@@ -144,6 +171,16 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
         }
       }
     });
+    
+    // video hotkeys
+    videojs(videoPlayer).ready(function() {
+      this.hotkeys({
+        volumeStep: 0.05,
+        seekStep: 5,
+        enableModifiersForNumbers: false
+      });
+    });
+
     const topControls = videoButton.topPageControlBarContainer(player);
     const downloadVideoContainer = basic.createSection(topControls, "div", "vjs-downloadVideo-container");
     const downloadVideoButton = basic.createSection(downloadVideoContainer, "button", "vjs-downloadVideo fa fa-download vjs-control vjs-button", "downloadVideoButton");
