@@ -33,7 +33,10 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
-- All current video/thubnail downloads is viewable from homepage, top right corner
+- View current video/thubnail downloads from Homepage or /saved/videos
+  - If video download is unfinished 
+    - Option to Generate thumbnails
+    - Option to Restore damaged video using unturnc
 - Video players
   - Video Type: MP4 Supports:
     - .mp4 files
@@ -77,10 +80,11 @@ Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spre
   - [FFmpeg](https://ffmpeg.org/) - A complete, cross-platform solution to record, convert and stream audio and video.
     1. [Download FFmpeg from https://ffmpeg.org/download.html](https://ffmpeg.org/download.html) 
     2. Once FFmpeg has been downloaded drop ffmpeg.exe and ffprobe.exe files (which could be found in ffmpeg\bin folder) in WatchVideoByLink folder.
-  - [Untrunc](https://github.com/anthwlock/untrunc) - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video. And some luck.
+  - [Untrunc](https://github.com/anthwlock/untrunc) - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video. And some luck.  
     1. [Download Untrunc from https://github.com/anthwlock/untrunc](https://github.com/anthwlock/untrunc) 
     2. Once Untrunc has been downloaded drop all Untrunc files in WatchVideoByLink folder. 
-  
+  - **Warning using Untrunc may not achieve desired results**
+
 ### Clone Repository
 You can clone the repository to a local destination using git:
 ```
