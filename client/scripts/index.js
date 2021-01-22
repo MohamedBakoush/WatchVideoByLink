@@ -86,6 +86,24 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       preload: "auto"
     });
 
+    // video hotkeys
+    videojs(videoPlayer).ready(function() {
+      this.hotkeys({
+        volumeStep: 0.05,
+        seekStep: false,
+        enableModifiersForNumbers: false,
+        // just in case seekStep is active, return undefined
+        forwardKey: function(event, player) {
+          // override forwardKey to not trigger when pressed
+          return undefined;
+        },
+        rewindKey: function(event, player) { 
+          // override rewindKey to not trigger when pressed
+          return undefined;
+        }
+      });
+    });
+
     // record stream
     const StopRecButton = videoButton.stopRecStreamButton(player, Button);
     const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
@@ -119,6 +137,15 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       preload: "auto"
     });
 
+    // video hotkeys
+    videojs(videoPlayer).ready(function() {
+      this.hotkeys({
+        volumeStep: 0.05,
+        seekStep: 5,
+        enableModifiersForNumbers: false
+      });
+    });
+
     const topControls = videoButton.topPageControlBarContainer(player);
     videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
@@ -132,7 +159,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       src: videoSrc
     });
   } else {
-    var player = videojs(videoPlayer, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
       techOrder: [ "chromecast", "html5" ],
@@ -144,6 +171,16 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
         }
       }
     });
+    
+    // video hotkeys
+    videojs(videoPlayer).ready(function() {
+      this.hotkeys({
+        volumeStep: 0.05,
+        seekStep: 5,
+        enableModifiersForNumbers: false
+      });
+    });
+
     const topControls = videoButton.topPageControlBarContainer(player);
     const downloadVideoContainer = basic.createSection(topControls, "div", "vjs-downloadVideo-container");
     const downloadVideoButton = basic.createSection(downloadVideoContainer, "button", "vjs-downloadVideo fa fa-download vjs-control vjs-button", "downloadVideoButton");
