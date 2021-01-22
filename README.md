@@ -33,7 +33,7 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
 - Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
-- View current video/thubnail downloads from Homepage or /saved/videos
+- View current video/thumbnail downloads from Homepage or /saved/videos
   - If video download is unfinished 
     - Option to Generate thumbnails
     - Option to Restore damaged video using unturnc
