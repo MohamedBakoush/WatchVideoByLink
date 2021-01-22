@@ -92,14 +92,14 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
         volumeStep: 0.05,
         seekStep: false,
         enableModifiersForNumbers: false,
-        // just in case seekStep is active, switch forwardKey and rewindKey hotkeys
+        // just in case seekStep is active, return undefined
         forwardKey: function(event, player) {
-          // override forwardKey to trigger when pressing Ctrl+Alt+i+forwardKey
-          return ((event.ctrlKey && event.altKey && event.which === 73 && event.which === 39));
+          // override forwardKey to not trigger when pressed
+          return undefined;
         },
         rewindKey: function(event, player) { 
-          // override forwardKey to trigger when pressing Ctrl+Alt+i+rewindKey
-          return ((event.ctrlKey && event.altKey && event.which === 73 && event.which === 37));
+          // override rewindKey to not trigger when pressed
+          return undefined;
         }
       });
     });
