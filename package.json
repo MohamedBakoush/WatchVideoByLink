@@ -19,16 +19,16 @@
   },
   "homepage": "https://github.com/MohamedBakoush/WatchVideoByLink#readme",
   "dependencies": {
-    "@silvermine/videojs-chromecast": "^1.2.1",
-    "@videojs/http-streaming": "^1.13.3",
+    "@silvermine/videojs-chromecast": "^1.2.2",
+    "@videojs/http-streaming": "^1.13.4",
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",
     "serve-favicon": "^2.5.0",
-    "uuid": "^8.2.0",
+    "uuid": "^8.3.2",
     "videojs-seek-buttons": "^1.6.0",
-    "youtube-dl": "^3.0.2"
+    "youtube-dl": "^3.1.0"
   },
   "devDependencies": {
-    "eslint": "^7.2.0"
+    "eslint": "^7.18.0"
   }
 }
