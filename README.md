@@ -14,7 +14,6 @@
 * [Features](#features)
 * [WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)](#watchvideobylink-breakdown-structure-under-construction)
 * [Installation](#installation)  
-* [Help/Support](#helpsupport)
 * [License](#license)
 
 ## Reason For Creation
@@ -116,9 +115,6 @@ npm start
 ```
 
 Then open `http://localhost:8080` in your preferred browser.
-
-## Help/Support
-WatchVideoByLink has not been forgotten but i [MohamedBakoush](https://github.com/MohamedBakoush) am busy for the next few months due to school meaning i wont be able to add new features to WatchVideoByLink on a weekly/monthly basis if you would like to contribute in any way possible please dont hesitate.
 
 ## License
 
