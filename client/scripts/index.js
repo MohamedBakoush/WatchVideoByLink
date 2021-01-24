@@ -92,6 +92,11 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       }
     });  
 
+    // change icon from vjs-icon-cog to vjs-icon-hd - needs to be implemented better
+    const httpSourceSelectorIconChange = document.createElement("style");
+    httpSourceSelectorIconChange.innerHTML = `.vjs-icon-cog:before { content: "\\f114"; font-size: 16px; }`;
+    document.head.appendChild(httpSourceSelectorIconChange);
+
     let hlsVideoSrc; 
     try { 
       // check if desired chunklist is in videoSrc
@@ -116,6 +121,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     } catch (error) { // if error orignial video src = hls video src
       hlsVideoSrc = videoSrc;  
     } 
+    
     // video hotkeys
     videojs(videoPlayer).ready(function() {
       this.hotkeys({
