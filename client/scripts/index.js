@@ -80,7 +80,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   videoPlayer.style.height = "100vh";
   const Button = videojs.getComponent("Button"); // eslint-disable-line
   if (videoType == "application/x-mpegURL") {
-    let player = videojs(videoPlayer, {  // eslint-disable-line
+    const player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
       preload: "auto",
@@ -98,7 +98,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     httpSourceSelectorIconChange.innerHTML = `.vjs-icon-cog:before { content: "\\f114"; font-size: 16px; }`;
     document.head.appendChild(httpSourceSelectorIconChange);
 
-    let qualityLevels = player.qualityLevels(); 
+    const qualityLevels = player.qualityLevels(); 
     // disable quality levels with less one qualityLevel options
     qualityLevels.on('addqualitylevel', function(event) {
       let qualityLevel = event.qualityLevel; 
