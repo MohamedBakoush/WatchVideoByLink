@@ -83,9 +83,60 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     const player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
-      preload: "auto"
+      preload: "auto",
+      html5: {
+        vhs: {
+          overrideNative: true
+        },
+        nativeAudioTracks: false,
+        nativeVideoTracks: false 
+      }
+    });  
+
+    // change icon from vjs-icon-cog to vjs-icon-hd - needs to be implemented better
+    const httpSourceSelectorIconChange = document.createElement("style");
+    httpSourceSelectorIconChange.innerHTML = `.vjs-icon-cog:before { content: "\\f114"; font-size: 16px; }`;
+    document.head.appendChild(httpSourceSelectorIconChange);
+
+    const qualityLevels = player.qualityLevels(); 
+    // disable quality levels with less one qualityLevel options
+    qualityLevels.on('addqualitylevel', function(event) {
+      let qualityLevel = event.qualityLevel; 
+      if(qualityLevels.levels_.length <= 1){ 
+        // dont show httpSourceSelector
+        qualityLevel.enabled = false;
+      } else{  
+        // show httpSourceSelector
+        player.httpSourceSelector();
+        qualityLevel.enabled = true;
+      } 
     });
 
+    let hlsVideoSrc; 
+    try { 
+      // check if desired chunklist is in videoSrc
+      if(videoSrc.substr(videoSrc.length - 4) == "m3u8"){ 
+        // get chunklist
+        const chunklist = videoSrc.substring( 
+          videoSrc.lastIndexOf("/") + 1, 
+          videoSrc.lastIndexOf(".m3u8")
+        );   
+        // if chunklist contains chunklist 
+        if(chunklist.includes("chunklist")){ 
+          // hls video src == new video src
+          hlsVideoSrc = videoSrc.slice(0,videoSrc.lastIndexOf("/")+1) + "playlist" + ".m3u8";
+          // replace url from orignial video src to new video src
+          history.replaceState(null, "", `?t=${videoType}?v=${hlsVideoSrc}`);
+        } else{ // orignial video src = hls video src
+          hlsVideoSrc = videoSrc;
+        } 
+      } else{ // orignial video src = hls video src
+        hlsVideoSrc = videoSrc;  
+      }
+    } catch (error) { // if error orignial video src = hls video src
+      hlsVideoSrc = videoSrc;  
+    } 
+    
     // video hotkeys
     videojs(videoPlayer).ready(function() {
       this.hotkeys({
@@ -121,7 +172,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     };
     player.src({  // video type and src
       type: videoType,
-      src: videoSrc
+      src: hlsVideoSrc
     });
     // hide time from live video player
     const style = document.createElement("style");
