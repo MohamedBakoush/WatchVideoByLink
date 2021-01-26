@@ -80,15 +80,16 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   videoPlayer.style.height = "100vh";
   const Button = videojs.getComponent("Button"); // eslint-disable-line
   if (videoType == "application/x-mpegURL") {
-    const player = videojs(videoPlayer, {  // eslint-disable-line
+    let player = videojs(videoPlayer, {  // eslint-disable-line
       controls: true,
       autoplay: true,
       preload: "auto",
-      plugins: {
-        httpSourceSelector:
-        {
-          default: 'auto'
-        }
+      html5: {
+        vhs: {
+          overrideNative: true
+        },
+        nativeAudioTracks: false,
+        nativeVideoTracks: false 
       }
     });  
 
@@ -96,6 +97,20 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     const httpSourceSelectorIconChange = document.createElement("style");
     httpSourceSelectorIconChange.innerHTML = `.vjs-icon-cog:before { content: "\\f114"; font-size: 16px; }`;
     document.head.appendChild(httpSourceSelectorIconChange);
+
+    let qualityLevels = player.qualityLevels(); 
+    // disable quality levels with less one qualityLevel options
+    qualityLevels.on('addqualitylevel', function(event) {
+      let qualityLevel = event.qualityLevel; 
+      if(qualityLevels.levels_.length <= 1){ 
+        // dont show httpSourceSelector
+        qualityLevel.enabled = false;
+      } else{  
+        // show httpSourceSelector
+        player.httpSourceSelector();
+        qualityLevel.enabled = true;
+      } 
+    });
 
     let hlsVideoSrc; 
     try { 
@@ -142,7 +157,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
 
     // record stream
     const StopRecButton = videoButton.stopRecStreamButton(player, Button);
-    const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, hlsVideoSrc, videoType);
+    const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
 
     videojs.registerComponent("RecButton", RecButton);  // eslint-disable-line
     player.getChild("controlBar").addChild("RecButton", {}, 1);
