@@ -11,7 +11,8 @@ function showVideoFromUrl(url) {
     const hostname_typeVideo = url.split("?t=");
     const type_video = hostname_typeVideo[1].split( "?v=");
     const type = type_video[0];
-    const video = type_video[1];
+    const video = type_video[1];  
+    history.replaceState(null, "", `?t=${type}?v=${video}`); 
     // put video src and type in video player
     showVideo(video, type);
 }
@@ -407,10 +408,14 @@ function pageLoaded() {
     const url_pathname = window.location.pathname;
     // show website content depending on url_href/url_pathname
     if (url_href.includes("?t=") && url_href.includes("?v=")) { // play specified video
-      showVideoFromUrl(url_href);
+      // check url for percent encoding
+      const url_link = basic.checkForPercentEncoding(url_href);
+      showVideoFromUrl(url_link);
     } else if (url_href.includes("?auto=")) { // find video data from url link
       const url_link_from_auto = url_href.split("?auto=")[1];
-      getVideoUrlAuto(url_link_from_auto);
+      // check url for percent encoding
+      const url_link = basic.checkForPercentEncoding(url_link_from_auto);
+      getVideoUrlAuto(url_link);
     } else if (url_pathname === "/saved/videos") { // show saved video
       navigationBar.loadNavigationBar("/saved/videos");
       showAvailableVideos.pageLoaded();

@@ -234,3 +234,46 @@ export function addFaviconNotificationBadge() {
     favicon.href = canvas.toDataURL('image/png');
   };
 }
+
+// check for percent encoding
+export function checkForPercentEncoding(string){ 
+  // reserved characters after percent-encoding
+  // gen-delims
+  const str1 = percent_encoding_to_reserved_character(string, "%3A", ":");
+  const str2 = percent_encoding_to_reserved_character(str1, "%2F", "/");
+  const str3 = percent_encoding_to_reserved_character(str2, "%3F", "?");
+  const str4 = percent_encoding_to_reserved_character(str3, "%23", "#");
+  const str5 = percent_encoding_to_reserved_character(str4, "%5B", "[");
+  const str6 = percent_encoding_to_reserved_character(str5, "%5D", "]");
+  const str7 = percent_encoding_to_reserved_character(str6, "%40", "@");
+
+  // sub-delims  
+  const str8 = percent_encoding_to_reserved_character(str7, "%21", "!");
+  const str9 = percent_encoding_to_reserved_character(str8, "%24", "$");
+  const str10 = percent_encoding_to_reserved_character(str9, "%26", "&");
+  const str11 = percent_encoding_to_reserved_character(str10, "%27", "'");
+  const str12 = percent_encoding_to_reserved_character(str11, "%28", "(");
+  const str13 = percent_encoding_to_reserved_character(str12, "%29", ")");
+  const str14 = percent_encoding_to_reserved_character(str13, "%2A", "*");
+  const str15 = percent_encoding_to_reserved_character(str14, "%2B", "+");
+  const str16 = percent_encoding_to_reserved_character(str15, "%2C", ",");
+  const str17 = percent_encoding_to_reserved_character(str16, "%3B", ";");
+  const str18 = percent_encoding_to_reserved_character(str17, "%3D", "=");
+
+  return str18;
+ }
+
+ function percent_encoding_to_reserved_character(string, checkFor, replaceby){
+  var array = string.split(checkFor); 
+  var newarray = [];
+  for(var x = 0; x < array.length; x++){ 
+    if(x == (array.length - 1)){ 
+      newarray.push(array[x]);
+    } else{
+      newarray.push(array[x]+replaceby);
+    }
+  }
+  const str = newarray.join(''); 
+  return str;
+ }
+ 
