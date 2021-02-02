@@ -46,7 +46,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
   const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
   const linkContainer = basic.createLink(container, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, videoInfo_ID, "videoThumbnailContainer");
   const thumbnailContainer = basic.createSection(linkContainer, "section");
-  const imageContainer = basic.createSection(thumbnailContainer, "section");
+  const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container");
 
   const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, undefined, "thumbnail-image", videoInfo_ID);
 
