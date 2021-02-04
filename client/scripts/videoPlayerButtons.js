@@ -18,9 +18,17 @@ export function backToHomePageButton(container, videoLinkFromUrl) {
   backToHomePage.onclick = function() {
     if (videoLinkFromUrl == "Automatic") {
       window.location = "/";
-    } else if (document.referrer.indexOf(window.location.host) !== -1) {
-       history.back();
+    } else if (document.referrer.indexOf(window.location.host) !== -1) { 
+      // history.length: page loaded in a new tab returns 1
+       if(history.length == 1){
+        // load home page
+        window.location = "/";
+       } else{
+        // load previous URL from history list
+        history.back();
+       }
      } else {
+        // load home page
         window.location = "/";
      }
   };
