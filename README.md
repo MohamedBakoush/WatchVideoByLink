@@ -35,7 +35,7 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
 - View current video/thumbnail downloads from Homepage or /saved/videos
   - If video download is unfinished 
     - Option to Generate thumbnails
-    - Option to Restore damaged video using unturnc
+    - Option to Restore damaged video using untrunc
 - Video players
   - Video Type: MP4 Supports:
     - .mp4 files
@@ -100,11 +100,11 @@ Install dependencies by:
 npm install
 ```
 
-### Download Working Videos For Unturnc
+### Download Working Videos For Untrunc
 Download working videos for untrunc by:
 
 ```
-npm run-script download-working-videos-for-unturnc 
+npm run-script download-working-videos-for-untrunc
 ```
 
 ### Start Server
