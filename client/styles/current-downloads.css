@@ -13,6 +13,8 @@
   top: 3.5rem;
   right: 1.95em;
   z-index: 1;
+  display: flex; 
+  flex-direction: column-reverse;
 }
 
 .completeTumbnailDownloadButton, .completeVideoDownloadButton{  
