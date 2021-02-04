@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "download-working-videos-for-unturnc": "node download-working-videos-for-unturnc.js",
+    "download-working-videos-for-untrunc": "node download-working-videos-for-untrunc.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
