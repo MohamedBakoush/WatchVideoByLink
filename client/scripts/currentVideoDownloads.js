@@ -24,7 +24,11 @@ async function loadVideoDetails() {
       container = document.getElementById("download-status-container");
     }   
     if(show_current_downloads_clicked == false){ // stop showing current_downloads when show_current_downloads is no longer supposed to be active
-      container.remove();
+      // make sure container exists 
+      if(container != null){
+        container.remove();
+      }
+      // clear VideoDownloadDetailsInterval
       clearInterval(VideoDownloadDetailsInterval); 
     } else {
       // assign videoDownloadStatusContainer Failed fetch current downloads msg conainer
@@ -39,6 +43,7 @@ async function loadVideoDetails() {
   }
 } 
 
+let length = 0;
 // Split fetch data into individual video download details or show no availabe video dowloads
 function eachAvailableVideoDownloadDetails(videoDownloadDetails) {     
   let container, videoDownloadStatusContainer;
@@ -66,13 +71,17 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
     Object.keys(videoDownloadDetails).reverse().forEach(function(videoInfo_ID) {    
       videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);    
       // if video download ahs been completed then remove videoDownloadStatusContainer
-      if(videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "100.00%"){
-        videoDownloadStatusContainer.remove();
+      if(videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "100.00%"){ 
+        // make sure videoDownloadStatusContainer exists
+        if(videoDownloadStatusContainer != null){
+          // remove videoDownloadStatusContainer
+          videoDownloadStatusContainer.remove();
+        }
       }
       // if videoDownloadStatusContainer dosent exist
       if(!videoDownloadStatusContainer){
         showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID].video , videoDownloadDetails[videoInfo_ID].thumbnail);      
-      } else if(videoDownloadDetails[videoInfo_ID].video["download-status"] !== "unfinished download" && videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] !== "unfinished download"){
+      } else if(videoDownloadDetails[videoInfo_ID].video["download-status"] !== "unfinished download" && videoDownloadDetails[videoInfo_ID].video["download-status"] !== "working video for untrunc is unavailable"  && videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] !== "unfinished download"){
         // clear videoDownloadStatusContainer
         videoDownloadStatusContainer.innerHTML = "";
         // video id (title)
@@ -99,6 +108,9 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
       e.preventDefault(); 
       completeDownloadRequest(video_ID);  
     }; 
+  } else if(videoProgress["download-status"] == "working video for untrunc is unavailable") { 
+    // videoProgressContainer
+    basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-untrunc`,"Untrunc: working video.mp4 unavailable");
   } else if(thumbnailProgress["download-status"] == "unfinished download" ){
     const completeVideoDownloadButton = basic.createLink(videoDownloadStatusContainer, "javascript:;", `${video_ID}-complete-download-button`, "button completeVideoDownloadButton", "Generate thumbnails"); 
     // action on button click
