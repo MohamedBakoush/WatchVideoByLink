@@ -165,22 +165,26 @@ function showDetails(container, videoInfo_ID, videoDetails) {
   const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, undefined, "thumbnailTitleContainer");
   basic.createSection(thumbnailTitleContainer, "h1", undefined, undefined, video_name);
 
-  let loopTroughThumbnails;
-  let mainThumbnailNumber = 1;
-  thumbnail.addEventListener("mouseover", ( ) => {
-    loopTroughThumbnails = setInterval( () => {
-      if (mainThumbnailNumber == numberOfThumbnails) {
-        thumbnail.src =  mainThumbnail;
-        mainThumbnailNumber = 1;
-      } else {
-        mainThumbnailNumber = mainThumbnailNumber + 1;
-        thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
-      }
-    }, 500);
+  let loopTroughThumbnails, mainThumbnailNumber = 1;
+  thumbnail.addEventListener("mouseover", ( ) => { 
+    if (typeof loopTroughThumbnails != "number"){
+      loopTroughThumbnails = setInterval( () => {
+        if (mainThumbnailNumber == numberOfThumbnails) {
+          thumbnail.src =  mainThumbnail;
+          mainThumbnailNumber = 1;
+        } else {
+          mainThumbnailNumber = mainThumbnailNumber + 1;
+          thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
+        }
+      }, 500); 
+    }
   });
 
   thumbnail.addEventListener("mouseout", ( ) => {
    clearInterval(loopTroughThumbnails);
+   if (typeof loopTroughThumbnails == "number"){
+    loopTroughThumbnails = undefined;
+   }
    mainThumbnailNumber = 1;
    thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
   });

@@ -34,10 +34,10 @@ export function showDetails() {
   basic.createSection(videoLinkForm, "h4", undefined, undefined,  "Video Type: ");
   const videoTypeSelect = basic.createSection(videoLinkForm, "select", "videoTypeSelect", "select");
   // all the diffrent types of video that can be choosen
-  basic.createOption(videoTypeSelect, "option", "Automatic", "Automatic");
-  basic.createOption(videoTypeSelect, "option", "video/mp4", "MP4 (.mp4)");
-  basic.createOption(videoTypeSelect, "option", "application/x-mpegURL", "HLS (.m3u8)");
-  basic.createOption(videoTypeSelect, "option", "application/dash+xml", "MPEG-DASH (.mpd)");
+  basic.createOption(videoTypeSelect, "Automatic", "Automatic");
+  basic.createOption(videoTypeSelect, "video/mp4", "MP4 (.mp4)");
+  basic.createOption(videoTypeSelect, "application/x-mpegURL", "HLS (.m3u8)");
+  basic.createOption(videoTypeSelect, "application/dash+xml", "MPEG-DASH (.mpd)");
   // submit video button
   basic.createInput(videoLinkForm, "submit", "Watch Video", undefined , "button watchVideoButton");
   // once sumbitVideo button is clicked

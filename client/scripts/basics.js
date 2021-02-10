@@ -69,7 +69,7 @@ export function createInput(container, type, value, idHere, classHere) {
 
 // create a option element
 // with optional value and textContent
-export function createOption(container, dataType, value, textContent){
+export function createOption(container, value, textContent){
   try {  // if inputs are valid
     const option = document.createElement("option"); // create element
     if (value != undefined) { // assign value to option
