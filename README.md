@@ -11,8 +11,7 @@
 ## Table of Contents
 * [Reason For Creation](#reason-for-creation)
 * [How WatchVideoByLink Works](#how-watchvideobylink-works)
-* [Features](#features)
-* [WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)](#watchvideobylink-breakdown-structure-under-construction)
+* [Features](#features) 
 * [Installation](#installation)  
 * [License](#license)
 
@@ -61,10 +60,6 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
     - Edit button
       - if clicked Edit mode will be shown with such features as 
         - Delete this video which once clicked deletes the video plus all its data permanently from the system 
-
-## WatchVideoByLink BREAKDOWN STRUCTURE (Under Construction)
-
-Spreadsheet: [WatchVideoByLink BREAKDOWN STRUCTURE](https://docs.google.com/spreadsheets/d/16rSYlLbNQtZzAzoa6HURpE8C5gtYVG4WVPpvIGOPHjo/edit#gid=0) 
 
 ## Installation
 
