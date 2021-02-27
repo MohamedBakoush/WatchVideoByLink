@@ -470,7 +470,7 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
         inputRight.max = videoPlayer_active.duration;
         inputRight.value = videoPlayer_active.duration;
         const slider = basic.createSection(multiRangeSlider, "section", "slider");
-        basic.createSection(slider, "section", "track");
+        const track = basic.createSection(slider, "section", "track");
         const range = basic.createSection(slider, "section", "range");
         const thumbLeft = basic.createSection(slider, "section", "thumb left");
         const thumbRight = basic.createSection(slider, "section", "thumb right");
@@ -602,11 +602,38 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
         setRightValue();
         inputLeft.addEventListener("input", setLeftValue);
         inputRight.addEventListener("input", setRightValue);
+        
+        // when mouseover thumbLeft activate inputLeft, deactivate inputRight
+        thumbLeft.addEventListener("mouseover", function() {
+          inputLeft.style.pointerEvents = null
+          inputRight.style.pointerEvents = "none"
+        }); 
+        
+        // when mouseover thumbRight activate inputRight, deactivate inputLeft
+        thumbRight.addEventListener("mouseover", function() {
+          inputLeft.style.pointerEvents = "none"
+          inputRight.style.pointerEvents = null
+        });  
+        
+        // when mouseover track deactivate inputRight, deactivate inputLeft
+        track.addEventListener("mouseover", function() { 
+          inputRight.style.pointerEvents = "none"
+          inputLeft.style.pointerEvents = "none"
+        }); 
+
+        // when mouseover range deactivate inputRight, deactivate inputLeft
+        range.addEventListener("mouseover", function() { 
+          inputRight.style.pointerEvents = "none"
+          inputLeft.style.pointerEvents = "none"
+        }); 
+ 
         inputLeft.addEventListener("mouseover", function() {
           thumbLeft.classList.add("hover");
         });
         inputLeft.addEventListener("mouseout", function() {
-          thumbLeft.classList.remove("hover");
+          thumbLeft.classList.remove("hover"); 
+          inputRight.style.pointerEvents = "none"
+          inputLeft.style.pointerEvents = "none"
         });
 
         let liveselectedInputLeft;
@@ -632,10 +659,12 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
         });
 
         inputRight.addEventListener("mouseover", function() {
-          thumbRight.classList.add("hover");
+          thumbRight.classList.add("hover"); 
         });
         inputRight.addEventListener("mouseout", function() {
-          thumbRight.classList.remove("hover");
+          thumbRight.classList.remove("hover"); 
+          inputRight.style.pointerEvents = "none"
+          inputLeft.style.pointerEvents = "none"
         });
 
 

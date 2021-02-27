@@ -48,19 +48,22 @@
   box-shadow: 0 0 0 20px rgba(98,0,238,.1);
 }
 .slider > .thumb.active {
-  box-shadow: 0 0 0 40px rgba(98,0,238,.2);
+  box-shadow: 0 0 0 20px rgba(98,0,238,.2);
 }
 
 input[type=range] {
-  position: absolute;
-  pointer-events: none;
+  position: absolute; 
   -webkit-appearance: none;
-  z-index: 2;
-  height: 10px;
+  -moz-appearance: none;
+  z-index: 2; 
+  margin: 0.55em 0 0 0;
+  height: 0px;
   width: 100%;
   opacity: 0;
 }
-input[type=range]::-webkit-slider-thumb {
+
+/* webkit browsers */ 
+input[type=range]::-webkit-slider-thumb { 
   pointer-events: all;
   width: 30px;
   height: 30px;
@@ -68,6 +71,25 @@ input[type=range]::-webkit-slider-thumb {
   border: 0 none;
   background-color: red;
   -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {  
+  background-color: rgb(0, 255, 0); 
+}
+
+/* Firefox  */
+input[type=range]::-moz-range-thumb { 
+  pointer-events: all;
+  width: 30px;
+  height: 30px;
+  border-radius: 0;
+  border: 0 none;
+  background-color: red;
+  -moz-appearance: none;
+}
+
+input[type=range]::-moz-range-thumb:hover { 
+  background-color: rgb(0, 255, 0); 
 }
 
 .trimVideoBody{
