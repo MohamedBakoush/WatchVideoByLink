@@ -159,6 +159,7 @@ input[type=range]::-moz-range-thumb:hover {
 
 .trimVideoPlayer, .multi-range-slider{
   width: 100% !important;
+  max-height: 60vh;
   height: auto !important;
 }
 
