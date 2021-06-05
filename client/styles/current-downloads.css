@@ -17,15 +17,21 @@
   flex-direction: column-reverse;
 }
 
+.tumbnailOptionsContainer, .videoOptionsContainer{
+  display: grid;
+  grid-template-columns: 2fr 1fr; 
+  grid-gap: 1ch;
+}
+
 .completeTumbnailDownloadButton, .completeVideoDownloadButton{  
   justify-content: center;
   text-decoration: none;
-  padding: 0.25rem 0.75rem 0 0.75rem;
+  /* padding: 0.25rem 0.75rem 0 0.75rem; */
   color: #fff !important;
   background: #000 !important;
-  border-radius: 2em; 
+  border-radius: 6px; 
   border: 1px solid #000;
-  transition: border-radius .2s linear;
+  transition: background-color .3s cubic-bezier(.3,0,.5,1);
   display: inline-flex;
   align-items: center;
   height: 2.1875rem;
@@ -35,3 +41,4 @@
   color: #000 !important;
   background: #fff !important; 
 }
+

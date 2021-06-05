@@ -95,7 +95,8 @@ function currentDownloads(req, res){
 // complete download unfinnished video by specified video id header
 app.post("/complete-unfinnished-video-download",  express.json(), completeUnfinnishedVideoDownload);
 function completeUnfinnishedVideoDownload(req, res){
-  streamVideoFile.completeUnfinnishedVideoDownload(req, res);
+  // streamVideoFile.completeUnfinnishedVideoDownload(req, res);
+  res.json(streamVideoFile.completeUnfinnishedVideoDownload(req, res));
 } 
 
 // adds html as extensions, dont need to write index.html
