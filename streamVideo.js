@@ -281,8 +281,10 @@ function completeUnfinnishedVideoDownload(req, res){
       delete currentDownloadVideos[`${fileName}`] 
       const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
       FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+      return "download status: completed";
     } else{ // redownload thumbnails 
       createThumbnail(path, newFilePath, fileName); 
+      return "redownload thumbnails";
     }
   } else{  
     const fileName_path = `./media/video/${fileName}/${fileName}`,
@@ -290,6 +292,7 @@ function completeUnfinnishedVideoDownload(req, res){
     fileName_fixed_ending = `${fileName_path}.mp4_fixed.mp4`
     // untrunc broke video 
     untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending)  
+    return "untrunc broke video";
   }
 }
 
@@ -1035,40 +1038,58 @@ async function deletevideoData(request, response, videoID) {
           FileSystem.rmdir(filepath, { recursive: true }, (err) => {
             if (err) throw err;
             console.log(`\n removed ${filepath} dir \n`);
-          });
+          }); 
           // delete video data from database
-          delete videoData[videoID];
-          delete availableVideos[videoID];
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
-          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-          FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+          // delete videoData from database 
+          if(videoData.hasOwnProperty(videoID)){ 
+            delete videoData[videoID]; 
+            const newVideoData = JSON.stringify(videoData, null, 2);
+            FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+          }
+          // delete availableVideos from database 
+          if(availableVideos.hasOwnProperty(videoID)){ 
+            delete availableVideos[videoID];
+            const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+            FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+          }
+          // delete currentDownloadVideos from database 
+          if(currentDownloadVideos.hasOwnProperty(videoID)){ 
+            delete currentDownloadVideos[videoID];
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          }
           console.log(`\n ${filepath} is deleted! \n`);
           response.json(`video-id-${videoID}-data-permanently-deleted`);
         });
       } else{ // if seposed video path dosent exits delete data/video folder 
+        console.log("video path dosent exits delete data/video folder");
         if (FileSystem.existsSync(filepath)) { 
+          console.log("delete folder Content");
           //  delete folder Content
           FileSystem.rmdir(filepath, { recursive: true }, (err) => {
             if (err) throw err;
             console.log(`\n removed ${filepath} dir \n`);
           });
         };
-        if(availableVideos.hasOwnProperty(videoID)){
-          delete availableVideos[videoID];
 
+        // delete video data from database
+        // delete videoData from database 
+        if(videoData.hasOwnProperty(videoID)){  
+          delete videoData[videoID];
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
         }
-
-        if(videoData.hasOwnProperty(videoID)){
+        // delete availableVideos from database 
+        if(availableVideos.hasOwnProperty(videoID)){ 
           delete availableVideos[videoID];
-
           const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
           FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-          console.log(`\n ${filepath} is deleted! \n`);
+        }
+        // delete currentDownloadVideos from database
+        if(currentDownloadVideos.hasOwnProperty(videoID)){ 
+          delete currentDownloadVideos[videoID];
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
         }
 
         console.log(`\n ${filepath} is deleted! \n`);
