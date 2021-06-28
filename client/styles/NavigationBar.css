@@ -59,20 +59,20 @@ header{
 }
 
 .category-link{
-display: inline-flex;
-align-items: center;
-justify-content: center;
-line-height: 1.44444;
-padding: 0 1em;
-height: 2.1875rem;
-min-width: 3.75rem;
-border: 1px solid #000;
-transition: border-radius .15s linear;
-text-decoration: none;
-cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.44444;
+  padding: 0 1em;
+  height: 2.1875rem;
+  min-width: 3.75rem;
+  border: 1px solid #000;
+  transition: border-radius .15s linear;
+  text-decoration: none;
+  cursor: pointer;
 }
 .category-link:hover{
-border-radius: 2em;
+  border-radius: 2em;
 }
 
 .button {
@@ -101,4 +101,25 @@ border-radius: 2em;
   border-radius: 0em;
   border: 1px solid #000;
   transition: border-radius .3s linear;
+}
+
+.savedVideosPageButton { 
+  margin: 0px 0px 0px 1.25rem;
+}
+
+@media only screen and (max-width: 450px){ 
+
+    .is-selected, .category-link { 
+      padding: 0 0.5em; 
+    }
+
+    .savedVideosPageButton { 
+      margin: 0px 0px 0px 0.625rem;
+    }
+    
+    .current-dowloads-nav {
+      margin: 0px; 
+    }
   }
+
+  
