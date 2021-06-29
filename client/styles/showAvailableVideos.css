@@ -4,37 +4,34 @@
     padding: 0.5rem 0.25rem 0 0.25rem; 
     display: grid;
     margin: auto;
+    grid-template-columns: repeat(6 , auto); 
 }
 
-.savedVideosThumbnailContainer{ 
-  grid-template-columns: repeat(6 , auto); 
-}
-
-@media only screen and (max-width: 1820px){
+@media only screen and (max-width: 2229px){
   .savedVideosThumbnailContainer{ 
     grid-template-columns: repeat(5, auto); 
   }
 }
 
-@media only screen and (max-width: 1520px){
+@media only screen and (max-width: 1859px){
   .savedVideosThumbnailContainer{ 
     grid-template-columns: repeat(4, auto); 
   }
 }
 
-@media only screen and (max-width: 1218px){
+@media only screen and (max-width: 1489px){
   .savedVideosThumbnailContainer{ 
     grid-template-columns: repeat(3, auto); 
   }
 }
 
-@media only screen and (max-width: 920px){
+@media only screen and (max-width: 1129px){
   .savedVideosThumbnailContainer{ 
     grid-template-columns: repeat(2, auto); 
   }
 }
 
-@media only screen and (max-width: 620px){
+@media only screen and (max-width: 749px){
   .savedVideosThumbnailContainer{ 
     grid-template-columns: repeat(1, auto); 
   }
@@ -42,7 +39,6 @@
 
 .videoThumbnailContainer, .thumbnailTitleContainer{
   color: rgb(0,0,0);
-  text-align: center;
   text-decoration: none;
 }
 
@@ -51,7 +47,7 @@
 }
 
 .videoThumbnailContainer { 
-  width: 290px; 
+  width: 362.5px; 
   float: left;
   position: relative;
   padding: 0.5rem 0.25rem 0 0.25rem; 
@@ -61,13 +57,12 @@
 
 .thumbnail-image-container{ 
   background: rgb(0,0,0);
-  height: 165px;
+  height: 204px;
   margin-bottom: 0.271rem;
 }
 
 .thumbnail-image{ 
-  width: 100%;
-  height: 165px;
+  width: 100%; 
   object-fit: contain;
   background: rgb(0,0,0);
 }
@@ -98,8 +93,8 @@
 }
 
 .thumbnail-options-container{
-  width: 290px;
-  height: 165px;
+  width: 362.5px;
+  height: 204px;
   top: .15rem;
   right: 0;
   position: absolute;
@@ -122,7 +117,7 @@
   border: 1px solid #000;
   transition: border-radius .15s linear;
   text-decoration: none;
-  margin: 3rem 1em auto 1em;
+  margin: 3.8rem 1em auto 1em;
   background: #fff;
 }
 
@@ -138,3 +133,25 @@
     grid-row: 2;
 }
  
+
+/* Mobile  friendly */
+@media only screen and (max-width: 379px){ 
+  .videoThumbnailContainer { 
+    width: 290px !important; 
+  }
+  .thumbnail-image-container{  
+    height: 165px !important;  
+  }
+  .thumbnail-image{ 
+    height: 165px !important;  
+  }
+
+  .thumbnail-options-container{
+    width: 290px !important;
+    height: 165px !important;
+  }
+
+  .option-play, .option-delete{
+    margin: 3rem 1em auto 1em !important;
+  }
+}
