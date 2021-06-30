@@ -18,7 +18,7 @@ function showVideoFromUrl(url) {
 }
 
 // load details into html using video and videoLink id
-export function showDetails() {
+export function showDetails() { 
   // input video link container
   const videoLink = basic.createSection(basic.websiteContentContainer, "section", "videoLinkContainer", "videoLinkContainer");
   // create form
@@ -26,20 +26,27 @@ export function showDetails() {
   videoLinkForm.onsubmit = function(){
     return false;
   };
-  // video srcv
-  basic.createSection(videoLinkForm, "h4", undefined, undefined,  "Video Link: ");
-  const videoLinkInput = basic.inputType(videoLinkForm, "text", "videoLinkInput", "videoLinkInput", true);
+  // video src
+  const videoLinkInputBody = basic.createSection(videoLinkForm, "section", "videoLinkInputBody");
+  const videoLinkInputLabel = basic.createSection(videoLinkInputBody, "label", "videoLinkInputLabel");
+  const videoLinkInputContainer = basic.createSection(videoLinkInputLabel, "section" , "videoLinkInputContainer");
+  basic.createSection(videoLinkInputContainer, "section", undefined, undefined,  "Video Link: ");
+  const videoLinkInput = basic.inputType(videoLinkInputContainer, "text", "videoLinkInput", "videoLinkInput", true);
   videoLinkInput.placeholder = "Enter Video Link";
-  // video type
-  basic.createSection(videoLinkForm, "h4", undefined, undefined,  "Video Type: ");
-  const videoTypeSelect = basic.createSection(videoLinkForm, "select", "videoTypeSelect", "select");
-  // all the diffrent types of video that can be choosen
+  //video type
+  const videoLinkTypeBody = basic.createSection(videoLinkForm, "section", "videoTypeInputBody");
+  const videoLinkTypeLabel = basic.createSection(videoLinkTypeBody, "label", "videoTypeInputLabel");
+  const videoLinkTypeContainer = basic.createSection(videoLinkTypeLabel, "section", "videoTypeInputContainer");
+  basic.createSection(videoLinkTypeContainer, "section", undefined, undefined,  "Video Type: ");
+  const videoTypeSelect = basic.createSection(videoLinkTypeContainer, "select", "videoTypeSelect", "select"); 
+  // all the diffrent types of video that can be choosen 
   basic.createOption(videoTypeSelect, "Automatic", "Automatic");
   basic.createOption(videoTypeSelect, "video/mp4", "MP4 (.mp4)");
   basic.createOption(videoTypeSelect, "application/x-mpegURL", "HLS (.m3u8)");
   basic.createOption(videoTypeSelect, "application/dash+xml", "MPEG-DASH (.mpd)");
   // submit video button
-  basic.createInput(videoLinkForm, "submit", "Watch Video", undefined , "button watchVideoButton");
+  const submitVideoButtonContainer = basic.createSection(videoLinkForm, "section", "submitVideoButtonContainer");
+  basic.createInput(submitVideoButtonContainer, "submit", "Watch Video", undefined , "button watchVideoButton");
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
     if(document.getElementById("download-status-container"))  {

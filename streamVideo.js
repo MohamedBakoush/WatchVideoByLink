@@ -954,6 +954,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                   if (i == 0){
                     availableVideos[`${fileName}`] = {
                       info:{
+                        title: fileName,
                         videoLink: {
                           src : `/video/${fileName}`,
                           type : "video/mp4"
@@ -1015,7 +1016,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
 
 // deletes everything that is available in the system related to video id, video file, all available video data ...
 async function deletevideoData(request, response, videoID) {
-    const filepath = `media/video/${videoID}`;
+  const filepath = `media/video/${videoID}`;
   // check if videoid is valid
   const videoDetails = await findVideosByID(videoID);
   // if video dosent exist redirect to home page
@@ -1148,6 +1149,28 @@ async function getVideoLinkFromUrl(req, res) {
   }
 }
 
+// change title of video
+async function changeVideoTitle(req, res) { 
+  const videoID = req.body.videoID;
+  const newVideoTitle = req.body.newVideoTitle;
+
+  // check if videoid is valid
+  const videoDetails = await findVideosByID(videoID);
+  // if video dosent exist redirect to home page
+  if (videoDetails == undefined) {
+    response.status(404).redirect("/");
+  } else { 
+    try {
+      availableVideos[videoID]["info"]["title"] = newVideoTitle;  
+      const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync("data/available-videos.json", newAvailableVideos);   
+      res.json("video-title-changed");
+    } catch (e) {
+      res.json("failed-to-change-video-title");
+    }
+  }
+}
+
 module.exports = { // export modules
   streamVideo,
   updateVideoPlayerVolume,
@@ -1163,5 +1186,6 @@ module.exports = { // export modules
   getVideoPlayerSettings,
   currentDownloads,
   cheackForAvailabeUnFinishedVideoDownloads,
-  completeUnfinnishedVideoDownload
+  completeUnfinnishedVideoDownload,
+  changeVideoTitle
 };

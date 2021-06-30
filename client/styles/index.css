@@ -2,6 +2,7 @@
 @import url("current-downloads.css");
 @import url("showAvailableVideos.css");
 @import url("notify.css");
+
 *{
   margin: 0;
   padding: 0;
@@ -48,18 +49,18 @@ body, .index-body, .index-websiteContentContainer,
 
 .noAvailableVideosHeader, .getVideoUrlAutoMessageHeader{
   text-align: center;
-}
-
-.videoLinkContainer form{
-   display: grid;
-   grid-template-columns: repeat(2, 1fr);
-   grid-gap:  1rem;
-   padding:  0.5rem;
-}
+} 
 
 .watchVideoButton{
-  grid-column-start:  1;
-  grid-column-end:  3;
+  background: rgb(255, 56, 92) !important;
+  border: 0px !important;
+  color: rgb(255, 255, 255) !important;
+  border-radius: 24px !important;
+  height: 38px !important;
+  width: 200px !important;
+}
+.watchVideoButton:hover{
+  background: rgb(221, 16, 99) !important;
 }
 
 .button {
@@ -68,19 +69,82 @@ body, .index-body, .index-websiteContentContainer,
   text-align: center;
   font-size: .75rem;
   cursor: pointer;
+} 
+
+.videoLinkContainer form{ 
+  border: 1px solid rgb(221, 221, 221) !important;
+  border-radius: 32px !important;
+  color: rgb(34, 34, 34) !important;
+  display: flex !important;
+  height: 66px !important;
+  position: relative !important;
+  width: 100% !important;
+  box-shadow: rgb(0 0 0 / 15%) 0px 16px 32px, rgb(0 0 0 / 10%) 0px 3px 8px !important;
+  background-color: rgb(247, 247, 247) !important;
 }
-.watchVideoButton{
-  color: #000;
-  background: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.44444;
-  height: 2.1875rem;
-  min-width: 3.75rem;
-  border: 1px solid #000;
-  transition: border-radius .15s linear;
+ 
+.videoLinkInputBody, .videoTypeInputBody { 
+  -webkit-box-align: center !important;
+  -ms-flex-align: center !important;
+  position: relative !important;
+  -webkit-align-items: center !important;
+  align-items: center !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  display: -ms-flexbox !important;
+  display: -webkit-flex !important;
+  display: flex !important;
+  -webkit-flex: 1 0 0% !important;
+  -ms-flex: 1 0 0% !important;
+  flex: 1 0 0% !important;
+  margin: -1px !important;
+  min-width: 0px !important;
+  border-radius: 32px !important;
 }
-.watchVideoButton:hover{
-  border-radius: 2em;
+
+.videoLinkInputBody:hover , .videoTypeInputBody:hover{
+  background-color: rgb(235, 235, 235) !important;
+}
+ 
+.videoLinkInputLabel, .videoTypeInputLabel { 
+  cursor: pointer !important;
+  display: block !important;
+  background-clip: padding-box !important;
+  border: 1px solid transparent !important;
+  border-radius: 32px !important;
+  -webkit-flex: 1 0 0% !important;
+  -ms-flex: 1 0 0% !important;
+  flex: 1 0 0% !important;
+  min-width: 0px !important;
+  padding: 14px 32px !important;
+}
+ 
+.videoLinkInputContainer, .videoTypeInputContainer { 
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.videoLinkInput, .videoTypeSelect { 
+  display: block !important;
+  border: 0px !important; 
+  background: none !important;
+}
+
+.submitVideoButtonContainer {
+  padding: 14px 32px !important;
+  border-radius: 32px !important;
+}
+
+/* Tablet Friendly */
+
+@media only screen and (max-width: 760px){
+  .videoLinkContainer form{    
+    display: block !important;
+    height: initial !important;
+    width: initial !important;
+    padding: 10px;
+  }
+  .videoLinkInput, .videoTypeSelect { 
+    width: 100% !important; 
+  }
 }

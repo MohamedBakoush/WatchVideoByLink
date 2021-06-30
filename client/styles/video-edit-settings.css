@@ -17,14 +17,14 @@
   padding: 0 0.5rem 0 0.5rem;
   transform: translate(-50%, -50%);
 }
-.deleteVideoButtonContainer{
+.deleteVideoButtonContainer, .videoTitleEditButtonContainer{
   justify-content: end;
   display: grid;
   margin: auto 0;
   padding: 5px 16px;
 }
 
-.deleteVideoContainer{
+.deleteVideoContainer, .videoTitleEditContainer{
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 1rem 1rem 0.5rem 1rem;
@@ -51,14 +51,8 @@
   border-radius: 6px;
   border-color: #d73a49;
 }
-.deleteVideoButton:hover{
-  color: #fff;
-  background-color: #be222e;
-  border-color: rgba(27,31,35,.15);
-  box-shadow: inset 0 1px 0 rgba(134,24,29,.2);
-}
-.deleteVideoButton{
-  color: #cb2431;
+
+.deleteVideoButton, .videoTitleEditButton{
   background-color: #fafbfc;
   box-shadow: 0 1px 0 rgba(27,31,35,.04), inset 0 1px 0 hsla(0,0%,100%,.25);
   transition: background-color .2s cubic-bezier(.3,0,.5,1);
@@ -78,6 +72,29 @@
   border-color: rgba(27,31,35,.15);
 }
 
+.deleteVideoButton{
+  color: #cb2431;
+}
+
+.deleteVideoButton:hover{
+  color: #fff;
+  background-color: #be222e;
+}
+
+.videoTitleEditButton{
+  color: #000000;
+}
+
+.videoTitleEditButton:hover{
+  color: rgb(0,0,0);
+  background-color: rgba(178, 178, 178, 0.15)
+}
+
+.deleteVideoButton:hover, .videoTitleEditButton:hover{
+  border-color: rgba(27,31,35,.15);
+  box-shadow: inset 0 1px 0 rgba(134,24,29,.2);
+}
+
 .backToViewAvailableVideoButton{
     height: 3em !important;
     width: 4em !important;
@@ -94,4 +111,8 @@
 
 .backToViewAvailableVideoButton:hover {
   color: #000;
+}
+
+.videoTitleEditInput {
+  width: 100%
 }
