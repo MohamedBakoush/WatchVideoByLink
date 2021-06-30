@@ -41,7 +41,7 @@ function eachAvailableVideoDetails(videoDetails) {
 
 // load video details to user which include thumbnail image, video id as title and option menu
 function showDetails(container, videoInfo_ID, videoDetails) {
-  const video_name = videoInfo_ID;
+  const video_name = videoDetails.info.title;
   const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
   const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
   const linkContainer = basic.createLink(container, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, videoInfo_ID, "videoThumbnailContainer");
@@ -101,6 +101,31 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       const video_edit_form_title = basic.createSection(video_edit_form, "section");
       basic.createSection(video_edit_form_title, "h2", "video-edit-form-title", undefined, "Edit mode");
 
+      // Video title 
+      const video_title_edit_settings_container = basic.createSection(video_edit_form, "section");
+      const video_title_edit_settings_ul = basic.createSection(video_title_edit_settings_container, "ul");
+      const video_title_edit_settings_li = basic.createSection(video_title_edit_settings_ul, "li", "videoTitleEditContainer");
+
+      const video_title_edit_content_container = basic.createSection(video_title_edit_settings_li, "section");
+      basic.createSection(video_title_edit_content_container, "strong", undefined, undefined, "Video Title");
+      const video_title_edit_content_input = basic.inputType(video_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
+      video_title_edit_content_input.placeholder = document.getElementById(`${videoInfo_ID}-title`).textContent;
+
+      const video_title_edit_button_container = basic.createSection(video_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
+      const videoTitleEditButton = basic.createSection(video_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change video title");
+
+      videoTitleEditButton.onclick = function(e){
+        e.preventDefault();  
+        document.body.style.removeProperty("overflow");
+        video_edit_container.remove();
+        if (document.getElementById(`${videoInfo_ID}-title`)) { 
+          changeVideoTitle(videoInfo_ID, video_title_edit_content_input.value); 
+        } else {
+          basic.notify("error",`ID ${videoInfo_ID}-title is Missing`); 
+        }
+      };
+
+      // Danger zone setting 
       const dangerZone_title_container = basic.createSection(video_edit_form, "section");
       basic.createSection(dangerZone_title_container, "h2", "dangerZone-title", undefined, "Danger Zone");
 
@@ -108,6 +133,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       const dangerZone_settings_ul = basic.createSection(dangerZone_settingsContainer, "ul");
       const dangerZone_settings_li = basic.createSection(dangerZone_settings_ul, "li", "deleteVideoContainer");
 
+      // Delete video 
       const deleteVideoContentContainer = basic.createSection(dangerZone_settings_li, "section");
       basic.createSection(deleteVideoContentContainer, "strong", undefined, undefined, "Delete this video");
       basic.createSection(deleteVideoContentContainer, "p", undefined, undefined, "Once you delete a video, there is no going back. Please be certain.");
@@ -145,7 +171,6 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     const checkHoverFunction = function checkHover() {
       const hovered = isHover(linkContainer);
       if (hovered !== checkHover.hovered) {
-        console.log(hovered ? "hovered" : "not hovered");
         checkHover.hovered = hovered;
         if (hovered === false) {
            option_menu.title = "menu";
@@ -163,7 +188,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 
   // video title container - if user want to be redirected to video player even if menu is active when onclick
   const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, undefined, "thumbnailTitleContainer");
-  basic.createSection(thumbnailTitleContainer, "h1", undefined, undefined, video_name);
+  basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
 
   let loopTroughThumbnails, mainThumbnailNumber = 1;
   thumbnail.addEventListener("mouseover", ( ) => { 
@@ -189,6 +214,42 @@ function showDetails(container, videoInfo_ID, videoDetails) {
    thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
   });
 
+}
+
+// request to stop download video srteam
+export async function changeVideoTitle(videoID, newVideoTitle) { 
+  try {
+    
+    const payload = {
+      videoID: videoID,
+      newVideoTitle: newVideoTitle
+    }; 
+
+    const response = await fetch("../changeVideoTitle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    let requestResponse;
+    if (response.ok) {
+      // get json data from response
+      requestResponse = await response.json(); 
+      if (requestResponse == "video-title-changed") {
+        document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
+        basic.notify("success",`Video Title Changed: ${newVideoTitle}`);
+      } else if (requestResponse == "failed-to-change-video-title") {
+        basic.notify("error","Failed to Change Video Title"); 
+      }
+      return requestResponse;
+    } else {
+      basic.notify("error","Failed to Change Video Title"); 
+      return "Failed to Change Video Title";
+    } 
+  } catch (error) {
+    basic.notify("error","Failed fetch: Change Video Title"); 
+    return "Failed fetch";
+  }
 }
 
 // append image to container with features as, src, onload, onerror and optional  height, width

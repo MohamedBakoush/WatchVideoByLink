@@ -44,6 +44,12 @@ function streamVideoById(req, res){
   streamVideoFile.streamVideo(req, res, req.params.id);
 }
 
+// change title of video
+app.post("/changeVideoTitle", express.json(), changeVideoTitle);
+function changeVideoTitle(req, res){
+  streamVideoFile.changeVideoTitle(req, res);
+}
+
 // get video data for specified video by id header
 app.get("/video-data/:id", findVideosByID);
 function findVideosByID(req, res){
