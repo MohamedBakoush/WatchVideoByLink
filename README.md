@@ -79,6 +79,10 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
     2. Once Untrunc has been downloaded drop all Untrunc files in WatchVideoByLink folder. 
   - **Warning using Untrunc may not achieve desired results**
 
+**For windows: If youtube-dl/Video Type: Automatic dosent work**
+  - It may be due to missing MSVCR100.dll File.
+    - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
+
 ### Clone Repository
 You can clone the repository to a local destination using git:
 ```
