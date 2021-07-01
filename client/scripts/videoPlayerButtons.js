@@ -1,5 +1,5 @@
 import * as basic from "../scripts/basics.js";
-"use strict";
+
 let fileNameID;
 
 // controlBar at the top of the video player
