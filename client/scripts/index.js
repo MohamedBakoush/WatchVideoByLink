@@ -3,7 +3,6 @@ import * as basic from "../scripts/basics.js";
 import * as navigationBar from "../scripts/navigationBar.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
-"use strict";
 
 // get video link and video type from the url
 function showVideoFromUrl(url) {
