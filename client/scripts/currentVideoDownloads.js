@@ -1,5 +1,4 @@
 import * as basic from "../scripts/basics.js";
-"use strict";
 
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 
