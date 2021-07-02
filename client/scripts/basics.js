@@ -1,5 +1,3 @@
-"use strict";
-
 export const websiteContentContainer = document.getElementById("websiteContentContainer");
 export const favicon = document.getElementById('favicon');
 

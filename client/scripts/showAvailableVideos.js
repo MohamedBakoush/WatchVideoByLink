@@ -1,6 +1,5 @@
 import * as basic from "../scripts/basics.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
-"use strict";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 async function loadVideoDetails() {
