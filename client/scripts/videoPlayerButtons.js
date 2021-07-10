@@ -43,7 +43,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
   const downloadVideoConfirmation = function (){
     const downloadConfirm = confirm("Press OK to Download Full Video");
     if (downloadConfirm) {
-      basic.notify("success",`Start Full Video Download`);
+      basic.notify("success","Start Full Video Download");
       // if user confirms download full video then send videoSrc, videoType to the server as a post request by downloadVideo
       downloadVideo(videoSrc, videoType).then( (returnValue) => { // downloading video
         let number_of_errors = 0;
@@ -81,7 +81,7 @@ export function downloadVideoButton(container, videoSrc, videoType) {
                     downloadVideoButton.onclick = downloadVideoConfirmation;
                     if (isDownloading) {
                       isDownloading = false;
-                      basic.notify("success",`Download Completed: Full Video`);
+                      basic.notify("success","Download Completed: Full Video");
                       console.log(returnValue, "Full Video Download Completed");
                     }
                   } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
@@ -211,7 +211,7 @@ export async function downloadVideoStream(videoSrc, videoType) {
 export function recordingStreamCheck(player, RecButton) {
   let timemark = "00:00:00.00";
   let number_of_errors = 0;
-  basic.notify("success",`Starting Video Recording`);
+  basic.notify("success","Starting Video Recording");
   const checkRecordingStatus = setInterval( async function(){
     try {
       const response = await fetch(`../video-data/${fileNameID}`);
@@ -605,26 +605,26 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
         
         // when mouseover thumbLeft activate inputLeft, deactivate inputRight
         thumbLeft.addEventListener("mouseover", function() {
-          inputLeft.style.pointerEvents = null
-          inputRight.style.pointerEvents = "none"
+          inputLeft.style.pointerEvents = null;
+          inputRight.style.pointerEvents = "none";
         }); 
         
         // when mouseover thumbRight activate inputRight, deactivate inputLeft
         thumbRight.addEventListener("mouseover", function() {
-          inputLeft.style.pointerEvents = "none"
-          inputRight.style.pointerEvents = null
+          inputLeft.style.pointerEvents = "none";
+          inputRight.style.pointerEvents = null;
         });  
         
         // when mouseover track deactivate inputRight, deactivate inputLeft
         track.addEventListener("mouseover", function() { 
-          inputRight.style.pointerEvents = "none"
-          inputLeft.style.pointerEvents = "none"
+          inputRight.style.pointerEvents = "none";
+          inputLeft.style.pointerEvents = "none";
         }); 
 
         // when mouseover range deactivate inputRight, deactivate inputLeft
         range.addEventListener("mouseover", function() { 
-          inputRight.style.pointerEvents = "none"
-          inputLeft.style.pointerEvents = "none"
+          inputRight.style.pointerEvents = "none";
+          inputLeft.style.pointerEvents = "none";
         }); 
  
         inputLeft.addEventListener("mouseover", function() {
@@ -632,8 +632,8 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
         });
         inputLeft.addEventListener("mouseout", function() {
           thumbLeft.classList.remove("hover"); 
-          inputRight.style.pointerEvents = "none"
-          inputLeft.style.pointerEvents = "none"
+          inputRight.style.pointerEvents = "none";
+          inputLeft.style.pointerEvents = "none";
         });
 
         let liveselectedInputLeft;
@@ -663,8 +663,8 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
         });
         inputRight.addEventListener("mouseout", function() {
           thumbRight.classList.remove("hover"); 
-          inputRight.style.pointerEvents = "none"
-          inputLeft.style.pointerEvents = "none"
+          inputRight.style.pointerEvents = "none";
+          inputLeft.style.pointerEvents = "none";
         });
 
 

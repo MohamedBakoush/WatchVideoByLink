@@ -1,5 +1,5 @@
 export const websiteContentContainer = document.getElementById("websiteContentContainer");
-export const favicon = document.getElementById('favicon');
+export const favicon = document.getElementById("favicon");
 
 // create a input element
 // with optional input type, id, classList and if input type is required or not
@@ -147,7 +147,7 @@ export function notify(type,message){
   // if user is not focued on webpage
   if(!document.hasFocus()){
     // change favicon
-    addFaviconNotificationBadge()
+    addFaviconNotificationBadge();
   }
   
   // after a certin number of time, remove notifications
@@ -192,14 +192,14 @@ Timer.prototype.setTimeout = function(callback, time) {
       callback();
   }, time);
   this.start = Date.now();
-}
+};
 
 // change setTimeout time
 Timer.prototype.change = function(time) {
   if(!this.finished) {
       this.setTimeout(this.callback, time);
   }
-}
+};
 
 // replace favicon with original favicon
 export function originalFavicon() { 
@@ -210,12 +210,12 @@ export function originalFavicon() {
 export function addFaviconNotificationBadge() {  
   const faviconSize = 32; 
 
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = faviconSize;
   canvas.height = faviconSize;
 
-  const context = canvas.getContext('2d');
-  const img = document.createElement('img');
+  const context = canvas.getContext("2d");
+  const img = document.createElement("img");
   img.src = favicon.href;
 
   img.onload = () => {
@@ -225,11 +225,11 @@ export function addFaviconNotificationBadge() {
     // Draw Notification Circle
     context.beginPath();
     context.arc( canvas.width - faviconSize / 4 , canvas.height - faviconSize / 4, faviconSize / 4, 0, 2*Math.PI);
-    context.fillStyle = '#e84545';
+    context.fillStyle = "#e84545";
     context.fill();
 
     // Replace favicon
-    favicon.href = canvas.toDataURL('image/png');
+    favicon.href = canvas.toDataURL("image/png");
   };
 }
 
@@ -271,7 +271,7 @@ export function checkForPercentEncoding(string){
       newarray.push(array[x]+replaceby);
     }
   }
-  const str = newarray.join(''); 
+  const str = newarray.join(""); 
   return str;
  }
  
