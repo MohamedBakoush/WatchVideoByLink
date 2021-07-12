@@ -93,16 +93,26 @@ export function showDetails() {
   basic.createInput(submitChoosenVideoButtonContainer, "submit", "Upload Video", undefined , "button uploadVideoButton");
   // once upload Video button is clicked
   uploadVideoForm.onsubmit = function(){ 
-    // remove upload Video container
-    uploadVideoForm.remove();  
-    // create new upload Video container
-    const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer"); 
-    // create new submit Video button container
-    basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${inputUploadVideo.files[0].name}`); 
-    // notification to user 
-    basic.notify("success", "Uploading: video to server");
-    // upload video file 
-    uploadFile(inputUploadVideo, videoLink);
+    const file = inputUploadVideo.files[0]; 
+    // file size has to be smaller then 1 GB to be uploaded to server
+    if (file.size > (1024 * 1024 * 1024)) {  
+      // remove upload Video container
+      videoLink.remove();
+      showDetails();
+      // error msg
+      basic.notify("error", "Size Error: Unable to upload videos greater then 1 GB");
+    } else {
+      // remove upload Video container
+      uploadVideoForm.remove();  
+      // create new upload Video container
+      const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer"); 
+      // create new submit Video button container
+      basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${file.name}`); 
+      // notification to user 
+      basic.notify("success", "Uploading: video to server");
+      // upload video file 
+      uploadFile(inputUploadVideo, videoLink);
+    }
   };
 }
 
@@ -122,6 +132,9 @@ async function uploadFile(data, videoLink){
     // notification from response
     if(returnedValue == "downloading-uploaded-video") { 
       basic.notify("success", "Downloading: uploaded video"); 
+    } else if (returnedValue == "video-size-over-size-limit") { 
+      console.log("Size Error: Attempted video upload has a size greater then 1 GB");
+      basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
     } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
       console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
       basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");

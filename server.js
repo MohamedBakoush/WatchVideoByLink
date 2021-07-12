@@ -5,7 +5,9 @@ const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
 const streamVideoFile = require("./streamVideo");
 const app = express();
-app.use(upload());
+app.use(upload({
+  limits: { fileSize: 1024 * 1024 * 1024 },
+}));
 // show website icon on tab
 app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
 

@@ -1187,14 +1187,17 @@ function uploadVideoFile(req, res) {
     const file = req.files.file;
     const filename = uuidv4();
     const fileMimeType = req.files.file.mimetype; 
-
-    file.mv(`./media/video/${filename}.mp4`, function(err){
-      if (err) { 
-        res.send("error-has-accured");
-      } else { 
-        downloadUploadedVideo(`./media/video/${filename}.mp4`, filename, fileMimeType, res);
-      }
-    });
+    if(req.files.file.truncated){  // file size greater then limit
+      res.json("video-size-over-size-limit"); 
+    } else { // file size smaller then limit
+      file.mv(`./media/video/${filename}.mp4`, function(err){
+        if (err) { 
+          res.send("error-has-accured");
+        } else { 
+          downloadUploadedVideo(`./media/video/${filename}.mp4`, filename, fileMimeType, res);
+        }
+      });
+    }
   }
 }
 
