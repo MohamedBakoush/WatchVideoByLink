@@ -1,12 +1,16 @@
-<h1 align="center">Welcome to WatchVideoByLink</h1>
+<p align="center">
+  <big><strong>WatchVideoByLink</strong></big>
+</p>
 
 <p align="center">
-  <img src="/client/images/favicon/favicon.png" alt="WatchVideoByLink">
-</p>
+  <img width="200" src="/client/images/favicon/favicon.png" alt="WatchVideoByLink"/>
+</p> 
 
-<p>
-  <b>WatchVideoByLink</b> takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
-</p>
+<hr/>
+
+## Overview
+
+WatchVideoByLink takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
 
 ## Table of Contents
 * [Reason For Creation](#reason-for-creation)
@@ -83,7 +87,7 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
   - It may be due to missing MSVCR100.dll File.
     - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
 
-### Clone Repository
+## Clone Repository
 You can clone the repository to a local destination using git:
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
@@ -92,21 +96,21 @@ cd WatchVideoByLink
 
 Alternatively you may download and unpack the [zip](https://github.com/MohamedBakoush/WatchVideoByLink/archive/master.zip)
 
-### Install Dependencies
+## Install Dependencies
 Install dependencies by:
 
 ```
 npm install
 ```
 
-### Download Working Videos For Untrunc
+## Download Working Videos For Untrunc
 Download working videos for untrunc by:
 
 ```
 npm run-script download-working-videos-for-untrunc
 ```
 
-### Start Server
+## Start Server
 Run Server by:
 
 ```
@@ -115,6 +119,8 @@ npm start
 
 Then open `http://localhost:8080` in your preferred browser.
 
-## License
+<hr/>
 
-WatchVideoByLink is [licensed](LICENSE) under the Apache License, Version 2.0.
+<p id="user-content-license" align="center">
+  <a href="https://github.com/MohamedBakoush/WatchVideoByLink/blob/master/LICENSE"><img src="https://img.shields.io/badge/LICENSE-APACHE--2.0-green?style=for-the-badge" /></a>
+</p>
