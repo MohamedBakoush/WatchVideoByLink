@@ -71,8 +71,14 @@ export function showDetails() {
       showVideo(videoLinkInput.value, videoTypeSelect.value);
     }
   };
+  // Create upload video 
+  uploadVideoDetails(videoLink);
+}
+
+
+function uploadVideoDetails(videoLink){  
   // upload video container
-  const uploadVideoForm = basic.createSection(videoLink, "form", "uploadVideoContainer");  
+  const uploadVideoForm = basic.createSection(videoLink, "form", "uploadVideoContainer", "uploadVideoContainer");  
   uploadVideoForm.onsubmit = function(){
     return false;
   };
@@ -96,65 +102,80 @@ export function showDetails() {
     const file = inputUploadVideo.files[0]; 
     // file size has to be smaller then 1 GB to be uploaded to server
     if (file.size > (1024 * 1024 * 1024)) {  
-      // remove upload Video container
-      videoLink.remove();
-      showDetails();
+      // remove upload Video container 
+      uploadVideoForm.remove();
+      uploadVideoDetails(videoLink);
       // error msg
       basic.notify("error", "Size Error: Unable to upload videos greater then 1 GB");
     } else {
       // remove upload Video container
       uploadVideoForm.remove();  
       // create new upload Video container
-      const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer"); 
+      const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer", "uploadVideoContainer"); 
       // create new submit Video button container
       basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${file.name}`); 
-      // notification to user 
-      basic.notify("success", "Uploading: video to server");
       // upload video file 
-      uploadFile(inputUploadVideo, videoLink);
+      uploadFile(inputUploadVideo, videoLink, newUploadVideoForm);
     }
   };
 }
 
-
-async function uploadFile(data, videoLink){  
-  // holds file once its been choosen
-  const formData = new FormData(); 
-  // sends file + file data to server 
-  formData.append("file", data.files[0]);
-  const response = await fetch("/uploadVideoFile",{ 
-    method: "POST",
-    body: formData
-  });
-
-  if (response.ok) {
-    const returnedValue = await response.json();
-    // notification from response
-    if(returnedValue == "downloading-uploaded-video") { 
-      basic.notify("success", "Downloading: uploaded video"); 
-    } else if (returnedValue == "video-size-over-size-limit") { 
-      console.log("Size Error: Attempted video upload has a size greater then 1 GB");
-      basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
-    } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
-      console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
-      basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
-    } else if (returnedValue == "Cannot-find-ffmpeg") {
-      console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
-      basic.notify("error","Encoding Error: Cannot find ffmpeg");
-    } else if (returnedValue == "Cannot-find-ffprobe") {
-      console.log("Encoding Error: Cannot find ffprobe");
-      basic.notify("error","Encoding Error: Cannot find ffprobe");
-    } else if (returnedValue == "ffmpeg-failed") {
-      console.log("Encoding Error: ffmpeg failed");
-      basic.notify("error","Encoding Error: ffmpeg failed");
+async function uploadFile(data, videoLink, newUploadVideoForm){  
+  try {
+    // notification to user 
+    basic.notify("success", "Uploading: video to server");
+    // holds file once its been choosen
+    const formData = new FormData(); 
+    // sends file + file data to server 
+    formData.append("file", data.files[0]);
+    const response = await fetch("/uploadVideoFile",{ 
+      method: "POST",
+      body: formData
+    });
+    // fetch response
+    if (response.ok) {
+      const returnedValue = await response.json();
+      // notification from response
+      if(returnedValue == "downloading-uploaded-video") { 
+        basic.notify("success", "Downloading: uploaded video"); 
+      } else if (returnedValue == "video-size-over-size-limit") { 
+        console.log("Size Error: Attempted video upload has a size greater then 1 GB");
+        basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
+      } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
+        console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+        basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
+      } else if (returnedValue == "Cannot-find-ffmpeg") {
+        console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+        basic.notify("error","Encoding Error: Cannot find ffmpeg");
+      } else if (returnedValue == "Cannot-find-ffprobe") {
+        console.log("Encoding Error: Cannot find ffprobe");
+        basic.notify("error","Encoding Error: Cannot find ffprobe");
+      } else if (returnedValue == "ffmpeg-failed") {
+        console.log("Encoding Error: ffmpeg failed");
+        basic.notify("error","Encoding Error: ffmpeg failed");
+      }
+      // execute function showDetails()  
+      if(document.getElementById("uploadVideoContainer")){   
+        newUploadVideoForm.remove();
+        uploadVideoDetails(videoLink);
+      } 
+    } else { 
+      // execute function showDetails()  
+      if(document.getElementById("uploadVideoContainer")){   
+        newUploadVideoForm.remove();
+        uploadVideoDetails(videoLink);
+      } 
+      // request error msg 
+      basic.notify("error","Error: Request Error.");
     }
+  } catch (e) {  // when an error occurs
     // execute function showDetails()  
-    if(document.getElementById("videoLinkContainer")){   
-      videoLink.remove();
-      showDetails();
+    if(document.getElementById("uploadVideoContainer")){   
+      newUploadVideoForm.remove();
+      uploadVideoDetails(videoLink);
     } 
-  } else {
-    console.log("Failed");
+    // error msg 
+    basic.notify("error","Error: Connection Refused.");
   }
 }
 
