@@ -119,7 +119,7 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
       const confirmVideoDelete = confirm("Press OK to permanently delete video");
       if (confirmVideoDelete) {   
         console.log("starting"); 
-        deleteVideoDataPermanently(video_ID)
+        deleteVideoDataPermanently(video_ID);
       }
     };
   } else if(videoProgress["download-status"] == "working video for untrunc is unavailable") { 
@@ -141,7 +141,7 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
       const confirmVideoDelete = confirm("Press OK to permanently delete video");
       if (confirmVideoDelete) {   
         console.log("starting"); 
-        deleteVideoDataPermanently(video_ID)
+        deleteVideoDataPermanently(video_ID);
       }
     };
   } else{
@@ -157,7 +157,7 @@ async function completeDownloadRequest(filename) {
     const payload = { 
       id: filename
     };
-    const response = await fetch(`../complete-unfinnished-video-download`, {
+    const response = await fetch("../complete-unfinnished-video-download", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -175,9 +175,8 @@ async function completeDownloadRequest(filename) {
       } 
       return "all good";
     } else {
-      basic.notify("error",`Failed to Complete Request`);
+      basic.notify("error","Failed to Complete Request");
       return "failed";
-      console.log("fail");
     }
   } catch (e) { // when an error occurs
     console.log("error"); 
@@ -193,7 +192,7 @@ export function loadAvailableVideoDownloadDetails(show_current_downloads){
 export function stopAvailableVideoDownloadDetails(show_current_downloads){
   show_current_downloads_clicked = show_current_downloads;
   clearInterval(VideoDownloadDetailsInterval); 
-  return("cleared Interval")
+  return "cleared Interval"; 
 }
 
 // send request to server to delete video and all video data permently from the system

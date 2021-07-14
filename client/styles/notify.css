@@ -1,4 +1,5 @@
 #notification-area {
+    z-index: 1 !important;
     position:fixed; 
     right:10px;
     width:250px; 

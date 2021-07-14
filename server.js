@@ -1,12 +1,20 @@
 "use strict";
 const path = require("path");
 const express = require("express");
+const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
 const streamVideoFile = require("./streamVideo");
 const app = express();
-
+app.use(upload({
+  limits: { fileSize: 1024 * 1024 * 1024 },
+}));
 // show website icon on tab
 app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
+
+app.post("/uploadVideoFile", uploadVideoFile);
+function uploadVideoFile(req, res){
+  streamVideoFile.uploadVideoFile(req, res);
+}
 
 // converts url link to video link
 app.post("/getVideoLinkFromUrl", express.json(), videoLinkFromUrl);

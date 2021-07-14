@@ -51,16 +51,28 @@ body, .index-body, .index-websiteContentContainer,
   text-align: center;
 } 
 
-.watchVideoButton{
-  background: rgb(255, 56, 92) !important;
+.watchVideoButton, .uploadVideoButton{
   border: 0px !important;
   color: rgb(255, 255, 255) !important;
   border-radius: 24px !important;
   height: 38px !important;
   width: 200px !important;
 }
+
+.watchVideoButton{
+  background: rgb(255, 56, 92) !important;
+}
+
+.uploadVideoButton{
+  background: rgb(0 0 0) !important; 
+}
+
 .watchVideoButton:hover{
   background: rgb(221, 16, 99) !important;
+}
+
+.uploadVideoButton:hover{
+  background: rgb(0 0 0 / 90%) !important;
 }
 
 .button {
@@ -71,7 +83,7 @@ body, .index-body, .index-websiteContentContainer,
   cursor: pointer;
 } 
 
-.videoLinkContainer form{ 
+.videoLinkContainerForm{ 
   border: 1px solid rgb(221, 221, 221) !important;
   border-radius: 32px !important;
   color: rgb(34, 34, 34) !important;
@@ -135,6 +147,21 @@ body, .index-body, .index-websiteContentContainer,
   border-radius: 32px !important;
 }
 
+.chooseVideoInputLabel, .chooseVideoInputBody{ 
+  margin: auto;
+}
+
+.uploadVideoContainer{ 
+  display: flex !important;
+  height: 66px !important; 
+  width: 100% !important;
+}
+
+.submitUploadVideoButtonContainer{ 
+  margin: auto;
+  display: flex;
+}
+
 /* Tablet Friendly */
 
 @media only screen and (max-width: 760px){
@@ -146,5 +173,27 @@ body, .index-body, .index-websiteContentContainer,
   }
   .videoLinkInput, .videoTypeSelect { 
     width: 100% !important; 
+  }
+
+  .watchVideoButton, .uploadVideoButton{ 
+    width: 100% !important;
+  }
+
+  .chooseVideoInputLabel { 
+    display: block !important; 
+    border: 1px solid transparent !important; 
+    padding: 14px 32px !important;
+  }
+
+  .submitChoosenVideoButtonContainer { 
+    padding: 0px 32px !important;
+  }
+
+  .submitUploadVideoButtonContainer{  
+    display: block !important;
+  }
+
+  .videoLinkContainer { 
+    padding-top: 28.85vh !important;
   }
 }

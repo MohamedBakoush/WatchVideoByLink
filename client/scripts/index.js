@@ -2,7 +2,7 @@ import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as basic from "../scripts/basics.js";
 import * as navigationBar from "../scripts/navigationBar.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
-import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js"; 
 
 // get video link and video type from the url
 function showVideoFromUrl(url) {
@@ -21,7 +21,7 @@ export function showDetails() {
   // input video link container
   const videoLink = basic.createSection(basic.websiteContentContainer, "section", "videoLinkContainer", "videoLinkContainer");
   // create form
-  const videoLinkForm = basic.createSection(videoLink, "form");
+  const videoLinkForm = basic.createSection(videoLink, "form", "videoLinkContainerForm");
   videoLinkForm.onsubmit = function(){
     return false;
   };
@@ -71,6 +71,112 @@ export function showDetails() {
       showVideo(videoLinkInput.value, videoTypeSelect.value);
     }
   };
+  // Create upload video 
+  uploadVideoDetails(videoLink);
+}
+
+
+function uploadVideoDetails(videoLink){  
+  // upload video container
+  const uploadVideoForm = basic.createSection(videoLink, "form", "uploadVideoContainer", "uploadVideoContainer");  
+  uploadVideoForm.onsubmit = function(){
+    return false;
+  };
+  // submit video button container
+  const submitUploadVideoButtonContainer = basic.createSection(uploadVideoForm, "section", "submitUploadVideoButtonContainer");
+  // choose video input body
+  const chooseVideoInputBody = basic.createSection(submitUploadVideoButtonContainer, "section", "chooseVideoInputBody");
+  // choose video input label
+  const chooseVideoInputLabel = basic.createSection(chooseVideoInputBody, "label", "chooseVideoInputLabel");
+  // select video to input
+  const inputUploadVideo = basic.createInput(chooseVideoInputLabel, "file");  
+  inputUploadVideo.accept = "video/*";
+  inputUploadVideo.name = "file";
+  inputUploadVideo.required = true;
+  // submit choosen video button container
+  const submitChoosenVideoButtonContainer = basic.createSection(submitUploadVideoButtonContainer, "section", "submitChoosenVideoButtonContainer");
+  // upload Video button
+  basic.createInput(submitChoosenVideoButtonContainer, "submit", "Upload Video", undefined , "button uploadVideoButton");
+  // once upload Video button is clicked
+  uploadVideoForm.onsubmit = function(){ 
+    const file = inputUploadVideo.files[0]; 
+    // file size has to be smaller then 1 GB to be uploaded to server
+    if (file.size > (1024 * 1024 * 1024)) {  
+      // remove upload Video container 
+      uploadVideoForm.remove();
+      uploadVideoDetails(videoLink);
+      // error msg
+      basic.notify("error", "Size Error: Unable to upload videos greater then 1 GB");
+    } else {
+      // remove upload Video container
+      uploadVideoForm.remove();  
+      // create new upload Video container
+      const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer", "uploadVideoContainer"); 
+      // create new submit Video button container
+      basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${file.name}`); 
+      // upload video file 
+      uploadFile(inputUploadVideo, videoLink, newUploadVideoForm);
+    }
+  };
+}
+
+async function uploadFile(data, videoLink, newUploadVideoForm){  
+  try {
+    // notification to user 
+    basic.notify("success", "Uploading: video to server");
+    // holds file once its been choosen
+    const formData = new FormData(); 
+    // sends file + file data to server 
+    formData.append("file", data.files[0]);
+    const response = await fetch("/uploadVideoFile",{ 
+      method: "POST",
+      body: formData
+    });
+    // fetch response
+    if (response.ok) {
+      const returnedValue = await response.json();
+      // notification from response
+      if(returnedValue == "downloading-uploaded-video") { 
+        basic.notify("success", "Downloading: uploaded video"); 
+      } else if (returnedValue == "video-size-over-size-limit") { 
+        console.log("Size Error: Attempted video upload has a size greater then 1 GB");
+        basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
+      } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
+        console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+        basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
+      } else if (returnedValue == "Cannot-find-ffmpeg") {
+        console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+        basic.notify("error","Encoding Error: Cannot find ffmpeg");
+      } else if (returnedValue == "Cannot-find-ffprobe") {
+        console.log("Encoding Error: Cannot find ffprobe");
+        basic.notify("error","Encoding Error: Cannot find ffprobe");
+      } else if (returnedValue == "ffmpeg-failed") {
+        console.log("Encoding Error: ffmpeg failed");
+        basic.notify("error","Encoding Error: ffmpeg failed");
+      }
+      // execute function showDetails()  
+      if(document.getElementById("uploadVideoContainer")){   
+        newUploadVideoForm.remove();
+        uploadVideoDetails(videoLink);
+      } 
+    } else { 
+      // execute function showDetails()  
+      if(document.getElementById("uploadVideoContainer")){   
+        newUploadVideoForm.remove();
+        uploadVideoDetails(videoLink);
+      } 
+      // request error msg 
+      basic.notify("error","Error: Request Error.");
+    }
+  } catch (e) {  // when an error occurs
+    // execute function showDetails()  
+    if(document.getElementById("uploadVideoContainer")){   
+      newUploadVideoForm.remove();
+      uploadVideoDetails(videoLink);
+    } 
+    // error msg 
+    basic.notify("error","Error: Connection Refused.");
+  }
 }
 
 // assign video src and type to video id
@@ -102,12 +208,12 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
 
     // change icon from vjs-icon-cog to vjs-icon-hd - needs to be implemented better
     const httpSourceSelectorIconChange = document.createElement("style");
-    httpSourceSelectorIconChange.innerHTML = `.vjs-icon-cog:before { content: "\\f114"; font-size: 16px; }`;
+    httpSourceSelectorIconChange.innerHTML = ".vjs-icon-cog:before { content: \"\\f114\"; font-size: 16px; }";
     document.head.appendChild(httpSourceSelectorIconChange);
 
     const qualityLevels = player.qualityLevels(); 
     // disable quality levels with less one qualityLevel options
-    qualityLevels.on('addqualitylevel', function(event) {
+    qualityLevels.on("addqualitylevel", function(event) {
       let qualityLevel = event.qualityLevel; 
       if(qualityLevels.levels_.length <= 1){ 
         // dont show httpSourceSelector
@@ -145,17 +251,18 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     } 
     
     // video hotkeys
+    // eslint-disable-next-line no-undef
     videojs(videoPlayer).ready(function() {
       this.hotkeys({
         volumeStep: 0.05,
         seekStep: false,
         enableModifiersForNumbers: false,
         // just in case seekStep is active, return undefined
-        forwardKey: function(event, player) {
+        forwardKey: function() {
           // override forwardKey to not trigger when pressed
           return undefined;
         },
-        rewindKey: function(event, player) { 
+        rewindKey: function() { 
           // override rewindKey to not trigger when pressed
           return undefined;
         }
@@ -174,7 +281,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     player.play(); // play video on load
     player.muted(videoPlayerSettings.muted); // set mute video settings on load
     player.volume(videoPlayerSettings.volume);  // set volume video settings on load
-    document.getElementById("video_html5_api").onvolumechange = (event) => {  // update global video player volume/mute settings
+    document.getElementById("video_html5_api").onvolumechange = () => {  // update global video player volume/mute settings
       updateVideoPlayerVolume(player.volume(), player.muted()); 
     };
     player.src({  // video type and src
@@ -196,6 +303,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     });
 
     // video hotkeys
+    // eslint-disable-next-line no-undef
     videojs(videoPlayer).ready(function() {
       this.hotkeys({
         volumeStep: 0.05,
@@ -209,7 +317,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     player.play(); // play video on load
     player.muted(videoPlayerSettings.muted); // set mute video settings on load
     player.volume(videoPlayerSettings.volume);  // set volume video settings on load
-    document.getElementById("video_html5_api").onvolumechange = (event) => {  // update global video player volume/mute settings
+    document.getElementById("video_html5_api").onvolumechange = () => {  // update global video player volume/mute settings
       updateVideoPlayerVolume(player.volume(), player.muted()); 
     };
     player.src({  // video type and src
@@ -231,6 +339,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     });
     
     // video hotkeys
+    // eslint-disable-next-line no-undef
     videojs(videoPlayer).ready(function() {
       this.hotkeys({
         volumeStep: 0.05,
@@ -265,7 +374,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     player.play(); // play video on load
     player.muted(videoPlayerSettings.muted); // set mute video settings on load
     player.volume(videoPlayerSettings.volume);  // set volume video settings on load 
-    document.getElementById("video_html5_api").onvolumechange = (event) => { // update global video player volume/mute settings
+    document.getElementById("video_html5_api").onvolumechange = () => { // update global video player volume/mute settings
       updateVideoPlayerVolume(player.volume(), player.muted()); 
     };  
     player.src({  // video type and src
@@ -277,8 +386,8 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
 
 // get video player settings
 async function getVideoPlayerSettings() {
-  const response = await fetch(`../getVideoPlayerSettings`);
-  let videoPlayerSettings
+  const response = await fetch("../getVideoPlayerSettings");
+  let videoPlayerSettings;
   if(response.ok){
     videoPlayerSettings = await response.json();  
     return videoPlayerSettings;
@@ -287,7 +396,7 @@ async function getVideoPlayerSettings() {
     videoPlayerSettings = {
       volume: 1.0,
       muted: false
-    } 
+    }; 
     return videoPlayerSettings; 
   }
 }
@@ -310,6 +419,8 @@ async function updateVideoPlayerVolume(volume, muted) {
   }else {
     updatedVideoPlayerVolume = { msg: "failed to update video volume messages" };
   }
+   // return updatedVideoPlayerVolume
+   return updatedVideoPlayerVolume;
 }
 
 // video type Automatic activated function
@@ -351,7 +462,7 @@ async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContain
       // if url_link provided failed to get required video data
       if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
         // invalid url alert msg
-        basic.notify("error",`Invalid Url Link`);
+        basic.notify("error","Invalid Url Link");
         // change address bar
         history.pushState(null, "", "/");
         // load index details into html
