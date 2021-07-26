@@ -344,8 +344,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
 // find video by filtering trough each available video by textinput
 function searchBar(){
   // create search input
-  // TODO: remove videoLinkInput and replace it with better css
-  const searchBar = basic.inputType(basic.websiteContentContainer, "text", "searchBar", "videoLinkInput", true);
+  const searchBar = basic.inputType(basic.websiteContentContainer, "text", "searchBar", "searchBar", true);
   searchBar.name = "searchBar";
   searchBar.placeholder="Type to search";
   // filters trough video data by name at every key press
