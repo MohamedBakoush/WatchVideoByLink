@@ -1,5 +1,6 @@
 export const websiteContentContainer = document.getElementById("websiteContentContainer");
 export const favicon = document.getElementById("favicon");
+export let searchableVideoDataArray = []; 
 
 // create a input element
 // with optional input type, id, classList and if input type is required or not

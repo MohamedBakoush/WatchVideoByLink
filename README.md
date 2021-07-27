@@ -55,7 +55,7 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
     - takes a URL link and tries to find the videoSrc and videoType if successful it will be shown in the correct video player
     - using /?auto=URL will also activate the search
 - /saved/videos
-  - Shows all available videos by their thumbnails and video id as the title 
+  - Shows all available videos by their thumbnails and video title (video id as title by default)
     - if the thumbnail is hovered over a series of images from the video will be displayed to show what the video is about
     - if the thumbnail is clicked it will redirect the user to the specified video
   - Menu button is available on the top right corner of each available thumbnail which if clicked shows
@@ -63,8 +63,11 @@ After the downloaded/recorded video has finish downloading, snapshots of the vid
       - if clicked the video URL link will be copied for ease of shareability
     - Edit button
       - if clicked Edit mode will be shown with such features as 
+        - Change video title
         - Delete this video which once clicked deletes the video plus all its data permanently from the system 
-
+  - Search
+    - Find available video by video title
+  
 ## Installation
 
 ### Requirements to run WatchVideoByLink

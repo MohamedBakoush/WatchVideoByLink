@@ -8,6 +8,7 @@ async function loadVideoDetails() {
     let availablevideoDetails;
     if (response.ok) {
       availablevideoDetails = await response.json();
+      searchBar();
       eachAvailableVideoDetails(availablevideoDetails);
     } else {
       availablevideoDetails = { msg: "failed to load messages" };
@@ -26,12 +27,29 @@ async function loadVideoDetails() {
 // if there are no videoDetails then show  noAvailableVideos msg
 function eachAvailableVideoDetails(videoDetails) {
   if (Object.keys(videoDetails).length == 0) { // no available videos
+    if (document.getElementById("searchBar")) {
+      document.getElementById("searchBar").remove(); 
+    }
     const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
     basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
   } else {
-    const container = basic.createSection(basic.websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+    let container;
+    const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
+    if (savedVideosThumbnailContainer) {
+      savedVideosThumbnailContainer.innerHTML = "";
+      container = basic.createSection(basic.websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+    } else {
+      container = basic.createSection(basic.websiteContentContainer, "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+    }
+    if(basic.searchableVideoDataArray.length !== 0){ 
+      basic.searchableVideoDataArray.length = 0;
+    } 
     Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
       if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
+        // add video details into searchableVideoDataArray array 
+        videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID;
+        basic.searchableVideoDataArray.push(videoDetails[videoInfo_ID]);
+        // display video details
         showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
       }
     });
@@ -143,11 +161,16 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         e.preventDefault();
         const confirmVideoDelete = confirm("Press OK to permanently delete video");
         if (confirmVideoDelete) {
+          // remove container
           document.body.style.removeProperty("overflow");
           video_edit_container.remove();
+          //remove video from /saved/videos
           document.getElementById(videoInfo_ID).remove();
+          // delete searchable array iteam
+          const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoInfo_ID);
+          basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
+          //delete data permanently
           deleteVideoDataPermanently(videoInfo_ID, container);
-          console.log("deleted");
         }
       };
     };
@@ -235,7 +258,12 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
       // get json data from response
       requestResponse = await response.json(); 
       if (requestResponse == "video-title-changed") {
+        // find array id of searchableVideoDataArray by videoID
+        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID); 
+        // change video title from old to new
         document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
+        basic.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
+        // confirmation notification 
         basic.notify("success",`Video Title Changed: ${newVideoTitle}`);
       } else if (requestResponse == "failed-to-change-video-title") {
         basic.notify("error","Failed to Change Video Title"); 
@@ -301,15 +329,71 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
         basic.notify("success",`Deleted: ${videoID}`);
         if (savedVideosThumbnailContainer.childElementCount == 0) {
-          savedVideosThumbnailContainer.remove();
-          const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
-          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+          if(basic.searchableVideoDataArray.length == 0 ){
+            savedVideosThumbnailContainer.remove();
+            if (document.getElementById("searchBar")) {
+              document.getElementById("searchBar").remove(); 
+            }
+            const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
+            basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+          } else {
+            const noSearchableVideoData = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer", "noSearchableVideoData");
+            basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+          }
         }
       } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
         basic.notify("error",`Failed Delete: ${videoID}`);
       }
       return "videoDataDeletedPermanently";
     }
+}
+
+// find video by filtering trough each available video by textinput
+function searchBar(){
+  // create search input
+  const searchBar = basic.inputType(basic.websiteContentContainer, "text", "searchBar", "searchBar", true);
+  searchBar.name = "searchBar";
+  searchBar.placeholder="Type to search";
+  // filters trough video data by name at every key press
+  searchBar.addEventListener("keyup", (e) => { 
+    const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
+    const noSearchableVideoData = document.getElementById("noSearchableVideoData");
+    // check from searchableVideoDataArray if any video data title matches input string
+    const searchString = e.target.value;
+    const filteredsearchableVideoData = basic.searchableVideoDataArray.filter((video) => {
+      return (
+        video.info.title.toLowerCase().includes(searchString.toLowerCase())
+      );
+    }); 
+    // clear savedVideosThumbnailContainer
+    savedVideosThumbnailContainer.innerHTML = ""; 
+    // check if inputed key phrase available data is avaiable or not to either display data or state the problem
+    if (filteredsearchableVideoData.length == 0) {
+      //  check if filtered available data is avaiable or not to show the correct msg
+      if (basic.searchableVideoDataArray.length == 0) {
+        // no avaiable video msg
+        if (savedVideosThumbnailContainer) {      
+          const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
+          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+        } 
+      } else {
+        // key phrase is unavailable msg
+        if (!noSearchableVideoData) {
+          const noSearchableVideoData = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer", "noSearchableVideoData");
+          basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+        }  
+      }
+    } else {
+      //  remove noSearchableVideoDatacontaier if exits
+      if(noSearchableVideoData){ 
+        noSearchableVideoData.remove();
+      }
+      // display filterd details to client
+      filteredsearchableVideoData.forEach(function(data) {   
+        showDetails(savedVideosThumbnailContainer, data.info.id, data);
+      });
+    } 
+  });
 }
 
 // load pageLoaded to html page when requested

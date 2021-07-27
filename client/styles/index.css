@@ -2,7 +2,7 @@
 @import url("current-downloads.css");
 @import url("showAvailableVideos.css");
 @import url("notify.css");
-
+@import url("searchBar.css");
 *{
   margin: 0;
   padding: 0;
