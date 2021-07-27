@@ -8,6 +8,7 @@ async function loadVideoDetails() {
     let availablevideoDetails;
     if (response.ok) {
       availablevideoDetails = await response.json();
+      searchBar();
       eachAvailableVideoDetails(availablevideoDetails);
     } else {
       availablevideoDetails = { msg: "failed to load messages" };
@@ -26,6 +27,9 @@ async function loadVideoDetails() {
 // if there are no videoDetails then show  noAvailableVideos msg
 function eachAvailableVideoDetails(videoDetails) {
   if (Object.keys(videoDetails).length == 0) { // no available videos
+    if (document.getElementById("searchBar")) {
+      document.getElementById("searchBar").remove(); 
+    }
     const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
     basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
   } else {
@@ -327,6 +331,9 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           if(basic.searchableVideoDataArray.length == 0 ){
             savedVideosThumbnailContainer.remove();
+            if (document.getElementById("searchBar")) {
+              document.getElementById("searchBar").remove(); 
+            }
             const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
             basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
           } else {
@@ -391,6 +398,5 @@ function searchBar(){
 
 // load pageLoaded to html page when requested
 export function pageLoaded() {
-  searchBar();
   loadVideoDetails();
 }
