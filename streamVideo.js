@@ -922,26 +922,10 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   
               if(data.percent < 0){ // if data.percent is less then 0 then show 0.00%
                 videoData[`${fileName}`]["thumbnail"].download =  0.00;
-  
-                currentDownloadVideos[`${fileName}`] = {
-                  video : { 
-                    "download-status" : "completed"
-                  },
-                  thumbnail : { 
-                    "download-status" : "0.00%"
-                  } 
-                };
+                currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "0.00%"; 
               }else{ //update data with with data.percent
                 videoData[`${fileName}`]["thumbnail"].download =  data.percent;
-  
-                currentDownloadVideos[`${fileName}`] = {
-                  video : { 
-                    "download-status" : "completed"
-                  },
-                  thumbnail : { 
-                    "download-status" : `${data.percent.toFixed(2)}%`
-                  } 
-                };
+                currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent.toFixed(2)}%`; 
               }
   
               // update data to database
