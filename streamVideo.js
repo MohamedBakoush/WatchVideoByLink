@@ -340,7 +340,7 @@ async function streamVideo(request, response, videoID){
           "Content-Range": `bytes ${start}-${end}/${fileSize}`,
           "Accept-Ranges": "bytes",
           "Content-Length": chunksize,
-          "Content-Type": "video/mp4",
+          "Content-Type":  videoDetails.video.videoType,
         };
         // send newly made stream to the client
         response.writeHead(206, head);
@@ -348,7 +348,7 @@ async function streamVideo(request, response, videoID){
       } else { // send whole video file
         const head = {
           "Content-Length": fileSize,
-          "Content-Type": "video/mp4",
+          "Content-Type":  videoDetails.video.videoType,
         };
         response.writeHead(200, head);
         FileSystem.createReadStream(path).pipe(response);
