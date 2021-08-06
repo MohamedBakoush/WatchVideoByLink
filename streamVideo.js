@@ -1018,6 +1018,49 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   }
 }
 
+// V9 video compression - make video size smaller
+async function compression_V9(videofile, newFilePath, fileName) {
+  const command = new ffmpeg();
+  const fileType = ".webm";
+  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists 
+    command.addInput(videofile)
+      .on("start", function() {
+        console.log(`${fileName} download-status: starting`);
+      })
+      .on("progress", function(data) { 
+        if(data.percent < 0){  
+          console.log(`${fileName} download-status: 0.00%`);
+        } else if(data.percent == "undefined"){
+          console.log(`${fileName} download-status: ${data.percent}%`);
+        } else{
+          try { 
+            console.log(`${fileName} download-status: ${data.percent.toFixed(2)}%`);
+          } catch (error) {
+            console.log(`${fileName} download-status: ${data.percent}%`);
+          }
+        }  
+      })
+      .on("end", function() {
+        /// encoding is complete
+        console.log(`${fileName} download-status: complete`); 
+      })
+      .on("error", function(error) {
+        /// error handling
+        console.log(error.message);
+      })
+       // https://developers.google.com/media/vp9/settings/vod/
+      .outputOptions(["-c:v libvpx-vp9", "-crf 32", "-b:v 2000k"])
+      .output(`${newFilePath}${fileName}${fileType}`)
+      .run(); 
+  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
+    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory"); 
+  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory"); 
+  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
+    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory"); 
+  }
+}
+
 // deletes everything that is available in the system related to video id, video file, all available video data ...
 async function deletevideoData(request, response, videoID) {
   const filepath = `media/video/${videoID}`;
