@@ -786,42 +786,14 @@ async function trimVideo(req, res) {
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
           if(data.percent < 0){ 
-            currentDownloadVideos[`${fileName}`] = {
-              video : { 
-                "download-status" : "0.00%"
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            };
+            currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "0.00%";  
           }else if(data.percent == "undefined"){
-            currentDownloadVideos[`${fileName}`] = {
-              video : { 
-                "download-status" : `${data.percent}%`
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            };
+            currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent}%`;  
           } else{
             try {
-              currentDownloadVideos[`${fileName}`] = {
-                video : { 
-                  "download-status" : `${data.percent.toFixed(2)}%`
-                },
-                thumbnail : { 
-                  "download-status" : "waiting for video"
-                } 
-              };  
+              currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent.toFixed(2)}%`;   
             } catch (error) {
-              currentDownloadVideos[`${fileName}`] = {
-                video : { 
-                  "download-status" : `${data.percent}%`
-                },
-                thumbnail : { 
-                  "download-status" : "waiting for video"
-                } 
-              };    
+              currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent}%`;    
             }
           } 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -845,16 +817,10 @@ async function trimVideo(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+     
+          currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "completed";       
+          currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";    
 
-                    
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : "completed"
-            },
-            thumbnail : { 
-              "download-status" : "starting thumbnail download"
-            } 
-          };
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
 
