@@ -473,15 +473,9 @@ async function downloadVideoStream(req, res) {
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+          
+          currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  data.timemark;  
 
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : data.timemark
-            },
-            thumbnail : { 
-              "download-status" : "waiting for video"
-            } 
-          };
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
           
@@ -514,14 +508,9 @@ async function downloadVideoStream(req, res) {
           const newData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newData);
           
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : "completed"
-            },
-            thumbnail : { 
-              "download-status" : "starting thumbnail download"
-            } 
-          };
+          currentDownloadVideos[`${fileName}`]["video"]["download-status"] = "completed";           
+          currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] = "starting thumbnail download"; 
+
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
 
