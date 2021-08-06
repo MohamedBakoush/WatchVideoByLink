@@ -860,6 +860,7 @@ async function trimVideo(req, res) {
 
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
+          compression_V9(videofile, newFilePath, fileName);
           createThumbnail(path, newFilePath, fileName);
         })
         .on("error", function(error) {
