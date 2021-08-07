@@ -758,6 +758,9 @@ async function trimVideo(req, res) {
               videoType: "video/mp4",
               download: "completed"
             },
+            compression : {
+              download: "starting"
+            },
             thumbnail: {
               path: {},
               download: "starting"
@@ -767,7 +770,7 @@ async function trimVideo(req, res) {
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
      
           currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "completed";
-          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] =  "starting compression";          
+          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] =  "starting video compression";          
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -933,6 +936,10 @@ async function compression_V9(videofile, newFilePath, fileName) {
         console.log(`${fileName} compression-download-status: starting`);
       })
       .on("progress", function(data) { 
+        videoData[`${fileName}`]["compression"]["download"] = data.percent;       
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
         if(data.percent < 0){
           currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "0.00%";    
           console.log(`${fileName} compression-download-status: 0.00%`);
@@ -956,6 +963,15 @@ async function compression_V9(videofile, newFilePath, fileName) {
       .on("end", function() {
         /// encoding is complete
         console.log(`${fileName} compression-download-status: complete`); 
+
+        videoData[`${fileName}`]["compression"] = { 
+          path: newFilePath+fileName+fileType,
+          videoType: "video/webm",
+          download: "completed"
+        };
+        
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
         if(currentDownloadVideos[`${fileName}`]["thumbnail"] === undefined || currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] === "completed") { 
           delete currentDownloadVideos[`${fileName}`]; 
