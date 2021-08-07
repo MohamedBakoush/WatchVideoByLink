@@ -462,15 +462,15 @@ async function downloadVideoStream(req, res) {
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
         })
         .on("progress", function(data) {
-          /// do stuff with progress data if you wan
-          videoData[`${fileName}`] = {
-            video: {
-              originalVideoSrc : req.body.videoSrc,
-              originalVideoType : req.body.videoType,
-              timemark : data.timemark,
-              download : "downloading"
-            }
-          };
+          console.log("progress", data);
+
+          if(videoData[`${fileName}`]["video"]["download"] !== "downloading"){
+            videoData[`${fileName}`]["video"]["timemark"] = data.timemark; 
+            videoData[`${fileName}`]["video"]["download"] = "downloading"; 
+          } else {
+            videoData[`${fileName}`]["video"]["timemark"] = data.timemark; 
+          } 
+          
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
           
@@ -479,7 +479,6 @@ async function downloadVideoStream(req, res) {
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
           
-          console.log("progress", data);
           if (stopVideoFileBool === true  && fileNameID == fileName) {
             try {
               stop(command);
@@ -594,15 +593,10 @@ async function downloadVideo(req, res) {
 
         })
         .on("progress", function(data) {
-          /// do stuff with progress data if you wan
           console.log("progress", data);
-          videoData[`${fileName}`] = {
-            video : {
-              originalVideoSrc : req.body.videoSrc,
-              originalVideoType: req.body.videoType,
-              download: data.percent
-            }
-          };
+
+          videoData[`${fileName}`]["video"]["download"] = data.percent; 
+
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
@@ -706,6 +700,8 @@ async function trimVideo(req, res) {
             video:{
               originalVideoSrc : req.body.videoSrc,
               originalVideoType : req.body.videoType,
+              newVideoStartTime: req.body.newStartTime,
+              newVideoEndTime: req.body.newEndTime,
               download : "starting trim video download"
             }
           };
@@ -726,20 +722,13 @@ async function trimVideo(req, res) {
         
         })
         .on("progress", function(data) {
-          /// do stuff with progress data if you wan
           console.log("progress", data);
-          videoData[`${fileName}`] = {
-            video : {
-              originalVideoSrc: req.body.videoSrc,
-              originalVideoType: req.body.videoType,
-              newVideoStartTime: req.body.newStartTime,
-              newVideoEndTime: req.body.newEndTime,
-              download: data.percent
-            }
-          };
 
+          videoData[`${fileName}`]["video"]["download"] = data.percent; 
+          
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
           if(data.percent < 0){ 
             currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "0.00%";  
           }else if(data.percent == "undefined"){
@@ -751,6 +740,7 @@ async function trimVideo(req, res) {
               currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent}%`;    
             }
           } 
+
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
         })
