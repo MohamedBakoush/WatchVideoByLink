@@ -81,16 +81,24 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
       } else{
         // if videoDownloadStatusContainer dosent exist
         if(!videoDownloadStatusContainer){
-          showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID].video , videoDownloadDetails[videoInfo_ID].thumbnail);      
+          showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID]["video"], videoDownloadDetails[videoInfo_ID]["thumbnail"], videoDownloadDetails[videoInfo_ID]["compression"]);      
         } else if(videoDownloadDetails[videoInfo_ID].video["download-status"] !== "unfinished download" && videoDownloadDetails[videoInfo_ID].video["download-status"] !== "working video for untrunc is unavailable"  && videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] !== "unfinished download"){
           // clear videoDownloadStatusContainer
           videoDownloadStatusContainer.innerHTML = "";
           // video id (title)
           basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${videoInfo_ID}`); 
           // videoProgressContainer
-          basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID].video["download-status"]}`);
+          if(videoDownloadDetails[videoInfo_ID]["video"] !== undefined){
+            basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID]["video"]["download-status"]}`);
+          }  
           // thubnailProgressContainer
-          basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID].thumbnail["download-status"]}`);     
+          if(videoDownloadDetails[videoInfo_ID]["thumbnail"] !== undefined){
+            basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"]}`); 
+          }         
+          // compressionProgressContainer
+          if(videoDownloadDetails[videoInfo_ID]["compression"] !== undefined){
+            basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-compression`,`Compression Progress: ${videoDownloadDetails[videoInfo_ID]["compression"]["download-status"]}`);  
+          }  
         } 
       }  
     });
@@ -98,7 +106,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
 } 
 
 // show video downoad details
-function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgress, thumbnailProgress) { 
+function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgress, thumbnailProgress, compressionProgress) { 
   // container
   const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
   //  title
@@ -146,9 +154,17 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
     };
   } else{
     // videoProgressContainer
-    basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-video`,`Video Progress: ${videoProgress["download-status"]}`);
+    if(videoProgress !== undefined){
+      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-video`,`Video Progress: ${videoProgress["download-status"]}`);
+    }  
     // thubnailProgressContainer
-    basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-thubnail`,`Thubnail Progress: ${thumbnailProgress["download-status"]}`);
+    if(thumbnailProgress !== undefined){
+      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-thubnail`,`Thubnail Progress: ${thumbnailProgress["download-status"]}`); 
+    }         
+    // compressionProgressContainer
+    if(compressionProgress !== undefined){
+      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-compression`,`Compression Progress: ${compressionProgress["download-status"]}`);  
+    }  
   }  
 }
  
