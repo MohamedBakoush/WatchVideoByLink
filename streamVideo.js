@@ -213,6 +213,27 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             // thumbnail && compression true
           } else if (thumbnailProgress && !compressionProgress) {
             // thumbnail true compression false 
+            if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
+              delete currentDownloadVideos[`${fileName}`]; 
+              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+            } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
+              currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg and ffprobe unavailable";  
+              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            } else if(!FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg is  unavailable
+              currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg unavailable";  
+              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
+              currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffprobe unavailable";  
+              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            } else{ // update thumbanil is unfinnished
+              currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "unfinished download";
+              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
+            }
           } else if (!thumbnailProgress && compressionProgress) {
             // thumbnail false compression true 
           } else {
