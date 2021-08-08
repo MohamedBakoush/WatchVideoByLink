@@ -218,8 +218,62 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           } else {
             // thumbnail false compression false   
           }
-        } else { 
-          // videoProgress incomplete  
+        }  else if(currentDownloadVideos[fileName]["video"]["download-status"] == "starting stream download" ||
+                  currentDownloadVideos[fileName]["video"]["download-status"] == "starting video download" ||
+                  currentDownloadVideos[fileName]["video"]["download-status"] == "starting trim video download" ||
+                  currentDownloadVideos[fileName]["video"]["download-status"] == "0.00%"
+                  ){ // if the video download hasent started
+            // delete currentDownloadVideos from server if exist
+            // eslint-disable-next-line no-prototype-builtins
+            if(currentDownloadVideos.hasOwnProperty(fileName)){ 
+              delete currentDownloadVideos[`${fileName}`]; 
+              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+            }
+            // delete videoData from server if exist
+            // eslint-disable-next-line no-prototype-builtins
+            if (videoData.hasOwnProperty(fileName)) {
+              delete videoData[`${fileName}`]; 
+              const deleteVideoData = JSON.stringify(videoData, null, 2);
+              FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
+            }   
+            // check if there is a video file
+            if(FileSystem.existsSync(`./media/video/${fileName}/${fileName}.mp4`)){
+              //rename video file to another folder
+              FileSystem.rename(`./media/video/${fileName}/${fileName}.mp4`, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
+                if (err) throw err;  
+                console.log(`\n moved ./media/video/${fileName}/${fileName}.mp4 to  media/deleted-videos/deleted-${fileName}.mp4 \n`);
+                //  delete the video
+                FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
+                  if (err) throw err;
+                  console.log(`\n unlinked media/deleted-videos/deleted-${fileName}.mp4 video file \n`);
+                });
+                // delete created folder if exist
+                if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+                  FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                    if (err) throw err; 
+                  });
+                } 
+              }); 
+              // check if folder exists
+            } else if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+              // delete folder
+              FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                if (err) throw err; 
+              }); 
+            }
+          } else if(!FileSystem.existsSync(untrunc_path)){//update untrunc is unavailable
+            currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          } else if(!FileSystem.existsSync("./media/working-video/video.mp4")){//update working-video/video.mp4 is unavailable
+            currentDownloadVideos[fileName]["video"]["download-status"] = "working video for untrunc is unavailable";  
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          } else{ // update video is unfinnished
+            currentDownloadVideos[fileName]["video"]["download-status"] = "unfinished download";
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
           }
       } else {
         // videoProgress false
