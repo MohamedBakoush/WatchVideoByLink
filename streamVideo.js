@@ -211,11 +211,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           // videoProgress completed         
           if (thumbnailProgress && compressionProgress) {
             // thumbnail && compression true
-            if(thumbnailProgress == "completed" && compressionProgress == "completed"){ // delete data (no longer needed)            
-              delete currentDownloadVideos[`${fileName}`]; 
-              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
-            } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
+            if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
               if (thumbnailProgress == "completed" && compressionProgress !== "completed") {   
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffmpeg and ffprobe unavailable";   
               } else if (thumbnailProgress !== "completed" && compressionProgress == "completed") {       
@@ -237,6 +233,10 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);           
+            } else if(thumbnailProgress == "completed" && compressionProgress == "completed"){ // delete data (no longer needed)            
+              delete currentDownloadVideos[`${fileName}`]; 
+              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
               if (thumbnailProgress == "completed" && compressionProgress !== "completed") {   
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffprobe unavailable";  
@@ -268,11 +268,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             }
           } else if (thumbnailProgress && !compressionProgress) {
             // thumbnail true compression false 
-            if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
-              delete currentDownloadVideos[`${fileName}`]; 
-              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
-            } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
+            if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg and ffprobe unavailable";  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
@@ -284,6 +280,10 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffprobe unavailable";  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            } else if(thumbnailProgress == "completed"){ // delete data (no longer needed)       
+              delete currentDownloadVideos[`${fileName}`]; 
+              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
             } else{ // update thumbanil is unfinnished
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "unfinished download";
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -330,11 +330,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             }
           } else {
             // thumbnail false compression false  
-            if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
-              delete currentDownloadVideos[`${fileName}`]; 
-              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
-            } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
+            if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "ffmpeg and ffprobe unavailable"};
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
