@@ -183,8 +183,24 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
 function cheackForAvailabeUnFinishedVideoDownloads(){  
   if(Object.keys(currentDownloads()).length !== 0){  // if there is available data in currentDownloads()
     Object.keys(currentDownloads()).forEach(function(fileName) { // for each currentDownloads get id as fileName 
-      const videoProgress = currentDownloadVideos[fileName].video["download-status"];
-      const thumbnailProgress = currentDownloadVideos[fileName].thumbnail["download-status"];
+      // assign download status variable if available with correct progress status
+      let videoProgress, thumbnailProgress, compressionProgress;
+      if (currentDownloadVideos[fileName]["video"]) {
+        videoProgress = currentDownloadVideos[fileName]["video"]["download-status"];  
+      } else {
+        videoProgress = false;
+      }
+      if (currentDownloadVideos[fileName]["thumbnail"]) {
+        thumbnailProgress = currentDownloadVideos[fileName]["thumbnail"]["download-status"];  
+      } else {
+        thumbnailProgress = false;
+      } 
+      if (currentDownloadVideos[fileName]["compression"]) {
+        compressionProgress = currentDownloadVideos[fileName]["compression"]["download-status"];  
+      } else {
+        compressionProgress = false;
+      } 
+
       if(videoProgress == "completed"){ // when video has already been finnished downloading 
         if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
           delete currentDownloadVideos[`${fileName}`]; 
