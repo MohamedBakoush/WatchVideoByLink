@@ -478,9 +478,9 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                         // reset completedCount
                         completedCount = 0;
                         // delete folder
-                        FileSystem.rmdir(`\n ./media/video/${fileName}`, (err) => {
+                        FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
                           if (err) throw err; 
-                          console.log(`${fileName} folder deleted`);
+                          console.log(`\n ${fileName} folder deleted`);
                         }); 
                       }
                     }); 
