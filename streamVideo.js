@@ -1,5 +1,6 @@
 "use strict";
 const FileSystem = require("fs");
+const path = require('path');
 const stream = require("stream");
 const { exec } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
@@ -407,6 +408,20 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           }
       } else {
         // videoProgress false
+        // delete currentDownloadVideos from server if exist
+        // eslint-disable-next-line no-prototype-builtins
+        if(currentDownloadVideos.hasOwnProperty(fileName)){ 
+          delete currentDownloadVideos[`${fileName}`]; 
+          const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+        }
+        // delete videoData from server if exist
+        // eslint-disable-next-line no-prototype-builtins
+        if (videoData.hasOwnProperty(fileName)) {
+          delete videoData[`${fileName}`]; 
+          const deleteVideoData = JSON.stringify(videoData, null, 2);
+          FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
+        }   
       }
     });  
   }
