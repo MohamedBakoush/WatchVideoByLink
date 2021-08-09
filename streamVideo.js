@@ -1225,96 +1225,87 @@ async function compression_V9(videofile, newFilePath, fileName) {
 
 // deletes everything that is available in the system related to video id, video file, all available video data ...
 async function deletevideoData(request, response, videoID) {
-  const filepath = `media/video/${videoID}`;
   // check if videoid is valid
   const videoDetails = await findVideosByID(videoID);
   // if video dosent exist redirect to home page
   if (videoDetails == undefined) {
     response.status(404).redirect("/");
   } else {
-     try {  
-      if (FileSystem.existsSync(videoDetails.video.path)) { 
-        // move video file to deleted-videos folder
-        // if video is active it will make the video not viewable if someone wants to view it
-        FileSystem.rename(videoDetails.video.path, `media/deleted-videos/deleted-${videoID}.mp4`,  (err) => {
-          if (err) throw err;  
-          console.log(`\n moved ${videoDetails.video.path} to  media/deleted-videos/deleted-${videoID}.mp4 \n`);
-          //  delete the video
-          FileSystem.unlink(`media/deleted-videos/deleted-${videoID}.mp4`, (err) => {
-            if (err) throw err;
-            console.log(`\n unlinked media/deleted-videos/deleted-${videoID}.mp4 video file \n`);
-          });
-          //  delete folder Content
-          FileSystem.rmdir(filepath, { recursive: true }, (err) => {
-            if (err) throw err;
-            console.log(`\n removed ${filepath} dir \n`);
-          }); 
-          // delete video data from database
-          // delete videoData from database 
-          // eslint-disable-next-line no-prototype-builtins
-          if(videoData.hasOwnProperty(videoID)){ 
-            delete videoData[videoID]; 
-            const newVideoData = JSON.stringify(videoData, null, 2);
-            FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-          }
-          // delete availableVideos from database 
-          // eslint-disable-next-line no-prototype-builtins
-          if(availableVideos.hasOwnProperty(videoID)){ 
-            delete availableVideos[videoID];
-            const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-            FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-          }
-          // delete currentDownloadVideos from database 
-          // eslint-disable-next-line no-prototype-builtins
-          if(currentDownloadVideos.hasOwnProperty(videoID)){ 
-            delete currentDownloadVideos[videoID];
-            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
-          }
-          console.log(`\n ${filepath} is deleted! \n`);
-          response.json(`video-id-${videoID}-data-permanently-deleted`);
-        });
-      } else{ // if seposed video path dosent exits delete data/video folder 
-        console.log("video path dosent exits delete data/video folder");
-        if (FileSystem.existsSync(filepath)) { 
-          console.log("delete folder Content");
-          //  delete folder Content
-          FileSystem.rmdir(filepath, { recursive: true }, (err) => {
-            if (err) throw err;
-            console.log(`\n removed ${filepath} dir \n`);
-          });
-        }
-
-        // delete video data from database
-        // delete videoData from database 
-        // eslint-disable-next-line no-prototype-builtins
-        if(videoData.hasOwnProperty(videoID)){  
-          delete videoData[videoID];
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-        }
-        // delete availableVideos from database 
-        // eslint-disable-next-line no-prototype-builtins
-        if(availableVideos.hasOwnProperty(videoID)){ 
-          delete availableVideos[videoID];
-          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-          FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-        }
-        // delete currentDownloadVideos from database
-        // eslint-disable-next-line no-prototype-builtins
-        if(currentDownloadVideos.hasOwnProperty(videoID)){ 
-          delete currentDownloadVideos[videoID];
-          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
-        }
-
-        console.log(`\n ${filepath} is deleted! \n`);
-        response.json(`video-id-${videoID}-data-permanently-deleted`);
+    try {  
+      // delete video data from database
+      // delete videoData from database 
+      // eslint-disable-next-line no-prototype-builtins
+      if(videoData.hasOwnProperty(videoID)){  
+        console.log("delete videoData");
+        delete videoData[videoID];
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
       }
-
-     } catch (e) {
-       console.log(`failed to delete ${videoDetails.video.path}`);
-     }
+      // delete availableVideos from database 
+      // eslint-disable-next-line no-prototype-builtins
+      if(availableVideos.hasOwnProperty(videoID)){ 
+        console.log("delete availableVideos");
+        delete availableVideos[videoID];
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+      }
+      // delete currentDownloadVideos from database
+      // eslint-disable-next-line no-prototype-builtins
+      if(currentDownloadVideos.hasOwnProperty(videoID)){ 
+        console.log("delete currentDownloadVideos");
+        delete currentDownloadVideos[videoID];
+        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+        FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+      }
+      // check if folder exists
+      if(FileSystem.existsSync(`./media/video/${videoID}`)){ 
+        FileSystem.readdir(`./media/video/${videoID}`, function(err, files) {
+          if (err) throw err;  
+          if (!files.length) {
+            // directory empty, delete folder           
+            FileSystem.rmdir(`./media/video/${videoID}`, (err) => {
+              if (err) throw err; 
+              console.log(`${videoID} folder deleted`);      
+              response.json(`video-id-${videoID}-data-permanently-deleted`);
+            }); 
+          } else{ 
+            // folder not empty
+            FileSystem.readdir(`./media/video/${videoID}`, (err, files) => {
+              if (err) throw err;
+              let completedCount = 0;
+              for (const file of files) {   
+                FileSystem.rename(`./media/video/${videoID}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
+                  if (err) throw err;  
+                  console.log(`moved ./media/video/${videoID}/${file} to media/deleted-videos/deleted-${file}`);
+                  // delete the video
+                  FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                    if (err) throw err;
+                    console.log(`unlinked media/deleted-videos/deleted-${file} file`); 
+                    completedCount += 1; 
+                    if(files.length === completedCount){// if file length is same as completedCount then delete folder
+                      // reset completedCount 
+                      completedCount = 0; 
+                      // delete folder
+                      FileSystem.rmdir(`./media/video/${videoID}`, (err) => {
+                        if (err) throw err; 
+                        console.log(`${videoID} folder deleted`);
+                        response.json(`video-id-${videoID}-data-permanently-deleted`);
+                      }); 
+                    }
+                  }); 
+                });
+              }
+            });
+          }          
+        });
+      } else{ 
+        // folder dosent exit 
+        console.log(`${videoID} folder dosent exit`);
+        response.json(`video-id-${videoID}-data-permanently-deleted`);
+      } 
+    } catch (e) {
+      console.log(`${videoID} failed to delete`);
+    }
   }
 }
 
