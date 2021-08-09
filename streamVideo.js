@@ -367,6 +367,13 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               const deleteVideoData = JSON.stringify(videoData, null, 2);
               FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
             }   
+            // delete availableVideos from server if exist
+            // eslint-disable-next-line no-prototype-builtins
+            if(availableVideos.hasOwnProperty(fileName)){ 
+              delete availableVideos[fileName];
+              const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+              FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+            }
             // check if folder exists
             if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
               FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
@@ -436,6 +443,13 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           const deleteVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
         }   
+        // delete availableVideos from server if exist
+        // eslint-disable-next-line no-prototype-builtins
+        if(availableVideos.hasOwnProperty(fileName)){ 
+          delete availableVideos[fileName];
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+        }
         // check if folder exists
         if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
           FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
