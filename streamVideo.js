@@ -422,6 +422,22 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           const deleteVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
         }   
+
+        // check if folder exists
+        if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+          FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
+            if (err) throw err;  
+            if (!files.length) {
+              // directory empty, delete folder
+              FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                if (err) throw err; 
+                console.log(`${fileName} folder deleted`);
+              }); 
+            } else{ 
+              // folder not empty
+            }          
+          });
+        } 
       }
     });  
   }
