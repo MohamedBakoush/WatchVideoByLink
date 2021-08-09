@@ -435,9 +435,35 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               }); 
             } else{ 
               // folder not empty
+              FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+                if (err) throw err;
+                let completedCount = 0;
+                for (const file of files) {
+                  completedCount += 1;
+                  FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
+                    if (err) throw err;  
+                    console.log(`\n moved ./media/video/${fileName}/${file} to media/deleted-videos/deleted-${file}`);
+                    // delete the video
+                    FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                      if (err) throw err;
+                      console.log(`\n unlinked media/deleted-videos/deleted-${file} file`);  
+                      if(files.length == completedCount){// if file length is same as completedCount then delete folder
+                        // reset completedCount
+                        completedCount = 0;
+                        // delete folder
+                        FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                          if (err) throw err; 
+                          console.log(`${fileName} folder deleted`);
+                        }); 
+                      }
+                    }); 
+                  });
+                }
+              });
             }          
           });
         } 
+
       }
     });  
   }
