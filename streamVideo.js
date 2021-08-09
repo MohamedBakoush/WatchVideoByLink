@@ -826,9 +826,7 @@ async function downloadVideo(req, res) {
 
           if(data.percent < 0){ 
             currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "0.00%";  
-          } else if(data.percent == "undefined"){
-            currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent}%`;  
-          } else{
+          }else{
             try {
               currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent.toFixed(2)}%`;  
             } catch (error) {
@@ -958,9 +956,7 @@ async function trimVideo(req, res) {
 
           if(data.percent < 0){ 
             currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "0.00%";  
-          }else if(data.percent == "undefined"){
-            currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent}%`;  
-          } else{
+          }else{
             try {
               currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent.toFixed(2)}%`;   
             } catch (error) {
@@ -1066,10 +1062,14 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 videoData[`${fileName}`]["thumbnail"].download =  0.00;
                 currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "0.00%"; 
               }else{ //update data with with data.percent
-                videoData[`${fileName}`]["thumbnail"].download =  data.percent;
-                currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent.toFixed(2)}%`; 
+                try {
+                  videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+                  currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent.toFixed(2)}%`;  
+                } catch (error) {
+                  videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+                  currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent}%`;    
+                }
               }
-  
               // update data to database
               const newVideoData = JSON.stringify(videoData, null, 2);
               FileSystem.writeFileSync("data/data-videos.json", newVideoData); 
