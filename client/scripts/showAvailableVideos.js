@@ -164,11 +164,6 @@ function showDetails(container, videoInfo_ID, videoDetails) {
           // remove container
           document.body.style.removeProperty("overflow");
           video_edit_container.remove();
-          //remove video from /saved/videos
-          document.getElementById(videoInfo_ID).remove();
-          // delete searchable array iteam
-          const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoInfo_ID);
-          basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
           //delete data permanently
           deleteVideoDataPermanently(videoInfo_ID, container);
         }
@@ -323,11 +318,18 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container, o
 
 // send request to server to delete video and all video data permently from the system
 async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
+  try {
     const response = await fetch(`../delete-video-data-permanently/${videoID}`);
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
         basic.notify("success",`Deleted: ${videoID}`);
+        //remove video from /saved/videos
+        document.getElementById(videoID).remove();
+        // delete searchable array item 
+        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID);
+        basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
+        // update Available Videos Container if no availabe videos
         if (savedVideosThumbnailContainer.childElementCount == 0) {
           if(basic.searchableVideoDataArray.length == 0 ){
             savedVideosThumbnailContainer.remove();
@@ -346,6 +348,10 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
       }
       return "videoDataDeletedPermanently";
     }
+  } catch (error) {  
+    basic.notify("error","Failed Fetch: Video Deletion");
+    return "Failed fetch";
+  }
 }
 
 // find video by filtering trough each available video by textinput

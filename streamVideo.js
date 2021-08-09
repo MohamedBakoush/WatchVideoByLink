@@ -1301,6 +1301,7 @@ async function deletevideoData(request, response, videoID) {
         response.json(`video-id-${videoID}-data-permanently-deleted`);
       } 
     } catch (e) {
+      response.json(`video-id-${videoID}-data-failed-to-permanently-deleted`); 
       console.log(`${videoID} failed to delete`);
     }
   }
