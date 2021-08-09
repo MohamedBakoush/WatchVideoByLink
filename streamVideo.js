@@ -368,7 +368,6 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               const deleteVideoData = JSON.stringify(videoData, null, 2);
               FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
             }   
-
             // check if folder exists
             if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
               FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
@@ -408,8 +407,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                   });
                 }          
               });
-            } 
-            
+            }            
           } else if(!FileSystem.existsSync(untrunc_path)){//update untrunc is unavailable
             currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -439,7 +437,6 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           const deleteVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
         }   
-
         // check if folder exists
         if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
           FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
@@ -480,7 +477,6 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             }          
           });
         } 
-
       }
     });  
   }
