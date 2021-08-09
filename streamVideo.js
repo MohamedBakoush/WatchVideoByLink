@@ -353,7 +353,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                   currentDownloadVideos[fileName]["video"]["download-status"] == "starting video download" ||
                   currentDownloadVideos[fileName]["video"]["download-status"] == "starting trim video download" ||
                   currentDownloadVideos[fileName]["video"]["download-status"] == "0.00%"
-                  ){ // if the video download hasent started
+                  ){ // if the video download hasn't started
             // delete currentDownloadVideos from server if exist
             // eslint-disable-next-line no-prototype-builtins
             if(currentDownloadVideos.hasOwnProperty(fileName)){ 
@@ -368,31 +368,48 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               const deleteVideoData = JSON.stringify(videoData, null, 2);
               FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
             }   
-            // check if there is a video file
-            if(FileSystem.existsSync(`./media/video/${fileName}/${fileName}.mp4`)){
-              //rename video file to another folder
-              FileSystem.rename(`./media/video/${fileName}/${fileName}.mp4`, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
+
+            // check if folder exists
+            if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+              FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
                 if (err) throw err;  
-                console.log(`\n moved ./media/video/${fileName}/${fileName}.mp4 to  media/deleted-videos/deleted-${fileName}.mp4 \n`);
-                //  delete the video
-                FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-                  if (err) throw err;
-                  console.log(`\n unlinked media/deleted-videos/deleted-${fileName}.mp4 video file \n`);
-                });
-                // delete created folder if exist
-                if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+                if (!files.length) {
+                  // directory empty, delete folder
                   FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
                     if (err) throw err; 
+                    console.log(`${fileName} folder deleted`);
+                  }); 
+                } else{ 
+                  // folder not empty
+                  FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+                    if (err) throw err;
+                    let completedCount = 0;
+                    for (const file of files) {
+                      completedCount += 1;
+                      FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
+                        if (err) throw err;  
+                        console.log(`\n moved ./media/video/${fileName}/${file} to media/deleted-videos/deleted-${file}`);
+                        // delete the video
+                        FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                          if (err) throw err;
+                          console.log(`\n unlinked media/deleted-videos/deleted-${file} file`);  
+                          if(files.length == completedCount){// if file length is same as completedCount then delete folder
+                            // reset completedCount
+                            completedCount = 0;
+                            // delete folder
+                            FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                              if (err) throw err; 
+                              console.log(`\n ${fileName} folder deleted`);
+                            }); 
+                          }
+                        }); 
+                      });
+                    }
                   });
-                } 
-              }); 
-              // check if folder exists
-            } else if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
-              // delete folder
-              FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-                if (err) throw err; 
-              }); 
-            }
+                }          
+              });
+            } 
+            
           } else if(!FileSystem.existsSync(untrunc_path)){//update untrunc is unavailable
             currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -451,7 +468,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                         // reset completedCount
                         completedCount = 0;
                         // delete folder
-                        FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                        FileSystem.rmdir(`\n ./media/video/${fileName}`, (err) => {
                           if (err) throw err; 
                           console.log(`${fileName} folder deleted`);
                         }); 
