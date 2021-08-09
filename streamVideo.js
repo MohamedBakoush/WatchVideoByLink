@@ -1,6 +1,5 @@
 "use strict";
 const FileSystem = require("fs");
-const path = require('path');
 const stream = require("stream");
 const { exec } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
