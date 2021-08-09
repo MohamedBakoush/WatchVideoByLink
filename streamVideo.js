@@ -1236,7 +1236,6 @@ async function deletevideoData(request, response, videoID) {
       // delete videoData from database 
       // eslint-disable-next-line no-prototype-builtins
       if(videoData.hasOwnProperty(videoID)){  
-        console.log("delete videoData");
         delete videoData[videoID];
         const newVideoData = JSON.stringify(videoData, null, 2);
         FileSystem.writeFileSync("data/data-videos.json", newVideoData);
@@ -1244,7 +1243,6 @@ async function deletevideoData(request, response, videoID) {
       // delete availableVideos from database 
       // eslint-disable-next-line no-prototype-builtins
       if(availableVideos.hasOwnProperty(videoID)){ 
-        console.log("delete availableVideos");
         delete availableVideos[videoID];
         const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
         FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
@@ -1252,7 +1250,6 @@ async function deletevideoData(request, response, videoID) {
       // delete currentDownloadVideos from database
       // eslint-disable-next-line no-prototype-builtins
       if(currentDownloadVideos.hasOwnProperty(videoID)){ 
-        console.log("delete currentDownloadVideos");
         delete currentDownloadVideos[videoID];
         const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
         FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
