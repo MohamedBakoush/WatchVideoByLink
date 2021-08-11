@@ -1155,6 +1155,61 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   }
 }
 
+let fileNameID_Compression;
+let stopCompressedVideoFileBool = false; 
+// check if video compression is downloading
+// if true then update stopCompressedVideoFileBool and fileNameID_Compression variable and return true
+// else return false
+function stopCommpressedVideoDownload(bool, fileNameID) { 
+  try {
+    if (videoData[fileNameID]["compression"]) {
+      if (videoData[fileNameID]["compression"]["download"] == "completed") {   
+        return false;
+      } else if(currentDownloadVideos[fileNameID]){
+        if(currentDownloadVideos[fileNameID]["compression"]){
+          if (currentDownloadVideos[fileNameID]["compression"]["download-status"] == "completed"
+            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg and ffprobe unavailable"
+            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg unavailable"
+            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffprobe unavailable"
+            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "unfinished download") {
+            return false;
+          } else {
+            stopCompressedVideoFileBool = bool;
+            fileNameID_Compression = fileNameID; 
+            return true;
+          }
+        }else {
+          return false;
+        }  
+      } else {
+        stopCompressedVideoFileBool = bool;
+        fileNameID_Compression = fileNameID; 
+        return true;
+      }   
+    } else if(currentDownloadVideos[fileNameID]){
+      if(currentDownloadVideos[fileNameID]["compression"]){
+        if (currentDownloadVideos[fileNameID]["compression"]["download-status"] == "completed"
+          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg and ffprobe unavailable"
+          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg unavailable"
+          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffprobe unavailable"
+          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "unfinished download") {
+          return false;
+        } else {
+          stopCompressedVideoFileBool = bool;
+          fileNameID_Compression = fileNameID; 
+          return true;
+        }
+      }else {
+        return false;
+      }  
+    } else {
+      return false;
+    } 
+  } catch (e) {
+    return false;
+  }
+}
+
 // V9 video compression - make video size smaller
 async function compression_V9(videofile, newFilePath, fileName) {
   const command = new ffmpeg();
