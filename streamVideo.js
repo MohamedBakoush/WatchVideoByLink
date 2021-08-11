@@ -1303,6 +1303,41 @@ async function compression_V9(videofile, newFilePath, fileName) {
   }
 }
 
+// check if video compression is downloading before data deletion 
+function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(request, response, videoID) {
+      // stop video compression
+      const stopCommpressedVideoDownloadBool = stopCommpressedVideoDownload(true, videoID); 
+      if (stopCommpressedVideoDownloadBool) {
+        const checkDownloadStatus = setInterval( function(){ 
+          // try untill compressed video gets killed with signal SIGKILL or finnishes download 
+          try { 
+            if (videoData[videoID]["compression"]) {
+              if (videoData[videoID]["compression"]["download"] == "completed" 
+              || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
+                // stop interval and start data deletion when videoData is completed or ffmpeg was killed with signal SIGKILL
+                clearInterval(checkDownloadStatus); 
+                deletevideoData(request, response, videoID);
+              } else if(currentDownloadVideos[videoID]["compression"]){
+                if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
+                || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
+                  // stop interval and start data deletion when currentDownloadVideos is completed or ffmpeg was killed with signal SIGKILL
+                  clearInterval(checkDownloadStatus); 
+                  deletevideoData(request, response, videoID);
+                } 
+              } 
+            } else { // stop interval and start data deletion
+              clearInterval(checkDownloadStatus);            
+              deletevideoData(request, response, videoID);
+            }
+          } catch (e) { // error occurs 
+            console.log(e);  
+          }
+        }, 500); 
+      } else { // compressed video isn't downloading
+        deletevideoData(request, response, videoID);
+      }
+}
+
 // deletes everything that is available in the system related to video id, video file, all available video data ...
 async function deletevideoData(request, response, videoID) {
   // check if videoid is valid
@@ -1728,6 +1763,7 @@ module.exports = { // export modules
   getAllAvailableVideos,
   streamThumbnail,
   deletevideoData,
+  checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
   getVideoLinkFromUrl,
   getVideoPlayerSettings,
   currentDownloads,
