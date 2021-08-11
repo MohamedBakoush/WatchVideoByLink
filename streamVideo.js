@@ -633,8 +633,13 @@ function getVideoPlayerSettings() {
 }
 
 // ends ffmpeg (finishes download video)
-const stop = (stream) => {
-  return stream.ffmpegProc.stdin.write("q");
+const stop = (command) => {
+  return command.ffmpegProc.stdin.write("q");
+};
+
+// ends ffmpeg forcefully
+const SIGKILL = (command) => {
+  return command.kill("SIGKILL");
 };
 
 let fileNameID;
