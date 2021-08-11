@@ -1243,6 +1243,16 @@ async function compression_V9(videofile, newFilePath, fileName) {
         const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
         FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
 
+        // stop video compression
+        if (stopCompressedVideoFileBool === true  && fileNameID_Compression == fileName) {
+          try {
+            SIGKILL(command);
+            stopCompressedVideoFileBool = false; 
+          } catch (e) {
+            stopCompressedVideoFileBool = false; 
+          }
+        }
+
       })
       .on("end", function() {
         /// encoding is complete
