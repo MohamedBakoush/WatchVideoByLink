@@ -1252,7 +1252,6 @@ async function compression_V9(videofile, newFilePath, fileName) {
             stopCompressedVideoFileBool = false; 
           }
         }
-
       })
       .on("end", function() {
         /// encoding is complete
@@ -1278,7 +1277,18 @@ async function compression_V9(videofile, newFilePath, fileName) {
       })
       .on("error", function(error) {
         /// error handling
-        console.log(error.message);
+        if (error.message === "ffmpeg was killed with signal SIGKILL") {
+          if (videoData[`${fileName}`]["compression"]) {              
+            videoData[`${fileName}`]["compression"]["download"] = "ffmpeg was killed with signal SIGKILL";   
+            const newVideoData = JSON.stringify(videoData, null, 2);
+            FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+          }  
+          if (currentDownloadVideos[`${fileName}`]["compression"]) {         
+            currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "ffmpeg was killed with signal SIGKILL"; 
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+          } 
+        }
       })
        // https://developers.google.com/media/vp9/settings/vod/
       .outputOptions(["-c:v libvpx-vp9", "-crf 32", "-b:v 2000k"])
