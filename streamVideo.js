@@ -502,17 +502,60 @@ function completeUnfinnishedVideoDownload(req){
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`; 
   const path = newFilePath+fileName+fileType;
-  const videoProgress = currentDownloadVideos[fileName].video["download-status"];
-  const thumbnailProgress = currentDownloadVideos[fileName].thumbnail["download-status"];
-  if(videoProgress == "completed"){ // when video has already been finnished downloading 
-    if(thumbnailProgress == "completed"){ // delete data (no longer needed)            
+  let videoProgressCompleted, thumbnailProgressCompleted, compressionProgressCompleted;
+  try { // if videoProgress exits and is complete return true else false
+    if (currentDownloadVideos[fileName]["video"]["download-status"] == "completed") {
+      videoProgressCompleted = true;
+    } else {
+      videoProgressCompleted = false;
+    }
+  } catch (error) {
+    videoProgressCompleted = false;
+  }
+  try { // if thumbnailProgress exits and is complete return true else false
+    if (currentDownloadVideos[fileName]["thumbnail"]["download-status"] == "completed") {
+      thumbnailProgressCompleted = true;
+    } else {
+      thumbnailProgressCompleted = false;
+    }
+  } catch (error) {
+    thumbnailProgressCompleted = false;
+  }
+  try { // if compressionProgress exits and is complete return true else false
+    if (currentDownloadVideos[fileName]["compression"]["download-status"] == "completed") {
+      compressionProgressCompleted = true;
+    } else {
+      compressionProgressCompleted = false;
+    }
+  } catch (error) {
+    compressionProgressCompleted = false;
+  }
+  if(videoProgressCompleted){ // when video has already been finnished downloading 
+    if(thumbnailProgressCompleted && compressionProgressCompleted){ // delete data (no longer needed)    
+      // thumbnail true, compression true   
       delete currentDownloadVideos[`${fileName}`]; 
       const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
       FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
       return "download status: completed";
-    } else{ // redownload thumbnails 
+    } else if(!thumbnailProgressCompleted && compressionProgressCompleted){ // redownload thumbnails
+      // thumbnail false, compression true
       createThumbnail(path, newFilePath, fileName); 
       return "redownload thumbnails";
+    } else if(thumbnailProgressCompleted && !compressionProgressCompleted){ // redownload compression
+      // thumbnail true, compression false
+      compression_V9(path, newFilePath, fileName); 
+      return "redownload compression";
+    } else{ 
+      if (currentDownloadVideos[fileName]["compression"] == undefined) { // redownload thumbnails 
+        // thumbnail false, compression undefined  
+        createThumbnail(path, newFilePath, fileName); 
+        return "redownload thumbnails";      
+      } else { // redownload thumbnails & compression
+        // thumbnail false, compression false  
+        createThumbnail(path, newFilePath, fileName); 
+        compression_V9(path, newFilePath, fileName); 
+        return "redownload thumbnails & compression";  
+      } 
     }
   } else{  
     const fileName_path = `./media/video/${fileName}/${fileName}`,
