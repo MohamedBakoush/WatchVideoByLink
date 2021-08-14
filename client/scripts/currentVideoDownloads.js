@@ -110,6 +110,26 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
 
 // show video downoad details
 function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgress, thumbnailProgress, compressionProgress) { 
+  const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
+  let compressionProgressUnfinished, thumbnailProgressUnfinished;
+  try { // if thumbnailProgress exits and is complete return true else false
+    if (thumbnailProgress["download-status"] == "unfinished download") {
+      thumbnailProgressUnfinished = true;
+    } else {
+      thumbnailProgressUnfinished = false;
+    }
+  } catch (error) {
+    thumbnailProgressUnfinished = false;
+  }
+  try { // if compressionProgress exits and is complete return true else false
+    if (compressionProgress["download-status"] == "unfinished download") {
+      compressionProgressUnfinished = true;
+    } else {
+      compressionProgressUnfinished = false;
+    }
+  } catch (error) {
+    compressionProgressUnfinished = false;
+  }
   // container
   const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
   //  title
