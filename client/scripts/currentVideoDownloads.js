@@ -142,7 +142,7 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
       e.preventDefault(); 
       completeDownloadRequest(video_ID);  
     }; 
-     
+    // delete video button
     const deleteVideoButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
     // action on button click
     deleteVideoButton.onclick = function(e){
@@ -156,15 +156,36 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
   } else if(videoProgress["download-status"] == "working video for untrunc is unavailable") { 
     // videoProgressContainer
     basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-untrunc`,"Untrunc: working video.mp4 unavailable");
-  } else if(thumbnailProgress["download-status"] == "unfinished download"){
-    const tumbnailOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "tumbnailOptionsContainer");
-    const completeVideoDownloadButton = basic.createSection(tumbnailOptionsContainer, "button", "button completeTumbnailDownloadButton", `${video_ID}-complete-download-button`, "Generate thumbnails");
+  } else if(thumbnailProgressUnfinished && compressionProgressUnfinished) { 
+    // thumbnail and compression unfinished 
+    const tumbnailCompressionOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "tumbnailCompressionOptionsContainer");
+    const completeTumbnailCompressionDownloadButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "button completeTumbnailCompressionDownloadButton", `${video_ID}-complete-download-button`, "Generate thumbnails & video compression");
     // action on button click
-    completeVideoDownloadButton.onclick = (e) => {
+    completeTumbnailCompressionDownloadButton.onclick = (e) => {
       e.preventDefault();  
       completeDownloadRequest(video_ID);  
     }; 
- 
+    // delete video button
+    const deleteVideoButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+    // action on button click
+    deleteVideoButton.onclick = function(e){
+      e.preventDefault();
+      const confirmVideoDelete = confirm("Press OK to permanently delete video");
+      if (confirmVideoDelete) {   
+        console.log("starting"); 
+        deleteVideoDataPermanently(video_ID);
+      }
+    };
+  } else if(thumbnailProgressUnfinished && !compressionProgressUnfinished) { 
+    // thumbnail unfinished, compression finished 
+    const tumbnailOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "tumbnailOptionsContainer");
+    const completeTumbnailDownloadButton = basic.createSection(tumbnailOptionsContainer, "button", "button completeTumbnailDownloadButton", `${video_ID}-complete-download-button`, "Generate thumbnails");
+    // action on button click
+    completeTumbnailDownloadButton.onclick = (e) => {
+      e.preventDefault();  
+      completeDownloadRequest(video_ID);  
+    }; 
+    // delete video button
     const deleteVideoButton = basic.createSection(tumbnailOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
     // action on button click
     deleteVideoButton.onclick = function(e){
@@ -173,6 +194,47 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
       if (confirmVideoDelete) {   
         console.log("starting"); 
         deleteVideoDataPermanently(video_ID);
+      }
+    };
+  } else if(!thumbnailProgressUnfinished && compressionProgressUnfinished) { 
+    // thumbnail finished, compression unfinished
+    const compressionOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "compressionOptionsContainer");
+    const completeCompressionDownloadButton = basic.createSection(compressionOptionsContainer, "button", "button completeCompressionDownloadButton", `${video_ID}-complete-download-button`, "Generate video compression");
+    // action on button click
+    completeCompressionDownloadButton.onclick = (e) => {
+      e.preventDefault();  
+      completeDownloadRequest(video_ID);  
+    };  
+    // delete video button
+    const deleteVideoButton = basic.createSection(compressionOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+    // action on button click
+    deleteVideoButton.onclick = function(e){
+      e.preventDefault();
+      const confirmVideoDelete = confirm("Press OK to permanently delete video");
+      if (confirmVideoDelete) {   
+        console.log("starting"); 
+        deleteVideoDataPermanently(video_ID);
+        if (savedVideosThumbnailContainer) {
+          //remove video from /saved/videos
+          document.getElementById(video_ID).remove();
+          // delete searchable array item 
+          const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === video_ID);
+          basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
+          // update Available Videos Container if no availabe videos
+          if (savedVideosThumbnailContainer.childElementCount == 0) {
+            if(basic.searchableVideoDataArray.length == 0 ){
+              savedVideosThumbnailContainer.remove();
+              if (document.getElementById("searchBar")) {
+                document.getElementById("searchBar").remove(); 
+              }
+              const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
+              basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+            } else {
+              const noSearchableVideoData = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer", "noSearchableVideoData");
+              basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+            }
+          }
+        }
       }
     };
   } else{
