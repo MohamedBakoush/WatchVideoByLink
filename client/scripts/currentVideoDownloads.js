@@ -70,7 +70,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
     // check each data from videoDownloadDetails in reverse order
     Object.keys(videoDownloadDetails).forEach(function(videoInfo_ID) {    
       videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);    
-      // if video download ahs been completed then remove videoDownloadStatusContainer
+      // if video download has been completed then remove videoDownloadStatusContainer
       // check if tumbnail downlaod status is 100.00% or 99.99% (just in case)
       if(videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "100.00%" || videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "99.99%"){  
         // make sure videoDownloadStatusContainer exists
@@ -79,11 +79,14 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
           videoDownloadStatusContainer.remove(); 
         }
       } else{
-        // if videoDownloadStatusContainer dosent exist
+        // if videoDownloadStatusContainer dosent exist 
         if(!videoDownloadStatusContainer){
           showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID]["video"], videoDownloadDetails[videoInfo_ID]["thumbnail"], videoDownloadDetails[videoInfo_ID]["compression"]);      
-        } else if(videoDownloadDetails[videoInfo_ID].video["download-status"] !== "unfinished download" && videoDownloadDetails[videoInfo_ID].video["download-status"] !== "working video for untrunc is unavailable"  && videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] !== "unfinished download"){
-          // clear videoDownloadStatusContainer
+        } else if(videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "unfinished download" 
+              && videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "working video for untrunc is unavailable" 
+              && videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"] !== "unfinished download" 
+              && videoDownloadDetails[videoInfo_ID]["compression"]["download-status"] !== "unfinished download"){ 
+          // clear videoDownloadStatusContainer 
           videoDownloadStatusContainer.innerHTML = "";
           // video id (title)
           basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${videoInfo_ID}`); 
