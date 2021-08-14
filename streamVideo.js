@@ -36,6 +36,7 @@ function currentDownloads(){
   return currentDownloadVideos;
 }
 
+// Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   if(FileSystem.existsSync(fileName_original_ending) == true){  
     exec(`${untrunc_path} ./media/working-video/video.mp4 ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
@@ -84,12 +85,53 @@ function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, f
       const deleteVideoData = JSON.stringify(videoData, null, 2);
       FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
     }  
-    // delete created folder if exist
+    // delete availableVideos from server if exist
+    // eslint-disable-next-line no-prototype-builtins
+    if(availableVideos.hasOwnProperty(fileName)){ 
+      delete availableVideos[fileName];
+      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+    }
+    // check if folder exists
     if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
-      FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-        if (err) throw err; 
+      FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
+        if (err) throw err;  
+        if (!files.length) {
+          // directory empty, delete folder
+          FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+            if (err) throw err; 
+            console.log(`${fileName} folder deleted`);
+          }); 
+        } else{ 
+          // folder not empty
+          FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+            if (err) throw err;
+            let completedCount = 0;
+            for (const file of files) {
+              completedCount += 1;
+              FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
+                if (err) throw err;  
+                console.log(`\n moved ./media/video/${fileName}/${file} to media/deleted-videos/deleted-${file}`);
+                // delete the video
+                FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                  if (err) throw err;
+                  console.log(`\n unlinked media/deleted-videos/deleted-${file} file`);  
+                  if(files.length == completedCount){// if file length is same as completedCount then delete folder
+                    // reset completedCount
+                    completedCount = 0;
+                    // delete folder
+                    FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                      if (err) throw err; 
+                      console.log(`\n ${fileName} folder deleted`);
+                    }); 
+                  }
+                }); 
+              });
+            }
+          });
+        }          
       });
-    }      
+    }        
   }
 }
 
