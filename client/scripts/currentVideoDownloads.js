@@ -185,8 +185,12 @@ async function completeDownloadRequest(filename) {
     if (response.ok) {
       const downloadStatus = await response.json();
       console.log(downloadStatus);
-      if(downloadStatus == "redownload thumbnails"){
+      if (downloadStatus == "redownload thumbnails & compression") {
+        basic.notify("success",`Redownload Thumbnails & Compression: ${filename}`);
+      } else if(downloadStatus == "redownload thumbnails"){
         basic.notify("success",`Redownload Thumbnails: ${filename}`);
+      } else if (downloadStatus == "redownload compression") {
+        basic.notify("success",`Redownload Compression: ${filename}`);
       } else if(downloadStatus == "untrunc broke video"){
         basic.notify("success",`Untrunc Broke Video: ${filename}`);
       } else if(downloadStatus == "download status: completed"){
