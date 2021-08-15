@@ -75,6 +75,7 @@ function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, f
   }
 }
 
+// Download video after Untrunc
 function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   ffmpeg.ffprobe(fileName_fixed_ending, (error, metadata) => {   
     // update currentDownloadVideos
