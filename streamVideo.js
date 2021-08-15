@@ -1047,9 +1047,15 @@ async function createThumbnail(videofile, newFilePath, fileName) {
             .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
             .output(`${newFilePath}${imageFileName}%03d${fileType}`)
             .run();
-      } else { 
-        console.log(fileName, "delete me tumbnail"); 
-        deleteAllData(fileName);
+      } else { // duration less or equal to 0
+        try { // delete data
+          if (videoData[`${fileName}`] || currentDownloadVideos[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
+            // delete all data
+            deleteAllData(fileName);
+          } 
+        } catch (error) { // an error has occurred
+          console.log(error);
+        } 
       }
     }); 
   } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
@@ -1217,8 +1223,14 @@ async function compression_V9(videofile, newFilePath, fileName) {
           .output(`${newFilePath}${fileName}${fileType}`)
           .run(); 
       } else { 
-        console.log(fileName, "delete me compression");
-        deleteAllData(fileName);
+        try { // duration less or equal to 0
+          if (videoData[`${fileName}`] || currentDownloadVideos[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
+            // delete all data
+            deleteAllData(fileName);
+          } 
+        } catch (error) { // an error has occurred
+          console.log(error); 
+        } 
       }
     }); 
   } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
