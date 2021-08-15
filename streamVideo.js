@@ -954,8 +954,13 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   let numberOfCreatedScreenshots = 0;
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
     ffmpeg.ffprobe(videofile, (error, metadata) => {
-      duration = metadata.format.duration;
-      console.log(duration);
+      try { // get video duration 
+        duration = metadata.format.duration;
+      } catch (error) { // duration = 0
+        duration = 0;
+      } 
+      console.log(`${fileName} duration: ${duration}`);
+      // if video duration greater then 0
       if (duration > 0) {
         const command = new ffmpeg();
           command.addInput(videofile)
