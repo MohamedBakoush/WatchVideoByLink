@@ -1361,86 +1361,95 @@ function stopCommpressedVideoDownload(bool, fileNameID) {
 async function compression_V9(videofile, newFilePath, fileName) {
   const command = new ffmpeg();
   const fileType = ".webm";
+  let duration = 0;
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists 
-    command.addInput(videofile)
-      .on("start", function() {
-        console.log(`${fileName} compression-download-status: starting`);
-      })
-      .on("progress", function(data) { 
-        videoData[`${fileName}`]["compression"]["download"] = data.percent;       
-        const newVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
-        if(data.percent < 0){
-          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "0.00%";    
-          console.log(`${fileName} compression-download-status: 0.00%`);
-        } else if(data.percent == "undefined"){
-          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = `${data.percent}%`;    
-          console.log(`${fileName} compression-download-status: ${data.percent}%`);
-        } else{
-          try { 
-            currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = `${data.percent.toFixed(2)}%`; 
-            console.log(`${fileName} compression-download-status: ${data.percent.toFixed(2)}%`);
-          } catch (error) {
-            currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = `${data.percent}%`; 
-            console.log(`${fileName} compression-download-status: ${data.percent}%`);
-          }
-        }  
-
-        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-        FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
-
-        // stop video compression
-        if (stopCompressedVideoFileBool === true  && fileNameID_Compression == fileName) {
-          try {
-            SIGKILL(command);
-            stopCompressedVideoFileBool = false; 
-          } catch (e) {
-            stopCompressedVideoFileBool = false; 
-          }
-        }
-      })
-      .on("end", function() {
-        /// encoding is complete
-        console.log(`${fileName} compression-download-status: complete`); 
-
-        videoData[`${fileName}`]["compression"] = { 
-          path: newFilePath+fileName+fileType,
-          videoType: "video/webm",
-          download: "completed"
-        };
-        
-        const newVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-
-        if(currentDownloadVideos[`${fileName}`]["thumbnail"] === undefined || currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] === "completed") { 
-          delete currentDownloadVideos[`${fileName}`]; 
-        } else  {  
-          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "completed"; 
-        } 
-        
-        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-        FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
-      })
-      .on("error", function(error) {
-        /// error handling
-        if (error.message === "ffmpeg was killed with signal SIGKILL") {
-          if (videoData[`${fileName}`]["compression"]) {              
-            videoData[`${fileName}`]["compression"]["download"] = "ffmpeg was killed with signal SIGKILL";   
+    ffmpeg.ffprobe(videofile, (error, metadata) => {
+      duration = metadata.format.duration;
+      console.log(duration);
+      if (duration > 0) {
+        command.addInput(videofile)
+          .on("start", function() {
+            console.log(`${fileName} compression-download-status: starting`);
+          })
+          .on("progress", function(data) { 
+            videoData[`${fileName}`]["compression"]["download"] = data.percent;       
             const newVideoData = JSON.stringify(videoData, null, 2);
             FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-          }  
-          if (currentDownloadVideos[`${fileName}`]["compression"]) {         
-            currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "ffmpeg was killed with signal SIGKILL"; 
+
+            if(data.percent < 0){
+              currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "0.00%";    
+              console.log(`${fileName} compression-download-status: 0.00%`);
+            } else if(data.percent == "undefined"){
+              currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = `${data.percent}%`;    
+              console.log(`${fileName} compression-download-status: ${data.percent}%`);
+            } else{
+              try { 
+                currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = `${data.percent.toFixed(2)}%`; 
+                console.log(`${fileName} compression-download-status: ${data.percent.toFixed(2)}%`);
+              } catch (error) {
+                currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = `${data.percent}%`; 
+                console.log(`${fileName} compression-download-status: ${data.percent}%`);
+              }
+            }  
+
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
             FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
-          } 
-        }
-      })
-       // https://developers.google.com/media/vp9/settings/vod/
-      .outputOptions(["-c:v libvpx-vp9", "-crf 32", "-b:v 2000k"])
-      .output(`${newFilePath}${fileName}${fileType}`)
-      .run(); 
+
+            // stop video compression
+            if (stopCompressedVideoFileBool === true  && fileNameID_Compression == fileName) {
+              try {
+                SIGKILL(command);
+                stopCompressedVideoFileBool = false; 
+              } catch (e) {
+                stopCompressedVideoFileBool = false; 
+              }
+            }
+          })
+          .on("end", function() {
+            /// encoding is complete
+            console.log(`${fileName} compression-download-status: complete`); 
+
+            videoData[`${fileName}`]["compression"] = { 
+              path: newFilePath+fileName+fileType,
+              videoType: "video/webm",
+              download: "completed"
+            };
+            
+            const newVideoData = JSON.stringify(videoData, null, 2);
+            FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+
+            if(currentDownloadVideos[`${fileName}`]["thumbnail"] === undefined || currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] === "completed") { 
+              delete currentDownloadVideos[`${fileName}`]; 
+            } else  {  
+              currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "completed"; 
+            } 
+            
+            const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+          })
+          .on("error", function(error) {
+            /// error handling
+            if (error.message === "ffmpeg was killed with signal SIGKILL") {
+              if (videoData[`${fileName}`]["compression"]) {              
+                videoData[`${fileName}`]["compression"]["download"] = "ffmpeg was killed with signal SIGKILL";   
+                const newVideoData = JSON.stringify(videoData, null, 2);
+                FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+              }  
+              if (currentDownloadVideos[`${fileName}`]["compression"]) {         
+                currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "ffmpeg was killed with signal SIGKILL"; 
+                const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+                FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+              } 
+            }
+          })
+          // https://developers.google.com/media/vp9/settings/vod/
+          .outputOptions(["-c:v libvpx-vp9", "-crf 32", "-b:v 2000k"])
+          .output(`${newFilePath}${fileName}${fileType}`)
+          .run(); 
+      } else { 
+        console.log("delete me compression");
+      }
+    }); 
   } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
     console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory"); 
   } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
