@@ -1638,6 +1638,82 @@ async function deletevideoData(request, response, videoID) {
   }
 }
 
+// deletes all video id data
+function deleteAllData(fileName) {
+  // delete currentDownloadVideos from server if exist
+  // eslint-disable-next-line no-prototype-builtins
+  if(currentDownloadVideos.hasOwnProperty(fileName)){  
+    delete currentDownloadVideos[`${fileName}`]; 
+    const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+    FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+  }
+  // delete videoData from server if exist
+  // eslint-disable-next-line no-prototype-builtins
+  if (videoData.hasOwnProperty(fileName)) {
+    delete videoData[`${fileName}`]; 
+    const deleteVideoData = JSON.stringify(videoData, null, 2);
+    FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
+  }  
+  // delete availableVideos from server if exist
+  // eslint-disable-next-line no-prototype-builtins
+  if(availableVideos.hasOwnProperty(fileName)){ 
+    delete availableVideos[fileName];
+    const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+    FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+  }
+  try {
+    // check if folder exists
+    if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+      FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
+        if (err) throw err;  
+        if (!files.length) {
+          // directory empty, delete folder
+          FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+            if (err) throw err; 
+            console.log(`${fileName} folder deleted`); 
+            return `video-id-${fileName}-data-permanently-deleted`;
+          }); 
+        } else{ 
+          // folder not empty
+          FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+            if (err) throw err;
+            let completedCount = 0;
+            for (const file of files) {
+              completedCount += 1;
+              FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
+                if (err) throw err;  
+                console.log(`\n moved ./media/video/${fileName}/${file} to media/deleted-videos/deleted-${file}`);
+                // delete the video
+                FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                  if (err) throw err;
+                  console.log(`\n unlinked media/deleted-videos/deleted-${file} file`);  
+                  if(files.length == completedCount){// if file length is same as completedCount then delete folder
+                    // reset completedCount
+                    completedCount = 0;
+                    // delete folder
+                    FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                      if (err) throw err; 
+                      console.log(`\n ${fileName} folder deleted`);
+                      return `video-id-${fileName}-data-permanently-deleted`;
+                    }); 
+                  }
+                }); 
+              });
+            }
+          });
+        }          
+      });
+    }  else{ 
+      // folder dosent exit 
+      console.log(`${fileName} folder dosent exit`);
+      return `video-id-${fileName}-data-permanently-deleted`;
+    }
+  } catch (error) { 
+    console.log(`${fileName} failed to delete`);
+    return `video-id-${fileName}-data-failed-to-permanently-deleted`;
+  }
+}
+
 // using youtube-dl it converts url link to video type and video src
 async function getVideoLinkFromUrl(req, res) {
   try {
