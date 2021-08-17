@@ -831,7 +831,26 @@ async function downloadVideo(req, res) {
 // downlaod trimed video
 async function trimVideo(req, res) {
   const command = new ffmpeg();
-  const videofile = req.body.videoSrc;
+  const videoSrc = req.body.videoSrc;
+  let videofile;
+  try {
+    if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
+      const videoDetails = await findVideosByID(videoSrc.split("/video/")[1]);
+      if (videoDetails === undefined) { // videofile = inputted videos src
+        videofile = videoSrc;
+      } else {
+        if (videoDetails.video.path) { // original video path 
+          videofile = videoDetails.video.path;  
+        } else { // videofile = inputted videos src 
+          videofile = videoSrc;
+        } 
+      }
+    } else { // videofile = inputted videos src  
+      videofile = videoSrc;
+    } 
+  } catch (error) { // videofile = inputted videos src 
+    videofile = videoSrc;
+  } 
   const start = req.body.newStartTime;
   const end = req.body.newEndTime;
   const filepath = "media/video/";
