@@ -430,7 +430,7 @@ function completeUnfinnishedVideoDownload(req){
 }
 
 // if video videoId is valid then stream video
-async function streamVideo(request, response, videoID){
+async function streamVideo(request, response, videoID, displayCompressedVideo){
   // check if videoid is valid
   const videoDetails = await findVideosByID(videoID);
   // if video dosent exist redirect to home page
@@ -438,10 +438,17 @@ async function streamVideo(request, response, videoID){
     response.status(404).redirect("/");
   } else { // if videoID is valid
     try {
-      // path of video file
-      const path = videoDetails.video.path;
+      // variables
+      let videoPath, videoType;
+      if (displayCompressedVideo) { // update videoPath, videoType with compressed video details
+        videoPath = videoDetails.compression.path; 
+        videoType = videoDetails.compression.videoType; 
+      } else { // update videoPath, videoType with original video details
+        videoPath = videoDetails.video.path; 
+        videoType = videoDetails.video.videoType; 
+      }
       // getting the video file size
-      const stat = FileSystem.statSync(path);
+      const stat = FileSystem.statSync(videoPath);
       const fileSize = stat.size;
       // requests occur when a client asks the server for only a portion of the requested file.
       const range = request.headers.range;
@@ -464,12 +471,12 @@ async function streamVideo(request, response, videoID){
         // The size of the chunks
         const chunksize = (end-start)+1;
         // Creating the stream
-        const file = FileSystem.createReadStream(path, {start, end});
+        const file = FileSystem.createReadStream(videoPath, {start, end});
         const head = {
           "Content-Range": `bytes ${start}-${end}/${fileSize}`,
           "Accept-Ranges": "bytes",
           "Content-Length": chunksize,
-          "Content-Type":  videoDetails.video.videoType,
+          "Content-Type":  videoType,
         };
         // send newly made stream to the client
         response.writeHead(206, head);
@@ -477,10 +484,10 @@ async function streamVideo(request, response, videoID){
       } else { // send whole video file
         const head = {
           "Content-Length": fileSize,
-          "Content-Type":  videoDetails.video.videoType,
+          "Content-Type":  videoType,
         };
         response.writeHead(200, head);
-        FileSystem.createReadStream(path).pipe(response);
+        FileSystem.createReadStream(videoPath).pipe(response);
       }
     } catch (e) { // if error redirect to home page
       response.status(404).redirect("/");
