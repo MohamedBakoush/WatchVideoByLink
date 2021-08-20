@@ -53,6 +53,12 @@ function streamOriginalVideoById(req, res){
   streamVideoFile.streamVideo(req, res, req.params.id, false);
 }
 
+// stream compressed video by video id header
+app.get("/compressed/:id", streamCompressedVideoById);
+function streamCompressedVideoById(req, res){
+  streamVideoFile.streamVideo(req, res, req.params.id, true);
+}
+
 // change title of video
 app.post("/changeVideoTitle", express.json(), changeVideoTitle);
 function changeVideoTitle(req, res){
