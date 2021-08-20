@@ -1249,13 +1249,44 @@ async function compression_V9(videofile, newFilePath, fileName) {
           .on("end", function() {
             /// encoding is complete
             console.log(`${fileName} compression-download-status: complete`); 
-
+            try {
+              if (availableVideos[`${fileName}`]["info"]) {
+                availableVideos[`${fileName}`]["info"]["videoLink"].compressdSrc = `/compressed/${fileName}`;  
+                availableVideos[`${fileName}`]["info"]["videoLink"].compressedType = "video/webm";
+              } else{
+                availableVideos[`${fileName}`] = {
+                  info:{
+                    title: fileName,
+                    videoLink: {
+                      src : `/video/${fileName}`,
+                      type : "video/mp4",
+                      compressdSrc : `/compressed/${fileName}`,
+                      compressedType : "video/webm"
+                    }
+                  }
+                };
+              }              
+            } catch (error) {
+              availableVideos[`${fileName}`] = {
+                info:{
+                  title: fileName,
+                  videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4",
+                    compressdSrc : `/compressed/${fileName}`,
+                    compressedType : "video/webm"
+                  }
+                }
+              };
+            } 
+            const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+            FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+        
             videoData[`${fileName}`]["compression"] = { 
               path: newFilePath+fileName+fileType,
               videoType: "video/webm",
               download: "completed"
-            };
-            
+            };           
             const newVideoData = JSON.stringify(videoData, null, 2);
             FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
@@ -1263,8 +1294,7 @@ async function compression_V9(videofile, newFilePath, fileName) {
               delete currentDownloadVideos[`${fileName}`]; 
             } else  {  
               currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "completed"; 
-            } 
-            
+            }            
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
             FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
           })
