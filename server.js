@@ -47,10 +47,10 @@ function deletevideoData(req, res){
   streamVideoFile.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req, res, req.params.id);
 }
 
-// stream video by video id header
-app.get("/video/:id", streamVideoById);
-function streamVideoById(req, res){
-  streamVideoFile.streamVideo(req, res, req.params.id);
+// stream original video by video id header
+app.get("/video/:id", streamOriginalVideoById);
+function streamOriginalVideoById(req, res){
+  streamVideoFile.streamVideo(req, res, req.params.id, false);
 }
 
 // change title of video
