@@ -711,6 +711,17 @@ async function downloadVideo(req, res) {
           videofile = videoSrc;
         } 
       }
+    } else if (videoSrc.includes("/compressed/")) {
+      const videoDetails = await findVideosByID(videoSrc.split("/compressed/")[1]);
+      if (videoDetails === undefined) { // videofile = inputted videos src
+        videofile = videoSrc;
+      } else {
+        if (videoDetails.video.path) { // original video path 
+          videofile = videoDetails.video.path;
+        } else { // videofile = inputted videos src 
+          videofile = videoSrc;
+        } 
+      }
     } else { // videofile = inputted videos src  
       videofile = videoSrc;
     } 
