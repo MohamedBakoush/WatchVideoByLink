@@ -1040,20 +1040,39 @@ async function createThumbnail(videofile, newFilePath, fileName) {
               console.log("progress", data);
             })
             .on("end", () => {
-                /// encoding is complete, so callback or move on at this point
+                // encoding is complete
                 for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
                   if (i == 0){
-                    availableVideos[`${fileName}`] = {
-                      info:{
-                        title: fileName,
-                        videoLink: {
-                          src : `/video/${fileName}`,
-                          type : "video/mp4"
-                        },
-                        thumbnailLink: {
-                        }
+                    try {
+                      if (availableVideos[`${fileName}`]["info"]) {
+                        availableVideos[`${fileName}`]["info"].thumbnailLink = {  
+                        };
+                      } else {
+                        availableVideos[`${fileName}`] = {
+                          info:{
+                            title: fileName,
+                            videoLink: {
+                              src : `/video/${fileName}`,
+                              type : "video/mp4"
+                            },
+                            thumbnailLink: {
+                            }
+                          }
+                        }; 
                       }
-                    };
+                    } catch (error) {
+                      availableVideos[`${fileName}`] = {
+                        info:{
+                          title: fileName,
+                          videoLink: {
+                            src : `/video/${fileName}`,
+                            type : "video/mp4"
+                          },
+                          thumbnailLink: {
+                          }
+                        }
+                      }; 
+                    }
                   } else if (i < 10) {
                     videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}00${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
