@@ -755,6 +755,9 @@ async function downloadVideo(req, res) {
             video : { 
               "download-status" : "starting video download"
             },
+            compression : { 
+              "download-status" : "waiting for video"
+            },
             thumbnail : { 
               "download-status" : "waiting for video"
             } 
@@ -794,6 +797,9 @@ async function downloadVideo(req, res) {
               videoType : "video/mp4",
               download : "completed",
             },
+            compression : {
+              download: "starting"
+            },
             thumbnail: {
               path: {},
               download: "starting"
@@ -802,7 +808,8 @@ async function downloadVideo(req, res) {
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
-          currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "completed";       
+          currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "completed";
+          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] =  "starting video compression";                 
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";    
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -810,6 +817,7 @@ async function downloadVideo(req, res) {
 
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
+          compression_V9(path, newFilePath, fileName);
           createThumbnail(path, newFilePath, fileName);
         })
         .on("error", function(error) {
