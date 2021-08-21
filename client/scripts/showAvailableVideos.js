@@ -58,10 +58,25 @@ function eachAvailableVideoDetails(videoDetails) {
 
 // load video details to user which include thumbnail image, video id as title and option menu
 function showDetails(container, videoInfo_ID, videoDetails) {
+ 
+  let videoSrc, videoType;
+  try {
+    if (videoDetails.info.videoLink.compressdSrc !== undefined && videoDetails.info.videoLink.compressedType !== undefined) {
+      videoSrc = videoDetails.info.videoLink.compressdSrc; // compressed src
+      videoType = videoDetails.info.videoLink.compressedType; // video/webm
+    } else {
+      videoSrc = videoDetails.info.videoLink.src; // original src
+      videoType = videoDetails.info.videoLink.type; // video/mp4
+    }
+  } catch (error) {
+    videoSrc = videoDetails.info.videoLink.src; // original src
+    videoType = videoDetails.info.videoLink.type; // video/mp4
+  }
+
   const video_name = videoDetails.info.title;
   const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
   const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
-  const linkContainer = basic.createLink(container, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, videoInfo_ID, "videoThumbnailContainer");
+  const linkContainer = basic.createLink(container, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
   const thumbnailContainer = basic.createSection(linkContainer, "section");
   const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container");
 
@@ -86,7 +101,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       e.preventDefault();
       const tempCopyLink = document.createElement("textarea");
       document.body.appendChild(tempCopyLink);
-      tempCopyLink.value = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
+      tempCopyLink.value = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       tempCopyLink.select();
       document.execCommand("copy");
       document.body.removeChild(tempCopyLink);
@@ -104,7 +119,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
           document.getElementById("download-status-container").remove();   
         }
       }
-      linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
+      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu_container.remove();
       close_option_menu.remove();
@@ -176,7 +191,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     close_option_menu.onclick = function(e){
       e.preventDefault();
       option_menu.title = "menu";
-      linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
+      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
       option_menu.disabled = false;
       option_menu_container.remove();
@@ -191,7 +206,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         checkHover.hovered = hovered;
         if (hovered === false) {
            option_menu.title = "menu";
-          linkContainer.href = `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`;
+          linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
            option_menu.classList = "thumbnail-option-menu fa fa-bars";
            option_menu.disabled = false;
            option_menu_container.remove();
@@ -204,7 +219,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
   };
 
   // video title container - if user want to be redirected to video player even if menu is active when onclick
-  const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoDetails.info.videoLink.type}?v=${window.location.origin}${videoDetails.info.videoLink.src}`, undefined, "thumbnailTitleContainer");
+  const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, undefined, "thumbnailTitleContainer");
   basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
 
   let loopTroughThumbnails, mainThumbnailNumber = 1;
