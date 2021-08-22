@@ -898,10 +898,14 @@ async function trimVideo(req, res) {
   } 
 
   let compressTrimedVideo;
-  try { // userSettings.download.compression.trimVideo exists
-    compressTrimedVideo = userSettings.download.compression.trimVideo; // outputs true or false
+  try { // userSettings.download.compression.trimVideo exists 
+    if (userSettings.download.compression.trimVideo == true) {
+      compressTrimedVideo = true; 
+    } else {
+      compressTrimedVideo = false;
+    }
   } catch (error) { // userSettings.download.compression.trimVideo doesn't exists
-    compressTrimedVideo = false;
+    compressTrimedVideo = false; 
   }
   
   const start = req.body.newStartTime;
