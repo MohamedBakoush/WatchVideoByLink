@@ -2,5 +2,12 @@
   "videoPlayer": {
     "volume": 1,
     "muted": false
+  },
+  "download": {
+    "compression": {
+      "downloadVideoStream": true,
+      "downloadVideo": true,
+      "trimVideo": true
+    }
   }
 }
