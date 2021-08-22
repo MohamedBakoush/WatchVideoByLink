@@ -896,6 +896,14 @@ async function trimVideo(req, res) {
   } catch (error) { // videofile = inputted videos src 
     videofile = videoSrc;
   } 
+
+  let compressTrimedVideo;
+  try { // userSettings.download.compression.trimVideo exists
+    compressTrimedVideo = userSettings.download.compression.trimVideo; // outputs true or false
+  } catch (error) { // userSettings.download.compression.trimVideo doesn't exists
+    compressTrimedVideo = false;
+  }
+  
   const start = req.body.newStartTime;
   const end = req.body.newEndTime;
   const filepath = "media/video/";
@@ -924,17 +932,29 @@ async function trimVideo(req, res) {
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
           
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : "starting trim video download"
-            },
-            compression : { 
-              "download-status" : "waiting for video"
-            },
-            thumbnail : { 
-              "download-status" : "waiting for video"
-            } 
-          };
+          if (compressTrimedVideo) { // addition of compress video data
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : "starting trim video download"
+              },
+              compression : { 
+                "download-status" : "waiting for video"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          } else {
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : "starting trim video download"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          }
+
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
         
@@ -961,29 +981,49 @@ async function trimVideo(req, res) {
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
         })
         .on("end", function() {
-          videoData[`${fileName}`] = {
-            video: {
-              originalVideoSrc: req.body.videoSrc,
-              originalVideoType: req.body.videoType,
-              newVideoStartTime: req.body.newStartTime,
-              newVideoEndTime: req.body.newEndTime,
-              path: newFilePath+fileName+fileType,
-              videoType: "video/mp4",
-              download: "completed"
-            },
-            compression : {
-              download: "starting"
-            },
-            thumbnail: {
-              path: {},
-              download: "starting"
-            }
-          };
+          if (compressTrimedVideo) { // addition of compress video data
+            videoData[`${fileName}`] = {
+              video: {
+                originalVideoSrc: req.body.videoSrc,
+                originalVideoType: req.body.videoType,
+                newVideoStartTime: req.body.newStartTime,
+                newVideoEndTime: req.body.newEndTime,
+                path: newFilePath+fileName+fileType,
+                videoType: "video/mp4",
+                download: "completed"
+              },
+              compression : {
+                download: "starting"
+              },
+              thumbnail: {
+                path: {},
+                download: "starting"
+              }
+            };
+          } else {
+            videoData[`${fileName}`] = {
+              video: {
+                originalVideoSrc: req.body.videoSrc,
+                originalVideoType: req.body.videoType,
+                newVideoStartTime: req.body.newStartTime,
+                newVideoEndTime: req.body.newEndTime,
+                path: newFilePath+fileName+fileType,
+                videoType: "video/mp4",
+                download: "completed"
+              },
+              thumbnail: {
+                path: {},
+                download: "starting"
+              }
+            };
+          }
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
      
           currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "completed";
-          currentDownloadVideos[`${fileName}`]["compression"]["download-status"] =  "starting video compression";          
+          if (compressTrimedVideo) { // addition of video data
+            currentDownloadVideos[`${fileName}`]["compression"]["download-status"] =  "starting video compression";  
+          }        
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -991,7 +1031,9 @@ async function trimVideo(req, res) {
 
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
-          compression_V9(path, newFilePath, fileName);
+          if (compressTrimedVideo) { // compress video
+            compression_V9(path, newFilePath, fileName); 
+          }
           createThumbnail(path, newFilePath, fileName);
         })
         .on("error", function(error) {
