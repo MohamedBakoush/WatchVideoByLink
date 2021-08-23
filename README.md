@@ -10,7 +10,7 @@
 
 ## Overview
 
-WatchVideoByLink takes a public video/mp4, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
+WatchVideoByLink takes a public video/mp4, video/webm, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
 
 ## Table of Contents
 * [Reason For Creation](#reason-for-creation)
@@ -21,27 +21,38 @@ WatchVideoByLink takes a public video/mp4, application/x-mpegURL or application/
 
 ## Reason For Creation
 
-When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .m3u8 or .mpd files from a simple URL link.
+When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .webm, .m3u8 or .mpd files from a simple URL link.
 
 ## How WatchVideoByLink Works
 
-WatchVideoByLink takes a public video URL link and display the video in a custom video player depending on the video type, WatchVideoByLink currently supports video/mp4 (MP4), application/x-mpegURL (HLS) or application/dash+xml (MPEG-DASH) URL Links, Automatic video type is also available but works a little bit differently as the system will try to get a video type and video link from the provided URL link.
+WatchVideoByLink takes a public video URL link and display the video in a custom video player depending on the video type, WatchVideoByLink currently supports video/mp4 (MP4), video/webm (WebM), application/x-mpegURL (HLS) or application/dash+xml (MPEG-DASH) URL Links, Automatic video type is also available but works a little bit differently as the system will try to get a video type and video link from the provided URL link.
 
-Inside each video player there are diffrent features which makes the watching experience an enjoyable process but what video/mp4 (MP4) and application/x-mpegURL (HLS) have in common is the ability to download/record the provided video for as long of a video duration that the user wants provided by how long the original video is.
+Inside each video player there are diffrent features which makes the watching experience an enjoyable process but what video/mp4 (MP4), video/webm (WebM) and application/x-mpegURL (HLS) have in common is the ability to download/record the provided video for as long of a video duration that the user wants provided by how long the original video is.
 
-After the downloaded/recorded video has finish downloading, snapshots of the video in different locations will be taken (create thumbnails) and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
+After the downloaded/recorded video has finished downloading, 
+- Thumbnail creation gets taken into action: 8 snapshots of the video gets taken
+- V9 video compression gets taken into action: video/mp4 -> video/webm
+
+and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
 
 ## Features 
 - Shareable link gets provided in the address bar when video is viewable.
-- When a video has finished recording or completed its downloaded, video becomes playable from /video/:id 
+- When a video finished recording/completes its downloaded 
+  - H.264 video/mp4 becomes playable at /video/:id 
+- When a video completes a V9 compression
+  - V9 video/webm becomes playable at /compressed/:id 
 - Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
-- View current video/thumbnail downloads from Homepage or /saved/videos
+- View current videos/video compressions/thumbnails downloads from homepage or /saved/videos
   - If video download is unfinished 
+    - Option to Restore damaged video using untrunc and some luck.
     - Option to Generate thumbnails
-    - Option to Restore damaged video using untrunc
+    - Option to Generate video compression
+    - Option to Generate thumbnails & video compression
+- Upload a video to the system
+  - Max 1GB per video file
 - Video players
-  - Video Type: MP4 Supports:
-    - .mp4 files
+  - Video Type: WebM/MP4 Supports:
+    - .mp4 / .webm files
     - playbackRates
     - seek-buttons
     - chromecast
