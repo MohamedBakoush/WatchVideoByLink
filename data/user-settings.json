@@ -7,7 +7,8 @@
     "compression": {
       "downloadVideoStream": true,
       "downloadVideo": true,
-      "trimVideo": true
+      "trimVideo": true,
+      "downloadUploadedVideo": true
     }
   }
 }
