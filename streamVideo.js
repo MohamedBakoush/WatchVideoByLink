@@ -332,8 +332,9 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             } 
           }
         }  else if(currentDownloadVideos[fileName]["video"]["download-status"] == "starting stream download" ||
-                  currentDownloadVideos[fileName]["video"]["download-status"] == "starting video download" ||
+                  currentDownloadVideos[fileName]["video"]["download-status"] == "starting full video download" ||
                   currentDownloadVideos[fileName]["video"]["download-status"] == "starting trim video download" ||
+                  currentDownloadVideos[fileName]["video"]["download-status"] == "starting uploaded video download" ||
                   currentDownloadVideos[fileName]["video"]["download-status"] == "0.00%"
                   ){ // if the video download hasn't started
                 deleteAllData(fileName);          
@@ -816,7 +817,7 @@ async function downloadVideo(req, res) {
           if (compressVideo) { // addition of compress video data
             currentDownloadVideos[`${fileName}`] = {
               video : { 
-                "download-status" : "starting video download"
+                "download-status" : "starting full video download"
               },
               compression : { 
                 "download-status" : "waiting for video"
@@ -828,7 +829,7 @@ async function downloadVideo(req, res) {
           } else {
             currentDownloadVideos[`${fileName}`] = {
               video : { 
-                "download-status" : "starting video download"
+                "download-status" : "starting full video download"
               },
               thumbnail : { 
                 "download-status" : "waiting for video"
