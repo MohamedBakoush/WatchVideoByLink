@@ -31,7 +31,7 @@ Inside each video player there are diffrent features which makes the watching ex
 
 After the downloaded/recorded video has finished downloading, 
 - Thumbnail creation gets taken into action: 8 snapshots of the video gets taken
-- V9 video compression gets taken into action: video/mp4 -> video/webm
+- VP9 video compression gets taken into action: video/mp4 -> video/webm
 
 and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
 
@@ -39,8 +39,8 @@ and once everything is done the video will be found available in /saved/videos w
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video finished recording/completes its downloaded 
   - H.264 video/mp4 becomes playable at /video/:id 
-- When a video completes a V9 compression
-  - V9 video/webm becomes playable at /compressed/:id 
+- When a video completes a VP9 compression
+  - VP9 video/webm becomes playable at /compressed/:id 
 - Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
 - View current videos/video compressions/thumbnails downloads from homepage or /saved/videos
   - If video download is unfinished 
