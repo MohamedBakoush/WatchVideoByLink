@@ -738,13 +738,13 @@ async function downloadVideo(req, res) {
   } 
   
   let compressVideo;
-  try { // userSettings.download.compression.trimVideo exists 
+  try { // userSettings.download.compression.downloadVideo exists 
     if (userSettings.download.compression.downloadVideo == true) {
       compressVideo = true; 
     } else {
       compressVideo = false;
     }
-  } catch (error) { // userSettings.download.compression.trimVideo doesn't exists
+  } catch (error) { // userSettings.download.compression.downloadVideo doesn't exists
     compressVideo = false; 
   }
 
