@@ -406,7 +406,7 @@ function completeUnfinnishedVideoDownload(req){
       return "redownload thumbnails";
     } else if(thumbnailProgressCompleted && !compressionProgressCompleted){ // redownload compression
       // thumbnail true, compression false
-      compression_V9(path, newFilePath, fileName); 
+      compression_VP9(path, newFilePath, fileName); 
       return "redownload compression";
     } else{ 
       if (currentDownloadVideos[fileName]["compression"] == undefined) { // redownload thumbnails 
@@ -416,7 +416,7 @@ function completeUnfinnishedVideoDownload(req){
       } else { // redownload thumbnails & compression
         // thumbnail false, compression false  
         createThumbnail(path, newFilePath, fileName); 
-        compression_V9(path, newFilePath, fileName); 
+        compression_VP9(path, newFilePath, fileName); 
         return "redownload thumbnails & compression";  
       } 
     }
@@ -705,7 +705,7 @@ async function downloadVideoStream(req, res) {
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           if (compressVideoStream) { // compress video
-            compression_V9(path, newFilePath, fileName);
+            compression_VP9(path, newFilePath, fileName);
           }
           createThumbnail(path, newFilePath, fileName);
         })
@@ -910,7 +910,7 @@ async function downloadVideo(req, res) {
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           if (compressVideo) { // compress video
-            compression_V9(path, newFilePath, fileName);
+            compression_VP9(path, newFilePath, fileName);
           }
           createThumbnail(path, newFilePath, fileName);
         })
@@ -1121,7 +1121,7 @@ async function trimVideo(req, res) {
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
           if (compressTrimedVideo) { // compress video
-            compression_V9(path, newFilePath, fileName); 
+            compression_VP9(path, newFilePath, fileName); 
           }
           createThumbnail(path, newFilePath, fileName);
         })
@@ -1362,8 +1362,8 @@ function stopCommpressedVideoDownload(bool, fileNameID) {
   }
 }
 
-// V9 video compression - make video size smaller
-async function compression_V9(videofile, newFilePath, fileName) {
+// VP9 video compression - make video size smaller
+async function compression_VP9(videofile, newFilePath, fileName) {
   const command = new ffmpeg();
   const fileType = ".webm";
   let duration = 0;
@@ -1921,7 +1921,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 
           console.log("Video Transcoding succeeded !");
           if (compressUploadedVideo) { // compress video
-            compression_V9(path, newFilePath, fileName);
+            compression_VP9(path, newFilePath, fileName);
           }
           createThumbnail(path, newFilePath, fileName); 
 
