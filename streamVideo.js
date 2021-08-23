@@ -1791,6 +1791,18 @@ function uploadVideoFile(req, res) {
 // download full video
 async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
   const command = new ffmpeg(); 
+
+  let compressUploadedVideo;
+  try { // userSettings.download.compression.downloadUploadedVideo exists 
+    if (userSettings.download.compression.downloadUploadedVideo == true) {
+      compressUploadedVideo = true; 
+    } else {
+      compressUploadedVideo = false;
+    }
+  } catch (error) { // userSettings.download.compression.downloadUploadedVideo doesn't exists
+    compressUploadedVideo = false; 
+  }
+
   const filepath = "media/video/"; 
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
@@ -1808,74 +1820,53 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
             video:{
               originalVideoSrc : "unknown",
               originalVideoType : fileMimeType,
-              download : "starting video download"
+              download : "starting uploaded video download"
             }
           };
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
           
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : "starting trim video download"
-            },
-            thumbnail : { 
-              "download-status" : "waiting for video"
-            } 
-          };
+          if (compressUploadedVideo) { // addition of compress video data
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : "starting uploaded video download"
+              },
+              compression : { 
+                "download-status" : "waiting for video"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          } else {
+            currentDownloadVideos[`${fileName}`] = {
+              video : { 
+                "download-status" : "starting uploaded video download"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+            };
+          }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
 
         })
         .on("progress", function(data) { 
-          /// do stuff with progress data if you wan
           console.log("progress", data);
-          videoData[`${fileName}`] = {
-            video : {
-              originalVideoSrc : "unknown",
-              originalVideoType: fileMimeType,
-              download: data.percent
-            }
-          };
+
+          videoData[`${fileName}`]["video"]["download"] = data.percent; 
+
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
           if(data.percent < 0){ 
-            currentDownloadVideos[`${fileName}`] = {
-              video : { 
-                "download-status" : "0.00%"
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            };
-          } else if(data.percent == "undefined"){
-            currentDownloadVideos[`${fileName}`] = {
-              video : { 
-                "download-status" : `${data.percent}%`
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            };
-          } else{
+            currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "0.00%";  
+          }else{
             try {
-              currentDownloadVideos[`${fileName}`] = {
-                video : { 
-                  "download-status" : `${data.percent.toFixed(2)}%`
-                },
-                thumbnail : { 
-                  "download-status" : "waiting for video"
-                } 
-              };  
+              currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent.toFixed(2)}%`;  
             } catch (error) {
-              currentDownloadVideos[`${fileName}`] = {
-                video : { 
-                  "download-status" : `${data.percent}%`
-                },
-                thumbnail : { 
-                  "download-status" : "waiting for video"
-                } 
-              };    
+              currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  `${data.percent}%`;  
             }
           }           
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -1883,36 +1874,54 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
         })
         .on("end", function() { 
           /// encoding is complete, so callback or move on at this point
-          videoData[`${fileName}`] = {
-            video: {
-              originalVideoSrc : videofile,
-              originalVideoType: fileMimeType,
-              path: newFilePath+fileName+fileType,
-              videoType : "video/mp4",
-              download : "completed",
-            },
-            thumbnail: {
-              path: {},
-              download: "starting"
-            }
-          };
+          if (compressUploadedVideo) { // addition of compress video data
+            videoData[`${fileName}`] = {
+              video: {
+                originalVideoSrc : videofile,
+                originalVideoType: fileMimeType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+              },
+              compression : {
+                download: "starting"
+              },
+              thumbnail: {
+                path: {},
+                download: "starting"
+              }
+            };
+          } else {
+            videoData[`${fileName}`] = {
+              video: {
+                originalVideoSrc : videofile,
+                originalVideoType: fileMimeType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+              },
+              thumbnail: {
+                path: {},
+                download: "starting"
+              }
+            }; 
+          }
           const newVideoData = JSON.stringify(videoData, null, 2);
           FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
-                    
-          currentDownloadVideos[`${fileName}`] = {
-            video : { 
-              "download-status" : "completed"
-            },
-            thumbnail : { 
-              "download-status" : "starting thumbnail download"
-            } 
-          };
+          currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  "completed";
+          if (compressUploadedVideo) { // addition of compress video data
+            currentDownloadVideos[`${fileName}`]["compression"]["download-status"] =  "starting video compression";                 
+          }
+          currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";   
+
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
           FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
 
           console.log("Video Transcoding succeeded !");
-
+          if (compressUploadedVideo) { // compress video
+            compression_V9(path, newFilePath, fileName);
+          }
           createThumbnail(path, newFilePath, fileName); 
 
           if (FileSystem.existsSync(videofile)) { 
