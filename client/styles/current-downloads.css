@@ -17,13 +17,13 @@
   flex-direction: column-reverse;
 }
 
-.tumbnailOptionsContainer, .videoOptionsContainer{
+.compressionOptionsContainer, .tumbnailOptionsContainer, .tumbnailCompressionOptionsContainer, .videoOptionsContainer{
   display: grid;
   grid-template-columns: 2fr 1fr; 
   grid-gap: 1ch;
 }
 
-.completeTumbnailDownloadButton, .completeVideoDownloadButton{  
+.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton{  
   justify-content: center;
   text-decoration: none;
   /* padding: 0.25rem 0.75rem 0 0.75rem; */
@@ -37,7 +37,7 @@
   height: 2.1875rem;
 }
 
-.completeTumbnailDownloadButton:hover, .completeVideoDownloadButton:hover{
+.completeCompressionDownloadButton:hover, .completeTumbnailDownloadButton:hover, .completeTumbnailCompressionDownloadButton:hover, .completeVideoDownloadButton:hover{
   color: #000 !important;
   background: #fff !important; 
 }

@@ -42,6 +42,7 @@ export function showDetails() {
   basic.createOption(videoTypeSelect, "Automatic", "Automatic");
   basic.createOption(videoTypeSelect, "video/mp4", "MP4 (.mp4)");
   basic.createOption(videoTypeSelect, "application/x-mpegURL", "HLS (.m3u8)");
+  basic.createOption(videoTypeSelect, "video/webm", "WebM (.webm)"); 
   basic.createOption(videoTypeSelect, "application/dash+xml", "MPEG-DASH (.mpd)");
   // submit video button
   const submitVideoButtonContainer = basic.createSection(videoLinkForm, "section", "submitVideoButtonContainer");
