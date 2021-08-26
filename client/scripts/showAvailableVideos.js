@@ -73,7 +73,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     videoType = videoDetails.info.videoLink.type; // video/mp4
   }
 
-  const video_name = videoDetails.info.title;
+  let video_name = videoDetails.info.title;
   const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
   const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
   const linkContainer = basic.createLink(container, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
@@ -106,6 +106,19 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       document.execCommand("copy");
       document.body.removeChild(tempCopyLink);
       option_menu_copy.textContent = "Copied";
+    document.getElementById(`${videoInfo_ID}-title`).remove();
+    const inputNewTitle = basic.createInput(document.getElementById(`${videoInfo_ID}-title-container`),"text", video_name, `${videoInfo_ID}-title`, "inputNewTitle");
+    document.getElementById(`${videoInfo_ID}-title-container`).removeAttribute("href");
+
+    inputNewTitle.onkeypress = function(e){
+      if (!e) e = window.event;
+      var keyCode = e.code || e.key;
+      if (keyCode == "Enter"){ 
+        video_name = inputNewTitle.value;
+        changeVideoTitle(videoInfo_ID, video_name);
+        inputNewTitle.blur();
+        return false;
+      }
     };
 
     // show video edit info menu
@@ -118,6 +131,10 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         if(stopInterval == "cleared Interval"){
           document.getElementById("download-status-container").remove();   
         }
+      }
+      if (video_name !== inputNewTitle.value) {
+        video_name = inputNewTitle.value;
+        changeVideoTitle(videoInfo_ID, video_name); 
       }
       linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
@@ -141,7 +158,7 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       const video_title_edit_content_container = basic.createSection(video_title_edit_settings_li, "section");
       basic.createSection(video_title_edit_content_container, "strong", undefined, undefined, "Video Title");
       const video_title_edit_content_input = basic.inputType(video_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
-      video_title_edit_content_input.placeholder = document.getElementById(`${videoInfo_ID}-title`).textContent;
+      video_title_edit_content_input.placeholder = video_name;
 
       const video_title_edit_button_container = basic.createSection(video_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
       const videoTitleEditButton = basic.createSection(video_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change video title");
@@ -151,7 +168,8 @@ function showDetails(container, videoInfo_ID, videoDetails) {
         document.body.style.removeProperty("overflow");
         video_edit_container.remove();
         if (document.getElementById(`${videoInfo_ID}-title`)) { 
-          changeVideoTitle(videoInfo_ID, video_title_edit_content_input.value); 
+          video_name = video_title_edit_content_input.value;
+          changeVideoTitle(videoInfo_ID, video_name); 
         } else {
           basic.notify("error",`ID ${videoInfo_ID}-title is Missing`); 
         }
@@ -190,6 +208,13 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     close_option_menu.title = "Close menu";
     close_option_menu.onclick = function(e){
       e.preventDefault();
+      if (video_name !== inputNewTitle.value) {
+        video_name = inputNewTitle.value;
+        changeVideoTitle(videoInfo_ID, video_name); 
+      }
+      document.getElementById(`${videoInfo_ID}-title`).remove();
+      document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+      basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
       option_menu.title = "menu";
       linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
@@ -201,25 +226,63 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
     const isHover = e => e.parentElement.querySelector(":hover") === e;
     const checkHoverFunction = function checkHover() {
-      const hovered = isHover(linkContainer);
-      if (hovered !== checkHover.hovered) {
-        checkHover.hovered = hovered;
-        if (hovered === false) {
-           option_menu.title = "menu";
-          linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-           option_menu.classList = "thumbnail-option-menu fa fa-bars";
-           option_menu.disabled = false;
-           option_menu_container.remove();
-           close_option_menu.remove();
-           document.removeEventListener("mousemove", checkHoverFunction);
-        }
+      let hovered = isHover(linkContainer); 
+      if (hovered !== checkHover.hovered) { 
+        checkHover.hovered = hovered;  
+        const checkIfInputActive = setInterval(function(){ 
+            if (document.activeElement.id === `${videoInfo_ID}-title`) {
+              hovered = checkHover.hovered; 
+              inputNewTitle.onkeypress = function(e){
+                if (!e) e = window.event;
+                var keyCode = e.code || e.key;
+                if (keyCode == "Enter"){
+                  video_name = inputNewTitle.value;
+                  changeVideoTitle(videoInfo_ID, video_name);  
+                  if (hovered  === false) {
+                    document.getElementById(`${videoInfo_ID}-title`).remove();
+                    basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
+                    document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+                    option_menu.title = "menu";
+                    linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+                    option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                    option_menu.disabled = false;
+                    option_menu_container.remove();
+                    close_option_menu.remove();
+                    document.removeEventListener("mousemove", checkHoverFunction);
+                    clearInterval(checkIfInputActive);
+                  } else {
+                    inputNewTitle.blur();
+                  }
+                  return false;
+                }
+              };
+            } else{
+              if (hovered === false) { 
+                if (video_name !== inputNewTitle.value) {
+                  video_name = inputNewTitle.value;
+                  changeVideoTitle(videoInfo_ID, video_name); 
+                }
+                document.getElementById(`${videoInfo_ID}-title`).remove();
+                basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
+                document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+                option_menu.title = "menu";
+                linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+                option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                option_menu.disabled = false;
+                option_menu_container.remove();
+                close_option_menu.remove();
+                document.removeEventListener("mousemove", checkHoverFunction);
+              } 
+              clearInterval(checkIfInputActive);
+          }
+        }, 50); 
       }
     };
     document.addEventListener("mousemove", checkHoverFunction);
   };
 
   // video title container - if user want to be redirected to video player even if menu is active when onclick
-  const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, undefined, "thumbnailTitleContainer");
+  const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
   basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
 
   let loopTroughThumbnails, mainThumbnailNumber = 1;
