@@ -106,6 +106,9 @@ function showDetails(container, videoInfo_ID, videoDetails) {
       document.execCommand("copy");
       document.body.removeChild(tempCopyLink);
       option_menu_copy.textContent = "Copied";
+      basic.notify("success","Copied Video Link");
+    };
+
     document.getElementById(`${videoInfo_ID}-title`).remove();
     const inputNewTitle = basic.createInput(document.getElementById(`${videoInfo_ID}-title-container`),"text", video_name, `${videoInfo_ID}-title`, "inputNewTitle");
     document.getElementById(`${videoInfo_ID}-title-container`).removeAttribute("href");
