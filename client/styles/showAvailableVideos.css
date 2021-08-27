@@ -134,6 +134,12 @@
     grid-row: 2;
 }
  
+.inputNewTitle{
+  width: 100%  !important;
+  display: block !important;
+  border: 0px !important; 
+  background: none !important; 
+} 
 
 /* Mobile  friendly */
 @media only screen and (max-width: 379px){ 
