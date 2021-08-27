@@ -76,6 +76,7 @@ and once everything is done the video will be found available in /saved/videos w
       - if clicked Edit mode will be shown with such features as 
         - Change video title
         - Delete this video which once clicked deletes the video plus all its data permanently from the system 
+    - Change video title
   - Search
     - Find available video by video title
   
