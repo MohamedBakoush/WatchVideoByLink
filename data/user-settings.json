@@ -1,7 +1,8 @@
 {
   "videoPlayer": {
     "volume": 1,
-    "muted": false
+    "muted": false,
+    "chromecast": false
   },
   "download": {
     "compression": {

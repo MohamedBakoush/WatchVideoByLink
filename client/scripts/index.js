@@ -188,6 +188,16 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   document.title = "Watching Video By Provided Link"; 
   document.body.classList = "watching-video-body";
   basic.websiteContentContainer.classList = "watching-video-websiteContentContainer";
+  let displayChromecast;
+  try {    
+    if (videoPlayerSettings.chromecast == true) {
+      displayChromecast = true;
+    } else {
+      displayChromecast = false;
+    }
+  } catch (error) {
+    displayChromecast = false;
+  }
   // create video player
   const videoPlayer = basic.createSection(basic.websiteContentContainer, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
   videoPlayer.style.width = "100vw";
@@ -331,7 +341,9 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       controls: true,
       techOrder: [ "chromecast", "html5" ],
       plugins: {
-        chromecast: {},
+        chromecast: {
+          addButtonToControlBar: displayChromecast
+        },
         seekButtons: {
           forward: 30,
           back: 10
