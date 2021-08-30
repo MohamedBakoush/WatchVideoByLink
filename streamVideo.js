@@ -13,9 +13,49 @@ const available_videos  = FileSystem.readFileSync("data/available-videos.json");
 let availableVideos = JSON.parse(available_videos);
 const current_download_videos = FileSystem.readFileSync("data/current-download-videos.json");
 let currentDownloadVideos = JSON.parse(current_download_videos);
-const ffprobe_path = "./ffprobe.exe";
-const ffmpeg_path = "./ffmpeg.exe";
-const untrunc_path = "untrunc.exe";
+let ffprobe_path = "./ffprobe.exe";
+let ffmpeg_path = "./ffmpeg.exe";
+let untrunc_path = "untrunc.exe";
+let working_video_path = "./media/working-video/video.mp4";
+
+// updated ffprobe path
+function update_ffprobe_path(newPath){ 
+  ffprobe_path = newPath;
+  return ffprobe_path;
+}
+
+// updated ffmpeg path
+function update_ffmpeg_path(newPath){ 
+  ffmpeg_path = newPath;
+  return ffmpeg_path;
+}
+
+// updated untrun path
+function update_untrunc_path(newPath){ 
+  untrunc_path = newPath;
+  return untrunc_path;
+}
+
+// updated working video path
+function update_working_video_path(newPath){ 
+  working_video_path = newPath;
+  return working_video_path;
+}
+
+
+// returns current video downloads
+function getAllVideoData(){
+  return videoData;
+}
+
+// return video data to its inital state
+function resetVideoData(){
+  videoData = {};
+  const newVideoData = JSON.stringify(videoData, null, 2);
+  FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+  return "resetVideoData";
+}
+
 
 // check if id provided is corresponding to videos
 function findVideosByID(id){
@@ -54,6 +94,14 @@ function getAllAvailableVideos(){
 // returns current video downloads
 function currentDownloads(){
   return currentDownloadVideos;
+}
+
+// return current video downloads to its inital state
+function resetCurrentDownloadVideos(){
+  currentDownloadVideos = {};
+  const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+  FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+  return "resetCurrentDownloadVideos";
 }
 
 // check if id provided is corresponding to video download
@@ -265,10 +313,6 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);           
-            } else if(thumbnailProgress == "completed" && compressionProgress == "completed"){ // delete data (no longer needed)            
-              delete currentDownloadVideos[`${fileName}`]; 
-              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
               if (thumbnailProgress == "completed" && compressionProgress !== "completed") {   
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffprobe unavailable";  
@@ -280,6 +324,10 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            } else if(thumbnailProgress == "completed" && compressionProgress == "completed"){ // delete data (no longer needed)            
+              delete currentDownloadVideos[`${fileName}`]; 
+              const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
             } else if(thumbnailProgress == "completed" && compressionProgress !== "completed"){ 
               // update thumbanil unfinnished & compression completed              
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "completed"; 
@@ -391,7 +439,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
             FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
-          } else if(!FileSystem.existsSync("./media/working-video/video.mp4")){//update working-video/video.mp4 is unavailable
+          } else if(!FileSystem.existsSync(working_video_path)){//update working_video_path is unavailable
             currentDownloadVideos[fileName]["video"]["download-status"] = "working video for untrunc is unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
             FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
@@ -2093,13 +2141,20 @@ module.exports = { // export modules
   updateVideoDataByID,
   deleteVideoDataByID,
   findVideosByID,
+  resetVideoData,
+  getAllVideoData,
   getAllAvailableVideos,
+  update_ffprobe_path,
+  update_ffmpeg_path, 
+  update_untrunc_path,
+  update_working_video_path,
   streamThumbnail,
   deletevideoData,
   checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
   getVideoLinkFromUrl,
   getVideoPlayerSettings,
   currentDownloads,
+  resetCurrentDownloadVideos,
   findCurrentDownloadByID,
   updateCurrentDownloadByID,
   deleteCurrentDownloadByID,
