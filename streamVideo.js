@@ -350,7 +350,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
-            } else if(compressionProgress == "completed"){ // delete data (no longer needed)      
+            } else if(compressionProgress == "completed"){ // update thumbanil unfinnished 
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "unfinished download"};
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
               FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
@@ -1705,8 +1705,7 @@ function deleteAllData(fileName) {
         if (!files.length) {
           // directory empty, delete folder
           FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-            if (err) throw err; 
-            console.log(`${fileName} folder deleted`); 
+            if (err) throw err;
             return `video-id-${fileName}-data-permanently-deleted`;
           }); 
         } else{ 
@@ -1717,19 +1716,16 @@ function deleteAllData(fileName) {
             for (const file of files) {
               completedCount += 1;
               FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
-                if (err) throw err;  
-                console.log(`\n moved ./media/video/${fileName}/${file} to media/deleted-videos/deleted-${file}`);
+                if (err) throw err;
                 // delete the video
                 FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
-                  if (err) throw err;
-                  console.log(`\n unlinked media/deleted-videos/deleted-${file} file`);  
+                  if (err) throw err;  
                   if(files.length == completedCount){// if file length is same as completedCount then delete folder
                     // reset completedCount
                     completedCount = 0;
                     // delete folder
                     FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-                      if (err) throw err; 
-                      console.log(`\n ${fileName} folder deleted`);
+                      if (err) throw err;
                       return `video-id-${fileName}-data-permanently-deleted`;
                     }); 
                   }
@@ -1740,12 +1736,10 @@ function deleteAllData(fileName) {
         }          
       });
     }  else{ 
-      // folder dosent exit 
-      console.log(`${fileName} folder dosent exit`);
+      // folder dosent exit
       return `video-id-${fileName}-data-permanently-deleted`;
     }
-  } catch (error) { 
-    console.log(`${fileName} failed to delete`);
+  } catch (error) {
     return `video-id-${fileName}-data-failed-to-permanently-deleted`;
   }
 }
