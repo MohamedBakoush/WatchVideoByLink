@@ -26,6 +26,26 @@ function findVideosByID(id){
   }
 }
 
+// updates video data by for provided id
+function updateVideoDataByID(videoID, Data){
+  videoData[videoID] = Data;
+  const newVideoData = JSON.stringify(videoData, null, 2);
+  FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+  return videoData[videoID];
+}
+
+// deletes video data by for provided id
+function deleteVideoDataByID(videoID){ 
+  if (findVideosByID(videoID) !== undefined) {
+    delete videoData[videoID]; 
+    const newVideoData = JSON.stringify(videoData, null, 2);
+    FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+    return `Deleted ${videoID}`; 
+  } else {
+    return `${videoID} Unavaiable`; 
+  }
+}
+
 // returns all availableVideos data
 function getAllAvailableVideos(){
   return availableVideos;
@@ -2047,6 +2067,8 @@ module.exports = { // export modules
   downloadVideo,
   stopDownloadVideoStream,
   trimVideo,
+  updateVideoDataByID,
+  deleteVideoDataByID,
   findVideosByID,
   getAllAvailableVideos,
   streamThumbnail,
