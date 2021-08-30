@@ -56,6 +56,35 @@ function currentDownloads(){
   return currentDownloadVideos;
 }
 
+// check if id provided is corresponding to video download
+function findCurrentDownloadByID(id){
+  if (currentDownloadVideos[id] === undefined) { // if id is invalid
+    return undefined;
+  } else { // if valid return videos[id]
+    return currentDownloadVideos[id];
+  }
+}
+
+// deletes current video downloads by for provided id
+function updateCurrentDownloadByID(videoID, Data){
+  currentDownloadVideos[videoID] = Data;
+  const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+  FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+  return currentDownloadVideos[videoID];
+}
+
+// deletes video download data by for provided id
+function deleteCurrentDownloadByID(videoID){  
+  if (findCurrentDownloadByID(videoID) !== undefined) {
+    delete currentDownloadVideos[videoID]; 
+    const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+    return `Deleted ${videoID}`;  
+  } else {
+    return `${videoID} Unavaiable`; 
+  }
+}
+
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   if(FileSystem.existsSync(fileName_original_ending) == true){  
@@ -2077,6 +2106,9 @@ module.exports = { // export modules
   getVideoLinkFromUrl,
   getVideoPlayerSettings,
   currentDownloads,
+  findCurrentDownloadByID,
+  updateCurrentDownloadByID,
+  deleteCurrentDownloadByID,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
   changeVideoTitle,

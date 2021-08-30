@@ -71,3 +71,61 @@ describe("deleteVideoDataByID", () =>  {
         expect(deleteVideoDataByID).toBe("test3 Unavaiable");   
     });
 }); 
+
+describe("getAllAvailableVideos", () =>  {  
+    it("JSON Avaiable", () =>  {
+        const getAllAvailableVideos = streamVideo.getAllAvailableVideos();
+        expect(getAllAvailableVideos).toBeDefined();   
+    }); 
+}); 
+
+describe("currentDownloads", () =>  {  
+    it("JSON Avaiable", () =>  {
+        const currentDownloads = streamVideo.currentDownloads();
+        expect(currentDownloads).toBeDefined();   
+    }); 
+}); 
+
+describe("updateCurrentDownloadByID", () =>  { 
+    afterAll(() => { 
+        streamVideo.deleteCurrentDownloadByID("test");
+    });
+
+    it("Update Video Data", () =>  {
+        const updateCurrentDownloadByID = streamVideo.updateCurrentDownloadByID("test", { 
+            "video": {
+                "download-status": "unfinished download"
+            },
+            "thumbnail": {
+                "download-status": "waiting for video"
+            }
+        });
+        expect(updateCurrentDownloadByID).toBeDefined(); 
+        expect(updateCurrentDownloadByID.video["download-status"]).toBe("unfinished download"); 
+        expect(updateCurrentDownloadByID.thumbnail["download-status"]).toBe("waiting for video"); 
+    });
+}); 
+
+describe("deleteCurrentDownloadByID", () =>  { 
+    beforeAll(() => {       
+        streamVideo.updateCurrentDownloadByID("test1", { 
+            "video": {
+                "download-status": "unfinished download"
+            },
+            "thumbnail": {
+                "download-status": "waiting for video"
+            }
+        });
+    });
+
+    it("Delete Video Data", () =>  {
+        const deleteCurrentDownloadByID = streamVideo.deleteCurrentDownloadByID("test1");
+        expect(deleteCurrentDownloadByID).toBe("Deleted test1");   
+    });  
+
+    it("VideoID Unavaiable", () =>  {
+        const deleteCurrentDownloadByID = streamVideo.deleteCurrentDownloadByID("test2");
+        expect(deleteCurrentDownloadByID).toBe("test2 Unavaiable");   
+    });
+}); 
+
