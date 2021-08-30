@@ -158,6 +158,18 @@ describe("getAllAvailableVideos", () =>  {
     }); 
 }); 
 
+
+describe("resetAvailableVideos", () =>  {  
+    it("reset", () =>  {
+        const resetAvailableVideos = streamVideo.resetAvailableVideos();
+        expect(resetAvailableVideos).toBe("resetAvailableVideos"); 
+        const getAllAvailableVideos = streamVideo.getAllAvailableVideos();
+        expect(Object.keys(getAllAvailableVideos).length).toBe(0); 
+        expect(getAllAvailableVideos).toMatchObject({});
+    }); 
+}); 
+
+
 describe("currentDownloads", () =>  {  
     it("JSON Object", () =>  {
         const currentDownloads = streamVideo.currentDownloads();

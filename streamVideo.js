@@ -91,6 +91,14 @@ function getAllAvailableVideos(){
   return availableVideos;
 }
 
+// return available Videos to its inital state
+function resetAvailableVideos(){
+  availableVideos = {}; 
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+  return "resetAvailableVideos";
+}
+
 // returns current video downloads
 function currentDownloads(){
   return currentDownloadVideos;
@@ -2144,6 +2152,7 @@ module.exports = { // export modules
   resetVideoData,
   getAllVideoData,
   getAllAvailableVideos,
+  resetAvailableVideos,
   update_ffprobe_path,
   update_ffmpeg_path, 
   update_untrunc_path,
