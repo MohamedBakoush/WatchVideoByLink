@@ -144,7 +144,7 @@ function deleteCurrentDownloadByID(videoID){
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   if(FileSystem.existsSync(fileName_original_ending) == true){  
-    exec(`${untrunc_path} ./media/working-video/video.mp4 ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
+    exec(`${untrunc_path} ${working_video_path} ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
       if (error) {
           console.log(`error: ${error.message}`);
           return;
@@ -161,7 +161,7 @@ function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, f
       FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  () => { 
         clearInterval(renameFilePath);
         // if (err) throw err; 
-        exec(`${untrunc_path} ./media/working-video/video.mp4 ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
+        exec(`${untrunc_path} ${working_video_path} ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
           if (error) {
               console.log(`error: ${error.message}`);
               return;
