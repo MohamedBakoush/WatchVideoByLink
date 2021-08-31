@@ -464,8 +464,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
 }
 
 // finnish download video/thumbnail (if not completed) when the application get started 
-function completeUnfinnishedVideoDownload(req){ 
-  const fileName = req.body.id; 
+function completeUnfinnishedVideoDownload(fileName){
   const filepath = "media/video/";
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`; 

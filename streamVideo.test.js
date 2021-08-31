@@ -1004,3 +1004,110 @@ describe("cheackForAvailabeUnFinishedVideoDownloads", () =>  {
         streamVideo.deleteCurrentDownloadByID(id);
     });
 }); 
+ 
+describe("completeUnfinnishedVideoDownload", () =>  {   
+    afterAll(() => { 
+        streamVideo.resetCurrentDownloadVideos();
+    });
+
+    it("video true, thumbnail true, compression true - download status: completed", () =>  {
+        const id = uuidv4(); 
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "completed"
+            }
+        });
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload(id);
+        expect(completeUnfinnishedDownload).toBe("download status: completed");
+        const check = streamVideo.findCurrentDownloadByID(id);
+        expect(check).toBeUndefined(); 
+        streamVideo.deleteCurrentDownloadByID(id);
+    }); 
+
+    it("video true, thumbnail false, compression true - redownload thumbnails", () =>  {
+        const id = uuidv4(); 
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload(id);
+        expect(completeUnfinnishedDownload).toBe("redownload thumbnails");
+        streamVideo.deleteCurrentDownloadByID(id);
+    }); 
+
+    it("video true, thumbnail true, compression false - redownload compression", () =>  {
+        const id = uuidv4(); 
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "unfinished download"
+            },
+            "thumbnail": { 
+                "download-status": "completed"
+            }
+        });
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload(id);
+        expect(completeUnfinnishedDownload).toBe("redownload compression"); 
+        streamVideo.deleteCurrentDownloadByID(id);
+    }); 
+
+    it("video true, thumbnail false, compression undefined - redownload thumbnails", () =>  {
+        const id = uuidv4(); 
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload(id);
+        expect(completeUnfinnishedDownload).toBe("redownload thumbnails"); 
+        streamVideo.deleteCurrentDownloadByID(id);
+    }); 
+
+    it("video true, thumbnail false, compression undefined - redownload thumbnails & compression", () =>  {
+        const id = uuidv4(); 
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "unfinished download"
+            },
+            "thumbnail": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload(id);
+        expect(completeUnfinnishedDownload).toBe("redownload thumbnails & compression"); 
+        streamVideo.deleteCurrentDownloadByID(id);
+    }); 
+
+    it("video false, thumbnail false, compression undefined - untrunc broke video", () =>  {
+        const id = uuidv4(); 
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload(id);
+        expect(completeUnfinnishedDownload).toBe("untrunc broke video"); 
+        streamVideo.deleteCurrentDownloadByID(id);
+    }); 
+}); 
