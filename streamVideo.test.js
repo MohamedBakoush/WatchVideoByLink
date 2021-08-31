@@ -158,7 +158,6 @@ describe("getAllAvailableVideos", () =>  {
     }); 
 }); 
 
-
 describe("resetAvailableVideos", () =>  {  
     it("reset", () =>  {
         const resetAvailableVideos = streamVideo.resetAvailableVideos();
@@ -168,7 +167,6 @@ describe("resetAvailableVideos", () =>  {
         expect(getAllAvailableVideos).toMatchObject({});
     }); 
 }); 
-
 
 describe("currentDownloads", () =>  {  
     it("JSON Object", () =>  {

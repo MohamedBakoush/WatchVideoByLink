@@ -42,7 +42,6 @@ function update_working_video_path(newPath){
   return working_video_path;
 }
 
-
 // returns current video downloads
 function getAllVideoData(){
   return videoData;
@@ -55,7 +54,6 @@ function resetVideoData(){
   FileSystem.writeFileSync("data/data-videos.json", newVideoData);
   return "resetVideoData";
 }
-
 
 // check if id provided is corresponding to videos
 function findVideosByID(id){
