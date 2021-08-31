@@ -186,6 +186,37 @@ describe("resetCurrentDownloadVideos", () =>  {
     }); 
 }); 
 
+describe("findCurrentDownloadByID", () =>  {
+    const id = uuidv4();
+    beforeAll(() => {       
+        streamVideo.updateCurrentDownloadByID(id, {
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        });
+    });
+
+    afterAll(() => { 
+        streamVideo.resetCurrentDownloadVideos();
+    });
+
+    it("Avaiable: Current Video Download Data", () =>  {
+        const findCurrentDownloadByID = streamVideo.findCurrentDownloadByID(id);
+        expect(findCurrentDownloadByID).toBeDefined(); 
+        expect(findCurrentDownloadByID.video["download-status"]).toBe("completed"); 
+        expect(findCurrentDownloadByID.thumbnail["download-status"]).toBe("20.00%"); 
+        streamVideo.deleteCurrentDownloadByID(id);
+    });
+
+    it("UnAvaiable: Current Video Download Data", () =>  {
+        const findCurrentDownloadByID = streamVideo.findCurrentDownloadByID();
+        expect(findCurrentDownloadByID).toBeUndefined();
+    });
+});
+
 describe("updateCurrentDownloadByID", () =>  { 
     const id = uuidv4();
     afterAll(() => { 
