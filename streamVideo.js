@@ -1272,56 +1272,71 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   const numberOfImages = 8;
   let duration = 0;
   let numberOfCreatedScreenshots = 0;
+  const videoDetails = await findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
-    ffmpeg.ffprobe(videofile, (error, metadata) => {
-      try { // get video duration 
-        duration = metadata.format.duration;
-      } catch (error) { // duration = 0
-        duration = 0;
-      } 
-      console.log(`${fileName} duration: ${duration}`);
-      // if video duration greater then 0
-      if (duration > 0) {
-        const command = new ffmpeg();
-          command.addInput(videofile)
-            .on("start", () => {
-              console.log("start createThumbnail");
-            })
-  
-            .on("progress", (data) => {
-              // update numberOfCreatedScreenshots
-              numberOfCreatedScreenshots = data.frames; 
-  
-              if(data.percent < 0){ // if data.percent is less then 0 then show 0.00%
-                videoData[`${fileName}`]["thumbnail"].download =  0.00;
-                currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "0.00%"; 
-              }else{ //update data with with data.percent
-                try {
-                  videoData[`${fileName}`]["thumbnail"].download =  data.percent;
-                  currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent.toFixed(2)}%`;  
-                } catch (error) {
-                  videoData[`${fileName}`]["thumbnail"].download =  data.percent;
-                  currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent}%`;    
-                }
-              }
-              // update data to database
-              const newVideoData = JSON.stringify(videoData, null, 2);
-              FileSystem.writeFileSync("data/data-videos.json", newVideoData); 
-  
-              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
-  
-              console.log("progress", data);
-            })
-            .on("end", () => {
-              // encoding is complete
-              for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
-                if (i == 0){
+    if (videoDetails !== undefined) {
+      ffmpeg.ffprobe(videofile, (error, metadata) => {
+        try { // get video duration 
+          duration = metadata.format.duration;
+        } catch (error) { // duration = 0
+          duration = 0;
+        } 
+        console.log(`${fileName} duration: ${duration}`);
+        // if video duration greater then 0
+        if (duration > 0) {
+          const command = new ffmpeg();
+            command.addInput(videofile)
+              .on("start", () => {
+                console.log("start createThumbnail");
+              })
+    
+              .on("progress", (data) => {
+                // update numberOfCreatedScreenshots
+                numberOfCreatedScreenshots = data.frames; 
+    
+                if(data.percent < 0){ // if data.percent is less then 0 then show 0.00%
+                  videoData[`${fileName}`]["thumbnail"].download =  0.00;
+                  currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "0.00%"; 
+                }else{ //update data with with data.percent
                   try {
-                    if (availableVideos[`${fileName}`]["info"]) {
-                      availableVideos[`${fileName}`]["info"].thumbnailLink = {  
-                      };
-                    } else {
+                    videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+                    currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent.toFixed(2)}%`;  
+                  } catch (error) {
+                    videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+                    currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  `${data.percent}%`;    
+                  }
+                }
+                // update data to database
+                const newVideoData = JSON.stringify(videoData, null, 2);
+                FileSystem.writeFileSync("data/data-videos.json", newVideoData); 
+    
+                const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+                FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+    
+                console.log("progress", data);
+              })
+              .on("end", () => {
+                // encoding is complete
+                for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
+                  if (i == 0){
+                    try {
+                      if (availableVideos[`${fileName}`]["info"]) {
+                        availableVideos[`${fileName}`]["info"].thumbnailLink = {  
+                        };
+                      } else {
+                        availableVideos[`${fileName}`] = {
+                          info:{
+                            title: fileName,
+                            videoLink: {
+                              src : `/video/${fileName}`,
+                              type : "video/mp4"
+                            },
+                            thumbnailLink: {
+                            }
+                          }
+                        }; 
+                      }
+                    } catch (error) {
                       availableVideos[`${fileName}`] = {
                         info:{
                           title: fileName,
@@ -1334,69 +1349,59 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                         }
                       }; 
                     }
-                  } catch (error) {
-                    availableVideos[`${fileName}`] = {
-                      info:{
-                        title: fileName,
-                        videoLink: {
-                          src : `/video/${fileName}`,
-                          type : "video/mp4"
-                        },
-                        thumbnailLink: {
-                        }
-                      }
-                    }; 
+                  } else if (i < 10) {
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}00${i}${fileType}`;
+                    availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
+                  } else if (i < 100) {
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}0${i}${fileType}`;
+                    availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
+                  } else {
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}${i}${fileType}`;
+                    availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   }
-                } else if (i < 10) {
-                  videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}00${i}${fileType}`;
-                  availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
-                } else if (i < 100) {
-                  videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}0${i}${fileType}`;
-                  availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
-                } else {
-                  videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}${i}${fileType}`;
-                  availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
+                  if (i == numberOfCreatedScreenshots) {
+                    videoData[`${fileName}`]["thumbnail"].download = "completed";
+                  }
                 }
-                if (i == numberOfCreatedScreenshots) {
-                  videoData[`${fileName}`]["thumbnail"].download = "completed";
-                }
-              }
 
-              const newVideoData = JSON.stringify(videoData, null, 2);
-              FileSystem.writeFileSync("data/data-videos.json", newVideoData);
+                const newVideoData = JSON.stringify(videoData, null, 2);
+                FileSystem.writeFileSync("data/data-videos.json", newVideoData);
 
-              const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-              FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-              console.log("Image Thumbnails succeeded !");
-              
-              if(currentDownloadVideos[`${fileName}`]["compression"] === undefined || currentDownloadVideos[`${fileName}`]["compression"]["download-status"] === "completed") { 
-                delete currentDownloadVideos[`${fileName}`]; 
-              } else  {  
-                currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] = "completed"; 
-              } 
-      
-              const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
-  
-            })
-            .on("error", (error) => {
-                /// error handling
-                console.log(`Encoding Error: ${error.message}`);
-            })
-            .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
-            .output(`${newFilePath}${imageFileName}%03d${fileType}`)
-            .run();
-      } else { // duration less or equal to 0
-        try { // delete data
-          if (videoData[`${fileName}`] || currentDownloadVideos[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
-            // delete all data
-            deleteAllData(fileName);
+                const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+                FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+                console.log("Image Thumbnails succeeded !");
+                
+                if(currentDownloadVideos[`${fileName}`]["compression"] === undefined || currentDownloadVideos[`${fileName}`]["compression"]["download-status"] === "completed") { 
+                  delete currentDownloadVideos[`${fileName}`]; 
+                } else  {  
+                  currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] = "completed"; 
+                } 
+        
+                const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+                FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+    
+              })
+              .on("error", (error) => {
+                  /// error handling
+                  console.log(`Encoding Error: ${error.message}`);
+              })
+              .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
+              .output(`${newFilePath}${imageFileName}%03d${fileType}`)
+              .run();
+        } else { // duration less or equal to 0
+          try { // delete data
+            if (videoData[`${fileName}`] || currentDownloadVideos[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
+              // delete all data
+              deleteAllData(fileName);
+            } 
+          } catch (error) { // an error has occurred
+            console.log(error);
           } 
-        } catch (error) { // an error has occurred
-          console.log(error);
-        } 
-      }
-    }); 
+        }
+      }); 
+    } else { 
+      return "videoDetails dosnet exists";
+    }
   } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
     currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg and ffprobe unavailable";  
     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
