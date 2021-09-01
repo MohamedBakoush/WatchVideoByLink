@@ -1166,3 +1166,18 @@ describe("updateVideoPlayerVolume", () =>  {
         expect(updateVolume).toBe("volume-muted-invaid");
     }); 
 }); 
+
+describe("getVideoPlayerSettings", () =>  {
+    it("JSON Object", () =>  {
+        const videoPlayerSettings = streamVideo.getVideoPlayerSettings();
+        expect(videoPlayerSettings).toBeDefined();   
+        expect.objectContaining(videoPlayerSettings);
+    }); 
+
+    it("Available - volume, muted, chromecast", () =>  {
+        const videoPlayerSettings = streamVideo.getVideoPlayerSettings();
+        expect(videoPlayerSettings.volume).toBeDefined();    
+        expect(videoPlayerSettings.muted).toBeDefined();  
+        expect(videoPlayerSettings.chromecast).toBeDefined();     
+    }); 
+}); 
