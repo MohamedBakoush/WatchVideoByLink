@@ -1685,10 +1685,15 @@ function deleteAllVideoData(fileName, response) {  // check if videoid is valid
             // directory empty, delete folder
             FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
               if (err) throw err;
-              if (response !== undefined) {
-                response.json(`video-id-${fileName}-data-permanently-deleted`);
+              try {
+                if (response !== undefined) {
+                  response.json(`video-id-${fileName}-data-permanently-deleted`);
+                } else {
+                  return `video-id-${fileName}-data-permanently-deleted`;
+                }
+              } catch (error) {
+                return `video-id-${fileName}-data-permanently-deleted`;
               }
-              return `video-id-${fileName}-data-permanently-deleted`;
             });
           } else {
             // folder not empty
@@ -1707,11 +1712,16 @@ function deleteAllVideoData(fileName, response) {  // check if videoid is valid
                       completedCount = 0;
                       // delete folder
                       FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-                        if (err) throw err; 
-                        if (response !== undefined) {
-                          response.json(`video-id-${fileName}-data-permanently-deleted`);
+                        if (err) throw err;  
+                        try {
+                          if (response !== undefined) {
+                            response.json(`video-id-${fileName}-data-permanently-deleted`);
+                          } else {
+                            return `video-id-${fileName}-data-permanently-deleted`;
+                          }
+                        } catch (error) {
+                          return `video-id-${fileName}-data-permanently-deleted`;
                         }
-                        return `video-id-${fileName}-data-permanently-deleted`;
                       });
                     }
                   });
@@ -1720,17 +1730,27 @@ function deleteAllVideoData(fileName, response) {  // check if videoid is valid
             });
           }
         });
-    } else{ // folder dosent exit
-      if (response !== undefined) {
-        response.json(`video-id-${fileName}-data-permanently-deleted`);
+    } else{ // folder dosent exit 
+      try {
+        if (response !== undefined) {
+          response.json(`video-id-${fileName}-data-permanently-deleted`);
+        } else {
+          return `video-id-${fileName}-data-permanently-deleted`;
+        }
+      } catch (error) {
+        return `video-id-${fileName}-data-permanently-deleted`;
       }
-      return `video-id-${fileName}-data-permanently-deleted`;
     }
   } catch (error) {
-    if (response !== undefined) {
-      response.json(`video-id-${fileName}-data-failed-to-permanently-deleted`);
+    try {
+      if (response !== undefined) {
+        response.json(`video-id-${fileName}-data-failed-to-permanently-deleted`);
+      } else {
+        return `video-id-${fileName}-data-failed-to-permanently-deleted`;
+      }
+    } catch (error) {
+      return `video-id-${fileName}-data-failed-to-permanently-deleted`;
     }
-    return `video-id-${fileName}-data-failed-to-permanently-deleted`;
   }
 }
 
