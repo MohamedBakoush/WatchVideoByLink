@@ -2075,9 +2075,10 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 module.exports = { // export modules
   streamVideo,
   updateVideoPlayerVolume,
+  checkIfVideoSrcOriginalPathExits,
+  stopDownloadVideoStream,
   downloadVideoStream,
   downloadVideo,
-  stopDownloadVideoStream,
   trimVideo,
   updateVideoDataByID,
   deleteVideoDataByID,

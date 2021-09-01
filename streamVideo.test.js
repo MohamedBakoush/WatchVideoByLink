@@ -1212,3 +1212,98 @@ describe("stopDownloadVideoStream", () =>  {
         expect(stopDownload).toBe("videoDetails dosnet exists");   
     }); 
 }); 
+
+describe("checkIfVideoSrcOriginalPathExits", () =>  {   
+    afterAll(() => {  
+        streamVideo.resetVideoData();
+    });
+
+    it("video valid id and data", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "video": {
+                "originalVideoSrc" : "videoSrc",
+                "originalVideoType" : "videoType",
+                "path": "videoFilePath",
+                "videoType" : "video/mp4",
+                "download" : "completed",
+              },
+              "compression" : {
+                "path": "compressionFilePath",
+                "videoType": "video/webm",
+                "download": "completed"
+              },
+              "thumbnail": {
+                "path": {},
+                "download": "completed"
+              }
+          });
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/video/${id}`);
+        expect(stopDownload).toBe("videoFilePath");
+    }); 
+
+    it("video valid id invalid data", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, { 
+          });
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/video/${id}`);
+        expect(stopDownload).toBe(`http://localhost:8080/video/${id}`);
+    }); 
+
+    it("video invalid id", async () =>  { 
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits("http://localhost:8080/video/invalid");
+        expect(stopDownload).toBe("http://localhost:8080/video/invalid");
+    }); 
+
+    it("compressed valid id and valid data", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "video": {
+                "originalVideoSrc" : "videoSrc",
+                "originalVideoType" : "videoType",
+                "path": "videoFilePath",
+                "videoType" : "video/mp4",
+                "download" : "completed",
+              },
+              "compression" : {
+                "path": "compressionFilePath",
+                "videoType": "video/webm",
+                "download": "completed"
+              },
+              "thumbnail": {
+                "path": {},
+                "download": "completed"
+              }
+          });
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/compressed/${id}`);
+        expect(stopDownload).toBe("videoFilePath");
+    }); 
+
+    it("compression valid id invalid data", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, { 
+          });
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/compressed/${id}`);
+        expect(stopDownload).toBe(`http://localhost:8080/compressed/${id}`);
+    }); 
+
+    it("compression invalid id", async () =>  { 
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits("http://localhost:8080/compressed/invalid");
+        expect(stopDownload).toBe("http://localhost:8080/compressed/invalid");
+    }); 
+
+    it("Video src doesn't contain video or compression", async () =>  {
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits("URL");
+        expect(stopDownload).toBe("URL");
+    });  
+    
+    it("no input", async () =>  {
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits();
+        expect(stopDownload).toBe(undefined);
+    });  
+        
+    it("undefined input", async () =>  {
+        const stopDownload = await streamVideo.checkIfVideoSrcOriginalPathExits(undefined);
+        expect(stopDownload).toBe(undefined);
+    });  
+}); 
