@@ -656,6 +656,39 @@ const SIGKILL = (command) => {
   return command.kill("SIGKILL");
 };
 
+// check if original video src path exits
+async function checkIfVideoSrcOriginalPathExits(videoSrc) {
+  try {
+    if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
+      const videoDetails = await findVideosByID(videoSrc.split("/video/")[1]);
+      if (videoDetails === undefined) { // videofile = inputted videos src
+        return videoSrc;
+      } else {
+        if (videoDetails.video.path) { // original video path 
+          return videoDetails.video.path;  
+        } else { // videofile = inputted videos src 
+          return videoSrc;
+        } 
+      }
+    } else if (videoSrc.includes("/compressed/")) {
+      const videoDetails = await findVideosByID(videoSrc.split("/compressed/")[1]);
+      if (videoDetails === undefined) { // videofile = inputted videos src
+        return videoSrc;
+      } else {
+        if (videoDetails.video.path) { // original video path 
+          return videoDetails.video.path;
+        } else { // videofile = inputted videos src 
+          return videoSrc;
+        } 
+      }
+    } else { // videofile = inputted videos src  
+      return videoSrc;
+    } 
+  } catch (error) { // videofile = inputted videos src 
+    return videoSrc;
+  } 
+}
+
 let fileNameID;
 let stopVideoFileBool = false;
 async function stopDownloadVideoStream(id) {
@@ -855,37 +888,7 @@ async function downloadVideoStream(req, res) {
 async function downloadVideo(req, res) {
   const command = new ffmpeg();
   const videoSrc = req.body.videoSrc;
-  let videofile;
-  try {
-    if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
-      const videoDetails = await findVideosByID(videoSrc.split("/video/")[1]);
-      if (videoDetails === undefined) { // videofile = inputted videos src
-        videofile = videoSrc;
-      } else {
-        if (videoDetails.video.path) { // original video path 
-          videofile = videoDetails.video.path;  
-        } else { // videofile = inputted videos src 
-          videofile = videoSrc;
-        } 
-      }
-    } else if (videoSrc.includes("/compressed/")) {
-      const videoDetails = await findVideosByID(videoSrc.split("/compressed/")[1]);
-      if (videoDetails === undefined) { // videofile = inputted videos src
-        videofile = videoSrc;
-      } else {
-        if (videoDetails.video.path) { // original video path 
-          videofile = videoDetails.video.path;
-        } else { // videofile = inputted videos src 
-          videofile = videoSrc;
-        } 
-      }
-    } else { // videofile = inputted videos src  
-      videofile = videoSrc;
-    } 
-  } catch (error) { // videofile = inputted videos src 
-    videofile = videoSrc;
-  } 
-  
+  const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
   let compressVideo;
   try { // userSettings.download.compression.downloadVideo exists 
     if (userSettings.download.compression.downloadVideo == true) {
@@ -1058,36 +1061,7 @@ async function downloadVideo(req, res) {
 async function trimVideo(req, res) {
   const command = new ffmpeg();
   const videoSrc = req.body.videoSrc;
-  let videofile;
-  try {
-    if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
-      const videoDetails = await findVideosByID(videoSrc.split("/video/")[1]);
-      if (videoDetails === undefined) { // videofile = inputted videos src
-        videofile = videoSrc;
-      } else {
-        if (videoDetails.video.path) { // original video path 
-          videofile = videoDetails.video.path;  
-        } else { // videofile = inputted videos src 
-          videofile = videoSrc;
-        } 
-      }
-    } else if (videoSrc.includes("/compressed/")) {
-      const videoDetails = await findVideosByID(videoSrc.split("/compressed/")[1]);
-      if (videoDetails === undefined) { // videofile = inputted videos src
-        videofile = videoSrc;
-      } else {
-        if (videoDetails.video.path) { // original video path 
-          videofile = videoDetails.video.path;  
-        } else { // videofile = inputted videos src 
-          videofile = videoSrc;
-        } 
-      }
-    } else { // videofile = inputted videos src  
-      videofile = videoSrc;
-    } 
-  } catch (error) { // videofile = inputted videos src 
-    videofile = videoSrc;
-  } 
+  const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
 
   let compressTrimedVideo;
   try { // userSettings.download.compression.trimVideo exists 
