@@ -26,7 +26,8 @@ function videoLinkFromUrl(req, res){
 // update video player volume settings
 app.post("/updateVideoPlayerVolume", express.json(), updateVideoPlayerVolume);
 function updateVideoPlayerVolume(req, res) {
-  streamVideoFile.updateVideoPlayerVolume(req, res);
+  const updatedVolume = streamVideoFile.updateVideoPlayerVolume(req.body.updatedVideoPlayerVolume,  req.body.updatedVideoPlayerMuted);
+  res.json(updatedVolume);
 }
 
 // get video player settings

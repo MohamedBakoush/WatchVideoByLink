@@ -1140,3 +1140,29 @@ describe("completeUnfinnishedVideoDownload", () =>  {
         streamVideo.deleteCurrentDownloadByID(id);
     }); 
 }); 
+
+describe("updateVideoPlayerVolume", () =>  {
+    afterAll(() => { 
+        streamVideo.updateVideoPlayerVolume(1, false);
+    });
+
+    it("updated-video-player-volume", () =>  {   
+        const updateVolume = streamVideo.updateVideoPlayerVolume(0.1, true);
+        expect(updateVolume).toBe("updated-video-player-volume");
+    }); 
+
+    it("muted-invaid", () =>  {   
+        const updateVolume = streamVideo.updateVideoPlayerVolume(0.1, undefined);
+        expect(updateVolume).toBe("muted-invaid");
+    }); 
+
+    it("volume-invaid", () =>  {   
+        const updateVolume = streamVideo.updateVideoPlayerVolume(undefined, false);
+        expect(updateVolume).toBe("volume-invaid");
+    }); 
+
+    it("volume-muted-invaid", () =>  {   
+        const updateVolume = streamVideo.updateVideoPlayerVolume(undefined, undefined);
+        expect(updateVolume).toBe("volume-muted-invaid");
+    }); 
+}); 

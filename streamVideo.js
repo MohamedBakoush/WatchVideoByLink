@@ -625,20 +625,19 @@ async function streamThumbnail(request, response, videoID, thumbnailID) {
 }
 
 // update video player volume settings
-function updateVideoPlayerVolume(req, res) {
-  try { // update video volume settings
-    const videoPlayerVolume = req.body.updatedVideoPlayerVolume;
-    const videoPlayerMuted = req.body.updatedVideoPlayerMuted;     
-
+function updateVideoPlayerVolume(videoPlayerVolume, videoPlayerMuted) {
+  if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted == "boolean") {
     userSettings["videoPlayer"].volume = videoPlayerVolume;
     userSettings["videoPlayer"].muted = videoPlayerMuted;
-
     const newUserSettings = JSON.stringify(userSettings, null, 2);
     FileSystem.writeFileSync("data/user-settings.json", newUserSettings);  
-
-    res.json("updated-video-player-volume");
-  } catch (e) { // failed to update video volume settings
-    res.json("failed-to-update-video-player-volume");
+    return "updated-video-player-volume";
+  } else if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted !== "boolean") {
+    return "muted-invaid";
+  } else if (isNaN(videoPlayerVolume) && typeof videoPlayerMuted == "boolean") {
+    return "volume-invaid";
+  } else {
+    return "volume-muted-invaid";
   }
 }
 
