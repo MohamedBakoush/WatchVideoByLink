@@ -1181,3 +1181,34 @@ describe("getVideoPlayerSettings", () =>  {
         expect(videoPlayerSettings.chromecast).toBeDefined();     
     }); 
 }); 
+
+describe("stopDownloadVideoStream", () =>  { 
+    const id = uuidv4();
+    beforeAll(() => {   
+        streamVideo.updateVideoDataByID(id, {
+            "video": { 
+                "download": "20.00%"
+            },
+            compression : { 
+              "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+              "download-status" : "waiting for video"
+            } 
+        });
+    });
+
+    afterAll(() => {  
+        streamVideo.resetVideoData();
+    });
+
+    it("valid id", async () =>  {
+        const stopDownload = await streamVideo.stopDownloadVideoStream(id);
+        expect(stopDownload).toBe("stoped video stream download");   
+    }); 
+
+    it("invalid id", async () =>  {
+        const stopDownload = await streamVideo.stopDownloadVideoStream();
+        expect(stopDownload).toBe("videoDetails dosnet exists");   
+    }); 
+}); 
