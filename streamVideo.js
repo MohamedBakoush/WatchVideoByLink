@@ -174,7 +174,7 @@ function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, f
       });
     }, 50);
   } else{ 
-    deleteAllData(fileName);       
+    deleteAllVideoData(fileName);       
   }
 }
 
@@ -440,7 +440,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                   currentDownloadVideos[fileName]["video"]["download-status"] == "starting uploaded video download" ||
                   currentDownloadVideos[fileName]["video"]["download-status"] == "0.00%"
                   ){ // if the video download hasn't started
-                deleteAllData(fileName);          
+                    deleteAllVideoData(fileName);          
           } else if(!FileSystem.existsSync(untrunc_path)){//update untrunc is unavailable
             currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
@@ -455,7 +455,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
             FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
           }
       } else {
-        deleteAllData(fileName);    
+        deleteAllVideoData(fileName);    
       }
     });  
   }
@@ -1388,7 +1388,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
           try { // delete data
             if (videoData[`${fileName}`] || currentDownloadVideos[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
               // delete all data
-              deleteAllData(fileName);
+              deleteAllVideoData(fileName);
             } 
           } catch (error) { // an error has occurred
             console.log(error);
@@ -1598,7 +1598,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
           try { // duration less or equal to 0
             if (videoData[`${fileName}`] || currentDownloadVideos[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
               // delete all data
-              deleteAllData(fileName);
+              deleteAllVideoData(fileName);
             } 
           } catch (error) { // an error has occurred
             console.log(error); 
@@ -1618,190 +1618,118 @@ async function compression_VP9(videofile, newFilePath, fileName) {
 }
 
 // check if video compression is downloading before data deletion 
-function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(request, response, videoID) {
-      // stop video compression
-      const stopCommpressedVideoDownloadBool = stopCommpressedVideoDownload(true, videoID); 
-      if (stopCommpressedVideoDownloadBool) {
-        const checkDownloadStatus = setInterval( function(){ 
-          // try untill compressed video gets killed with signal SIGKILL or finnishes download 
-          try { 
-            if (videoData[videoID]["compression"]) {
-              if (videoData[videoID]["compression"]["download"] == "completed" 
-              || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
-                // stop interval and start data deletion when videoData is completed or ffmpeg was killed with signal SIGKILL
-                clearInterval(checkDownloadStatus); 
-                deletevideoData(request, response, videoID);
-              } else if(currentDownloadVideos[videoID]["compression"]){
-                if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
-                || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
-                  // stop interval and start data deletion when currentDownloadVideos is completed or ffmpeg was killed with signal SIGKILL
-                  clearInterval(checkDownloadStatus); 
-                  deletevideoData(request, response, videoID);
-                } 
-              } 
-            } else { // stop interval and start data deletion
-              clearInterval(checkDownloadStatus);            
-              deletevideoData(request, response, videoID);
-            }
-          } catch (e) { // error occurs 
-            console.log(e);  
-          }
-        }, 500); 
-      } else { // compressed video isn't downloading
-        deletevideoData(request, response, videoID);
+async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, response) {
+  // stop video compression
+  const stopCommpressedVideoDownloadBool = stopCommpressedVideoDownload(true, videoID); 
+  if (stopCommpressedVideoDownloadBool) {
+    console.log(stopCommpressedVideoDownloadBool);
+    const checkDownloadStatus = setInterval( function(){ 
+      // try untill compressed video gets killed with signal SIGKILL or finnishes download 
+      try { 
+        if (videoData[videoID]["compression"]) {
+          if (videoData[videoID]["compression"]["download"] == "completed" 
+          || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
+            // stop interval and start data deletion when videoData is completed or ffmpeg was killed with signal SIGKILL
+            clearInterval(checkDownloadStatus); 
+            return deleteAllVideoData(videoID, response); 
+          } else if(currentDownloadVideos[videoID]["compression"]){
+            if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
+            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
+              // stop interval and start data deletion when currentDownloadVideos is completed or ffmpeg was killed with signal SIGKILL
+              clearInterval(checkDownloadStatus); 
+              return deleteAllVideoData(videoID, response); 
+            } 
+          } 
+        } else { // stop interval and start data deletion
+          clearInterval(checkDownloadStatus);            
+          return deleteAllVideoData(videoID, response); 
+        }
+      } catch (e) { // error occurs 
+        console.log(e);  
       }
-}
-
-// deletes everything that is available in the system related to video id, video file, all available video data ...
-async function deletevideoData(request, response, videoID) {
-  // check if videoid is valid
-  const videoDetails = await findVideosByID(videoID);
-  // if video dosent exist redirect to home page
-  if (videoDetails == undefined) {
-    response.status(404).redirect("/");
-  } else {
-    try {  
-      // delete video data from database
-      // delete videoData from database 
-      // eslint-disable-next-line no-prototype-builtins
-      if(videoData.hasOwnProperty(videoID)){  
-        delete videoData[videoID];
-        const newVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync("data/data-videos.json", newVideoData);
-      }
-      // delete availableVideos from database 
-      // eslint-disable-next-line no-prototype-builtins
-      if(availableVideos.hasOwnProperty(videoID)){ 
-        delete availableVideos[videoID];
-        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-        FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-      }
-      // delete currentDownloadVideos from database
-      // eslint-disable-next-line no-prototype-builtins
-      if(currentDownloadVideos.hasOwnProperty(videoID)){ 
-        delete currentDownloadVideos[videoID];
-        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-        FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
-      }
-      // check if folder exists
-      if(FileSystem.existsSync(`./media/video/${videoID}`)){ 
-        FileSystem.readdir(`./media/video/${videoID}`, function(err, files) {
-          if (err) throw err;  
-          if (!files.length) {
-            // directory empty, delete folder           
-            FileSystem.rmdir(`./media/video/${videoID}`, (err) => {
-              if (err) throw err; 
-              console.log(`${videoID} folder deleted`);      
-              response.json(`video-id-${videoID}-data-permanently-deleted`);
-            }); 
-          } else{ 
-            // folder not empty
-            FileSystem.readdir(`./media/video/${videoID}`, (err, files) => {
-              if (err) throw err;
-              let completedCount = 0;
-              for (const file of files) {   
-                FileSystem.rename(`./media/video/${videoID}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
-                  if (err) throw err;  
-                  console.log(`moved ./media/video/${videoID}/${file} to media/deleted-videos/deleted-${file}`);
-                  // delete the video
-                  FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
-                    if (err) throw err;
-                    console.log(`unlinked media/deleted-videos/deleted-${file} file`); 
-                    completedCount += 1; 
-                    if(files.length === completedCount){// if file length is same as completedCount then delete folder
-                      // reset completedCount 
-                      completedCount = 0; 
-                      // delete folder
-                      FileSystem.rmdir(`./media/video/${videoID}`, (err) => {
-                        if (err) throw err; 
-                        console.log(`${videoID} folder deleted`);
-                        response.json(`video-id-${videoID}-data-permanently-deleted`);
-                      }); 
-                    }
-                  }); 
-                });
-              }
-            });
-          }          
-        });
-      } else{ 
-        // folder dosent exit 
-        console.log(`${videoID} folder dosent exit`);
-        response.json(`video-id-${videoID}-data-permanently-deleted`);
-      } 
-    } catch (e) {
-      response.json(`video-id-${videoID}-data-failed-to-permanently-deleted`); 
-      console.log(`${videoID} failed to delete`);
-    }
+    }, 500); 
+  } else { // compressed video isn't downloading 
+    return deleteAllVideoData(videoID, response); 
   }
 }
 
 // deletes all video id data
-function deleteAllData(fileName) {
-  // delete currentDownloadVideos from server if exist
-  // eslint-disable-next-line no-prototype-builtins
-  if(currentDownloadVideos.hasOwnProperty(fileName)){  
-    delete currentDownloadVideos[`${fileName}`]; 
-    const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
-  }
-  // delete videoData from server if exist
-  // eslint-disable-next-line no-prototype-builtins
-  if (videoData.hasOwnProperty(fileName)) {
-    delete videoData[`${fileName}`]; 
-    const deleteVideoData = JSON.stringify(videoData, null, 2);
-    FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
-  }  
-  // delete availableVideos from server if exist
-  // eslint-disable-next-line no-prototype-builtins
-  if(availableVideos.hasOwnProperty(fileName)){ 
-    delete availableVideos[fileName];
-    const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-    FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
-  }
+function deleteAllVideoData(fileName, response) {  // check if videoid is valid
   try {
+    // delete currentDownloadVideos from server if exist
+    // eslint-disable-next-line no-prototype-builtins
+    if(currentDownloadVideos.hasOwnProperty(fileName)){  
+      delete currentDownloadVideos[`${fileName}`]; 
+      const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+      FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+    }
+    // delete videoData from server if exist
+    // eslint-disable-next-line no-prototype-builtins
+    if (videoData.hasOwnProperty(fileName)) {
+      delete videoData[`${fileName}`]; 
+      const deleteVideoData = JSON.stringify(videoData, null, 2);
+      FileSystem.writeFileSync("data/data-videos.json", deleteVideoData);
+    }  
+    // delete availableVideos from server if exist
+    // eslint-disable-next-line no-prototype-builtins
+    if(availableVideos.hasOwnProperty(fileName)){ 
+      delete availableVideos[fileName];
+      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+    }
     // check if folder exists
     if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
-      FileSystem.readdir(`./media/video/${fileName}`, function(err, files) {
-        if (err) throw err;  
-        if (!files.length) {
-          // directory empty, delete folder
-          FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-            if (err) throw err;
-            return `video-id-${fileName}-data-permanently-deleted`;
-          }); 
-        } else{ 
-          // folder not empty
-          FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
-            if (err) throw err;
-            let completedCount = 0;
-            for (const file of files) {
-              completedCount += 1;
-              FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`,  (err) => {
-                if (err) throw err;
-                // delete the video
-                FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
-                  if (err) throw err;  
-                  if(files.length == completedCount){// if file length is same as completedCount then delete folder
-                    // reset completedCount
-                    completedCount = 0;
-                    // delete folder
-                    FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-                      if (err) throw err;
-                      return `video-id-${fileName}-data-permanently-deleted`;
-                    }); 
-                  }
-                }); 
-              });
-            }
-          });
-        }          
-      });
-    }  else{ 
-      // folder dosent exit
+      FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+          if (err) throw err;
+          if (!files.length) {
+            // directory empty, delete folder
+            FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+              if (err) throw err;
+              if (response !== undefined) {
+                response.json(`video-id-${fileName}-data-permanently-deleted`);
+              }
+              return `video-id-${fileName}-data-permanently-deleted`;
+            });
+          } else {
+            // folder not empty
+            FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+              if (err) throw err;
+              let completedCount = 0;
+              for (const file of files) {
+                completedCount += 1;
+                FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`, (err) => {
+                  if (err) throw err;
+                  // delete the video
+                  FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                    if (err) throw err;
+                    if (files.length == completedCount) { // if file length is same as completedCount then delete folder
+                      // reset completedCount
+                      completedCount = 0;
+                      // delete folder
+                      FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                        if (err) throw err; 
+                        if (response !== undefined) {
+                          response.json(`video-id-${fileName}-data-permanently-deleted`);
+                        }
+                        return `video-id-${fileName}-data-permanently-deleted`;
+                      });
+                    }
+                  });
+                });
+              }
+            });
+          }
+        });
+    } else{ // folder dosent exit
+      if (response !== undefined) {
+        response.json(`video-id-${fileName}-data-permanently-deleted`);
+      }
       return `video-id-${fileName}-data-permanently-deleted`;
     }
   } catch (error) {
+    if (response !== undefined) {
+      response.json(`video-id-${fileName}-data-failed-to-permanently-deleted`);
+    }
     return `video-id-${fileName}-data-failed-to-permanently-deleted`;
   }
 }
@@ -2164,7 +2092,7 @@ module.exports = { // export modules
   update_untrunc_path,
   update_working_video_path,
   streamThumbnail,
-  deletevideoData,
+  deleteAllVideoData,
   checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
   getVideoLinkFromUrl,
   getVideoPlayerSettings,
