@@ -144,29 +144,31 @@ export function downloadVideoButton(container, videoSrc, videoType) {
 }
 
 // request to stop download video srteam
-export async function stopDownloadVideoStream(bool) {
+export async function stopDownloadVideoStream() {
   console.log(fileNameID);
   const payload = {
-    bool: bool,
-    fileNameID: fileNameID
+    id: fileNameID
   };
   const response = await fetch("stopDownloadVideoStream", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+  let stopVideoDownloadResponse;
   if (response.ok) {
-    return "stoped downloading";
+    stopVideoDownloadResponse = await response.json();
+    return stopVideoDownloadResponse;
   } else {
-    return "failed stop record video file";
+    stopVideoDownloadResponse = "stop video stream download failed  ";
   }
+  return stopVideoDownloadResponse;
 }
 
 // if the window closes then stop download of video stream
 function stopDownloadVideoStreamOnWindowsClose(event) {
   // when windows closes
   event.preventDefault();
-  stopDownloadVideoStream(true);
+  stopDownloadVideoStream();
   // dont show popup
   delete event["returnValue"];
 }
@@ -285,8 +287,7 @@ export function stopRecStreamButton(player, Button) {
     },
     handleClick: function() {
           /* do something on click */
-        stopDownloadVideoStream(true).then( () => {
-         console.log("stop downloading");
+        stopDownloadVideoStream().then( () => {
          // stop remove download on windows close
          removeStopDownloadOnWindowClose();
        });

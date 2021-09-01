@@ -658,10 +658,15 @@ const SIGKILL = (command) => {
 
 let fileNameID;
 let stopVideoFileBool = false;
-function stopDownloadVideoStream(req, res) {
-   stopVideoFileBool = req.body.bool;
-   fileNameID = req.body.fileNameID;
-   res.json("stopedVideoFileFromDownloading");
+async function stopDownloadVideoStream(id) {
+  const videoDetails = await findVideosByID(id);
+  if (videoDetails !== undefined) {
+    stopVideoFileBool = true;
+    fileNameID = id; 
+    return "stoped video stream download";
+  } else {
+    return "videoDetails dosnet exists";
+  } 
 }
 
 // downloads live video stream

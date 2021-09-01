@@ -98,8 +98,8 @@ function trimVideo(req, res){
 
 // stop downloading live video stream header
 app.post("/stopDownloadVideoStream", express.json(), stopDownloadVideoStream);
-function stopDownloadVideoStream(req, res){
-  streamVideoFile.stopDownloadVideoStream(req, res);
+async function stopDownloadVideoStream(req, res){ 
+  res.json(await streamVideoFile.stopDownloadVideoStream(req.body.id));
 }
 
 // load path name /saved/videos with index.html page
