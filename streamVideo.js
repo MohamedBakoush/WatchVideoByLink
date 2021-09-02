@@ -641,6 +641,27 @@ function updateVideoPlayerVolume(videoPlayerVolume, videoPlayerMuted) {
   }
 }
 
+// update compress Video Download
+function updateCompressVideoDownload(downloadType, bool) {
+  try {
+    if (userSettings["download"]["compression"][`${downloadType}`] == true ||
+        userSettings["download"]["compression"][`${downloadType}`] == false
+    ) {
+      if (typeof bool == "boolean") {
+        userSettings["download"]["compression"][`${downloadType}`] = bool;
+        const newUserSettings = JSON.stringify(userSettings, null, 2);
+        FileSystem.writeFileSync("data/user-settings.json", newUserSettings);
+        return `compress video download ${downloadType} updated`;
+      } else {       
+        return "invalid bool";
+      }
+    } else {
+      return "invalid download type";
+    }
+  } catch (error) {
+    return "update failed";
+  }
+}
 // get video player settings
 function getVideoPlayerSettings() { 
   return userSettings["videoPlayer"];
@@ -2075,6 +2096,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 module.exports = { // export modules
   streamVideo,
   updateVideoPlayerVolume,
+  updateCompressVideoDownload,
   checkIfVideoSrcOriginalPathExits,
   stopDownloadVideoStream,
   downloadVideoStream,

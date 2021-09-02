@@ -1307,3 +1307,63 @@ describe("checkIfVideoSrcOriginalPathExits", () =>  {
         expect(stopDownload).toBe(undefined);
     });  
 }); 
+
+describe("updateCompressVideoDownload", () =>  { 
+    afterAll(() => {  
+        streamVideo.updateCompressVideoDownload("downloadVideoStream", true);
+        streamVideo.updateCompressVideoDownload("downloadVideo", true);
+        streamVideo.updateCompressVideoDownload("trimVideo", true);
+        streamVideo.updateCompressVideoDownload("downloadUploadedVideo", true);
+    });
+    
+    it("update downloadVideoStream true", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadVideoStream", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
+    }); 
+     
+    it("update downloadVideoStream false", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadVideoStream", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
+    });  
+
+    it("update downloadVideo true", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideo updated");
+    });    
+
+    it("update downloadVideo false", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideo updated");
+    });    
+
+    it("update trimVideo true", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("trimVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");
+    }); 
+
+    it("update trimVideo false", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("trimVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");
+    }); 
+
+    it("update downloadUploadedVideo true", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadUploadedVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
+    });    
+
+    it("update downloadUploadedVideo false", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadUploadedVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
+    });  
+
+    it("invalid bool", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadUploadedVideo", "test");
+        expect(updateCompressVideoDownload).toBe("invalid bool");
+    });  
+    
+    it("invalid download type", () =>  {
+        const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("test", true);
+        expect(updateCompressVideoDownload).toBe("invalid download type");
+    });  
+}); 
+}); 
