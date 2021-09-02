@@ -97,6 +97,35 @@ function resetAvailableVideos(){
   return "resetAvailableVideos";
 }
 
+// check if id provided is corresponding to available videos
+function findAvailableVideosByID(id){
+  if (availableVideos[id] === undefined) {  
+    return undefined;
+  } else { 
+    return availableVideos[id];
+  }
+}
+
+// updates available videos by for provided id
+function updateAvailableVideosByID(videoID, Data){
+  availableVideos[videoID] = Data;
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+  return availableVideos[videoID];
+}
+ 
+// deletes available videos by for provided id
+function deleteAvailableVideosByID(videoID){ 
+  if (findAvailableVideosByID(videoID) !== undefined) {
+    delete availableVideos[videoID]; 
+    const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+    FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+    return `Deleted ${videoID}`; 
+  } else {
+    return `${videoID} Unavaiable`; 
+  }
+}
+
 // returns current video downloads
 function currentDownloads(){
   return currentDownloadVideos;
@@ -2083,6 +2112,9 @@ module.exports = { // export modules
   getAllVideoData,
   getAllAvailableVideos,
   resetAvailableVideos,
+  findAvailableVideosByID,
+  updateAvailableVideosByID,
+  deleteAvailableVideosByID,
   update_ffprobe_path,
   update_ffmpeg_path, 
   update_untrunc_path,

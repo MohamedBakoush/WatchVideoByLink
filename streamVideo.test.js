@@ -168,6 +168,121 @@ describe("resetAvailableVideos", () =>  {
     }); 
 }); 
 
+describe("findAvailableVideosByID", () =>  {    
+    const id = uuidv4();
+    beforeAll(() => {       
+        streamVideo.updateAvailableVideosByID(id, {
+            "info": {
+                "title": "test",
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+    }); 
+
+    afterAll(() => { 
+        streamVideo.resetAvailableVideos();
+    });
+
+    it("Avaiable Video Data", () =>  {
+        const findAvailableVideosByID = streamVideo.findAvailableVideosByID(id);
+        expect(findAvailableVideosByID).toBeDefined(); 
+        expect(findAvailableVideosByID.info.title).toBe("test"); 
+        expect(findAvailableVideosByID.info.videoLink.src).toBe(`/video/${id}`); 
+        expect(findAvailableVideosByID.info.thumbnailLink["1"]).toBe(`/thumbnail/${id}/1`); 
+    });
+
+    it("UnAvaiable Video Data", () =>  {
+        const findAvailableVideosByID = streamVideo.findAvailableVideosByID();
+        expect(findAvailableVideosByID).toBeUndefined();
+    }); 
+}); 
+
+describe("updateAvailableVideosByID", () =>  {     
+    afterAll(() => {  
+        streamVideo.resetAvailableVideos();
+    });
+
+    it("Update Video Data", () =>  {
+        const id = uuidv4();
+        const updateAvailableVideosByID = streamVideo.updateAvailableVideosByID(id, {
+            "info": {
+                "title": "test",
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideosByID).toBeDefined(); 
+        expect(updateAvailableVideosByID.info.title).toBe("test"); 
+        expect(updateAvailableVideosByID.info.videoLink.src).toBe(`/video/${id}`); 
+        expect(updateAvailableVideosByID.info.thumbnailLink["1"]).toBe(`/thumbnail/${id}/1`); 
+    });
+}); 
+
+describe("deleteAvailableVideosByID", () =>  {   
+    const id_1 = uuidv4();
+    beforeAll(() => {       
+        streamVideo.updateAvailableVideosByID(id_1, {
+            "info": {
+                "title": "test",
+                "videoLink": {
+                    "src": `/video/${id_1}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id_1}/1`,
+                    "2": `/thumbnail/${id_1}/2`,
+                    "3": `/thumbnail/${id_1}/3`,
+                    "4": `/thumbnail/${id_1}/4`,
+                    "5": `/thumbnail/${id_1}/5`,
+                    "6": `/thumbnail/${id_1}/6`,
+                    "7": `/thumbnail/${id_1}/7`,
+                    "8": `/thumbnail/${id_1}/8`
+                }
+            }
+        });
+    });
+
+    afterAll(() => {  
+        streamVideo.resetVideoData();
+    });
+
+    it("Delete Video Data", () =>  {
+        const deleteVideoDataByID = streamVideo.deleteAvailableVideosByID(id_1);
+        expect(deleteVideoDataByID).toBe(`Deleted ${id_1}`);   
+    });
+
+    it("VideoID Unavaiable", () =>  {
+        const id_2 = uuidv4();
+        const deleteVideoDataByID = streamVideo.deleteAvailableVideosByID(id_2);
+        expect(deleteVideoDataByID).toBe(`${id_2} Unavaiable`);   
+    });  
+}); 
+
 describe("currentDownloads", () =>  {  
     it("JSON Object", () =>  {
         const currentDownloads = streamVideo.currentDownloads();
