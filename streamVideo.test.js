@@ -1539,6 +1539,156 @@ describe("checkIfVideoCompress", () =>  {
     });    
 }); 
 
+describe("stopCommpressedVideoDownload", () =>  {    
+    afterAll(() => { 
+        streamVideo.resetCurrentDownloadVideos();
+        streamVideo.resetVideoData();
+    });
+
+    it("videoDataCompression downloading, currentDownload unavailable", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    }); 
+
+    it("currentDownloadCompression downloading, videoData unavailable", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateCurrentDownloadByID(id, {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    }); 
+        
+    it("currentDownloadCompression downloading, videoDataCompression downloading", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+              "compression" : {
+                "download": 20.00
+              }
+        });
+         
+        streamVideo.updateCurrentDownloadByID(id, {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    }); 
+       
+    it("currentDownloadCompression completed, videoDataCompression completed", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "compression" : {
+              "download": "completed"
+            }
+        }); 
+         
+        streamVideo.updateCurrentDownloadByID(id, {
+            "compression" : {
+                "download-status": "completed"
+            }
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(false);
+    }); 
+             
+    it("currentDownloadCompression downloading, videoDataCompression completed", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "compression" : {
+              "download": "completed"
+            }
+        }); 
+         
+        streamVideo.updateCurrentDownloadByID(id, {
+            "compression" : {
+                "download-status": "99.99%"
+            }
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    }); 
+              
+    it("currentDownloadCompression completed, videoDataCompression downloading", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "compression" : {
+              "download": 99.99
+            }
+        }); 
+         
+        streamVideo.updateCurrentDownloadByID(id, {
+            "compression" : {
+                "download-status": "completed"
+            }
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    }); 
+
+    it("currentDownloadCompression downloading, videoDataCompression unavailable", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, { 
+        });
+         
+        streamVideo.updateCurrentDownloadByID(id, {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    }); 
+    
+    it("currentDownloadCompression unavailable, videoDataCompression downloading", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+    
+        streamVideo.updateCurrentDownloadByID(id, {
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(true);
+    });   
+    
+    it("currentDownloadCompression unavailable, videoDataCompression unavailable", async () =>  {
+        const id = uuidv4();
+        streamVideo.updateVideoDataByID(id, {
+        }); 
+    
+        streamVideo.updateCurrentDownloadByID(id, {
+        });
+
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
+        expect(stopCommpressedVideoDownload).toBe(false);
+    }); 
+    
+    it("currentDownload, videoData unavailable", async () =>  {
+        const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload("test");
+        expect(stopCommpressedVideoDownload).toBe(false);
+    }); 
+});
+
+
 describe("changeVideoTitle", () =>  {    
     const id = uuidv4();
     beforeAll(() => {       
@@ -1562,7 +1712,7 @@ describe("changeVideoTitle", () =>  {
             }
         });
     }); 
-    
+
     afterAll(() => {  
         streamVideo.resetAvailableVideos();
     });

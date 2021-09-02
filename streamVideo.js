@@ -1431,52 +1431,68 @@ let stopCompressedVideoFileBool = false;
 // check if video compression is downloading
 // if true then update stopCompressedVideoFileBool and fileNameID_Compression variable and return true
 // else return false
-function stopCommpressedVideoDownload(bool, fileNameID) { 
+async function stopCommpressedVideoDownload(fileNameID) { 
   try {
-    if (videoData[fileNameID]["compression"]) {
-      if (videoData[fileNameID]["compression"]["download"] == "completed") {   
-        return false;
-      } else if(currentDownloadVideos[fileNameID]){
-        if(currentDownloadVideos[fileNameID]["compression"]){
-          if (currentDownloadVideos[fileNameID]["compression"]["download-status"] == "completed"
-            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg and ffprobe unavailable"
-            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg unavailable"
-            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffprobe unavailable"
-            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "unfinished download") {
+    const videoDetails = await findVideosByID(fileNameID);
+    const currentDownloads = await findCurrentDownloadByID(fileNameID); 
+    let videoDataCompressionProgress, currentDownloadCompressionProgress; 
+    try {
+      if (videoDetails["compression"]) {
+        videoDataCompressionProgress = videoDetails["compression"]["download"];  
+      } else {
+        videoDataCompressionProgress = false;
+      } 
+    } catch (error) {
+      videoDataCompressionProgress = false;
+    }
+    try {
+      if (currentDownloads["compression"]) {
+        currentDownloadCompressionProgress = currentDownloads["compression"]["download-status"];  
+      } else {
+        currentDownloadCompressionProgress = false;
+      } 
+    } catch (error) {
+      currentDownloadCompressionProgress = false;
+    }
+
+    if (videoDataCompressionProgress) {
+      if (videoDataCompressionProgress == "completed") {  
+        if (currentDownloadCompressionProgress) {
+          if (currentDownloadCompressionProgress == "completed"
+          || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
+          || currentDownloadCompressionProgress == "ffmpeg unavailable"
+          || currentDownloadCompressionProgress == "ffprobe unavailable"
+          || currentDownloadCompressionProgress == "unfinished download") {
             return false;
           } else {
-            stopCompressedVideoFileBool = bool;
+            stopCompressedVideoFileBool = true;
             fileNameID_Compression = fileNameID; 
             return true;
           }
-        }else {
+        } else {
           return false;
-        }  
+        } 
       } else {
-        stopCompressedVideoFileBool = bool;
+        stopCompressedVideoFileBool = true;
         fileNameID_Compression = fileNameID; 
         return true;
-      }   
-    } else if(currentDownloadVideos[fileNameID]){
-      if(currentDownloadVideos[fileNameID]["compression"]){
-        if (currentDownloadVideos[fileNameID]["compression"]["download-status"] == "completed"
-          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg and ffprobe unavailable"
-          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg unavailable"
-          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffprobe unavailable"
-          || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "unfinished download") {
-          return false;
-        } else {
-          stopCompressedVideoFileBool = bool;
-          fileNameID_Compression = fileNameID; 
-          return true;
-        }
-      }else {
+      }
+    } else if (currentDownloadCompressionProgress) {
+      if (currentDownloadCompressionProgress == "completed"
+      || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
+      || currentDownloadCompressionProgress == "ffmpeg unavailable"
+      || currentDownloadCompressionProgress == "ffprobe unavailable"
+      || currentDownloadCompressionProgress == "unfinished download") {
         return false;
-      }  
+      } else {
+        stopCompressedVideoFileBool = true;
+        fileNameID_Compression = fileNameID; 
+        return true;
+      }
     } else {
       return false;
     } 
-  } catch (e) {
+  } catch (error) {
     return false;
   }
 }
@@ -1633,7 +1649,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
 // check if video compression is downloading before data deletion 
 async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, response) {
   // stop video compression
-  const stopCommpressedVideoDownloadBool = stopCommpressedVideoDownload(true, videoID); 
+  const stopCommpressedVideoDownloadBool = await stopCommpressedVideoDownload(videoID); 
   if (stopCommpressedVideoDownloadBool) {
     console.log(stopCommpressedVideoDownloadBool);
     const checkDownloadStatus = setInterval( function(){ 
@@ -2100,6 +2116,7 @@ module.exports = { // export modules
   updateCompressVideoDownload,
   checkIfVideoSrcOriginalPathExits,
   checkIfVideoCompress,
+  stopCommpressedVideoDownload,
   stopDownloadVideoStream,
   downloadVideoStream,
   downloadVideo,
