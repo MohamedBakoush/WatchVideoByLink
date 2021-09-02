@@ -1619,7 +1619,7 @@ describe("stopCommpressedVideoDownload", () =>  {
         });
 
         const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
-        expect(stopCommpressedVideoDownload).toBe(true);
+        expect(stopCommpressedVideoDownload).toBe(false);
     }); 
               
     it("currentDownloadCompression completed, videoDataCompression downloading", async () =>  {
@@ -1637,7 +1637,7 @@ describe("stopCommpressedVideoDownload", () =>  {
         });
 
         const stopCommpressedVideoDownload = await streamVideo.stopCommpressedVideoDownload(id);
-        expect(stopCommpressedVideoDownload).toBe(true);
+        expect(stopCommpressedVideoDownload).toBe(false);
     }); 
 
     it("currentDownloadCompression downloading, videoDataCompression unavailable", async () =>  {

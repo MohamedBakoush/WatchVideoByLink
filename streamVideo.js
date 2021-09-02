@@ -1456,22 +1456,20 @@ async function stopCommpressedVideoDownload(fileNameID) {
     }
 
     if (videoDataCompressionProgress) {
-      if (videoDataCompressionProgress == "completed") {  
-        if (currentDownloadCompressionProgress) {
-          if (currentDownloadCompressionProgress == "completed"
-          || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
-          || currentDownloadCompressionProgress == "ffmpeg unavailable"
-          || currentDownloadCompressionProgress == "ffprobe unavailable"
-          || currentDownloadCompressionProgress == "unfinished download") {
-            return false;
-          } else {
-            stopCompressedVideoFileBool = true;
-            fileNameID_Compression = fileNameID; 
-            return true;
-          }
-        } else {
+      if (videoDataCompressionProgress == "completed") {   
+          return false; 
+      } else if (currentDownloadCompressionProgress) {
+        if (currentDownloadCompressionProgress == "completed"
+        || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
+        || currentDownloadCompressionProgress == "ffmpeg unavailable"
+        || currentDownloadCompressionProgress == "ffprobe unavailable"
+        || currentDownloadCompressionProgress == "unfinished download") {
           return false;
-        } 
+        } else {
+          stopCompressedVideoFileBool = true;
+          fileNameID_Compression = fileNameID; 
+          return true;
+        }
       } else {
         stopCompressedVideoFileBool = true;
         fileNameID_Compression = fileNameID; 
