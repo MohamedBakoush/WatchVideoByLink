@@ -1813,25 +1813,24 @@ async function getVideoLinkFromUrl(req, res) {
   }
 }
 
-// change title of video
-async function changeVideoTitle(req, res) { 
-  const videoID = req.body.videoID;
-  const newVideoTitle = req.body.newVideoTitle;
-
+// change title of video  
+async function changeVideoTitle(videoID, newVideoTitle) { 
   // check if videoid is valid
-  const videoDetails = await findVideosByID(videoID);
+  const videoDetails = await findAvailableVideosByID(videoID);
   // if video dosent exist redirect to home page
-  if (videoDetails == undefined) {
-    res.status(404).redirect("/");
-  } else { 
-    try {
+  if (videoDetails !== undefined && 
+    newVideoTitle !== undefined &&
+    typeof newVideoTitle == "string") { 
+    try { 
       availableVideos[videoID]["info"]["title"] = newVideoTitle;  
       const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
       FileSystem.writeFileSync("data/available-videos.json", newAvailableVideos);   
-      res.json("video-title-changed");
-    } catch (e) {
-      res.json("failed-to-change-video-title");
+      return "video-title-changed";
+    } catch (e) { 
+      return "failed-to-change-video-title";   
     }
+  } else  { 
+    return "failed-to-change-video-title";   
   }
 }
 

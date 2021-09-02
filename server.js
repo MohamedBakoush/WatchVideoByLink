@@ -62,8 +62,8 @@ function streamCompressedVideoById(req, res){
 
 // change title of video
 app.post("/changeVideoTitle", express.json(), changeVideoTitle);
-function changeVideoTitle(req, res){
-  streamVideoFile.changeVideoTitle(req, res);
+async function changeVideoTitle(req, res){ 
+  res.json(await streamVideoFile.changeVideoTitle(req.body.videoID, req.body.newVideoTitle));
 }
 
 // get video data for specified video by id header

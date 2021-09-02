@@ -1430,7 +1430,7 @@ describe("updateCompressVideoDownload", () =>  {
         streamVideo.updateCompressVideoDownload("trimVideo", true);
         streamVideo.updateCompressVideoDownload("downloadUploadedVideo", true);
     });
-    
+
     it("update downloadVideoStream true", () =>  {
         const updateCompressVideoDownload = streamVideo.updateCompressVideoDownload("downloadVideoStream", true);
         expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
@@ -1537,4 +1537,53 @@ describe("checkIfVideoCompress", () =>  {
         const videoCompress = streamVideo.checkIfVideoCompress("downloadUploadedVideo");
         expect(videoCompress).toBe(false);
     });    
+}); 
+
+describe("changeVideoTitle", () =>  {    
+    const id = uuidv4();
+    beforeAll(() => {       
+        streamVideo.updateAvailableVideosByID(id, {
+            "info": {
+                "title": "test",
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+    }); 
+    
+    afterAll(() => {  
+        streamVideo.resetAvailableVideos();
+    });
+
+    it("valid", async () =>  {
+        const videoCompress = await streamVideo.changeVideoTitle(id, "new video title");
+        expect(videoCompress).toBe("video-title-changed");
+        const findAvailableVideosByID = streamVideo.findAvailableVideosByID(id);
+        expect(findAvailableVideosByID.info.title).toBe("new video title"); 
+    });  
+
+    
+    it("invalid newVideoTitle", async () =>  {
+        const videoCompress = await streamVideo.changeVideoTitle(id);
+        expect(videoCompress).toBe("failed-to-change-video-title");
+        const findAvailableVideosByID = streamVideo.findAvailableVideosByID(id);
+        expect(findAvailableVideosByID.info.title).toBe("new video title");
+    });  
+
+    it("invalid id", async () =>  {
+        const videoCompress = await streamVideo.changeVideoTitle("test");
+        expect(videoCompress).toBe("failed-to-change-video-title");
+    });  
 }); 
