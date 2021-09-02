@@ -662,6 +662,7 @@ function updateCompressVideoDownload(downloadType, bool) {
     return "update failed";
   }
 }
+
 // get video player settings
 function getVideoPlayerSettings() { 
   return userSettings["videoPlayer"];
@@ -710,6 +711,21 @@ async function checkIfVideoSrcOriginalPathExits(videoSrc) {
   } 
 }
 
+// check if video compress true or false
+function checkIfVideoCompress(downloadType) {
+  try {
+    if (userSettings["download"]["compression"][`${downloadType}`] == true ||
+        userSettings["download"]["compression"][`${downloadType}`] == false
+      ) {
+      return userSettings.download.compression[`${downloadType}`]; 
+    } else {
+      return false; 
+    }
+  } catch (error) {
+    return false; 
+  }  
+}
+
 let fileNameID;
 let stopVideoFileBool = false;
 async function stopDownloadVideoStream(id) {
@@ -727,18 +743,7 @@ async function stopDownloadVideoStream(id) {
 async function downloadVideoStream(req, res) {
   const command = new ffmpeg();
   const videofile = req.body.videoSrc;
-
-  let compressVideoStream;
-  try { // userSettings.download.compression.downloadVideoStream exists 
-    if (userSettings.download.compression.downloadVideoStream == true) {
-      compressVideoStream = true; 
-    } else {
-      compressVideoStream = false;
-    }
-  } catch (error) { // userSettings.download.compression.downloadVideoStream doesn't exists
-    compressVideoStream = false; 
-  }
-
+  const compressVideoStream = checkIfVideoCompress("downloadVideoStream");
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
@@ -910,17 +915,7 @@ async function downloadVideo(req, res) {
   const command = new ffmpeg();
   const videoSrc = req.body.videoSrc;
   const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
-  let compressVideo;
-  try { // userSettings.download.compression.downloadVideo exists 
-    if (userSettings.download.compression.downloadVideo == true) {
-      compressVideo = true; 
-    } else {
-      compressVideo = false;
-    }
-  } catch (error) { // userSettings.download.compression.downloadVideo doesn't exists
-    compressVideo = false; 
-  }
-
+  const compressVideo = checkIfVideoCompress("downloadVideo");
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
@@ -1083,18 +1078,7 @@ async function trimVideo(req, res) {
   const command = new ffmpeg();
   const videoSrc = req.body.videoSrc;
   const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
-
-  let compressTrimedVideo;
-  try { // userSettings.download.compression.trimVideo exists 
-    if (userSettings.download.compression.trimVideo == true) {
-      compressTrimedVideo = true; 
-    } else {
-      compressTrimedVideo = false;
-    }
-  } catch (error) { // userSettings.download.compression.trimVideo doesn't exists
-    compressTrimedVideo = false; 
-  }
-  
+  const compressTrimedVideo = checkIfVideoCompress("trimVideo");
   const start = req.body.newStartTime;
   const end = req.body.newEndTime;
   const filepath = "media/video/";
@@ -1845,18 +1829,7 @@ function uploadVideoFile(req, res) {
 // download full video
 async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
   const command = new ffmpeg(); 
-
-  let compressUploadedVideo;
-  try { // userSettings.download.compression.downloadUploadedVideo exists 
-    if (userSettings.download.compression.downloadUploadedVideo == true) {
-      compressUploadedVideo = true; 
-    } else {
-      compressUploadedVideo = false;
-    }
-  } catch (error) { // userSettings.download.compression.downloadUploadedVideo doesn't exists
-    compressUploadedVideo = false; 
-  }
-
+  const compressUploadedVideo = checkIfVideoCompress("downloadUploadedVideo");
   const filepath = "media/video/"; 
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
@@ -2098,6 +2071,7 @@ module.exports = { // export modules
   updateVideoPlayerVolume,
   updateCompressVideoDownload,
   checkIfVideoSrcOriginalPathExits,
+  checkIfVideoCompress,
   stopDownloadVideoStream,
   downloadVideoStream,
   downloadVideo,

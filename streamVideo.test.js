@@ -1366,4 +1366,60 @@ describe("updateCompressVideoDownload", () =>  {
         expect(updateCompressVideoDownload).toBe("invalid download type");
     });  
 }); 
+
+describe("checkIfVideoCompress", () =>  {   
+    afterAll(() => {  
+        streamVideo.updateCompressVideoDownload("downloadVideoStream", true);
+        streamVideo.updateCompressVideoDownload("downloadVideo", true);
+        streamVideo.updateCompressVideoDownload("trimVideo", true);
+        streamVideo.updateCompressVideoDownload("downloadUploadedVideo", true);
+    });
+
+    it("downloadVideoStream true", () =>  {
+        streamVideo.updateCompressVideoDownload("downloadVideoStream", true);
+        const videoCompress = streamVideo.checkIfVideoCompress("downloadVideoStream");
+        expect(videoCompress).toBe(true);
+    });  
+
+    it("downloadVideoStream false", () =>  {
+        streamVideo.updateCompressVideoDownload("downloadVideoStream", false);
+        const videoCompress = streamVideo.checkIfVideoCompress("downloadVideoStream");
+        expect(videoCompress).toBe(false);
+    }); 
+
+    it("downloadVideo true", () =>  {
+        streamVideo.updateCompressVideoDownload("downloadVideoStream", true);
+        const videoCompress = streamVideo.checkIfVideoCompress("downloadVideoStream");
+        expect(videoCompress).toBe(true);
+    });    
+    
+    it("downloadVideo false", () =>  {
+        streamVideo.updateCompressVideoDownload("downloadVideo", false);
+        const videoCompress = streamVideo.checkIfVideoCompress("downloadVideo");
+        expect(videoCompress).toBe(false);
+    }); 
+
+    it("trimVideo true", () =>  {
+        streamVideo.updateCompressVideoDownload("trimVideo", true);
+        const videoCompress = streamVideo.checkIfVideoCompress("trimVideo");
+        expect(videoCompress).toBe(true);
+    }); 
+
+    it("trimVideo false", () =>  {
+        streamVideo.updateCompressVideoDownload("trimVideo", false);
+        const videoCompress = streamVideo.checkIfVideoCompress("trimVideo");
+        expect(videoCompress).toBe(false);
+    }); 
+
+    it("downloadUploadedVideo true", () =>  {
+        streamVideo.updateCompressVideoDownload("downloadUploadedVideo", true);
+        const videoCompress = streamVideo.checkIfVideoCompress("downloadUploadedVideo");
+        expect(videoCompress).toBe(true);
+    });    
+
+    it("downloadUploadedVideo false", () =>  {
+        streamVideo.updateCompressVideoDownload("downloadUploadedVideo", false);
+        const videoCompress = streamVideo.checkIfVideoCompress("downloadUploadedVideo");
+        expect(videoCompress).toBe(false);
+    });    
 }); 
