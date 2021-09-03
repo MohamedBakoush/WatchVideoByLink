@@ -1,9 +1,13 @@
-export const favicon = document.getElementById("favicon");
 export let searchableVideoDataArray = []; 
 
 // return websiteContentContainer
 export function websiteContentContainer() {
   return document.getElementById("websiteContentContainer");
+}
+
+// return favicon
+export function favicon() {
+  return document.getElementById("favicon");
 }
 
 // create a input element
@@ -208,7 +212,7 @@ Timer.prototype.change = function(time) {
 
 // replace favicon with original favicon
 export function originalFavicon() { 
-  favicon.href = "../favicon.ico";
+  favicon().href = "../favicon.ico";
 }
 
 // change favicon with a red circle bottom at left of favicon
@@ -221,7 +225,7 @@ export function addFaviconNotificationBadge() {
 
   const context = canvas.getContext("2d");
   const img = document.createElement("img");
-  img.src = favicon.href;
+  img.src = favicon().href;
 
   img.onload = () => {
     // Draw Original Favicon as Background
@@ -234,7 +238,7 @@ export function addFaviconNotificationBadge() {
     context.fill();
 
     // Replace favicon
-    favicon.href = canvas.toDataURL("image/png");
+    favicon().href = canvas.toDataURL("image/png");
   };
 }
 
