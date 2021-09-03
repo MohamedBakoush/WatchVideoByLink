@@ -1,6 +1,10 @@
-export const websiteContentContainer = document.getElementById("websiteContentContainer");
 export const favicon = document.getElementById("favicon");
 export let searchableVideoDataArray = []; 
+
+// return websiteContentContainer
+export function websiteContentContainer() {
+  return document.getElementById("websiteContentContainer");
+}
 
 // create a input element
 // with optional input type, id, classList and if input type is required or not
@@ -133,7 +137,7 @@ export function notify(type,message){
   // create notification_area if not available
   let notification_area;
   if(!document.getElementById("notification-area")){
-    notification_area = createSection(websiteContentContainer, "section" , undefined, "notification-area");
+    notification_area = createSection(websiteContentContainer(), "section" , undefined, "notification-area");
   } else{
     notification_area = document.getElementById("notification-area");
   }

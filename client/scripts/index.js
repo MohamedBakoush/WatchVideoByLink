@@ -19,7 +19,7 @@ function showVideoFromUrl(url) {
 // load details into html using video and videoLink id
 export function showDetails() { 
   // input video link container
-  const videoLink = basic.createSection(basic.websiteContentContainer, "section", "videoLinkContainer", "videoLinkContainer");
+  const videoLink = basic.createSection(basic.websiteContentContainer(), "section", "videoLinkContainer", "videoLinkContainer");
   // create form
   const videoLinkForm = basic.createSection(videoLink, "form", "videoLinkContainerForm");
   videoLinkForm.onsubmit = function(){
@@ -187,7 +187,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   // update info
   document.title = "Watching Video By Provided Link"; 
   document.body.classList = "watching-video-body";
-  basic.websiteContentContainer.classList = "watching-video-websiteContentContainer";
+  basic.websiteContentContainer().classList = "watching-video-websiteContentContainer";
   let displayChromecast;
   try {    
     if (videoPlayerSettings.chromecast == true) {
@@ -199,7 +199,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     displayChromecast = false;
   }
   // create video player
-  const videoPlayer = basic.createSection(basic.websiteContentContainer, "video-js", "vjs-default-skin vjs-big-play-centered", "video");
+  const videoPlayer = basic.createSection(basic.websiteContentContainer(), "video-js", "vjs-default-skin vjs-big-play-centered", "video");
   videoPlayer.style.width = "100vw";
   videoPlayer.style.height = "100vh";
   const Button = videojs.getComponent("Button"); // eslint-disable-line
@@ -444,9 +444,9 @@ function getVideoUrlAuto(url_link) {
   document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
   // change css
   document.body.classList = "index-body";
-  basic.websiteContentContainer.classList = "index-websiteContentContainer";
+  basic.websiteContentContainer().classList = "index-websiteContentContainer";
   // searchingForVideoLinkMessage
-  const searchingForVideoLinkMessageContainer = basic.createSection(basic.websiteContentContainer, "section", "getVideoUrlAutoMessageConatinaer");
+  const searchingForVideoLinkMessageContainer = basic.createSection(basic.websiteContentContainer(), "section", "getVideoUrlAutoMessageConatinaer");
   basic.createSection(searchingForVideoLinkMessageContainer, "h1", "getVideoUrlAutoMessageHeader", undefined,  `Searching for video link: ${url_link}`);
   // look for video data from url_link
   getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
@@ -496,7 +496,7 @@ async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContain
         // reamove searching for viddeo link msg
         searchingForVideoLinkMessageContainer.remove();
         // make sure that websiteContentContainer is empty
-        basic.websiteContentContainer.innerHTML = "";
+        basic.websiteContentContainer().innerHTML = "";
         // change address bar
         history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
         // put video src and type in video player
@@ -521,7 +521,7 @@ async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContain
       // naviagtionbar content
       navigationBar.loadNavigationBar();
       // show error msg
-      const responseError = basic.createSection(basic.websiteContentContainer, "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
+      const responseError = basic.createSection(basic.websiteContentContainer(), "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
       basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
     }
   }

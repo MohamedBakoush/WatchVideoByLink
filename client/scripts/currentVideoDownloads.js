@@ -18,7 +18,7 @@ async function loadVideoDetails() {
   } catch (e) { // when an error occurs  
     let container, videoDownloadStatusContainer; 
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(basic.websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+      container = basic.createSection(basic.websiteContentContainer(), "section", "download-status-container", "download-status-container"); 
     } else {
       container = document.getElementById("download-status-container");
     }   
@@ -48,7 +48,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
   if (Object.keys(videoDownloadDetails).length == 0){  
     // make sure container exists
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(basic.websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+      container = basic.createSection(basic.websiteContentContainer(), "section", "download-status-container", "download-status-container"); 
     } else {
       container = document.getElementById("download-status-container");
     } 
@@ -63,7 +63,7 @@ function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
   } else  {
     // available downloads
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(basic.websiteContentContainer, "section", "download-status-container", "download-status-container"); 
+      container = basic.createSection(basic.websiteContentContainer(), "section", "download-status-container", "download-status-container"); 
     } else {
       container = document.getElementById("download-status-container");
     } 
@@ -227,10 +227,10 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
               if (document.getElementById("searchBar")) {
                 document.getElementById("searchBar").remove(); 
               }
-              const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer");
+              const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
               basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
             } else {
-              const noSearchableVideoData = basic.createSection(basic.websiteContentContainer, "section", "noAvailableVideosContainer", "noSearchableVideoData");
+              const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
               basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
             }
           }
