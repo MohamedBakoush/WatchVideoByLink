@@ -51,3 +51,23 @@ describe("inputType", () =>  {
         expect(input).toBe("inputType didnt work");  
     }); 
 }); 
+
+describe("createLabel", () =>  {    
+    it("valid tagname", () =>  { 
+        const label = basic.createLabel(container);   
+        expect(label).toBeDefined();
+        expect(label.tagName).toBe("LABEL");     
+    }); 
+    
+    it("valid tagname textContent", () =>  { 
+        const label = basic.createLabel(container, "text"); 
+        expect(label).toBeDefined();
+        expect(label.tagName).toBe("LABEL");  
+        expect(label.textContent).toBe("text");  
+    });  
+    it("createLabel didnt work", () =>  { 
+        const label = basic.createLabel(); 
+        expect(label).toBeDefined();
+        expect(label).toBe("createLabel didnt work");  
+    }); 
+}); 
