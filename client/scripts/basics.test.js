@@ -119,3 +119,32 @@ describe("createInput", () =>  {
         expect(input).toBe("createInput didnt work");  
     }); 
 }); 
+
+describe("createOption", () =>  {    
+    it("valid tagname", () =>  { 
+        const option = basic.createOption(container);   
+        expect(option).toBeDefined();
+        expect(option.tagName).toBe("OPTION");     
+    });  
+
+    it("valid tagname value", () =>  { 
+        const option = basic.createOption(container, "value");   
+        expect(option).toBeDefined();
+        expect(option.tagName).toBe("OPTION");  
+        expect(option.value).toBe("value");   
+    }); 
+
+    it("valid tagname value textContent", () =>  { 
+        const option = basic.createOption(container, "value", "text"); 
+        expect(option).toBeDefined();
+        expect(option.tagName).toBe("OPTION");  
+        expect(option.value).toBe("value");   
+        expect(option.textContent).toBe("text");  
+    }); 
+
+    it("createOption didnt work", () =>  { 
+        const option = basic.createOption(); 
+        expect(option).toBeDefined();
+        expect(option).toBe("createOption didnt work");  
+    }); 
+}); 
