@@ -270,17 +270,21 @@ export function checkForPercentEncoding(string){
   return str18;
  }
 
- function percent_encoding_to_reserved_character(string, checkFor, replaceby){
-  var array = string.split(checkFor); 
-  var newarray = [];
-  for(var x = 0; x < array.length; x++){ 
-    if(x == (array.length - 1)){ 
-      newarray.push(array[x]);
-    } else{
-      newarray.push(array[x]+replaceby);
+ export function percent_encoding_to_reserved_character(string, checkFor, replaceby){
+  try {
+    const array = string.split(checkFor); 
+    const newarray = [];
+    for(var x = 0; x < array.length; x++){ 
+      if(x == (array.length - 1)){ 
+        newarray.push(array[x]);
+      } else{
+        newarray.push(array[x]+replaceby);
+      }
     }
+    const str = newarray.join(""); 
+    return str;
+  } catch (error) {
+    return "Encoding Failed";
   }
-  const str = newarray.join(""); 
-  return str;
  }
  

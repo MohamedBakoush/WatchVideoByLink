@@ -268,3 +268,29 @@ describe("createLink", () =>  {
         expect(link).toBe("createLink didnt work");  
     }); 
 }); 
+
+describe("percent_encoding_to_reserved_character", () =>  { 
+    it("Input string checkFor replaceby", () =>  {  
+        const encode = basic.percent_encoding_to_reserved_character("3*3%3D9", "%3D", "="); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe("3*3=9"); 
+    }); 
+
+    it("Input string checkFor ", () =>  {  
+        const encode = basic.percent_encoding_to_reserved_character("3*3%3D9", "%3D"); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe("3*3undefined9"); 
+    }); 
+
+    it("Input string ", () =>  {  
+        const encode = basic.percent_encoding_to_reserved_character("3*3%3D9"); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe("3*3%3D9"); 
+    }); 
+    
+    it("No Input", () =>  {  
+        const encode = basic.percent_encoding_to_reserved_character(); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe("Encoding Failed"); 
+    }); 
+}); 
