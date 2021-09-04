@@ -269,6 +269,26 @@ describe("createLink", () =>  {
     }); 
 }); 
 
+describe("checkForPercentEncoding", () =>  { 
+    it("Input %3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D -> :/?#[]@!$&'()*+,;=", () =>  {  
+        const encode = basic.checkForPercentEncoding("%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D"); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe(":/?#[]@!$&'()*+,;="); 
+    });   
+
+    it("Input http%3A%2F%2Flocalhost%3A8080%2Fvideo%2Ftest -> http://localhost:8080/video/test", () =>  {  
+        const encode = basic.checkForPercentEncoding("http%3A%2F%2Flocalhost%3A8080%2Fvideo%2Ftest"); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe("http://localhost:8080/video/test"); 
+    });   
+
+    it("No Input", () =>  {  
+        const encode = basic.checkForPercentEncoding(); 
+        expect(encode).toBeDefined();
+        expect(encode).toBe("Encoding Failed"); 
+    }); 
+}); 
+
 describe("percent_encoding_to_reserved_character", () =>  { 
     it("Input string checkFor replaceby", () =>  {  
         const encode = basic.percent_encoding_to_reserved_character("3*3%3D9", "%3D", "="); 
