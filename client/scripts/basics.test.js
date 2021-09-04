@@ -186,3 +186,51 @@ describe("createSection", () =>  {
         expect(section).toBe("createSection didnt work");  
     }); 
 }); 
+
+describe("createLink", () =>  {    
+    it("valid tagname", () =>  { 
+        const link = basic.createLink(container);   
+        expect(link).toBeDefined();
+        expect(link.tagName).toBe("A");     
+    });      
+
+    it("valid tagname href", () =>  { 
+        const link = basic.createLink(container, "http://localhost:8080/");   
+        expect(link).toBeDefined();
+        expect(link.tagName).toBe("A");  
+        expect(link.href).toBe("http://localhost:8080/");    
+    });   
+
+    it("valid tagname href id", () =>  { 
+        const link = basic.createLink(container, "http://localhost:8080/", "id");   
+        expect(link).toBeDefined();
+        expect(link.tagName).toBe("A");  
+        expect(link.href).toBe("http://localhost:8080/");    
+        expect(link.id).toBe("id"); 
+    });   
+
+    it("valid tagname href id class", () =>  { 
+        const link = basic.createLink(container, "http://localhost:8080/", "id", "class");   
+        expect(link).toBeDefined();
+        expect(link.tagName).toBe("A");  
+        expect(link.href).toBe("http://localhost:8080/");    
+        expect(link.id).toBe("id"); 
+        expect(link.classList[0]).toBe("class"); 
+    });   
+
+    it("valid tagname href id class textContent", () =>  { 
+        const link = basic.createLink(container, "http://localhost:8080/", "id", "class", "text");   
+        expect(link).toBeDefined();
+        expect(link.tagName).toBe("A");  
+        expect(link.href).toBe("http://localhost:8080/");    
+        expect(link.id).toBe("id"); 
+        expect(link.classList[0]).toBe("class"); 
+        expect(link.textContent).toBe("text"); 
+    });  
+
+    it("createLink didnt work", () =>  { 
+        const link = basic.createLink(); 
+        expect(link).toBeDefined();
+        expect(link).toBe("createLink didnt work");  
+    }); 
+}); 
