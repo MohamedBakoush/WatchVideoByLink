@@ -6,17 +6,37 @@ global.document = dom.window.document;
 
 const container = document.createElement("section");
 
-let spy, mockElement; 
-spy = jest.spyOn(document, "getElementById");
-mockElement = document.createElement("article");
-mockElement.id = "websiteContentContainer";
-spy.mockReturnValue(mockElement); 
+let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
+beforeAll(() => {
+    spy = jest.spyOn(document, "getElementById");
+    mockHTML = document.createElement("html"); 
+    mockHead = document.createElement("head"); 
+    mockHTML.appendChild(mockHead);
+    mockFavicon = document.createElement("link");
+    mockFavicon.id = "favicon";
+    mockFavicon.rel = "icon";
+    mockFavicon.href = "../favicon.ico";
+    mockFavicon.type = "image/png"; 
+    mockHead.appendChild(mockFavicon);
+    mockArticle = document.createElement("article");
+    mockArticle.id = "websiteContentContainer"; 
+    mockHTML.appendChild(mockArticle);
+    spy.mockReturnValue(mockHTML); 
+});
 
 describe("websiteContentContainer", () =>  {    
-    it("valid id", () =>  { 
+    it("Defined", () =>  { 
         const websiteContentContainer = basic.websiteContentContainer();   
-        expect(websiteContentContainer).toBeDefined();
-        expect(websiteContentContainer.id).toBe("websiteContentContainer");     
+        expect(websiteContentContainer).toBeDefined();     
+        expect(websiteContentContainer).not.toBe(null);    
+    }); 
+}); 
+
+describe("favicon", () =>  {    
+    it("Defined", () =>  { 
+        const favicon = basic.favicon();   
+        expect(favicon).toBeDefined();        
+        expect(favicon).not.toBe(null);   
     }); 
 }); 
 
