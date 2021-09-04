@@ -6,6 +6,12 @@ global.document = dom.window.document;
 
 const container = document.createElement("section");
 
+let spy, mockElement; 
+spy = jest.spyOn(document, "getElementById");
+mockElement = document.createElement("article");
+mockElement.id = "websiteContentContainer";
+spy.mockReturnValue(mockElement); 
+
 describe("inputType", () =>  {    
     it("valid tagname", () =>  { 
         const input = basic.inputType(container);   
