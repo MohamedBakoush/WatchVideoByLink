@@ -12,6 +12,14 @@ mockElement = document.createElement("article");
 mockElement.id = "websiteContentContainer";
 spy.mockReturnValue(mockElement); 
 
+describe("websiteContentContainer", () =>  {    
+    it("valid id", () =>  { 
+        const websiteContentContainer = basic.websiteContentContainer();   
+        expect(websiteContentContainer).toBeDefined();
+        expect(websiteContentContainer.id).toBe("websiteContentContainer");     
+    }); 
+}); 
+
 describe("inputType", () =>  {    
     it("valid tagname", () =>  { 
         const input = basic.inputType(container);   
