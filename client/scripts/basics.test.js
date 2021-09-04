@@ -148,3 +148,41 @@ describe("createOption", () =>  {
         expect(option).toBe("createOption didnt work");  
     }); 
 }); 
+
+describe("createSection", () =>  {    
+    it("valid tagname", () =>  { 
+        const section = basic.createSection(container, "section");   
+        expect(section).toBeDefined();
+        expect(section.tagName).toBe("SECTION");     
+    });     
+
+    it("valid tagname class", () =>  { 
+        const section = basic.createSection(container, "section", "class");   
+        expect(section).toBeDefined();
+        expect(section.tagName).toBe("SECTION");   
+        expect(section.classList[0]).toBe("class");       
+    });     
+
+    it("valid tagname class id", () =>  { 
+        const section = basic.createSection(container, "section", "class", "id");   
+        expect(section).toBeDefined();
+        expect(section.tagName).toBe("SECTION");   
+        expect(section.classList[0]).toBe("class");    
+        expect(section.id).toBe("id");       
+    });   
+ 
+    it("valid tagname class id textContent", () =>  { 
+        const section = basic.createSection(container, "section", "class", "id", "text");   
+        expect(section).toBeDefined();
+        expect(section.tagName).toBe("SECTION");   
+        expect(section.classList[0]).toBe("class");    
+        expect(section.id).toBe("id");        
+        expect(section.textContent).toBe("text");       
+    });   
+
+    it("createSection didnt work", () =>  { 
+        const section = basic.createSection(); 
+        expect(section).toBeDefined();
+        expect(section).toBe("createSection didnt work");  
+    }); 
+}); 
