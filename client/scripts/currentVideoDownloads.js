@@ -301,25 +301,27 @@ export function stopAvailableVideoDownloadDetails(show_current_downloads){
 }
 
 // send request to server to delete video and all video data permently from the system
-async function deleteVideoDataPermanently(videoID) {
-  const response = await fetch(`../delete-video-data-permanently/${videoID}`);
-  if (response.ok) {
-    const deleteVideoStatus = await response.json();
-    if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
-
-      basic.notify("success",`Deleted: ${videoID}`);  
-      console.log("deleted");
-  
-      const videoDownloadStatusContainer = document.getElementById(`${videoID}-download-status-container`);    
-      console.log(videoDownloadStatusContainer);
-      if(videoDownloadStatusContainer !== null){
-        videoDownloadStatusContainer.remove(); 
-        console.log("removed");
-      }
-    } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
-      basic.notify("error",`Failed Delete: ${videoID}`);
-      console.log(`Failed Delete: ${videoID}`);
+export async function deleteVideoDataPermanently(videoID) {
+  try {
+    const response = await fetch(`../delete-video-data-permanently/${videoID}`);
+    if (response.ok) {
+      const deleteVideoStatus = await response.json(); 
+      if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
+        basic.notify("success",`Deleted: ${videoID}`);   
+        const videoDownloadStatusContainer = document.getElementById(`${videoID}-download-status-container`);    
+        if(videoDownloadStatusContainer !== null){
+          videoDownloadStatusContainer.remove();  
+        }
+        return "video data permanently deleted";
+      } else {
+        basic.notify("error",`Failed Delete: ${videoID}`); 
+        return "failed to delete video data permanently";
+      }  
+    } else { 
+      basic.notify("error",`Failed Delete: ${videoID}`); 
+      return "Request Error";
     }
-    return "videoDataDeletedPermanently";
+  } catch (error) { 
+    return error;
   }
 }
