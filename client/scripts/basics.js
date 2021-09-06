@@ -213,6 +213,7 @@ Timer.prototype.change = function(time) {
 // replace favicon with original favicon
 export function originalFavicon() { 
   favicon().href = "../favicon.ico";
+  return "Favicon href updated";
 }
 
 // change favicon with a red circle bottom at left of favicon
@@ -240,6 +241,7 @@ export function addFaviconNotificationBadge() {
     // Replace favicon
     favicon().href = canvas.toDataURL("image/png");
   };
+  return "favicon notification badge added";
 }
 
 // check for percent encoding

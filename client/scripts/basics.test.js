@@ -2,8 +2,9 @@ const basic = require("./basics");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();
-global.document = dom.window.document; 
-
+global.window = dom.window; 
+global.document = dom.window.document;  
+window.HTMLCanvasElement.prototype.getContext = jest.fn();
 const container = document.createElement("section");
 
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
@@ -266,6 +267,22 @@ describe("createLink", () =>  {
         const link = basic.createLink(); 
         expect(link).toBeDefined();
         expect(link).toBe("createLink didnt work");  
+    }); 
+}); 
+
+describe("originalFavicon", () =>  {  
+    it("Favicon href updated", () =>  {  
+        const favicon = basic.originalFavicon(); 
+        expect(favicon).toBeDefined();
+        expect(favicon).toBe("Favicon href updated"); 
+    }); 
+}); 
+
+describe("addFaviconNotificationBadge", () =>  {  
+    it("favicon notification badge added", () =>  {  
+        const badge = basic.addFaviconNotificationBadge(); 
+        expect(badge).toBeDefined();
+        expect(badge).toBe("favicon notification badge added"); 
     }); 
 }); 
 
