@@ -138,48 +138,47 @@ export function createLink(container, herf, idHere, classHere, textContent) {
 }
 
 export function notify(type,message){
-  // create notification_area if not available
-  let notification_area;
-  if(!document.getElementById("notification-area")){
-    notification_area = createSection(websiteContentContainer(), "section" , undefined, "notification-area");
-  } else{
-    notification_area = document.getElementById("notification-area");
-  }
-
-  // clear what was their before, only only one notification at a time 
-  notification_area.innerHTML = "";
-
-  // create new notification
-  const id = Math.random().toString(36).substr(2,10); 
-  createSection(notification_area, "section", `notification ${type}`, id, message);
-
-  // if user is not focued on webpage
-  if(!document.hasFocus()){
-    // change favicon
-    addFaviconNotificationBadge();
-  }
-  
-  // after a certin number of time, remove notifications
-  const timer = new Timer(()=>{
-    const notifications = notification_area.getElementsByClassName("notification");
-    for(let i=0;i<notifications.length;i++){
-      if(notifications[i].getAttribute("id") == id){
-        notifications[i].remove();
+  try {
+    if (typeof message === "string") { 
+      let notification_area;
+      if(!document.getElementById("notification-area")){ // create notification_area if not available
+        notification_area = createSection(websiteContentContainer(), "section" , undefined, "notification-area");
+      } else{
+        notification_area = document.getElementById("notification-area");
       }
-    } 
-  },5000);
-
-  //check if user is focued on webpage, if not repeate time for timer
-  const checkIfHasFocus = setInterval(function(){  
-    if(document.hasFocus()){
-      // change favicon
-      originalFavicon();
-      // clear checkIfHasFocus
-      clearInterval(checkIfHasFocus);
-    }else{
-      timer.change(5000); // change time to five seconds
+      // clear notification_area, one notification at a time 
+      notification_area.innerHTML = "";
+      // create new notification
+      const id = Math.random().toString(36).substr(2,10); 
+      createSection(notification_area, "section", `notification ${type}`, id, message);
+      if(!document.hasFocus()){ // if user is not focued on webpage change favicon
+        addFaviconNotificationBadge();
+      } 
+      // remove notifications after 5 sec
+      const timer = new Timer( () => {
+        const notifications = notification_area.getElementsByClassName("notification");
+        for(let i=0;i<notifications.length;i++){
+          if(notifications[i].getAttribute("id") == id){
+            notifications[i].remove();
+          }
+        } 
+      },5000);  
+      // check if user is focued on webpage
+      const checkFocus = setInterval( () => {  
+        if(document.hasFocus()){
+          originalFavicon();
+          clearInterval(checkFocus); 
+        }else{ // change timer time to 5 sec
+          timer.change(5000);  
+        }
+      }, 1000);    
+      return "successful notify";
+    } else {
+      return "notify message not string";
     }
-  }, 1000); 
+  } catch (error) {
+    return error;
+  }
 }
 
 // create a timer
