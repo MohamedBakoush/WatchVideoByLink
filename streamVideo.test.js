@@ -1254,6 +1254,11 @@ describe("completeUnfinnishedVideoDownload", () =>  {
         expect(completeUnfinnishedDownload).toBe("untrunc broke video"); 
         streamVideo.deleteCurrentDownloadByID(id);
     }); 
+
+    it("invalid current downloads id", () =>  {
+        const completeUnfinnishedDownload = streamVideo.completeUnfinnishedVideoDownload();
+        expect(completeUnfinnishedDownload).toBe("invalid current downloads id");  
+    });
 }); 
 
 describe("updateVideoPlayerVolume", () =>  {
