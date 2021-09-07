@@ -253,7 +253,7 @@ function showDetailsIfDownloadDetailsAvailable(container, video_ID, videoProgres
   }  
 }
  
-async function completeDownloadRequest(filename) {
+export async function completeDownloadRequest(filename) {
   try { 
     const payload = { 
       id: filename
@@ -266,25 +266,31 @@ async function completeDownloadRequest(filename) {
   
     if (response.ok) {
       const downloadStatus = await response.json();
-      console.log(downloadStatus);
       if (downloadStatus == "redownload thumbnails & compression") {
         basic.notify("success",`Redownload Thumbnails & Compression: ${filename}`);
+        return `Redownload Thumbnails & Compression: ${filename}`;
       } else if(downloadStatus == "redownload thumbnails"){
         basic.notify("success",`Redownload Thumbnails: ${filename}`);
+        return `Redownload Thumbnails: ${filename}`;
       } else if (downloadStatus == "redownload compression") {
         basic.notify("success",`Redownload Compression: ${filename}`);
+        return `Redownload Compression: ${filename}`;
       } else if(downloadStatus == "untrunc broke video"){
         basic.notify("success",`Untrunc Broke Video: ${filename}`);
+        return `Untrunc Broke Video: ${filename}`;
       } else if(downloadStatus == "download status: completed"){
         basic.notify("success",`Download Completed: ${filename}`);
+        return `Download Completed: ${filename}`;
+      } else { 
+        basic.notify("success","Invalid Current Downlods ID");
+        return "Invalid Current Downlods ID";
       } 
-      return "all good";
     } else {
       basic.notify("error","Failed to Complete Request");
-      return "failed";
+      return "Failed to Complete Request";
     }
-  } catch (e) { // when an error occurs
-    console.log("error"); 
+  } catch (error) {
+    return error;
   }  
 }  
 
@@ -294,6 +300,7 @@ export function loadAvailableVideoDownloadDetails(){
   VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 50);
   return "start fetch available download video details";
 }
+
 // Stop Fetching Available Video Download Details
 export function stopAvailableVideoDownloadDetails(){
   show_current_downloads_clicked = false;

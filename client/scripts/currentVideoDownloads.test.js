@@ -17,6 +17,92 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("completeDownloadRequest", () =>  { 
+    it("redownload thumbnails & compression", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "redownload thumbnails & compression"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest("valid filname");   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Redownload Thumbnails & Compression: valid filname");     
+    });    
+
+    it("redownload thumbnails", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "redownload thumbnails"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest("valid filname");   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Redownload Thumbnails: valid filname");     
+    });  
+
+    it("redownload compression", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "redownload compression"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest("valid filname");   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Redownload Compression: valid filname");     
+    });  
+
+    it("untrunc broke video", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "untrunc broke video"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest("valid filname");   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Untrunc Broke Video: valid filname");     
+    });  
+
+    it("download status: completed", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "download status: completed"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest("valid filname");   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Download Completed: valid filname");     
+    });  
+
+    it("invalid current downlods id", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "Invalid Current Downlods ID"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest("invalid filname");   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Invalid Current Downlods ID");     
+    });  
+
+    it("Failed to Complete Request", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false,
+                json: () => "redownload thumbnails & compression"  
+            })
+        );
+        const completeDownloadRequest = await currentVideoDownloads.completeDownloadRequest();   
+        expect(completeDownloadRequest).toBeDefined();       
+        expect(completeDownloadRequest).toBe("Failed to Complete Request");     
+    });   
+}); 
+
 describe("loadAvailableVideoDownloadDetails", () =>  { 
     it("start fetch", () =>  { 
         const loadAvailableVideoDownloadDetails = currentVideoDownloads.loadAvailableVideoDownloadDetails();   
