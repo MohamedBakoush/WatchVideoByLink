@@ -130,10 +130,8 @@ function showDetails(container, videoInfo_ID, videoDetails) {
     option_menu_edit.onclick = function(e){
       e.preventDefault();
       if(document.getElementById("download-status-container"))  { 
-        const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
-        if(stopInterval == "cleared Interval"){
-          document.getElementById("download-status-container").remove();   
-        }
+        document.getElementById("download-status-container").remove(); 
+        currentVideoDownloads.stopAvailableVideoDownloadDetails();  
       }
       if (video_name !== inputNewTitle.value) {
         video_name = inputNewTitle.value;

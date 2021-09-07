@@ -50,10 +50,8 @@ export function showDetails() {
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
     if(document.getElementById("download-status-container"))  {
-      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
-      if(stopInterval == "cleared Interval"){
-        document.getElementById("download-status-container").remove();   
-      }
+      document.getElementById("download-status-container").remove(); 
+      currentVideoDownloads.stopAvailableVideoDownloadDetails(); 
     }
     if (videoTypeSelect.value === "Automatic") {
       getVideoUrlAuto(videoLinkInput.value);

@@ -17,6 +17,14 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("stopAvailableVideoDownloadDetails", () =>  { 
+    it("stop fetch", () =>  { 
+        const stopAvailableVideoDownloadDetails = currentVideoDownloads.stopAvailableVideoDownloadDetails();   
+        expect(stopAvailableVideoDownloadDetails).toBeDefined();       
+        expect(stopAvailableVideoDownloadDetails).toBe("stop fetch available download video details");     
+    });    
+}); 
+
 describe("deleteVideoDataPermanently", () =>  {     
     beforeAll(() => {
         global.fetch = jest.fn().mockImplementation(() =>

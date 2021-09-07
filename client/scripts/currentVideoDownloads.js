@@ -294,10 +294,10 @@ export function loadAvailableVideoDownloadDetails(show_current_downloads){
   VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 50);
 }
 // Stop Fetching Available Video Download Details
-export function stopAvailableVideoDownloadDetails(show_current_downloads){
-  show_current_downloads_clicked = show_current_downloads;
+export function stopAvailableVideoDownloadDetails(){
+  show_current_downloads_clicked = false;
   clearInterval(VideoDownloadDetailsInterval); 
-  return "cleared Interval"; 
+  return "stop fetch available download video details"; 
 }
 
 // send request to server to delete video and all video data permently from the system

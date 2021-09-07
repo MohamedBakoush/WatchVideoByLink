@@ -28,10 +28,8 @@ export function loadNavigationBar(path) {
   homeButton.onclick = (e) => {
     e.preventDefault(); 
     if(document.getElementById("download-status-container"))  {
-      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
-      if(stopInterval == "cleared Interval"){
-        document.getElementById("download-status-container").remove();   
-      }
+      document.getElementById("download-status-container").remove(); 
+      currentVideoDownloads.stopAvailableVideoDownloadDetails();  
     }
     basic.websiteContentContainer().innerHTML = "";
     homeButton.classList = "button is-selected";
@@ -45,10 +43,8 @@ export function loadNavigationBar(path) {
   savedVideosPage.onclick = (e) => {
     e.preventDefault(); 
     if(document.getElementById("download-status-container"))  { 
-      const stopInterval = currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
-      if(stopInterval == "cleared Interval"){
-        document.getElementById("download-status-container").remove();   
-      }
+      document.getElementById("download-status-container").remove(); 
+      currentVideoDownloads.stopAvailableVideoDownloadDetails();  
     }
     basic.websiteContentContainer().innerHTML = "";
     homeButton.classList = "button category-link";
@@ -64,7 +60,7 @@ export function loadNavigationBar(path) {
     e.preventDefault(); 
       if (document.getElementById("download-status-container")){ 
           document.getElementById("download-status-container").remove();
-          currentVideoDownloads.stopAvailableVideoDownloadDetails(false);  
+          currentVideoDownloads.stopAvailableVideoDownloadDetails();  
       } else {
         currentVideoDownloads.loadAvailableVideoDownloadDetails(true);
       } 
