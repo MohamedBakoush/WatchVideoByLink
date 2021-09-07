@@ -17,6 +17,14 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("loadAvailableVideoDownloadDetails", () =>  { 
+    it("start fetch", () =>  { 
+        const loadAvailableVideoDownloadDetails = currentVideoDownloads.loadAvailableVideoDownloadDetails();   
+        expect(loadAvailableVideoDownloadDetails).toBeDefined();       
+        expect(loadAvailableVideoDownloadDetails).toBe("start fetch available download video details");     
+    });    
+}); 
+
 describe("stopAvailableVideoDownloadDetails", () =>  { 
     it("stop fetch", () =>  { 
         const stopAvailableVideoDownloadDetails = currentVideoDownloads.stopAvailableVideoDownloadDetails();   

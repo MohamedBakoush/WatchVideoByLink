@@ -289,9 +289,10 @@ async function completeDownloadRequest(filename) {
 }  
 
 // Start Fetching Available Video Download Details 
-export function loadAvailableVideoDownloadDetails(show_current_downloads){ 
-  show_current_downloads_clicked = show_current_downloads;
+export function loadAvailableVideoDownloadDetails(){ 
+  show_current_downloads_clicked = true;
   VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 50);
+  return "start fetch available download video details";
 }
 // Stop Fetching Available Video Download Details
 export function stopAvailableVideoDownloadDetails(){
