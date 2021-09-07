@@ -9,8 +9,115 @@ const container = document.createElement("section");
 const videoID = "videoID";
 
 afterEach(() => {    
-    jest.restoreAllMocks();
+    jest.restoreAllMocks(); 
 });
+
+describe("loadVideoDetails", () =>  {
+    beforeEach(() => {    
+        let spy = jest.spyOn(document, "getElementById"); 
+        let mockSection = document.createElement("section");
+        mockSection.id = "websiteContentContainer";  
+        spy.mockReturnValue(mockSection); 
+    });
+
+    const data = {
+        "ccf40c5d-640b-44e8-ae3b-7e4563a44d29": {
+            "video": {
+            "download-status": "completed"
+            },
+            "compression": {
+            "download-status": "22.64%"
+            },
+            "thumbnail": {
+            "download-status": "22.64%"
+            }
+        },
+        "3d69eafa-d955-4ad0-8a4f-3ea16afc6b34": {
+            "video": {
+            "download-status": "completed"
+            },
+            "compression": {
+            "download-status": "unfinished download"
+            },
+            "thumbnail": {
+            "download-status": "completed"
+            }
+        },
+        "a8f36a2f-42f7-441b-8c9a-57bf1c900348": {
+            "video": {
+            "download-status": "completed"
+            },
+            "compression": {
+            "download-status": "22.64%"
+            },
+            "thumbnail": {
+            "download-status": "completed"
+            }
+        }
+    };
+ 
+    it("Display Current Downloads", async () =>  {
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () =>  data
+            })
+        );      
+        currentVideoDownloads.update_show_current_downloads(true);
+        const loadVideoDetails = await currentVideoDownloads.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Display Current Downloads");   
+        global.fetch = jest.fn(); 
+    }); 
+        
+    it("Show Current Downlods False", async () =>  {
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () =>  data
+            })
+        ); 
+        currentVideoDownloads.update_show_current_downloads(false);
+        const loadVideoDetails = await currentVideoDownloads.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Show Current Downlods False");   
+        global.fetch = jest.fn();
+    });
+     
+    it("Fetch response not ok", async () =>  {
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false,
+                json: () =>  data
+            })
+        ); 
+        const loadVideoDetails = await currentVideoDownloads.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Fetch response not ok");   
+        global.fetch = jest.fn();
+    }); 
+    it("Failed fetch download details", async () =>  { 
+        currentVideoDownloads.update_show_current_downloads(false);
+        const loadVideoDetails = await currentVideoDownloads.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("stoped current downloads no longer visable");     
+        currentVideoDownloads.update_show_current_downloads(true);
+    }); 
+    
+    it("Failed fetch download details", async () =>  {       
+        currentVideoDownloads.update_show_current_downloads(false);
+        const loadVideoDetails = await currentVideoDownloads.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("stoped current downloads no longer visable");     
+        currentVideoDownloads.update_show_current_downloads(true);
+    }); 
+
+    it("Failed fetch download details", async () =>  { 
+        const loadVideoDetails = await currentVideoDownloads.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Failed fetch download details");     
+    });    
+}); 
 
 describe("eachAvailableVideoDownloadDetails", () =>  {
     const videoDownloadDetails = {

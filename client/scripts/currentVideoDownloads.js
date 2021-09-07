@@ -3,17 +3,20 @@ import * as basic from "../scripts/basics.js";
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 
 // try to fetch for current-video-downloads if successful send data to currentVideoDownloads function else show error msg
-async function loadVideoDetails() {
+export async function loadVideoDetails() {
   try {
     const response = await fetch("../current-video-downloads");
     let currentVideoDownloads;
     if (response.ok) {
       currentVideoDownloads = await response.json();
       if(show_current_downloads_clicked == true){ // show current_downloads when show_current_downloads is supposed to be active
-        eachAvailableVideoDownloadDetails(currentVideoDownloads);      
-      }
+        eachAvailableVideoDownloadDetails(currentVideoDownloads);   
+        return "Display Current Downloads";   
+      } else{  
+        return "Show Current Downlods False";
+       } 
     } else {
-      currentVideoDownloads = { msg: "failed to load messages" };
+      return "Fetch response not ok";
     }
   } catch (e) { // when an error occurs  
     let container, videoDownloadStatusContainer; 
@@ -29,6 +32,7 @@ async function loadVideoDetails() {
       }
       // clear VideoDownloadDetailsInterval
       clearInterval(VideoDownloadDetailsInterval); 
+      return "stoped current downloads no longer visable";
     } else {
       // assign videoDownloadStatusContainer Failed fetch current downloads msg conainer
       videoDownloadStatusContainer = document.getElementById("failed-fetch-available-download-details");
@@ -38,6 +42,7 @@ async function loadVideoDetails() {
         videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "failed-fetch-available-download-details"); 
         basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "Error: Failed fetch download details");  
       } 
+      return "Failed fetch download details";
     }
   }
 } 
@@ -76,14 +81,44 @@ export function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
 // for each video download details
 export function forEachVideoDownloadDetails(container, videoDownloadDetails, videoInfo_ID) {    
   let videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);    
-  // if videoDownloadStatusContainer dosent exist  
+  // if videoDownloadStatusContainer dosent exist    
+  let compressionProgressUnfinished, thumbnailProgressUnfinished, videoProgressUnfinished;
+  try {
+    if (videoDownloadDetails[videoInfo_ID]["video"]["download-status"] == "unfinished download") {
+      videoProgressUnfinished = "unfinished download";
+    } else if (videoDownloadDetails[videoInfo_ID]["video"]["download-status"] == "working video for untrunc is unavailable") {
+      videoProgressUnfinished = "working video for untrunc is unavailable";
+    } else {
+      videoProgressUnfinished = false;
+    }
+  } catch (error) {
+    videoProgressUnfinished = false;
+  }
+  try { // if thumbnailProgress exits and is complete return true else false
+    if (videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"] == "unfinished download") {
+      thumbnailProgressUnfinished = true;
+    } else {
+      thumbnailProgressUnfinished = false;
+    }
+  } catch (error) {
+    thumbnailProgressUnfinished = false;
+  }
+  try { // if compressionProgress exits and is complete return true else false
+    if (videoDownloadDetails[videoInfo_ID]["compression"]["download-status"] == "unfinished download") {
+      compressionProgressUnfinished = true;
+    } else {
+      compressionProgressUnfinished = false;
+    }
+  } catch (error) {
+    compressionProgressUnfinished = false;
+  }
   if(!videoDownloadStatusContainer){
     showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID]["video"], videoDownloadDetails[videoInfo_ID]["thumbnail"], videoDownloadDetails[videoInfo_ID]["compression"]);      
     return "show download details if avaiable";
-  } else if(videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "unfinished download" 
-        && videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "working video for untrunc is unavailable" 
-        && videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"] !== "unfinished download" 
-        && videoDownloadDetails[videoInfo_ID]["compression"]["download-status"] !== "unfinished download"){ 
+  } else if(videoProgressUnfinished !== "unfinished download" 
+        && videoProgressUnfinished !== "working video for untrunc is unavailable" 
+        && thumbnailProgressUnfinished !== true 
+        && compressionProgressUnfinished !== true){ 
     // clear videoDownloadStatusContainer 
     videoDownloadStatusContainer.innerHTML = "";
     // video id (title)
