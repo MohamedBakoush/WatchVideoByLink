@@ -62,7 +62,7 @@ export function loadNavigationBar(path) {
           document.getElementById("download-status-container").remove();
           currentVideoDownloads.stopAvailableVideoDownloadDetails();  
       } else {
-        currentVideoDownloads.loadAvailableVideoDownloadDetails(true);
+        currentVideoDownloads.loadAvailableVideoDownloadDetails();
       } 
   };
 }
