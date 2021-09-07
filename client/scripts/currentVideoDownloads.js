@@ -66,7 +66,7 @@ export function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
     } else  { // available downloads
       // check each data from videoDownloadDetails in reverse order
       Object.keys(videoDownloadDetails).forEach(function(videoInfo_ID) {    
-        forEachVideoDownloadDetails(container, videoDownloadStatusContainer, videoDownloadDetails, videoInfo_ID); 
+        forEachVideoDownloadDetails(container, videoDownloadDetails, videoInfo_ID); 
       });
       return "Show current available dowloads";
     }
@@ -74,41 +74,35 @@ export function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
 } 
  
 // for each video download details
-export function forEachVideoDownloadDetails(container, videoDownloadStatusContainer, videoDownloadDetails, videoInfo_ID) {    
-  videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);    
-  // if video download has been completed then remove videoDownloadStatusContainer
-  // check if tumbnail downlaod status is 100.00% or 99.99% (just in case)
-  if(videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "100.00%" || videoDownloadDetails[videoInfo_ID].thumbnail["download-status"] === "99.99%"){  
-    // make sure videoDownloadStatusContainer exists
-    if(videoDownloadStatusContainer != null){
-      // remove videoDownloadStatusContainer
-      videoDownloadStatusContainer.remove(); 
-    }
-  } else{
-    // if videoDownloadStatusContainer dosent exist 
-    if(!videoDownloadStatusContainer){
-      showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID]["video"], videoDownloadDetails[videoInfo_ID]["thumbnail"], videoDownloadDetails[videoInfo_ID]["compression"]);      
-    } else if(videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "unfinished download" 
-          && videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "working video for untrunc is unavailable" 
-          && videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"] !== "unfinished download" 
-          && videoDownloadDetails[videoInfo_ID]["compression"]["download-status"] !== "unfinished download"){ 
-      // clear videoDownloadStatusContainer 
-      videoDownloadStatusContainer.innerHTML = "";
-      // video id (title)
-      basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${videoInfo_ID}`); 
-      // videoProgressContainer
-      if(videoDownloadDetails[videoInfo_ID]["video"] !== undefined){
-        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID]["video"]["download-status"]}`);
-      }  
-      // thubnailProgressContainer
-      if(videoDownloadDetails[videoInfo_ID]["thumbnail"] !== undefined){
-        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"]}`); 
-      }         
-      // compressionProgressContainer
-      if(videoDownloadDetails[videoInfo_ID]["compression"] !== undefined){
-        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-compression`,`Compression Progress: ${videoDownloadDetails[videoInfo_ID]["compression"]["download-status"]}`);  
-      }  
-    } 
+export function forEachVideoDownloadDetails(container, videoDownloadDetails, videoInfo_ID) {    
+  let videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);    
+  // if videoDownloadStatusContainer dosent exist  
+  if(!videoDownloadStatusContainer){
+    showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID]["video"], videoDownloadDetails[videoInfo_ID]["thumbnail"], videoDownloadDetails[videoInfo_ID]["compression"]);      
+    return "show download details if avaiable";
+  } else if(videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "unfinished download" 
+        && videoDownloadDetails[videoInfo_ID]["video"]["download-status"] !== "working video for untrunc is unavailable" 
+        && videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"] !== "unfinished download" 
+        && videoDownloadDetails[videoInfo_ID]["compression"]["download-status"] !== "unfinished download"){ 
+    // clear videoDownloadStatusContainer 
+    videoDownloadStatusContainer.innerHTML = "";
+    // video id (title)
+    basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${videoInfo_ID}`); 
+    // videoProgressContainer
+    if(videoDownloadDetails[videoInfo_ID]["video"] !== undefined){
+      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID]["video"]["download-status"]}`);
+    }  
+    // thubnailProgressContainer
+    if(videoDownloadDetails[videoInfo_ID]["thumbnail"] !== undefined){
+      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"]}`); 
+    }         
+    // compressionProgressContainer
+    if(videoDownloadDetails[videoInfo_ID]["compression"] !== undefined){
+      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-compression`,`Compression Progress: ${videoDownloadDetails[videoInfo_ID]["compression"]["download-status"]}`);  
+    }  
+    return "Display Video Download Details";
+  } else {
+     return "video download unfinished";
   }  
 }
 

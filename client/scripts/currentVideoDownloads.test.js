@@ -6,16 +6,10 @@ global.window = dom.window;
 global.document = dom.window.document;  
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
 const container = document.createElement("section");
-
 const videoID = "videoID";
-let spy, mockHTML, mockArticle; 
-beforeAll(() => {
-    spy = jest.spyOn(document, "getElementById");
-    mockHTML = document.createElement("html");  
-    mockArticle = document.createElement("article");
-    mockArticle.id = `${videoID}-download-status-container`; 
-    mockHTML.appendChild(mockArticle);
-    spy.mockReturnValue(mockHTML); 
+
+afterEach(() => {    
+    jest.restoreAllMocks();
 });
 
 describe("eachAvailableVideoDownloadDetails", () =>  {
@@ -55,13 +49,19 @@ describe("eachAvailableVideoDownloadDetails", () =>  {
         }
       } ; 
        
-    it("video download details unavailable", () =>  { 
+    it("Show current available dowloads", () =>  {
         const eachAvailableVideoDownloadDetails = currentVideoDownloads.eachAvailableVideoDownloadDetails(videoDownloadDetails);   
         expect(eachAvailableVideoDownloadDetails).toBeDefined();       
         expect(eachAvailableVideoDownloadDetails).toBe("Show current available dowloads");     
     });  
-    
-    it("video download details unavailable", () =>  { 
+
+    it("No current available dowloads", () =>  {   
+
+        let spy = jest.spyOn(document, "getElementById"); 
+        let mockSection = document.createElement("section");
+        mockSection.id = "no-current-dowloads-available";  
+        spy.mockReturnValue(mockSection); 
+        
         const eachAvailableVideoDownloadDetails = currentVideoDownloads.eachAvailableVideoDownloadDetails({});   
         expect(eachAvailableVideoDownloadDetails).toBeDefined();       
         expect(eachAvailableVideoDownloadDetails).toBe("No current available dowloads");     
@@ -72,6 +72,77 @@ describe("eachAvailableVideoDownloadDetails", () =>  {
         expect(eachAvailableVideoDownloadDetails).toBeDefined();       
         expect(eachAvailableVideoDownloadDetails).toBe("video download details unavailable");     
     });    
+}); 
+
+describe("forEachVideoDownloadDetails", () =>   {    
+    it("show download details if avaiable", () =>  { 
+        const videoDownloadDetails = {
+            videoID: {
+                "video": {
+                    "download-status": "completed"
+                },
+                "compression": {
+                    "download-status": "22.64%"
+                },
+                "thumbnail": {
+                    "download-status": "22.64%"
+                }
+            } 
+        }; 
+        const forEachVideoDownloadDetails = currentVideoDownloads.forEachVideoDownloadDetails(container, videoDownloadDetails, videoID);   
+        expect(forEachVideoDownloadDetails).toBeDefined();       
+        expect(forEachVideoDownloadDetails).toBe("show download details if avaiable");     
+    });  
+    
+    it("Display Video Download Details", () =>  {
+         
+        let spy = jest.spyOn(document, "getElementById"); 
+        let mockSection = document.createElement("section");
+        mockSection.id = "id-download-status-container";  
+        spy.mockReturnValue(mockSection); 
+
+        const videoDownloadDetails = {
+            "id": {
+                "video": {
+                    "download-status": "completed"
+                },
+                "compression": {
+                    "download-status": "22.64%"
+                },
+                "thumbnail": {
+                    "download-status": "22.64%"
+                }
+            } 
+        }; 
+        const forEachVideoDownloadDetails = currentVideoDownloads.forEachVideoDownloadDetails(container, videoDownloadDetails, "id");   
+        expect(forEachVideoDownloadDetails).toBeDefined();       
+        expect(forEachVideoDownloadDetails).toBe("Display Video Download Details");     
+    });   
+    
+    it("video download unfinished", () =>  {
+                 
+        let spy = jest.spyOn(document, "getElementById"); 
+        let mockSection = document.createElement("section");
+        mockSection.id = "id-download-status-container";  
+        spy.mockReturnValue(mockSection); 
+
+        const videoDownloadDetails = {
+            "id": {
+                "video": {
+                    "download-status": "unfinished download"
+                },
+                "compression": {
+                    "download-status": "unfinished download"
+                },
+                "thumbnail": {
+                    "download-status": "unfinished download"
+                }
+            } 
+        }; 
+        const forEachVideoDownloadDetails = currentVideoDownloads.forEachVideoDownloadDetails(container, videoDownloadDetails, "id");   
+        expect(forEachVideoDownloadDetails).toBeDefined();       
+        expect(forEachVideoDownloadDetails).toBe("video download unfinished");     
+    });  
 }); 
 
 describe("showDetailsIfDownloadDetailsAvailable", () =>  {      
