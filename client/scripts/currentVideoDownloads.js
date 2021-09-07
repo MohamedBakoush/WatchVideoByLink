@@ -172,8 +172,7 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {   
-            console.log("starting"); 
+          if (confirmVideoDelete) {    
             deleteVideoDataPermanently(video_ID);
           }
         };
@@ -197,8 +196,7 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {   
-            console.log("starting"); 
+          if (confirmVideoDelete) {
             deleteVideoDataPermanently(video_ID);
           }
         };
@@ -218,8 +216,7 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {   
-            console.log("starting"); 
+          if (confirmVideoDelete) {    
             deleteVideoDataPermanently(video_ID);
           }
         };
@@ -239,8 +236,7 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {   
-            console.log("starting"); 
+          if (confirmVideoDelete) {    
             deleteVideoDataPermanently(video_ID);
             if (savedVideosThumbnailContainer) {
               //remove video from /saved/videos
