@@ -5,6 +5,7 @@ const dom = new JSDOM();
 global.window = dom.window; 
 global.document = dom.window.document;  
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
+const container = document.createElement("section");
 
 const videoID = "videoID";
 let spy, mockHTML, mockArticle; 
@@ -16,6 +17,235 @@ beforeAll(() => {
     mockHTML.appendChild(mockArticle);
     spy.mockReturnValue(mockHTML); 
 });
+
+describe("showDetailsIfDownloadDetailsAvailable", () =>  {      
+    it("video unfinished, thumbnail and compression unfinished", () =>  { 
+        const videoDownloadDetails = { 
+            "video": {
+                "download-status":"unfinished download"
+            },
+            "compression": {
+                "download-status": "unfinished download"
+            },
+            "thumbnail": {
+                "download-status": "unfinished download"
+        }
+        } ;  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("video unfinished");
+     });  
+
+    it("working video for untrunc is unavailable", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "working video for untrunc is unavailable"
+            },
+            "compression": {
+                "download-status": "unfinished download"
+            },
+            "thumbnail": {
+                "download-status": "unfinished download"
+            }
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("working video for untrunc is unavailable");
+     });  
+
+    it("thumbnail and compression unfinished", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            },
+            "compression": {
+                "download-status": "unfinished download"
+            },
+            "thumbnail": {
+                "download-status": "unfinished download"
+            }
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("thumbnail and compression unfinished");
+     });    
+        
+    it("thumbnail unfinished, compression finished", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            },
+            "compression": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "unfinished download"
+            }
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("thumbnail unfinished");
+     }); 
+
+    it("thumbnail finished, compression unfinished", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            },
+            "compression": {
+                "download-status": "unfinished download"
+            },
+            "thumbnail": {
+                "download-status": "completed"
+            } 
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("compression unfinished");
+    }); 
+
+    it("Display Video Download Details - video, compression, thumbnail downloading", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+            "download-status": "20.00%"
+            },
+            "compression": {
+            "download-status": "20.00%"
+            },
+            "thumbnail": {
+            "download-status": "20.00%"
+            }
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Display Video Download Details");
+    });
+
+    it("Display Video Download Details - video downloading", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+            "download-status": "20.00%"
+            },
+            "compression": {
+            "download-status": "waiting for video"
+            },
+            "thumbnail": {
+            "download-status": "waiting for video"
+            } 
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Display Video Download Details");
+    });
+
+    it("Display Video Download Details - compression, thumbnail downloading", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            },
+            "compression": {
+                "download-status":  "20.00%"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            } 
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Display Video Download Details");
+    });
+
+    it("Display Video Download Details - compression downloading", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            },
+            "compression": {
+                "download-status":  "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            } 
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Display Video Download Details");
+    });
+
+    it("Display Video Download Details - compression downloading", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            },
+            "compression": {
+                "download-status":  "20.00%"
+            },
+            "thumbnail": {
+                "download-status": "completed"
+            } 
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Display Video Download Details");
+    });
+
+    it("video completed, thumbnail unfinished", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            }, 
+            "thumbnail": {
+                "download-status": "unfinished download"
+            } 
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, videoDownloadDetails.thumbnail);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("thumbnail unfinished");
+    });
+
+    it("video completed, compression unfinished", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "completed"
+            }, 
+            "compression": {
+                "download-status": "unfinished download"
+            }
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video, undefined, videoDownloadDetails.compression);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("compression unfinished");
+    });
+
+    it("video unfinished", () =>  { 
+        const videoDownloadDetails = {
+            "video": {
+                "download-status": "unfinished download"
+            }  
+        };  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id", videoDownloadDetails.video);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("video unfinished");
+    });
+
+    it("Video Download Details unavaiable", () =>  {  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container, "id");
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Video Download Details unavaiable");
+    });
+
+    it("Video ID undefined", () =>  {  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable(container);
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("Video ID unavaiable");
+    });
+
+    it("container undefined", () =>  {  
+        const showDownloadDetails = currentVideoDownloads.showDetailsIfDownloadDetailsAvailable();
+        expect(showDownloadDetails).toBeDefined(); 
+        expect(showDownloadDetails).toBe("container unavaiable");
+    });
+}); 
 
 describe("completeDownloadRequest", () =>  { 
     it("redownload thumbnails & compression", async () =>  { 
