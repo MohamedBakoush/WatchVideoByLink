@@ -460,6 +460,38 @@ describe("completeDownloadRequest", () =>  {
     });   
 }); 
 
+describe("update_show_current_downloads", () =>  { 
+    it("true input", () =>  { 
+        const updateShowCurrentDownloads = currentVideoDownloads.update_show_current_downloads(true);   
+        expect(updateShowCurrentDownloads).toBeDefined();       
+        expect(updateShowCurrentDownloads).toBe(true);     
+    }); 
+
+    it("false input", () =>  { 
+        const updateShowCurrentDownloads = currentVideoDownloads.update_show_current_downloads(false);   
+        expect(updateShowCurrentDownloads).toBeDefined();       
+        expect(updateShowCurrentDownloads).toBe(false);     
+    });    
+    
+    it("number input", () =>  { 
+        const updateShowCurrentDownloads = currentVideoDownloads.update_show_current_downloads(123);   
+        expect(updateShowCurrentDownloads).toBeDefined();       
+        expect(updateShowCurrentDownloads).toBe("input has to be boolean");     
+    }); 
+    
+    it("string input", () =>  { 
+        const updateShowCurrentDownloads = currentVideoDownloads.update_show_current_downloads("string");   
+        expect(updateShowCurrentDownloads).toBeDefined();       
+        expect(updateShowCurrentDownloads).toBe("input has to be boolean");     
+    }); 
+
+    it("no input", () =>  { 
+        const updateShowCurrentDownloads = currentVideoDownloads.update_show_current_downloads();   
+        expect(updateShowCurrentDownloads).toBeDefined();       
+        expect(updateShowCurrentDownloads).toBe("input has to be boolean");     
+    }); 
+}); 
+
 describe("loadAvailableVideoDownloadDetails", () =>  { 
     it("start fetch", () =>  { 
         const loadAvailableVideoDownloadDetails = currentVideoDownloads.loadAvailableVideoDownloadDetails();   

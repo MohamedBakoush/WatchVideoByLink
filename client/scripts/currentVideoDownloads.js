@@ -322,16 +322,26 @@ export async function completeDownloadRequest(filename) {
   }  
 }  
 
+// updated show current downloads
+export function update_show_current_downloads(bool){ 
+  if (typeof bool == "boolean") {
+    show_current_downloads_clicked = bool;
+    return show_current_downloads_clicked;
+  } else {
+    return "input has to be boolean";
+  }
+}
+
 // Start Fetching Available Video Download Details 
 export function loadAvailableVideoDownloadDetails(){ 
-  show_current_downloads_clicked = true;
+  update_show_current_downloads(true);
   VideoDownloadDetailsInterval = setInterval(loadVideoDetails, 50);
   return "start fetch available download video details";
 }
 
 // Stop Fetching Available Video Download Details
-export function stopAvailableVideoDownloadDetails(){
-  show_current_downloads_clicked = false;
+export function stopAvailableVideoDownloadDetails(){ 
+  update_show_current_downloads(false);
   clearInterval(VideoDownloadDetailsInterval); 
   return "stop fetch available download video details"; 
 }
