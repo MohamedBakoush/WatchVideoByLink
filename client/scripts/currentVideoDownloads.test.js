@@ -18,6 +18,62 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("eachAvailableVideoDownloadDetails", () =>  {
+    const videoDownloadDetails = {
+        "ccf40c5d-640b-44e8-ae3b-7e4563a44d29": {
+          "video": {
+            "download-status": "completed"
+          },
+          "compression": {
+            "download-status": "22.64%"
+          },
+          "thumbnail": {
+            "download-status": "22.64%"
+          }
+        },
+        "3d69eafa-d955-4ad0-8a4f-3ea16afc6b34": {
+          "video": {
+            "download-status": "completed"
+          },
+          "compression": {
+            "download-status": "unfinished download"
+          },
+          "thumbnail": {
+            "download-status": "completed"
+          }
+        },
+        "a8f36a2f-42f7-441b-8c9a-57bf1c900348": {
+          "video": {
+            "download-status": "completed"
+          },
+          "compression": {
+            "download-status": "22.64%"
+          },
+          "thumbnail": {
+            "download-status": "completed"
+          }
+        }
+      } ; 
+       
+    it("video download details unavailable", () =>  { 
+        const eachAvailableVideoDownloadDetails = currentVideoDownloads.eachAvailableVideoDownloadDetails(videoDownloadDetails);   
+        expect(eachAvailableVideoDownloadDetails).toBeDefined();       
+        expect(eachAvailableVideoDownloadDetails).toBe("Show current available dowloads");     
+    });  
+    
+    it("video download details unavailable", () =>  { 
+        const eachAvailableVideoDownloadDetails = currentVideoDownloads.eachAvailableVideoDownloadDetails({});   
+        expect(eachAvailableVideoDownloadDetails).toBeDefined();       
+        expect(eachAvailableVideoDownloadDetails).toBe("No current available dowloads");     
+    }); 
+
+    it("video download details unavailable", () =>  { 
+        const eachAvailableVideoDownloadDetails = currentVideoDownloads.eachAvailableVideoDownloadDetails();   
+        expect(eachAvailableVideoDownloadDetails).toBeDefined();       
+        expect(eachAvailableVideoDownloadDetails).toBe("video download details unavailable");     
+    });    
+}); 
+
 describe("showDetailsIfDownloadDetailsAvailable", () =>  {      
     it("video unfinished, thumbnail and compression unfinished", () =>  { 
         const videoDownloadDetails = { 
