@@ -484,4 +484,5 @@ function searchBar(){
 // load pageLoaded to html page when requested
 export function pageLoaded() {
   loadVideoDetails();
+  return "pageLoaded";
 }
