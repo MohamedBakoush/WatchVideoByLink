@@ -434,7 +434,7 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
 }
 
 // find video by filtering trough each available video by textinput
-function searchBar(){
+export function searchBar(){
   // create search input
   const searchBar = basic.inputType(basic.websiteContentContainer(), "text", "searchBar", "searchBar", true);
   searchBar.name = "searchBar";
@@ -479,6 +479,7 @@ function searchBar(){
       });
     } 
   });
+  return "searchBar";
 }
 
 // load pageLoaded to html page when requested
