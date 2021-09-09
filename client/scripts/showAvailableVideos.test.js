@@ -5,6 +5,9 @@ const { JSDOM } = jsdom;
 const dom = new JSDOM();
 global.window = dom.window; 
 global.document = dom.window.document;   
+window.HTMLCanvasElement.prototype.getContext = jest.fn();
+const container = document.createElement("section");
+const videoID = "videoID";
 
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
 beforeAll(() => {
@@ -23,6 +26,65 @@ beforeAll(() => {
     mockHTML.appendChild(mockArticle);
     spy.mockReturnValue(mockHTML); 
 });
+
+describe("deleteVideoDataPermanently", () =>  {   
+    afterAll(() => {    
+        global.fetch = jest.fn();
+    }); 
+ 
+    it("Data permantly deleted", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => `video-id-${videoID}-data-permanently-deleted`  
+            })
+        ); 
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);   
+        expect(deleteVideoData).toBeDefined();        
+        expect(deleteVideoData).toBe(`video-id-${videoID}-data-permanently-deleted`); 
+    });  
+    
+    it("Failed to Delete - invalid msg", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => `video-id-${videoID}-data-failed-to-permanently-deleted`  
+            })
+        ); 
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);   
+        expect(deleteVideoData).toBeDefined();        
+        expect(deleteVideoData).toBe(`video-id-${videoID}-data-failed-to-permanently-deleted`); 
+    });  
+    
+    it("Failed to Delete - random msg", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "JSON Message"  
+            })
+        ); 
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);  
+        expect(deleteVideoData).toBeDefined();        
+        expect(deleteVideoData).toBe(`video-id-${videoID}-data-failed-to-permanently-deleted`); 
+    });  
+    
+    it("Failed to Complete Request - response.ok false", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false
+            })
+        ); 
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);   
+        expect(deleteVideoData).toBeDefined();        
+        expect(deleteVideoData).toBe("Failed to Complete Request"); 
+    });      
+
+    it("Failed to Complete Request - no response", async () =>  {  
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently();   
+        expect(deleteVideoData).toBeDefined();        
+        expect(deleteVideoData).toBe("Failed to Complete Request"); 
+    });    
+}); 
 
 describe("searchBar", () =>  {   
     it("searchBar exits", () =>  { 

@@ -396,13 +396,12 @@ function backToViewAvailableVideoButton(video_edit_body, video_edit_container, o
 }
 
 // send request to server to delete video and all video data permently from the system
-async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
+export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
   try {
     const response = await fetch(`../delete-video-data-permanently/${videoID}`);
     if (response.ok) {
       const deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
-        basic.notify("success",`Deleted: ${videoID}`);
         //remove video from /saved/videos
         document.getElementById(videoID).remove();
         // delete searchable array item 
@@ -422,14 +421,19 @@ async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer
             basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
           }
         }
-      } else if (deleteVideoStatus == `video-id-${videoID}-data-failed-to-permanently-deleted`) {
+        basic.notify("success",`Deleted: ${videoID}`);
+        return `video-id-${videoID}-data-permanently-deleted`;
+      } else {
         basic.notify("error",`Failed Delete: ${videoID}`);
-      }
-      return "videoDataDeletedPermanently";
-    }
+        return `video-id-${videoID}-data-failed-to-permanently-deleted`;
+      }  
+    } else { 
+      basic.notify("error","Failed Fetch: Video Deletion");
+      return "Failed to Complete Request";
+    } 
   } catch (error) {  
     basic.notify("error","Failed Fetch: Video Deletion");
-    return "Failed fetch";
+    return error;
   }
 }
 
