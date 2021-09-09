@@ -25,6 +25,15 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("searchableVideoDataArray", () =>  {    
+    it("Expect Array", () =>  { 
+        const searchableVideoDataArray = basic.searchableVideoDataArray;   
+        expect(searchableVideoDataArray).toBeDefined();     
+        expect(searchableVideoDataArray).toEqual(expect.arrayContaining([]));
+        expect(searchableVideoDataArray).toEqual([]);  
+    }); 
+}); 
+
 describe("websiteContentContainer", () =>  {    
     it("Defined", () =>  { 
         const websiteContentContainer = basic.websiteContentContainer();   
