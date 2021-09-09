@@ -448,44 +448,48 @@ export function searchBar(){
 }
 
 // filters trough video data by searchString input
-export function searchBarKeyUp(searchString) {
-  const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
-  const noSearchableVideoData = document.getElementById("noSearchableVideoData");
-  // check from searchableVideoDataArray if any video data title matches input string
-  const filteredsearchableVideoData = basic.searchableVideoDataArray.filter((video) => {
-    return (
-      video.info.title.toLowerCase().includes(searchString.toLowerCase())
-    );
-  }); 
-  // clear savedVideosThumbnailContainer
-  savedVideosThumbnailContainer.innerHTML = ""; 
-  // check if inputed key phrase available data is avaiable or not to either display data or state the problem
-  if (filteredsearchableVideoData.length == 0) {
-    //  check if filtered available data is avaiable or not to show the correct msg
-    if (basic.searchableVideoDataArray.length == 0) {
-
-      // no avaiable video msg
-      if (savedVideosThumbnailContainer) {      
-        const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-        basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-      } 
+export function searchBarKeyUp(searchString) { 
+  if (typeof searchString == "string") {
+    const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
+    const noSearchableVideoData = document.getElementById("noSearchableVideoData");
+    // check from searchableVideoDataArray if any video data title matches input string
+    const filteredsearchableVideoData = basic.searchableVideoDataArray.filter((video) => {
+      return (
+        video.info.title.toLowerCase().includes(searchString.toLowerCase())
+      );
+    }); 
+    // clear savedVideosThumbnailContainer
+    savedVideosThumbnailContainer.innerHTML = ""; 
+    // check if inputed key phrase available data is avaiable or not to either display data or state the problem
+    if (filteredsearchableVideoData.length == 0) {
+      //  check if filtered available data is avaiable or not to show the correct msg
+      if (basic.searchableVideoDataArray.length == 0) {
+        if (savedVideosThumbnailContainer) {      
+          const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
+          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+        } 
+        return "no avaiable video data";
+      } else { 
+        if (!noSearchableVideoData) {
+          const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
+          basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+        }  
+        return "key phrase unavailable";
+      }
     } else {
-      // key phrase is unavailable msg
-      if (!noSearchableVideoData) {
-        const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-        basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
-      }  
-    }
+      //  remove noSearchableVideoDatacontaier if exits
+      if(noSearchableVideoData){ 
+        noSearchableVideoData.remove();
+      }
+      // display filterd details to client
+      filteredsearchableVideoData.forEach(function(data) {   
+        showDetails(savedVideosThumbnailContainer, data.info.id, data);
+      });
+      return "Display filterd avaiable video data";
+    } 
   } else {
-    //  remove noSearchableVideoDatacontaier if exits
-    if(noSearchableVideoData){ 
-      noSearchableVideoData.remove();
-    }
-    // display filterd details to client
-    filteredsearchableVideoData.forEach(function(data) {   
-      showDetails(savedVideosThumbnailContainer, data.info.id, data);
-    });
-  } 
+    return "searchString not string";
+  }
 }
 
 // load pageLoaded to html page when requested
