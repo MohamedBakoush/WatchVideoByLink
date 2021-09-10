@@ -354,13 +354,13 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
 }
 
 // append image to container with features as, src, onload, onerror and optional  height, width
-function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
+export function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
   try {
     const image = document.createElement("img"); // create image element
-    if (height != undefined) { // create height
+    if (height != undefined) { // assign height
       image.height = height;
     }
-    if (width != undefined) { // create height
+    if (width != undefined) { // assign height
       image.width = width;
     }
     if (idHere != undefined) { // assign id
@@ -369,7 +369,9 @@ function appendImg(container, src, width, height, idHere, classHere, videoInfo_I
     if (classHere != undefined) { // assign class
       image.classList = classHere;
     }   
-    image.src = src; // create src
+    if (src != undefined) { // assign src
+      image.src = src;
+    }    
     image.onload = function () { 
      container.appendChild(image); // append image in container
     };

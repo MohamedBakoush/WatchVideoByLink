@@ -27,6 +27,72 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("appendImg", () =>  {   
+    const imageSrc = "http://localhost:8080/image.png";
+
+    it("valid tagname", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container);   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+    });
+
+    it("valid tagname src", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc);   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+        expect(appendImg.src).toBe(imageSrc);  
+    });
+
+    it("valid tagname src width", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20);   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+        expect(appendImg.src).toBe(imageSrc);  
+        expect(appendImg.width).toBe(20);       
+    });
+
+    it("valid tagname src width height", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20, 40);   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+        expect(appendImg.src).toBe(imageSrc);  
+        expect(appendImg.width).toBe(20);           
+        expect(appendImg.height).toBe(40);    
+    });
+
+    it("valid tagname src width height id", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20, 40, "idHere");   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+        expect(appendImg.src).toBe(imageSrc);  
+        expect(appendImg.width).toBe(20);           
+        expect(appendImg.height).toBe(40);    
+        expect(appendImg.id).toBe("idHere");       
+    });
+
+    it("valid tagname src width height id class", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20, 40, "idHere", "classHere");   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+        expect(appendImg.src).toBe(imageSrc);  
+        expect(appendImg.width).toBe(20);           
+        expect(appendImg.height).toBe(40);    
+        expect(appendImg.id).toBe("idHere");       
+        expect(appendImg.classList[0]).toBe("classHere");   
+    });
+
+    it("valid tagname src width height id class", () =>  { 
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20, 40, "idHere", "classHere", videoID);   
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG");   
+        expect(appendImg.src).toBe(imageSrc);  
+        expect(appendImg.width).toBe(20);           
+        expect(appendImg.height).toBe(40);    
+        expect(appendImg.id).toBe("idHere");       
+        expect(appendImg.classList[0]).toBe("classHere");   
+    });   
+}); 
+
 describe("backToViewAvailableVideoButton", () =>  {   
     it("backToViewAvailableVideoButton exits", () =>  { 
         const backButton = showAvailableVideos.backToViewAvailableVideoButton(container, container, container);   
