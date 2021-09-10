@@ -27,6 +27,62 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+const data = {
+    "ccf40c5d-640b-44e8-ae3b-7e4563a44d29": {
+        "video": {
+        "download-status": "completed"
+        },
+        "compression": {
+        "download-status": "22.64%"
+        },
+        "thumbnail": {
+        "download-status": "22.64%"
+        }
+    },
+    "3d69eafa-d955-4ad0-8a4f-3ea16afc6b34": {
+        "video": {
+        "download-status": "completed"
+        },
+        "compression": {
+        "download-status": "unfinished download"
+        },
+        "thumbnail": {
+        "download-status": "completed"
+        }
+    },
+    "a8f36a2f-42f7-441b-8c9a-57bf1c900348": {
+        "video": {
+        "download-status": "completed"
+        },
+        "compression": {
+        "download-status": "22.64%"
+        },
+        "thumbnail": {
+        "download-status": "completed"
+        }
+    }
+};
+
+describe("eachAvailableVideoDetails", () =>  {   
+    it("available videos", () =>  { 
+        const eachAvailableVideoDetails = showAvailableVideos.eachAvailableVideoDetails(data);   
+        expect(eachAvailableVideoDetails).toBeDefined();       
+        expect(eachAvailableVideoDetails).toBe("available videos");     
+    }); 
+
+    it("no available videos - empty object", () =>  { 
+        const eachAvailableVideoDetails = showAvailableVideos.eachAvailableVideoDetails({});   
+        expect(eachAvailableVideoDetails).toBeDefined();       
+        expect(eachAvailableVideoDetails).toBe("no available videos");     
+    });   
+
+    it("no input", () =>  { 
+        const eachAvailableVideoDetails = showAvailableVideos.eachAvailableVideoDetails();   
+        expect(eachAvailableVideoDetails).toBeDefined();       
+        expect(eachAvailableVideoDetails).toBe("input not an object");     
+    });    
+}); 
+
 describe("changeVideoTitle", () =>  {  
     afterAll(() => {    
         global.fetch = jest.fn();

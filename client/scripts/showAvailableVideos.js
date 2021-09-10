@@ -25,34 +25,44 @@ async function loadVideoDetails() {
 
 // if there is available videoDetails then get each video Details and send the data to showDetails
 // if there are no videoDetails then show  noAvailableVideos msg
-function eachAvailableVideoDetails(videoDetails) {
-  if (Object.keys(videoDetails).length == 0) { // no available videos
-    if (document.getElementById("searchBar")) {
-      document.getElementById("searchBar").remove(); 
-    }
-    const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-    basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-  } else {
-    let container;
-    const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
-    if (savedVideosThumbnailContainer) {
-      savedVideosThumbnailContainer.innerHTML = "";
-      container = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-    } else {
-      container = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-    }
-    if(basic.searchableVideoDataArray.length !== 0){ 
-      basic.searchableVideoDataArray.length = 0;
-    } 
-    Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
-      if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
-        // add video details into searchableVideoDataArray array 
-        videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID;
-        basic.searchableVideoDataArray.push(videoDetails[videoInfo_ID]);
-        // display video details
-        showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
+export function eachAvailableVideoDetails(videoDetails) {
+  try {
+    if (typeof videoDetails == "object") {
+      if (Object.keys(videoDetails).length == 0) { // no available videos
+        if (document.getElementById("searchBar")) {
+          document.getElementById("searchBar").remove(); 
+        }
+        const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
+        basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+        return "no available videos";
+      } else {
+        let container;
+        const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
+        if (savedVideosThumbnailContainer) {
+          savedVideosThumbnailContainer.innerHTML = "";
+          container = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+        } else {
+          container = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+        }
+        if(basic.searchableVideoDataArray.length !== 0){ 
+          basic.searchableVideoDataArray.length = 0;
+        } 
+        Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
+          if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
+            // add video details into searchableVideoDataArray array 
+            videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID;
+            basic.searchableVideoDataArray.push(videoDetails[videoInfo_ID]);
+            // display video details
+            showDetails(container, videoInfo_ID, videoDetails[videoInfo_ID]);
+          }
+        });
+        return "available videos";
       }
-    });
+    } else {
+      return "input not an object";
+    }
+  } catch (error) {
+    return error;
   }
 }
 
