@@ -27,6 +27,96 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("changeVideoTitle", () =>  {  
+    afterAll(() => {    
+        global.fetch = jest.fn();
+        basic.searchableVideoDataArray = [];
+    }); 
+   
+    beforeEach(() => {    
+        basic.searchableVideoDataArray.push({
+            "info": {
+                "title": "Title 27",
+                "videoLink": {
+                    "src": "/video/472290fa-dd86-40f8-8aed-c5672fd81e90",
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/1",
+                    "2": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/2",
+                    "3": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/3",
+                    "4": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/4",
+                    "5": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/5",
+                    "6": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/6",
+                    "7": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/7",
+                    "8": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/8"
+                },
+                "id": "472290fa-dd86-40f8-8aed-c5672fd81e90"
+            }
+        });
+    });
+
+    it("Video Title Changed - response.ok true", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-title-changed"  
+            })
+        ); 
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        expect(changeVideoTitle).toBeDefined();       
+        expect(changeVideoTitle).toBe("Video Title Changed");     
+    });   
+
+    it("Video Title Changed - response.ok true - empty searchableVideoDataArray", async () =>  { 
+        basic.searchableVideoDataArray = [];
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-title-changed"  
+            })
+        ); 
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        expect(changeVideoTitle).toBeDefined();       
+        expect(changeVideoTitle).toBe("searchable video data array id unavailable");     
+    });   
+    
+    it("Video Title Changed - response.ok true - invald id", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-title-changed"  
+            })
+        ); 
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("invalid id", "new title");   
+        expect(changeVideoTitle).toBeDefined();       
+        expect(changeVideoTitle).toBe("searchable video data array id unavailable");     
+    });   
+
+    it("Failed to Change Video Title- response.ok true", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "failed-to-change-video-title"  
+            })
+        ); 
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        expect(changeVideoTitle).toBeDefined();       
+        expect(changeVideoTitle).toBe("Failed to Change Video Title");     
+    });   
+
+    it("Failed to Change Video Title - response.ok false", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false 
+            })
+        ); 
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        expect(changeVideoTitle).toBeDefined();       
+        expect(changeVideoTitle).toBe("Failed to Change Video Title");     
+    });   
+}); 
+
 describe("appendImg", () =>  {   
     const imageSrc = "http://localhost:8080/image.png";
 

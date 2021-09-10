@@ -315,7 +315,6 @@ function showDetails(container, videoInfo_ID, videoDetails) {
 // request to stop download video srteam
 export async function changeVideoTitle(videoID, newVideoTitle) { 
   try {
-    
     const payload = {
       videoID: videoID,
       newVideoTitle: newVideoTitle
@@ -333,23 +332,27 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
       requestResponse = await response.json(); 
       if (requestResponse == "video-title-changed") {
         // find array id of searchableVideoDataArray by videoID
-        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID); 
-        // change video title from old to new
-        document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
-        basic.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
-        // confirmation notification 
-        basic.notify("success",`Video Title Changed: ${newVideoTitle}`);
-      } else if (requestResponse == "failed-to-change-video-title") {
+        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID);
+        if (searchableArrayItemId !== -1) {// change video title from old to new
+          document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
+          basic.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
+          basic.notify("success",`Video Title Changed: ${newVideoTitle}`);
+          return "Video Title Changed";
+        } else {
+          basic.notify("error", "Video Data ID Unavailable");
+          return "searchable video data array id unavailable";
+        }
+      } else {
         basic.notify("error","Failed to Change Video Title"); 
+        return "Failed to Change Video Title";
       }
-      return requestResponse;
     } else {
       basic.notify("error","Failed to Change Video Title"); 
       return "Failed to Change Video Title";
     } 
   } catch (error) {
-    basic.notify("error","Failed fetch: Change Video Title"); 
-    return "Failed fetch";
+    basic.notify("error","Failed fetch: Change Video Title");  
+    return error;
   }
 }
 
