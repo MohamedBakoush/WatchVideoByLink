@@ -27,6 +27,63 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("backToViewAvailableVideoButton", () =>  {   
+    it("backToViewAvailableVideoButton exits", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(container, container, container);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton successful");     
+    });   
+
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(container, container, undefined);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });   
+  
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(undefined, container, container);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });  
+
+                 
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(container, undefined, container);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });  
+
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(container, container, undefined);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });  
+
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(undefined, undefined, container);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });   
+
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(undefined, container);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });   
+
+    it("backToViewAvailableVideoButton - fist ", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton(container);   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });   
+
+    it("backToViewAvailableVideoButton no inputs", () =>  { 
+        const backButton = showAvailableVideos.backToViewAvailableVideoButton();   
+        expect(backButton).toBeDefined();       
+        expect(backButton).toBe("backToViewAvailableVideoButton didnt work");     
+    });   
+}); 
+
 describe("deleteVideoDataPermanently", () =>  {   
     afterAll(() => {    
         global.fetch = jest.fn();

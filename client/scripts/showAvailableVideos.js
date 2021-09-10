@@ -383,16 +383,25 @@ function appendImg(container, src, width, height, idHere, classHere, videoInfo_I
 }
 
 // close edit menu button
-function backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu) {
-  const backToMainVideoButton = document.createElement("button");
-  option_menu.title = "menu";
-  backToMainVideoButton.title = "Close Edit mode";
-  backToMainVideoButton.className =  "backToViewAvailableVideoButton fa fa-times";
-  backToMainVideoButton.onclick = function(){
-    document.body.style.removeProperty("overflow");
-    video_edit_container.remove();
-  };
-  video_edit_body.appendChild(backToMainVideoButton);
+export function backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu) {
+  try {
+    if (video_edit_body == undefined || video_edit_container == undefined || option_menu == undefined ) {  
+      return "backToViewAvailableVideoButton didnt work";
+    } else {
+      const backToMainVideoButton = document.createElement("button");
+      option_menu.title = "menu";
+      backToMainVideoButton.title = "Close Edit mode";
+      backToMainVideoButton.className =  "backToViewAvailableVideoButton fa fa-times";
+      backToMainVideoButton.onclick = function(){
+        document.body.style.removeProperty("overflow");
+        video_edit_container.remove();
+      };
+      video_edit_body.appendChild(backToMainVideoButton);
+      return "backToViewAvailableVideoButton successful"; 
+    }
+  } catch (error) {
+    return "backToViewAvailableVideoButton didnt work";
+  }
 }
 
 // send request to server to delete video and all video data permently from the system
