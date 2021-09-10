@@ -63,6 +63,43 @@ const data = {
     }
 };
 
+describe("loadVideoDetails", () =>  {   
+    afterAll(() => {    
+        global.fetch = jest.fn();
+    }); 
+
+    it("Video details loaded", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => data  
+            })
+        );  
+        const loadVideoDetails = await showAvailableVideos.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Video details loaded");     
+    });  
+
+    it("Failed to load video details", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false,
+                json: () => data  
+            })
+        );  
+        const loadVideoDetails = await showAvailableVideos.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Failed to load video details");     
+    });  
+
+    it("Fetch Request Failed", async () =>  { 
+        global.fetch = jest.fn();
+        const loadVideoDetails = await showAvailableVideos.loadVideoDetails();   
+        expect(loadVideoDetails).toBeDefined();       
+        expect(loadVideoDetails).toBe("Fetch Request Failed");     
+    });  
+}); 
+
 describe("eachAvailableVideoDetails", () =>  {   
     it("available videos", () =>  { 
         const eachAvailableVideoDetails = showAvailableVideos.eachAvailableVideoDetails(data);   

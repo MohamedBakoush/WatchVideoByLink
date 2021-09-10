@@ -2,7 +2,7 @@ import * as basic from "../scripts/basics.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
-async function loadVideoDetails() {
+export async function loadVideoDetails() {
   try {
     const response = await fetch("../all-available-video-data");
     let availablevideoDetails;
@@ -10,16 +10,18 @@ async function loadVideoDetails() {
       availablevideoDetails = await response.json();
       searchBar();
       eachAvailableVideoDetails(availablevideoDetails);
+      return "Video details loaded";
     } else {
-      availablevideoDetails = { msg: "failed to load messages" };
+      return "Failed to load video details";
     }
-  } catch (e) { // when an error occurs
+  } catch (error) { // when an error occurs
     // if responseErrorAvailableVideo id dosent exist
     if (!document.getElementById("responseErrorAvailableVideo")) {
       // show error msg
       const responseError = basic.createSection(basic.websiteContentContainer(), "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
       basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
     }
+    return "Fetch Request Failed";
   }
 }
 
