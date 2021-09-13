@@ -5,6 +5,7 @@ const { JSDOM } = jsdom;
 const dom = new JSDOM();
 global.window = dom.window; 
 global.document = dom.window.document;   
+document.execCommand = jest.fn();
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
 const container = document.createElement("section");
 const videoID1 = "ccf40c5d-640b-44e8-ae3b-7e4563a44d29";
@@ -173,6 +174,32 @@ describe("showDetails", () =>  {
     });
 });
 
+describe("optionMenuCopyOnClick", () =>  {  
+    it("videoSrc not string", () =>  { 
+        const optionMenuCopyOnClick = showAvailableVideos.optionMenuCopyOnClick();   
+        expect(optionMenuCopyOnClick).toBeDefined();       
+        expect(optionMenuCopyOnClick).toBe("videoSrc not string");     
+    });   
+
+    it("videoType not string", () =>  { 
+        const optionMenuCopyOnClick = showAvailableVideos.optionMenuCopyOnClick("http://localhost:8080/video.mp4");   
+        expect(optionMenuCopyOnClick).toBeDefined();       
+        expect(optionMenuCopyOnClick).toBe("videoType not string");     
+    });  
+
+    it("optionMenuCopyOnClick didnt work", () =>  { 
+        const optionMenuCopyOnClick = showAvailableVideos.optionMenuCopyOnClick("http://localhost:8080/video.mp4", "video/mp4");   
+        expect(optionMenuCopyOnClick).toBeDefined();       
+        expect(optionMenuCopyOnClick).toBe("optionMenuCopyOnClick didnt work");     
+    });  
+
+    it("display optionMenuCopyOnClick", () =>  { 
+        const optionMenuCopyOnClick = showAvailableVideos.optionMenuCopyOnClick("", "", container);   
+        expect(optionMenuCopyOnClick).toBeDefined();       
+        expect(optionMenuCopyOnClick).toBe("optionMenuCopyOnClick");     
+    });  
+});
+ 
 describe("changeVideoTitle", () =>  {  
     afterAll(() => {    
         global.fetch = jest.fn();

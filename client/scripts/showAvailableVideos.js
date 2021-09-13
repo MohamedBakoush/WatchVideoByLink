@@ -139,15 +139,29 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
 }
 
 // on click option menu copy video link
-function optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy) { 
-  const tempCopyLink = document.createElement("textarea");
-  document.body.appendChild(tempCopyLink);
-  tempCopyLink.value = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-  tempCopyLink.select();
-  document.execCommand("copy");
-  document.body.removeChild(tempCopyLink);
-  option_menu_copy.textContent = "Copied";
-  basic.notify("success","Copied Video Link");
+export function optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy) { 
+  try {
+    if (typeof videoSrc !== "string") {
+      basic.notify("error","Copied Video Link: Invalid videoSrc");
+      return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+      basic.notify("error","Copied Video Link: Invalid videoType");
+      return "videoType not string";
+    } else {
+      const tempCopyLink = document.createElement("textarea");
+      document.body.appendChild(tempCopyLink);
+      tempCopyLink.value = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+      tempCopyLink.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempCopyLink);
+      option_menu_copy.textContent = "Copied";
+      basic.notify("success","Copied Video Link");
+      return "optionMenuCopyOnClick";
+    }
+  } catch (error) {
+    basic.notify("error","Copied Video Link: Failed to execute function properly");
+    return "optionMenuCopyOnClick didnt work";
+  }
 }
 
 // on click option menu
