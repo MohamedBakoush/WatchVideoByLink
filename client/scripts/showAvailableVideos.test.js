@@ -7,8 +7,8 @@ global.window = dom.window;
 global.document = dom.window.document;   
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
 const container = document.createElement("section");
-const videoID = "ccf40c5d-640b-44e8-ae3b-7e4563a44d29";
-
+const videoID1 = "ccf40c5d-640b-44e8-ae3b-7e4563a44d29";
+const videoID2 = "472290fa-dd86-40f8-8aed-c5672fd81e90";
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
 beforeAll(() => {
     spy = jest.spyOn(document, "getElementById");
@@ -27,7 +27,7 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
-const data = {
+const currentVideoDownloadData = {
     "ccf40c5d-640b-44e8-ae3b-7e4563a44d29": {
         "video": {
         "download-status": "completed"
@@ -63,6 +63,27 @@ const data = {
     }
 };
 
+const videoDetails = {
+    "info": {
+        "title": "Title 27",
+        "videoLink": {
+            "src": "/video/472290fa-dd86-40f8-8aed-c5672fd81e90",
+            "type": "video/mp4"
+        },
+        "thumbnailLink": {
+            "1": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/1",
+            "2": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/2",
+            "3": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/3",
+            "4": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/4",
+            "5": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/5",
+            "6": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/6",
+            "7": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/7",
+            "8": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/8"
+        },
+        "id": "472290fa-dd86-40f8-8aed-c5672fd81e90"
+    }
+};
+
 describe("loadVideoDetails", () =>  {   
     afterAll(() => {    
         global.fetch = jest.fn();
@@ -72,7 +93,7 @@ describe("loadVideoDetails", () =>  {
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
-                json: () => data  
+                json: () => currentVideoDownloadData  
             })
         );  
         const loadVideoDetails = await showAvailableVideos.loadVideoDetails();   
@@ -84,7 +105,7 @@ describe("loadVideoDetails", () =>  {
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: false,
-                json: () => data  
+                json: () => currentVideoDownloadData  
             })
         );  
         const loadVideoDetails = await showAvailableVideos.loadVideoDetails();   
@@ -102,7 +123,7 @@ describe("loadVideoDetails", () =>  {
 
 describe("eachAvailableVideoDetails", () =>  {   
     it("available videos", () =>  { 
-        const eachAvailableVideoDetails = showAvailableVideos.eachAvailableVideoDetails(data);   
+        const eachAvailableVideoDetails = showAvailableVideos.eachAvailableVideoDetails(currentVideoDownloadData);   
         expect(eachAvailableVideoDetails).toBeDefined();       
         expect(eachAvailableVideoDetails).toBe("available videos");     
     }); 
@@ -120,6 +141,38 @@ describe("eachAvailableVideoDetails", () =>  {
     });    
 }); 
 
+describe("showDetails", () =>  {  
+    it("display showDetails", () =>  { 
+        const showDetails = showAvailableVideos.showDetails(container, videoID2, videoDetails);   
+        expect(showDetails).toBeDefined();       
+        expect(showDetails).toBe("showDetails");     
+    });   
+     
+    it("videoDetails undefined", () =>  { 
+        const showDetails = showAvailableVideos.showDetails(container, videoID2);   
+        expect(showDetails).toBeDefined();       
+        expect(showDetails).toBe("invalid videoDetails");     
+    });   
+     
+    it("video id undefined", () =>  { 
+        const showDetails = showAvailableVideos.showDetails(container);   
+        expect(showDetails).toBeDefined();       
+        expect(showDetails).toBe("video id undefined");     
+    }); 
+     
+    it("no input", () =>  { 
+        const showDetails = showAvailableVideos.showDetails();   
+        expect(showDetails).toBeDefined();       
+        expect(showDetails).toBe("savedVideosThumbnailContainer undefined");  
+    });
+     
+    it("invalid videoDetails", () =>  { 
+        const showDetails = showAvailableVideos.showDetails(container, videoID2, {});   
+        expect(showDetails).toBeDefined();       
+        expect(showDetails).toBe("showDetails didnt work");  
+    });
+});
+
 describe("changeVideoTitle", () =>  {  
     afterAll(() => {    
         global.fetch = jest.fn();
@@ -127,26 +180,7 @@ describe("changeVideoTitle", () =>  {
     }); 
    
     beforeEach(() => {    
-        basic.searchableVideoDataArray.push({
-            "info": {
-                "title": "Title 27",
-                "videoLink": {
-                    "src": "/video/472290fa-dd86-40f8-8aed-c5672fd81e90",
-                    "type": "video/mp4"
-                },
-                "thumbnailLink": {
-                    "1": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/1",
-                    "2": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/2",
-                    "3": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/3",
-                    "4": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/4",
-                    "5": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/5",
-                    "6": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/6",
-                    "7": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/7",
-                    "8": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/8"
-                },
-                "id": "472290fa-dd86-40f8-8aed-c5672fd81e90"
-            }
-        });
+        basic.searchableVideoDataArray.push(videoDetails);
     });
 
     it("Video Title Changed - response.ok true", async () =>  { 
@@ -156,7 +190,7 @@ describe("changeVideoTitle", () =>  {
                 json: () => "video-title-changed"  
             })
         ); 
-        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle(videoID2, "new title");   
         expect(changeVideoTitle).toBeDefined();       
         expect(changeVideoTitle).toBe("Video Title Changed");     
     });   
@@ -169,7 +203,7 @@ describe("changeVideoTitle", () =>  {
                 json: () => "video-title-changed"  
             })
         ); 
-        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle(videoID2, "new title");   
         expect(changeVideoTitle).toBeDefined();       
         expect(changeVideoTitle).toBe("searchable video data array id unavailable");     
     });   
@@ -193,7 +227,7 @@ describe("changeVideoTitle", () =>  {
                 json: () => "failed-to-change-video-title"  
             })
         ); 
-        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle(videoID2, "new title");   
         expect(changeVideoTitle).toBeDefined();       
         expect(changeVideoTitle).toBe("Failed to Change Video Title");     
     });   
@@ -204,7 +238,7 @@ describe("changeVideoTitle", () =>  {
                 ok: false 
             })
         ); 
-        const changeVideoTitle = await showAvailableVideos.changeVideoTitle("472290fa-dd86-40f8-8aed-c5672fd81e90", "new title");   
+        const changeVideoTitle = await showAvailableVideos.changeVideoTitle(videoID2, "new title");   
         expect(changeVideoTitle).toBeDefined();       
         expect(changeVideoTitle).toBe("Failed to Change Video Title");     
     });   
@@ -265,7 +299,7 @@ describe("appendImg", () =>  {
     });
 
     it("valid tagname src width height id class", () =>  { 
-        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20, 40, "idHere", "classHere", videoID);   
+        const appendImg = showAvailableVideos.appendImg(container, imageSrc, 20, 40, "idHere", "classHere", videoID1);   
         expect(appendImg).toBeDefined(); 
         expect(appendImg.tagName).toBe("IMG");   
         expect(appendImg.src).toBe(imageSrc);  
@@ -342,24 +376,24 @@ describe("deleteVideoDataPermanently", () =>  {
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
-                json: () => `video-id-${videoID}-data-permanently-deleted`  
+                json: () => `video-id-${videoID1}-data-permanently-deleted`  
             })
         ); 
-        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);   
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID1, container);   
         expect(deleteVideoData).toBeDefined();        
-        expect(deleteVideoData).toBe(`video-id-${videoID}-data-permanently-deleted`); 
+        expect(deleteVideoData).toBe(`video-id-${videoID1}-data-permanently-deleted`); 
     });  
     
     it("Failed to Delete - invalid msg", async () =>  { 
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
-                json: () => `video-id-${videoID}-data-failed-to-permanently-deleted`  
+                json: () => `video-id-${videoID1}-data-failed-to-permanently-deleted`  
             })
         ); 
-        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);   
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID1, container);   
         expect(deleteVideoData).toBeDefined();        
-        expect(deleteVideoData).toBe(`video-id-${videoID}-data-failed-to-permanently-deleted`); 
+        expect(deleteVideoData).toBe(`video-id-${videoID1}-data-failed-to-permanently-deleted`); 
     });  
     
     it("Failed to Delete - random msg", async () =>  { 
@@ -369,9 +403,9 @@ describe("deleteVideoDataPermanently", () =>  {
                 json: () => "JSON Message"  
             })
         ); 
-        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);  
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID1, container);  
         expect(deleteVideoData).toBeDefined();        
-        expect(deleteVideoData).toBe(`video-id-${videoID}-data-failed-to-permanently-deleted`); 
+        expect(deleteVideoData).toBe(`video-id-${videoID1}-data-failed-to-permanently-deleted`); 
     });  
     
     it("Failed to Complete Request - response.ok false", async () =>  { 
@@ -380,7 +414,7 @@ describe("deleteVideoDataPermanently", () =>  {
                 ok: false
             })
         ); 
-        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID, container);   
+        const deleteVideoData = await showAvailableVideos.deleteVideoDataPermanently(videoID1, container);   
         expect(deleteVideoData).toBeDefined();        
         expect(deleteVideoData).toBe("Failed to Complete Request"); 
     });      
@@ -402,26 +436,7 @@ describe("searchBar", () =>  {
 
 describe("searchBarKeyUp", () =>  {   
     beforeEach(() => {    
-        basic.searchableVideoDataArray.push({
-            "info": {
-                "title": "Title 27",
-                "videoLink": {
-                    "src": "/video/472290fa-dd86-40f8-8aed-c5672fd81e90",
-                    "type": "video/mp4"
-                },
-                "thumbnailLink": {
-                    "1": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/1",
-                    "2": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/2",
-                    "3": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/3",
-                    "4": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/4",
-                    "5": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/5",
-                    "6": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/6",
-                    "7": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/7",
-                    "8": "/thumbnail/472290fa-dd86-40f8-8aed-c5672fd81e90/8"
-                },
-                "id": "472290fa-dd86-40f8-8aed-c5672fd81e90"
-            }
-        });
+        basic.searchableVideoDataArray.push(videoDetails);
     });
 
     afterAll(() => {    
