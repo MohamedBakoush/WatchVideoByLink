@@ -184,3 +184,72 @@ describe("getVideoUrlAuto", () =>  {
         expect(getVideoUrlAuto).toBe("getVideoUrlAuto");    
     });    
 });    
+
+describe("getVideoLinkFromUrl", () =>  {     
+    afterEach(() => {    
+        global.fetch = jest.fn();
+    });
+
+    it("url_link not string", async () =>  {  
+        const getVideoLinkFromUrl = await index.getVideoLinkFromUrl();   
+        expect(getVideoLinkFromUrl).toBeDefined();       
+        expect(getVideoLinkFromUrl).toBe("url_link not string");    
+    });   
+
+    it("searchingForVideoLinkMessageContainer undefined", async () =>  {  
+        const getVideoLinkFromUrl = await index.getVideoLinkFromUrl("http://localhost:8080/");   
+        expect(getVideoLinkFromUrl).toBeDefined();       
+        expect(getVideoLinkFromUrl).toBe("searchingForVideoLinkMessageContainer undefined");    
+    });  
+
+    it("Failed to get video link from URL", async () =>  { 
+        const videoDataFromUrl = {
+            input_url_link: "http://localhost:8080/",
+            video_url: "http://localhost:8080/video.mp4",
+            video_file_format: "video/mp4"
+        };  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => videoDataFromUrl
+
+            })
+        ); 
+        const getVideoLinkFromUrl = await index.getVideoLinkFromUrl("http://localhost:8080/", container);   
+        expect(getVideoLinkFromUrl).toBeDefined();       
+        expect(getVideoLinkFromUrl.input_url_link).toBe("http://localhost:8080/");  
+        expect(getVideoLinkFromUrl.video_url).toBe("http://localhost:8080/video.mp4");    
+        expect(getVideoLinkFromUrl.video_file_format).toBe("video/mp4");  
+    });
+    
+    it("failed-get-video-url-from-provided-url", async () =>  {  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "failed-get-video-url-from-provided-url"
+
+            })
+        ); 
+        const getVideoLinkFromUrl = await index.getVideoLinkFromUrl("http://localhost:8080/", container);   
+        expect(getVideoLinkFromUrl).toBeDefined();       
+        expect(getVideoLinkFromUrl).toBe("Failed to get video link from URL");    
+    });
+
+     
+    it("Failed to get video link from URL", async () =>  {  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false
+            })
+        ); 
+        const getVideoLinkFromUrl = await index.getVideoLinkFromUrl("http://localhost:8080/", container);   
+        expect(getVideoLinkFromUrl).toBeDefined();       
+        expect(getVideoLinkFromUrl).toBe("Failed to get video link from URL");    
+    });
+
+    it("Failed fetch video link from URL", async () =>  {  
+        const getVideoLinkFromUrl = await index.getVideoLinkFromUrl("http://localhost:8080/", container);   
+        expect(getVideoLinkFromUrl).toBeDefined();       
+        expect(getVideoLinkFromUrl).toBe("Failed fetch video link from URL");    
+    });        
+}); 
