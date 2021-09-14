@@ -172,14 +172,14 @@ describe("updateVideoPlayerVolume", () =>  {
 });    
 
 describe("getVideoUrlAuto", () =>  {     
-    it("url_link not string", async () =>  {  
-        const getVideoUrlAuto = await index.getVideoUrlAuto();   
+    it("url_link not string", () =>  {  
+        const getVideoUrlAuto = index.getVideoUrlAuto();   
         expect(getVideoUrlAuto).toBeDefined();       
         expect(getVideoUrlAuto).toBe("url_link not string");    
     });    
     
-    it("getVideoUrlAuto", async () =>  {  
-        const getVideoUrlAuto = await index.getVideoUrlAuto("http://localhost:8080/");   
+    it("getVideoUrlAuto", () =>  {  
+        const getVideoUrlAuto = index.getVideoUrlAuto("http://localhost:8080/");   
         expect(getVideoUrlAuto).toBeDefined();       
         expect(getVideoUrlAuto).toBe("getVideoUrlAuto");    
     });    
