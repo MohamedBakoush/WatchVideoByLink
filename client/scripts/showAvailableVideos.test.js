@@ -8,6 +8,9 @@ global.document = dom.window.document;
 document.execCommand = jest.fn();
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
 const container = document.createElement("section");
+const inputTextContainer = document.createElement("input");
+inputTextContainer.type = "text";
+inputTextContainer.value = "newInputTitle";
 const videoID1 = "ccf40c5d-640b-44e8-ae3b-7e4563a44d29";
 const videoID2 = "472290fa-dd86-40f8-8aed-c5672fd81e90";
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
@@ -324,15 +327,80 @@ describe("optionMenuEditOnClick", () =>  {
     });  
 
     it("display optionMenuEditOnClick", () =>  { 
-        const inputContainer = document.createElement("input");
-        inputContainer.type = "text";
-        inputContainer.value = "newInputTitle";
-        const optionMenuEditOnClick = showAvailableVideos.optionMenuEditOnClick(container ,"http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container, container, inputContainer);   
+        const optionMenuEditOnClick = showAvailableVideos.optionMenuEditOnClick(container ,"http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container, container, inputTextContainer);   
         expect(optionMenuEditOnClick).toBeDefined();       
         expect(optionMenuEditOnClick).toBe("optionMenuEditOnClick");     
     }); 
 });
 
+describe("closeOptionMenuOnClick", () =>  {  
+    it("videoSrc not string", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick();   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("videoSrc not string");     
+    });       
+    
+    it("videoType not string", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4");   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("videoType not string");     
+    });    
+    
+    it("videoInfo_ID not string", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4");   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("videoInfo_ID not string");     
+    }); 
+    
+    it("video_name not string", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("video_name not string");     
+    }); 
+    
+    it("option_menu undefined", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name");   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("option_menu undefined");     
+    }); 
+    
+    it("option_menu_container undefined", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("option_menu_container undefined");     
+    }); 
+    
+    it("close_option_menu undefined", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("close_option_menu undefined");     
+    }); 
+    
+    it("linkContainer undefined", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("linkContainer undefined");     
+    }); 
+    
+    it("thumbnailTitleContainer undefined", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container, container);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("thumbnailTitleContainer undefined");     
+    }); 
+    
+    it("inputNewTitle undefined", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container, container, container);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("inputNewTitle undefined");     
+    }); 
+    
+    it("display closeOptionMenuOnClick", () =>  { 
+        const closeOptionMenuOnClick = showAvailableVideos.closeOptionMenuOnClick("http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container, container, container, inputTextContainer);   
+        expect(closeOptionMenuOnClick).toBeDefined();       
+        expect(closeOptionMenuOnClick).toBe("closeOptionMenuOnClick");     
+    }); 
+});
+ 
 describe("changeVideoTitle", () =>  {  
     afterAll(() => {    
         global.fetch = jest.fn();

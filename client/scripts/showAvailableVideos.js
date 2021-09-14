@@ -399,20 +399,47 @@ export function optionMenuEditOnClick(savedVideosThumbnailContainer, videoSrc, v
 }
 
 // on click close option menu
-function closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle) {
-  if (video_name !== inputNewTitle.value) {
-    video_name = inputNewTitle.value;
-    changeVideoTitle(videoInfo_ID, video_name); 
+export function closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle) {
+  try {
+    if (typeof videoSrc !== "string") {  
+      return "videoSrc not string";
+    } else if (typeof videoType !== "string") {  
+      return "videoType not string";
+    } else if (typeof videoInfo_ID !== "string") {  
+      return "videoInfo_ID not string";
+    } else if (typeof video_name !== "string") {  
+      return "video_name not string";
+    } else if (option_menu === undefined) {  
+      return "option_menu undefined";
+    } else if (option_menu_container === undefined) {  
+      return "option_menu_container undefined";
+    } else if (close_option_menu === undefined) {  
+      return "close_option_menu undefined";
+    } else if (linkContainer === undefined) {  
+      return "linkContainer undefined";
+    } else if (thumbnailTitleContainer === undefined) {  
+      return "thumbnailTitleContainer undefined";
+    } else if (inputNewTitle === undefined) {  
+      return "inputNewTitle undefined";
+    } else {  
+      if (video_name !== inputNewTitle.value) {
+        video_name = inputNewTitle.value;
+        changeVideoTitle(videoInfo_ID, video_name); 
+      }
+      document.getElementById(`${videoInfo_ID}-title`).remove();
+      document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+      basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
+      option_menu.title = "menu";
+      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+      option_menu.classList = "thumbnail-option-menu fa fa-bars";
+      option_menu.disabled = false;
+      option_menu_container.remove();
+      close_option_menu.remove(); 
+      return "closeOptionMenuOnClick"; 
+    }
+  } catch (error) {
+    return "closeOptionMenuOnClick didnt work";
   }
-  document.getElementById(`${videoInfo_ID}-title`).remove();
-  document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-  basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-  option_menu.title = "menu";
-  linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-  option_menu.classList = "thumbnail-option-menu fa fa-bars";
-  option_menu.disabled = false;
-  option_menu_container.remove();
-  close_option_menu.remove();
 }
 
 // request to stop download video srteam
