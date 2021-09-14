@@ -86,49 +86,54 @@ export function showDetails() {
   return "showDetails";
 }
 
-
-function uploadVideoDetails(videoLink){  
-  // upload video container
-  const uploadVideoForm = basic.createSection(videoLink, "form", "uploadVideoContainer", "uploadVideoContainer");  
-  uploadVideoForm.onsubmit = function(){
-    return false;
-  };
-  // submit video button container
-  const submitUploadVideoButtonContainer = basic.createSection(uploadVideoForm, "section", "submitUploadVideoButtonContainer");
-  // choose video input body
-  const chooseVideoInputBody = basic.createSection(submitUploadVideoButtonContainer, "section", "chooseVideoInputBody");
-  // choose video input label
-  const chooseVideoInputLabel = basic.createSection(chooseVideoInputBody, "label", "chooseVideoInputLabel");
-  // select video to input
-  const inputUploadVideo = basic.createInput(chooseVideoInputLabel, "file");  
-  inputUploadVideo.accept = "video/*";
-  inputUploadVideo.name = "file";
-  inputUploadVideo.required = true;
-  // submit choosen video button container
-  const submitChoosenVideoButtonContainer = basic.createSection(submitUploadVideoButtonContainer, "section", "submitChoosenVideoButtonContainer");
-  // upload Video button
-  basic.createInput(submitChoosenVideoButtonContainer, "submit", "Upload Video", undefined , "button uploadVideoButton");
-  // once upload Video button is clicked
-  uploadVideoForm.onsubmit = function(){ 
-    const file = inputUploadVideo.files[0]; 
-    // file size has to be smaller then 1 GB to be uploaded to server
-    if (file.size > (1024 * 1024 * 1024)) {  
-      // remove upload Video container 
-      uploadVideoForm.remove();
-      uploadVideoDetails(videoLink);
-      // error msg
-      basic.notify("error", "Size Error: Unable to upload videos greater then 1 GB");
-    } else {
-      // remove upload Video container
-      uploadVideoForm.remove();  
-      // create new upload Video container
-      const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer", "uploadVideoContainer"); 
-      // create new submit Video button container
-      basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${file.name}`); 
-      // upload video file 
-      uploadFile(inputUploadVideo, videoLink, newUploadVideoForm);
-    }
-  };
+// upload video form 
+export function uploadVideoDetails(videoLink){  
+  if (videoLink === undefined) {
+    return "videoLink undefined";
+  } else {
+    // upload video container
+    const uploadVideoForm = basic.createSection(videoLink, "form", "uploadVideoContainer", "uploadVideoContainer");  
+    uploadVideoForm.onsubmit = function(){
+      return false;
+    };
+    // submit video button container
+    const submitUploadVideoButtonContainer = basic.createSection(uploadVideoForm, "section", "submitUploadVideoButtonContainer");
+    // choose video input body
+    const chooseVideoInputBody = basic.createSection(submitUploadVideoButtonContainer, "section", "chooseVideoInputBody");
+    // choose video input label
+    const chooseVideoInputLabel = basic.createSection(chooseVideoInputBody, "label", "chooseVideoInputLabel");
+    // select video to input
+    const inputUploadVideo = basic.createInput(chooseVideoInputLabel, "file");  
+    inputUploadVideo.accept = "video/*";
+    inputUploadVideo.name = "file";
+    inputUploadVideo.required = true;
+    // submit choosen video button container
+    const submitChoosenVideoButtonContainer = basic.createSection(submitUploadVideoButtonContainer, "section", "submitChoosenVideoButtonContainer");
+    // upload Video button
+    basic.createInput(submitChoosenVideoButtonContainer, "submit", "Upload Video", undefined , "button uploadVideoButton");
+    // once upload Video button is clicked
+    uploadVideoForm.onsubmit = function(){ 
+      const file = inputUploadVideo.files[0]; 
+      // file size has to be smaller then 1 GB to be uploaded to server
+      if (file.size > (1024 * 1024 * 1024)) {  
+        // remove upload Video container 
+        uploadVideoForm.remove();
+        uploadVideoDetails(videoLink);
+        // error msg
+        basic.notify("error", "Size Error: Unable to upload videos greater then 1 GB");
+      } else {
+        // remove upload Video container
+        uploadVideoForm.remove();  
+        // create new upload Video container
+        const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer", "uploadVideoContainer"); 
+        // create new submit Video button container
+        basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${file.name}`); 
+        // upload video file 
+        uploadFile(inputUploadVideo, videoLink, newUploadVideoForm);
+      }
+    };
+    return "uploadVideoDetails"; 
+  }
 }
 
 async function uploadFile(data, videoLink, newUploadVideoForm){  

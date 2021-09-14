@@ -6,6 +6,7 @@ global.window = dom.window;
 global.document = dom.window.document;   
 global.history = dom.window.history;
 const videoURL = "http://localhost:8080/?t=video/mp4?v=http://localhost:8080/video.mp4";     
+const container = document.createElement("section");
 history.replaceState = jest.fn();   
 
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
@@ -51,5 +52,19 @@ describe("showDetails", () =>  {
         const showDetails = index.showDetails();   
         expect(showDetails).toBeDefined();       
         expect(showDetails).toBe("showDetails");     
+    });       
+}); 
+
+describe("uploadVideoDetails", () =>  {    
+    it("videoLink undefined", () =>  { 
+        const uploadVideoDetails = index.uploadVideoDetails();   
+        expect(uploadVideoDetails).toBeDefined();       
+        expect(uploadVideoDetails).toBe("videoLink undefined");     
+    });    
+
+    it("display uploadVideoDetails", () =>  { 
+        const uploadVideoDetails = index.uploadVideoDetails(container);   
+        expect(uploadVideoDetails).toBeDefined();       
+        expect(uploadVideoDetails).toBe("uploadVideoDetails");     
     });       
 }); 
