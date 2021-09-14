@@ -200,6 +200,68 @@ describe("optionMenuCopyOnClick", () =>  {
     });  
 });
  
+describe("optionMenuOnClick", () =>  {  
+    it("savedVideosThumbnailContainer undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick();   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("savedVideosThumbnailContainer undefined");     
+    }); 
+
+    it("videoSrc not string", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container);   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("videoSrc not string");     
+    });   
+
+    it("videoType not string", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4");   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("videoType not string");     
+    });  
+
+    it("videoInfo_ID undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4");   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("videoInfo_ID undefined");     
+    });  
+
+    it("video_name undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1);   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("video_name undefined");     
+    });  
+
+    it("option_menu undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name");   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("option_menu undefined");     
+    });  
+    
+    it("linkContainer undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container);   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("linkContainer undefined");     
+    });  
+    
+    it("thumbnailContainer undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container);   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("thumbnailContainer undefined");     
+    });  
+
+    it("thumbnailTitleContainer undefined", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container);   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("thumbnailTitleContainer undefined");     
+    });  
+
+    it("display optionMenuOnClick", () =>  { 
+        const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1, "video name", container, container, container, container);   
+        expect(optionMenuOnClick).toBeDefined();       
+        expect(optionMenuOnClick).toBe("optionMenuOnClick");     
+    });   
+});
+
 describe("changeVideoTitle", () =>  {  
     afterAll(() => {    
         global.fetch = jest.fn();

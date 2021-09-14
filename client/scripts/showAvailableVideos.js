@@ -165,68 +165,111 @@ export function optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy) {
 }
 
 // on click option menu
-function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer) {
-  option_menu.title = "";
-  linkContainer.removeAttribute("href");
-  option_menu.disabled = true;
-  option_menu.classList = "thumbnail-option-menu";
-  // option_menu_container
-  const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
-  // copy video link
-  const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
-  option_menu_copy.title = "Get shareable link";
-  option_menu_copy.onclick = function(e){
-    e.preventDefault();
-    optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy);
-  };
-  // check if video title is same as dispalyed by ${videoInfo_ID}-title id
-  if (video_name !== document.getElementById(`${videoInfo_ID}-title`).textContent) { 
-    video_name = document.getElementById(`${videoInfo_ID}-title`).textContent;
-  }
-  // update ${videoInfo_ID}-title id into input text box
-  document.getElementById(`${videoInfo_ID}-title`).remove();
-  const inputNewTitle = basic.createInput(document.getElementById(`${videoInfo_ID}-title-container`),"text", video_name, `${videoInfo_ID}-title`, "inputNewTitle");
-  document.getElementById(`${videoInfo_ID}-title-container`).removeAttribute("href");
-  inputNewTitle.onkeypress = function(e){ // on input new title key press
-    if (!e) e = window.event;
-    var keyCode = e.code || e.key;
-    if (keyCode == "Enter"){ 
-      video_name = inputNewTitle.value;
-      changeVideoTitle(videoInfo_ID, video_name);
-      inputNewTitle.blur();
-      return false;
-    }
-  };
-  // show video edit info menu
-  const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
-  option_menu_edit.title = "Edit";
-  option_menu_edit.onclick = function(e){
-    e.preventDefault();
-    optionMenuEditOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, inputNewTitle);
-  };
-  // close video edit info menu
-  const close_option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-times");
-  close_option_menu.title = "Close menu";
-  close_option_menu.onclick = function(e){
-    e.preventDefault();
-    closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
-  };
-  // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
-  const isHover = e => e.parentElement.querySelector(":hover") === e;
-  const checkHoverFunction = function checkHover() {
-    let hovered = isHover(linkContainer); 
-    if (hovered !== checkHover.hovered) { 
-      checkHover.hovered = hovered;  
-      const checkIfInputActive = setInterval(function(){ 
-          if (document.activeElement.id === `${videoInfo_ID}-title`) {
-            hovered = checkHover.hovered; 
-            inputNewTitle.onkeypress = function(e){
-              if (!e) e = window.event;
-              var keyCode = e.code || e.key;
-              if (keyCode == "Enter"){
-                video_name = inputNewTitle.value;
-                changeVideoTitle(videoInfo_ID, video_name);  
-                if (hovered  === false) {
+export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer) {
+  try { 
+    if (savedVideosThumbnailContainer === undefined) {  
+      return "savedVideosThumbnailContainer undefined";
+    } else if (typeof videoSrc !== "string") {  
+      return "videoSrc not string";
+    } else if (typeof videoType !== "string") {  
+      return "videoType not string";
+    } else if (videoInfo_ID === undefined) {  
+      return "videoInfo_ID undefined";
+    } else if (video_name === undefined) {  
+      return "video_name undefined";
+    } else if (option_menu === undefined) {  
+      return "option_menu undefined";
+    } else if (linkContainer === undefined) {  
+      return "linkContainer undefined";
+    } else if (thumbnailContainer === undefined) {  
+      return "thumbnailContainer undefined";
+    } else if (thumbnailTitleContainer === undefined) {  
+      return "thumbnailTitleContainer undefined";
+    } else {  
+      option_menu.title = "";
+      linkContainer.removeAttribute("href");
+      option_menu.disabled = true;
+      option_menu.classList = "thumbnail-option-menu";
+      // option_menu_container
+      const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
+      // copy video link
+      const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
+      option_menu_copy.title = "Get shareable link";
+      option_menu_copy.onclick = function(e){
+        e.preventDefault();
+        optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy);
+      };
+      // check if video title is same as dispalyed by ${videoInfo_ID}-title id
+      if (video_name !== document.getElementById(`${videoInfo_ID}-title`).textContent) { 
+        video_name = document.getElementById(`${videoInfo_ID}-title`).textContent;
+      }
+      // update ${videoInfo_ID}-title id into input text box
+      document.getElementById(`${videoInfo_ID}-title`).remove();
+      const inputNewTitle = basic.createInput(document.getElementById(`${videoInfo_ID}-title-container`),"text", video_name, `${videoInfo_ID}-title`, "inputNewTitle");
+      document.getElementById(`${videoInfo_ID}-title-container`).removeAttribute("href");
+      inputNewTitle.onkeypress = function(e){ // on input new title key press
+        if (!e) e = window.event;
+        var keyCode = e.code || e.key;
+        if (keyCode == "Enter"){ 
+          video_name = inputNewTitle.value;
+          changeVideoTitle(videoInfo_ID, video_name);
+          inputNewTitle.blur();
+          return false;
+        }
+      };
+      // show video edit info menu
+      const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
+      option_menu_edit.title = "Edit";
+      option_menu_edit.onclick = function(e){
+        e.preventDefault();
+        optionMenuEditOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, inputNewTitle);
+      };
+      // close video edit info menu
+      const close_option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-times");
+      close_option_menu.title = "Close menu";
+      close_option_menu.onclick = function(e){
+        e.preventDefault();
+        closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
+      };
+      // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
+      const isHover = e => e.parentElement.querySelector(":hover") === e;
+      const checkHoverFunction = function checkHover() {
+        let hovered = isHover(linkContainer); 
+        if (hovered !== checkHover.hovered) { 
+          checkHover.hovered = hovered;  
+          const checkIfInputActive = setInterval(function(){ 
+              if (document.activeElement.id === `${videoInfo_ID}-title`) {
+                hovered = checkHover.hovered; 
+                inputNewTitle.onkeypress = function(e){
+                  if (!e) e = window.event;
+                  var keyCode = e.code || e.key;
+                  if (keyCode == "Enter"){
+                    video_name = inputNewTitle.value;
+                    changeVideoTitle(videoInfo_ID, video_name);  
+                    if (hovered  === false) {
+                      document.getElementById(`${videoInfo_ID}-title`).remove();
+                      basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
+                      document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+                      option_menu.title = "menu";
+                      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
+                      option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                      option_menu.disabled = false;
+                      option_menu_container.remove();
+                      close_option_menu.remove();
+                      document.removeEventListener("mousemove", checkHoverFunction);
+                      clearInterval(checkIfInputActive);
+                    } else {
+                      inputNewTitle.blur();
+                    }
+                    return false;
+                  }
+                };
+              } else{
+                if (hovered === false) { 
+                  if (video_name !== inputNewTitle.value) {
+                    video_name = inputNewTitle.value;
+                    changeVideoTitle(videoInfo_ID, video_name); 
+                  }
                   document.getElementById(`${videoInfo_ID}-title`).remove();
                   basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
                   document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
@@ -237,36 +280,18 @@ function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, videoType, v
                   option_menu_container.remove();
                   close_option_menu.remove();
                   document.removeEventListener("mousemove", checkHoverFunction);
-                  clearInterval(checkIfInputActive);
-                } else {
-                  inputNewTitle.blur();
-                }
-                return false;
-              }
-            };
-          } else{
-            if (hovered === false) { 
-              if (video_name !== inputNewTitle.value) {
-                video_name = inputNewTitle.value;
-                changeVideoTitle(videoInfo_ID, video_name); 
-              }
-              document.getElementById(`${videoInfo_ID}-title`).remove();
-              basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-              document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-              option_menu.title = "menu";
-              linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-              option_menu.classList = "thumbnail-option-menu fa fa-bars";
-              option_menu.disabled = false;
-              option_menu_container.remove();
-              close_option_menu.remove();
-              document.removeEventListener("mousemove", checkHoverFunction);
-            } 
-            clearInterval(checkIfInputActive);
+                } 
+                clearInterval(checkIfInputActive);
+            }
+          }, 50); 
         }
-      }, 50); 
+      };
+      document.addEventListener("mousemove", checkHoverFunction);
+      return "optionMenuOnClick";
     }
-  };
-  document.addEventListener("mousemove", checkHoverFunction);
+  } catch (error) { 
+    return "optionMenuOnClick didnt work";
+  }  
 }
 
 // on click option menu edit
