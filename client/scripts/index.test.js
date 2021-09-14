@@ -115,3 +115,57 @@ describe("getVideoPlayerSettings", () =>  {
         expect(getVideoPlayerSettings).toBe("Failed fetch video player settings");               
     }); 
 });    
+
+describe("updateVideoPlayerVolume", () =>  {    
+    afterEach(() => {    
+        global.fetch = jest.fn();
+    });
+    
+    it("volume-muted-invaid", async () =>  {  
+        const updateVideoPlayerVolume = await index.updateVideoPlayerVolume();   
+        expect(updateVideoPlayerVolume).toBeDefined();       
+        expect(updateVideoPlayerVolume).toBe("volume-muted-invaid");    
+    });     
+    
+    it("muted-invaid", async () =>  {  
+        const updateVideoPlayerVolume = await index.updateVideoPlayerVolume(1);   
+        expect(updateVideoPlayerVolume).toBeDefined();       
+        expect(updateVideoPlayerVolume).toBe("muted-invaid");    
+    });     
+     
+    it("volume-invaid", async () =>  {  
+        const updateVideoPlayerVolume = await index.updateVideoPlayerVolume(undefined, true);   
+        expect(updateVideoPlayerVolume).toBeDefined();       
+        expect(updateVideoPlayerVolume).toBe("volume-invaid");    
+    });    
+     
+    it("updated-video-player-volume", async () =>  {  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "updated-video-player-volume"
+
+            })
+        ); 
+        const updateVideoPlayerVolume = await index.updateVideoPlayerVolume(1, true);   
+        expect(updateVideoPlayerVolume).toBeDefined();       
+        expect(updateVideoPlayerVolume).toBe("updated-video-player-volume");    
+    });     
+
+    it("Failed to update video volume messages", async () =>  {  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false
+            })
+        ); 
+        const updateVideoPlayerVolume = await index.updateVideoPlayerVolume(1, true);   
+        expect(updateVideoPlayerVolume).toBeDefined();       
+        expect(updateVideoPlayerVolume).toBe("Failed to update video volume messages");    
+    });     
+
+    it("Failed fetch video player volume update", async () =>  {  
+        const updateVideoPlayerVolume = await index.updateVideoPlayerVolume(1, true);   
+        expect(updateVideoPlayerVolume).toBeDefined();       
+        expect(updateVideoPlayerVolume).toBe("Failed fetch video player volume update");    
+    });       
+});    

@@ -435,25 +435,36 @@ export async function getVideoPlayerSettings() {
 }
 
 // update video player volume settings
-async function updateVideoPlayerVolume(volume, muted) {
-  const payload = {  // data sending in fetch request
-    updatedVideoPlayerVolume : volume,
-    updatedVideoPlayerMuted : muted
-  };
-  const response = await fetch("../updateVideoPlayerVolume", { // look for video data from provided url_link
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  let updatedVideoPlayerVolume;
-  if (response.ok) { 
-    updatedVideoPlayerVolume = await response.json(); 
-  }else {
-    updatedVideoPlayerVolume = { msg: "failed to update video volume messages" };
-  }
-   // return updatedVideoPlayerVolume
-   return updatedVideoPlayerVolume;
+export async function updateVideoPlayerVolume(volume, muted) {
+   if (!isNaN(volume) && typeof muted == "boolean") {
+    try {
+      const payload = {  // data sending in fetch request
+        updatedVideoPlayerVolume : volume,
+        updatedVideoPlayerMuted : muted
+      };
+      const response = await fetch("../updateVideoPlayerVolume", { // look for video data from provided url_link
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    
+      let updatedVideoPlayerVolume;
+      if (response.ok) { 
+        updatedVideoPlayerVolume = await response.json(); 
+        return updatedVideoPlayerVolume;
+      }else { 
+        return "Failed to update video volume messages";
+      }
+    } catch (error) {
+      return "Failed fetch video player volume update";
+    } 
+   } else if (!isNaN(volume) && typeof muted !== "boolean") {
+    return "muted-invaid";
+   } else if (isNaN(volume) && typeof muted == "boolean") {
+    return "volume-invaid";
+   } else{
+    return "volume-muted-invaid";
+   }
 }
 
 // video type Automatic activated function
