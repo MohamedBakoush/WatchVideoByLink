@@ -155,10 +155,10 @@ describe("showDetails", () =>  {
         expect(showDetails).toBe("invalid videoDetails");     
     });   
      
-    it("video id undefined", () =>  { 
+    it("videoInfo_ID not string", () =>  { 
         const showDetails = showAvailableVideos.showDetails(container);   
         expect(showDetails).toBeDefined();       
-        expect(showDetails).toBe("video id undefined");     
+        expect(showDetails).toBe("videoInfo_ID not string");     
     }); 
      
     it("no input", () =>  { 

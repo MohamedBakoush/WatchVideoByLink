@@ -72,8 +72,8 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
   try {
     if (savedVideosThumbnailContainer === undefined) {
       return "savedVideosThumbnailContainer undefined";
-    } else if (videoInfo_ID === undefined) {
-      return "video id undefined";
+    } else if (typeof videoInfo_ID !== "string") {  
+      return "videoInfo_ID not string";
     } else if (videoDetails === undefined) {
       return "invalid videoDetails";
     } else {
