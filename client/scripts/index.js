@@ -83,6 +83,7 @@ export function showDetails() {
   };
   // Create upload video 
   uploadVideoDetails(videoLink);
+  return "showDetails";
 }
 
 

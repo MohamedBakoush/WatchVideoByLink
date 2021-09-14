@@ -45,3 +45,11 @@ describe("showVideoFromUrl", () =>  {
         expect(showVideoFromUrl).toBe("showVideoFromUrl didnt work");     
     });    
 }); 
+
+describe("showDetails", () =>  {    
+    it("display showDetails", () =>  { 
+        const showDetails = index.showDetails();   
+        expect(showDetails).toBeDefined();       
+        expect(showDetails).toBe("showDetails");     
+    });       
+}); 
