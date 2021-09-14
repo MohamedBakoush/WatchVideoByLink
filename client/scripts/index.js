@@ -413,19 +413,24 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
 }
 
 // get video player settings
-async function getVideoPlayerSettings() {
-  const response = await fetch("../getVideoPlayerSettings");
-  let videoPlayerSettings;
-  if(response.ok){
-    videoPlayerSettings = await response.json();  
-    return videoPlayerSettings;
-  }else {
-    // failed to fetch video settings
-    videoPlayerSettings = {
-      volume: 1.0,
-      muted: false
-    }; 
-    return videoPlayerSettings; 
+export async function getVideoPlayerSettings() {
+  try {
+    const response = await fetch("../getVideoPlayerSettings");
+    let videoPlayerSettings;
+    if(response.ok){
+      videoPlayerSettings = await response.json();  
+      return videoPlayerSettings;
+    }else {
+      // failed to fetch video settings
+      videoPlayerSettings = {
+        volume: 1.0,
+        muted: false,
+        chromecast: false
+      }; 
+      return videoPlayerSettings; 
+    }
+  } catch (error) {
+    return "Failed fetch video player settings";
   }
 }
 

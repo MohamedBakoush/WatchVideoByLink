@@ -1,4 +1,5 @@
-const index = require("./index");   
+ 
+const index = require("./index");  
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();
@@ -8,6 +9,7 @@ global.history = dom.window.history;
 const videoURL = "http://localhost:8080/?t=video/mp4?v=http://localhost:8080/video.mp4";     
 const container = document.createElement("section");
 history.replaceState = jest.fn();   
+window.HTMLCanvasElement.prototype.getContext = jest.fn();
 
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
 beforeAll(() => {
@@ -26,6 +28,12 @@ beforeAll(() => {
     mockHTML.appendChild(mockArticle);
     spy.mockReturnValue(mockHTML); 
 });
+
+const videoPlayerSettings = {  
+    "volume": 1,
+    "muted": true,
+    "chromecast": false 
+};
 
 describe("showVideoFromUrl", () =>  {    
     it("Valid URL - showVideoFromUrl", () =>  { 
@@ -68,3 +76,42 @@ describe("uploadVideoDetails", () =>  {
         expect(uploadVideoDetails).toBe("uploadVideoDetails");     
     });       
 }); 
+
+describe("getVideoPlayerSettings", () =>  {    
+    afterEach(() => {    
+        global.fetch = jest.fn();
+    });
+    
+    it("response ok", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () =>  videoPlayerSettings
+            })
+        ); 
+        const getVideoPlayerSettings = await index.getVideoPlayerSettings();   
+        expect(getVideoPlayerSettings).toBeDefined();       
+        expect(getVideoPlayerSettings.volume).toBe(1);    
+        expect(getVideoPlayerSettings.muted).toBe(true);  
+        expect(getVideoPlayerSettings.chromecast).toBe(false);     
+    });        
+
+    it("response false", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false
+            })
+        ); 
+        const getVideoPlayerSettings = await index.getVideoPlayerSettings();   
+        expect(getVideoPlayerSettings).toBeDefined();       
+        expect(getVideoPlayerSettings.volume).toBe(1);    
+        expect(getVideoPlayerSettings.muted).toBe(false); 
+        expect(getVideoPlayerSettings.chromecast).toBe(false);            
+    });   
+    
+    it("Failed fetch video player settings", async () =>  {   
+        const getVideoPlayerSettings = await index.getVideoPlayerSettings();   
+        expect(getVideoPlayerSettings).toBeDefined();       
+        expect(getVideoPlayerSettings).toBe("Failed fetch video player settings");               
+    }); 
+});    
