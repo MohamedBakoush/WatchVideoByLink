@@ -173,10 +173,10 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
       return "videoSrc not string";
     } else if (typeof videoType !== "string") {  
       return "videoType not string";
-    } else if (videoInfo_ID === undefined) {  
-      return "videoInfo_ID undefined";
-    } else if (video_name === undefined) {  
-      return "video_name undefined";
+    } else if (typeof videoInfo_ID !== "string") {  
+      return "videoInfo_ID not string";
+    } else if (typeof video_name !== "string") {  
+      return "video_name not string";
     } else if (option_menu === undefined) {  
       return "option_menu undefined";
     } else if (linkContainer === undefined) {  

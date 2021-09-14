@@ -219,16 +219,16 @@ describe("optionMenuOnClick", () =>  {
         expect(optionMenuOnClick).toBe("videoType not string");     
     });  
 
-    it("videoInfo_ID undefined", () =>  { 
+    it("videoInfo_ID not string", () =>  { 
         const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4");   
         expect(optionMenuOnClick).toBeDefined();       
-        expect(optionMenuOnClick).toBe("videoInfo_ID undefined");     
+        expect(optionMenuOnClick).toBe("videoInfo_ID not string");     
     });  
 
-    it("video_name undefined", () =>  { 
+    it("video_name not string", () =>  { 
         const optionMenuOnClick = showAvailableVideos.optionMenuOnClick(container, "http://localhost:8080/video.mp4", "video/mp4", videoID1);   
         expect(optionMenuOnClick).toBeDefined();       
-        expect(optionMenuOnClick).toBe("video_name undefined");     
+        expect(optionMenuOnClick).toBe("video_name not string");     
     });  
 
     it("option_menu undefined", () =>  { 
