@@ -468,19 +468,24 @@ export async function updateVideoPlayerVolume(volume, muted) {
 }
 
 // video type Automatic activated function
-function getVideoUrlAuto(url_link) {
-  // change address bar
-  history.pushState(null, "", `?auto=${url_link}`);
-  // change document title
-  document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
-  // change css
-  document.body.classList = "index-body";
-  basic.websiteContentContainer().classList = "index-websiteContentContainer";
-  // searchingForVideoLinkMessage
-  const searchingForVideoLinkMessageContainer = basic.createSection(basic.websiteContentContainer(), "section", "getVideoUrlAutoMessageConatinaer");
-  basic.createSection(searchingForVideoLinkMessageContainer, "h1", "getVideoUrlAutoMessageHeader", undefined,  `Searching for video link: ${url_link}`);
-  // look for video data from url_link
-  getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
+export function getVideoUrlAuto(url_link) {
+  if (typeof url_link !== "string") {
+    return "url_link not string";
+  } else {
+    // change address bar
+    history.pushState(null, "", `?auto=${url_link}`);
+    // change document title
+    document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
+    // change css
+    document.body.classList = "index-body";
+    basic.websiteContentContainer().classList = "index-websiteContentContainer";
+    // searchingForVideoLinkMessage
+    const searchingForVideoLinkMessageContainer = basic.createSection(basic.websiteContentContainer(), "section", "getVideoUrlAutoMessageConatinaer");
+    basic.createSection(searchingForVideoLinkMessageContainer, "h1", "getVideoUrlAutoMessageHeader", undefined,  `Searching for video link: ${url_link}`);
+    // look for video data from url_link
+    getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
+    return "getVideoUrlAuto"; 
+  }
 }
 
 // trys to fetch video data from provided url_link

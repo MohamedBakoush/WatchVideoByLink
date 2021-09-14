@@ -8,6 +8,7 @@ global.document = dom.window.document;
 global.history = dom.window.history;
 const videoURL = "http://localhost:8080/?t=video/mp4?v=http://localhost:8080/video.mp4";     
 const container = document.createElement("section");
+history.pushState = jest.fn();   
 history.replaceState = jest.fn();   
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
 
@@ -168,4 +169,18 @@ describe("updateVideoPlayerVolume", () =>  {
         expect(updateVideoPlayerVolume).toBeDefined();       
         expect(updateVideoPlayerVolume).toBe("Failed fetch video player volume update");    
     });       
+});    
+
+describe("getVideoUrlAuto", () =>  {     
+    it("url_link not string", async () =>  {  
+        const getVideoUrlAuto = await index.getVideoUrlAuto();   
+        expect(getVideoUrlAuto).toBeDefined();       
+        expect(getVideoUrlAuto).toBe("url_link not string");    
+    });    
+    
+    it("getVideoUrlAuto", async () =>  {  
+        const getVideoUrlAuto = await index.getVideoUrlAuto("http://localhost:8080/");   
+        expect(getVideoUrlAuto).toBeDefined();       
+        expect(getVideoUrlAuto).toBe("getVideoUrlAuto");    
+    });    
 });    
