@@ -30,12 +30,6 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
-const videoPlayerSettings = {  
-    "volume": 1,
-    "muted": true,
-    "chromecast": false 
-};
-
 describe("showVideoFromUrl", () =>  {    
     it("Valid URL - showVideoFromUrl", () =>  { 
         const showVideoFromUrl = index.showVideoFromUrl(videoURL);   
@@ -84,6 +78,11 @@ describe("getVideoPlayerSettings", () =>  {
     });
     
     it("response ok", async () =>  { 
+        const videoPlayerSettings = {  
+            "volume": 1,
+            "muted": true,
+            "chromecast": false 
+        };
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
