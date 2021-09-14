@@ -570,32 +570,36 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
 }
 
 // all the functions that are to load when the page loads
-function pageLoaded() {
-    // when active history entry changes load location.herf
-    window.onpopstate = function() {
-      window.location.href = location.href;
-    };
-    // url herf and pathname
-    const url_href = window.location.href;
-    const url_pathname = window.location.pathname;
-    // show website content depending on url_href/url_pathname
-    if (url_href.includes("?t=") && url_href.includes("?v=")) { // play specified video
-      // check url for percent encoding
-      const url_link = basic.checkForPercentEncoding(url_href);
-      showVideoFromUrl(url_link);
-    } else if (url_href.includes("?auto=")) { // find video data from url link
-      const url_link_from_auto = url_href.split("?auto=")[1];
-      // check url for percent encoding
-      const url_link = basic.checkForPercentEncoding(url_link_from_auto);
-      getVideoUrlAuto(url_link);
-    } else if (url_pathname === "/saved/videos") { // show saved video
-      navigationBar.loadNavigationBar("/saved/videos");
-      showAvailableVideos.pageLoaded();
-    } else { // show homepage
-      navigationBar.loadNavigationBar();
-      showDetails();
-    }
- }
+export function pageLoaded() {
+  // when active history entry changes load location.herf
+  window.onpopstate = function() {
+    window.location.href = location.href;
+  };
+  // url herf and pathname
+  const url_href = window.location.href;
+  const url_pathname = window.location.pathname;
+  // show website content depending on url_href/url_pathname
+  if (url_href.includes("?t=") && url_href.includes("?v=")) { // play specified video
+    // check url for percent encoding
+    const url_link = basic.checkForPercentEncoding(url_href);
+    showVideoFromUrl(url_link);
+    return "Show video from URL";
+  } else if (url_href.includes("?auto=")) { // find video data from url link
+    const url_link_from_auto = url_href.split("?auto=")[1];
+    // check url for percent encoding
+    const url_link = basic.checkForPercentEncoding(url_link_from_auto);
+    getVideoUrlAuto(url_link);
+    return "Get Video URL Auto";
+  } else if (url_pathname === "/saved/videos") { // show saved video
+    navigationBar.loadNavigationBar("/saved/videos");
+    showAvailableVideos.pageLoaded();
+    return "show saved video";
+  } else { // show homepage
+    navigationBar.loadNavigationBar();
+    showDetails();
+    return  "show homepage";
+  }  
+}
 
 // load pageLoaded when html page loads
 addEventListener("load", pageLoaded);

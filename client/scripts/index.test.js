@@ -253,3 +253,53 @@ describe("getVideoLinkFromUrl", () =>  {
         expect(getVideoLinkFromUrl).toBe("Failed fetch video link from URL");    
     });        
 }); 
+
+describe("pageLoaded", () =>  {      
+    it("Show video from URL", () =>  {  
+        Object.defineProperty(window, "location", {
+            value: {
+                href: "http://localhost:8080/?t=video/mp4?v=VideoLink",
+                pathname: "/"
+            }
+        });
+        const pageLoaded = index.pageLoaded();   
+        expect(pageLoaded).toBeDefined();       
+        expect(pageLoaded).toBe("Show video from URL");    
+    });   
+    
+    it("Get Video URL Auto", () =>  {  
+        Object.defineProperty(window, "location", {
+            value: {
+                href: "http://localhost:8080/?auto=VideoLink",
+                pathname: "/"
+            }
+        });
+        const pageLoaded = index.pageLoaded();   
+        expect(pageLoaded).toBeDefined();       
+        expect(pageLoaded).toBe("Get Video URL Auto");    
+    });  
+
+    it("show saved video", () =>  {  
+        Object.defineProperty(window, "location", {
+            value: {
+                href: "http://localhost:8080/saved/videos",
+                pathname: "/saved/videos"
+            }
+        });
+        const pageLoaded = index.pageLoaded();   
+        expect(pageLoaded).toBeDefined();       
+        expect(pageLoaded).toBe("show saved video");    
+    });  
+
+    it("show homepage", () =>  {  
+        Object.defineProperty(window, "location", {
+            value: {
+                href: "http://localhost:8080/",
+                pathname: "/"
+            }
+        });
+        const pageLoaded = index.pageLoaded();   
+        expect(pageLoaded).toBeDefined();       
+        expect(pageLoaded).toBe("show homepage");    
+    });   
+}); 
