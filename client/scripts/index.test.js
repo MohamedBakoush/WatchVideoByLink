@@ -387,49 +387,58 @@ describe("getVideoLinkFromUrl", () =>  {
 }); 
 
 describe("pageLoaded", () =>  {      
-    it("Show video from URL", () =>  {  
-        Object.defineProperty(window, "location", {
-            value: {
-                href: "http://localhost:8080/?t=video/mp4?v=VideoLink",
-                pathname: "/"
-            }
-        });
+    let location; 
+    afterEach(() => {
+      window.location = location;
+    });
+
+    it("Show video from URL", () =>  {   
+        const url = "http://localhost:8080/?t=video/mp4?v=VideoLink";
+        location = window.location;
+        const mockLocation = new URL(url);
+        mockLocation.replace = jest.fn();
+        delete window.location;
+        window.location = mockLocation;
+
         const pageLoaded = index.pageLoaded();   
         expect(pageLoaded).toBeDefined();       
         expect(pageLoaded).toBe("Show video from URL");    
     });   
     
     it("Get Video URL Auto", () =>  {  
-        Object.defineProperty(window, "location", {
-            value: {
-                href: "http://localhost:8080/?auto=VideoLink",
-                pathname: "/"
-            }
-        });
+        const url = "http://localhost:8080/?auto=VideoLink";
+        location = window.location;
+        const mockLocation = new URL(url);
+        mockLocation.replace = jest.fn();
+        delete window.location;
+        window.location = mockLocation; 
+
         const pageLoaded = index.pageLoaded();   
         expect(pageLoaded).toBeDefined();       
         expect(pageLoaded).toBe("Get Video URL Auto");    
     });  
 
-    it("show saved video", () =>  {  
-        Object.defineProperty(window, "location", {
-            value: {
-                href: "http://localhost:8080/saved/videos",
-                pathname: "/saved/videos"
-            }
-        });
+    it("show saved video", () =>  {   
+        const url = "http://localhost:8080/saved/videos";
+        location = window.location;
+        const mockLocation = new URL(url);
+        mockLocation.replace = jest.fn();
+        delete window.location;
+        window.location = mockLocation; 
+
         const pageLoaded = index.pageLoaded();   
         expect(pageLoaded).toBeDefined();       
         expect(pageLoaded).toBe("show saved video");    
     });  
 
     it("show homepage", () =>  {  
-        Object.defineProperty(window, "location", {
-            value: {
-                href: "http://localhost:8080/",
-                pathname: "/"
-            }
-        });
+        const url = "http://localhost:8080/";
+        location = window.location;
+        const mockLocation = new URL(url);
+        mockLocation.replace = jest.fn();
+        delete window.location;
+        window.location = mockLocation; 
+        
         const pageLoaded = index.pageLoaded();   
         expect(pageLoaded).toBeDefined();       
         expect(pageLoaded).toBe("show homepage");    
