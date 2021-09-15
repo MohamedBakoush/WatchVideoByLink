@@ -8,8 +8,14 @@ global.document = dom.window.document;
 global.history = dom.window.history;
 const videoURL = "http://localhost:8080/?t=video/mp4?v=http://localhost:8080/video.mp4";     
 const container = document.createElement("section");
+const inputFileTypeContainer = document.createElement("input");
+inputFileTypeContainer.type = "File";  
 history.pushState = jest.fn();   
-history.replaceState = jest.fn();   
+history.replaceState = jest.fn(); 
+function FormDataMock() {
+    this.append = jest.fn();
+}  
+global.FormData = FormDataMock; 
 window.HTMLCanvasElement.prototype.getContext = jest.fn();
 
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
@@ -70,6 +76,133 @@ describe("uploadVideoDetails", () =>  {
         expect(uploadVideoDetails).toBeDefined();       
         expect(uploadVideoDetails).toBe("uploadVideoDetails");     
     });       
+}); 
+ 
+describe("uploadFile", () =>  {    
+    afterEach(() => {    
+        global.fetch = jest.fn();
+    });
+
+    it("data undefined", async () =>  { 
+        const uploadFile = await index.uploadFile();   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("data undefined");     
+    });    
+    
+    it("videoLink undefined", async () =>  { 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("videoLink undefined");     
+    });    
+
+    it("newUploadVideoForm undefined", async () =>  { 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("newUploadVideoForm undefined");     
+    });    
+
+    it("Response ok - downloading-uploaded-video", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "downloading-uploaded-video"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("downloading-uploaded-video");     
+    });   
+    
+    it("Response ok - video-size-over-size-limit", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-size-over-size-limit"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("video-size-over-size-limit");     
+    });
+
+    it("Response ok - Cannot-find-ffmpeg-ffprobe", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "Cannot-find-ffmpeg-ffprobe"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("Cannot-find-ffmpeg-ffprobe");     
+    });
+    
+    it("Response ok - Cannot-find-ffmpeg", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "Cannot-find-ffmpeg"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("Cannot-find-ffmpeg");     
+    });
+    
+    it("Response ok - Cannot-find-ffprobe", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "Cannot-find-ffprobe"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("Cannot-find-ffprobe");     
+    });
+    
+    it("Response ok - ffmpeg-failed", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "ffmpeg-failed"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("ffmpeg-failed");     
+    });
+    
+    
+    it("Response ok - value returned", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "value returned"
+
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("value returned");     
+    });
+
+    it("Response not ok", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false
+            })
+        ); 
+        const uploadFile = await index.uploadFile(inputFileTypeContainer, container, container);   
+        expect(uploadFile).toBeDefined();       
+        expect(uploadFile).toBe("Failed to upload video file");     
+    });
 }); 
 
 describe("getVideoPlayerSettings", () =>  {    

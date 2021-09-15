@@ -136,62 +136,76 @@ export function uploadVideoDetails(videoLink){
   }
 }
 
-async function uploadFile(data, videoLink, newUploadVideoForm){  
-  try {
-    // notification to user 
-    basic.notify("success", "Uploading: video to server");
-    // holds file once its been choosen
-    const formData = new FormData(); 
-    // sends file + file data to server 
-    formData.append("file", data.files[0]);
-    const response = await fetch("/uploadVideoFile",{ 
-      method: "POST",
-      body: formData
-    });
-    // fetch response
-    if (response.ok) {
-      const returnedValue = await response.json();
-      // notification from response
-      if(returnedValue == "downloading-uploaded-video") { 
-        basic.notify("success", "Downloading: uploaded video"); 
-      } else if (returnedValue == "video-size-over-size-limit") { 
-        console.log("Size Error: Attempted video upload has a size greater then 1 GB");
-        basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
-      } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
-        console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
-        basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
-      } else if (returnedValue == "Cannot-find-ffmpeg") {
-        console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
-        basic.notify("error","Encoding Error: Cannot find ffmpeg");
-      } else if (returnedValue == "Cannot-find-ffprobe") {
-        console.log("Encoding Error: Cannot find ffprobe");
-        basic.notify("error","Encoding Error: Cannot find ffprobe");
-      } else if (returnedValue == "ffmpeg-failed") {
-        console.log("Encoding Error: ffmpeg failed");
-        basic.notify("error","Encoding Error: ffmpeg failed");
+export async function uploadFile(data, videoLink, newUploadVideoForm){  
+  if (data === undefined) {
+    return "data undefined";
+  } else if (videoLink === undefined) {
+    return "videoLink undefined";
+  } else if (newUploadVideoForm === undefined) {
+    return "newUploadVideoForm undefined";
+  } else { 
+    try {
+      // notification to user 
+      basic.notify("success", "Uploading: video to server");
+      // holds file once its been choosen
+      const formData = new FormData(); 
+      // sends file + file data to server
+      formData.append("file", data.files[0]);
+      const response = await fetch("/uploadVideoFile",{ 
+        method: "POST",
+        body: formData
+      });
+      // fetch response
+      if (response.ok) {
+        const returnedValue = await response.json();
+        // reset upload video form
+        if(document.getElementById("uploadVideoContainer")){   
+          newUploadVideoForm.remove();
+          uploadVideoDetails(videoLink);
+        } 
+        // notification from response
+        if(returnedValue == "downloading-uploaded-video") { 
+          basic.notify("success", "Downloading: uploaded video"); 
+          return "downloading-uploaded-video";
+        } else if (returnedValue == "video-size-over-size-limit") {  
+          basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
+          return "video-size-over-size-limit";
+        } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
+          basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
+          return "Cannot-find-ffmpeg-ffprobe";
+        } else if (returnedValue == "Cannot-find-ffmpeg") {
+          basic.notify("error","Encoding Error: Cannot find ffmpeg");
+          return "Cannot-find-ffmpeg";
+        } else if (returnedValue == "Cannot-find-ffprobe") { 
+          basic.notify("error","Encoding Error: Cannot find ffprobe");
+          return "Cannot-find-ffprobe";
+        } else if (returnedValue == "ffmpeg-failed") { 
+          basic.notify("error","Encoding Error: ffmpeg failed");
+          return "ffmpeg-failed";
+        }else { 
+          basic.notify("error", "Encoding Error: " + returnedValue);
+          return returnedValue;
+        }
+      } else { 
+        // reset upload video form
+        if(document.getElementById("uploadVideoContainer")){   
+          newUploadVideoForm.remove();
+          uploadVideoDetails(videoLink);
+        } 
+        // request error msg 
+        basic.notify("error","Error: Request Error."); 
+        return "Failed to upload video file";
       }
+    } catch (error) {  // when an error occurs
       // execute function showDetails()  
       if(document.getElementById("uploadVideoContainer")){   
         newUploadVideoForm.remove();
         uploadVideoDetails(videoLink);
       } 
-    } else { 
-      // execute function showDetails()  
-      if(document.getElementById("uploadVideoContainer")){   
-        newUploadVideoForm.remove();
-        uploadVideoDetails(videoLink);
-      } 
-      // request error msg 
-      basic.notify("error","Error: Request Error.");
+      // error msg 
+      basic.notify("error","Error: Connection Refused.");
+      return error;
     }
-  } catch (e) {  // when an error occurs
-    // execute function showDetails()  
-    if(document.getElementById("uploadVideoContainer")){   
-      newUploadVideoForm.remove();
-      uploadVideoDetails(videoLink);
-    } 
-    // error msg 
-    basic.notify("error","Error: Connection Refused.");
   }
 }
 
