@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 const navigationBar = require("./navigationBar");  
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
