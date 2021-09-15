@@ -1,4 +1,6 @@
- 
+/**
+ * @jest-environment jsdom
+ */
 const index = require("./index");  
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -391,7 +393,7 @@ describe("pageLoaded", () =>  {
     afterEach(() => {
       window.location = location;
     });
-
+    
     it("Show video from URL", () =>  {   
         const url = "http://localhost:8080/?t=video/mp4?v=VideoLink";
         location = window.location;
