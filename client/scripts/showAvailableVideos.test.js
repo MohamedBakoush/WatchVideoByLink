@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 const showAvailableVideos = require("./showAvailableVideos");  
 const basic = require("./basics");  
 const jsdom = require("jsdom");
