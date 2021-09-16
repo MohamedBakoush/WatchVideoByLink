@@ -181,33 +181,33 @@ export function notify(type,message){
   }
 }
 
-// create a timer
-export function Timer(callback, time) {
-  this.setTimeout(callback, time);
+// Timer Class
+class Timer { 
+  constructor(callback, time){ 
+    this.setTimeout(callback, time);    
+  }
+  // set setTimeout
+  setTimeout(callback, time) {
+    var self = this;
+    if(this.timer) {
+        clearTimeout(this.timer);
+    }
+    this.finished = false;
+    this.callback = callback;
+    this.time = time;
+    this.timer = setTimeout(function() {
+        self.finished = true;
+        callback();
+    }, time);
+    this.start = Date.now();
+  }
+  // change setTimeout time
+  change(time) {
+    if(!this.finished) {
+        this.setTimeout(this.callback, time);
+    }
+  }
 }
-
-// set setTimeout
-Timer.prototype.setTimeout = function(callback, time) {
-  var self = this;
-  if(this.timer) {
-      clearTimeout(this.timer);
-  }
-  this.finished = false;
-  this.callback = callback;
-  this.time = time;
-  this.timer = setTimeout(function() {
-      self.finished = true;
-      callback();
-  }, time);
-  this.start = Date.now();
-};
-
-// change setTimeout time
-Timer.prototype.change = function(time) {
-  if(!this.finished) {
-      this.setTimeout(this.callback, time);
-  }
-};
 
 // replace favicon with original favicon
 export function originalFavicon() { 
