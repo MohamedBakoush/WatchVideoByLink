@@ -182,7 +182,7 @@ export function notify(type,message){
 }
 
 // Timer Class
-class Timer { 
+export class Timer { 
   constructor(callback, time){ 
     this.setTimeout(callback, time);    
   }
