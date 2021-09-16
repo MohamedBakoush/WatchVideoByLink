@@ -320,6 +320,28 @@ describe("notify", () =>  {
     });  
 }); 
 
+describe("Timer", () =>  {
+    function callBackFunction() {
+        return "callBackFunction";
+    } 
+    
+    it("set setTimeout", () =>  {   
+        const Timer = new basic.Timer(callBackFunction(), 5000); 
+        expect(Timer).toBeDefined();
+        expect(Timer.time).toBe(5000); 
+        expect(Timer.callback).toBe(callBackFunction());  
+        expect(Timer.finished).toBe(false);  
+    });   
+
+    it("change setTimeout time", () =>  {   
+        const Timer = new basic.Timer(callBackFunction(), 5000); 
+        Timer.change(10000);
+        expect(Timer).toBeDefined(); 
+        expect(Timer.time).toBe(10000); 
+        expect(Timer.callback).toBe(callBackFunction());   
+    });  
+}); 
+
 describe("originalFavicon", () =>  {  
     it("Favicon href updated", () =>  {  
         const favicon = basic.originalFavicon(); 
