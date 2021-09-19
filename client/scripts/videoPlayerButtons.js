@@ -12,27 +12,37 @@ export function topPageControlBarContainer(player) {
 
 // close video player button, go back to homepage/ previous page
 export function backToHomePageButton(container, videoLinkFromUrl) {
-  const backToHomePage = document.createElement("button");
-  backToHomePage.title = "Close Player";
-  backToHomePage.className =  "backToHomePageButton fa fa-times vjs-control vjs-button";
-  backToHomePage.onclick = function() {
-    if (videoLinkFromUrl == "Automatic") {
+  if (container === undefined) {
+     return "container undefined";
+  } else {
+    const backToHomePage = document.createElement("button");
+    backToHomePage.title = "Close Player";
+    backToHomePage.className =  "backToHomePageButton fa fa-times vjs-control vjs-button";
+    backToHomePage.onclick = function() {
+      backToHomePageOnClick(videoLinkFromUrl);
+    };
+    container.appendChild(backToHomePage);
+    return "backToHomePageButton";
+  }
+}
+
+export function backToHomePageOnClick(videoLinkFromUrl) {  
+  if (videoLinkFromUrl == "Automatic") {
+    window.location = "/";
+    return "load home page";
+  } else if (document.referrer.indexOf(window.location.host) !== -1) { 
+    // history.length: page loaded in a new tab returns 1
+    if(history.length == 1){ 
       window.location = "/";
-    } else if (document.referrer.indexOf(window.location.host) !== -1) { 
-      // history.length: page loaded in a new tab returns 1
-       if(history.length == 1){
-        // load home page
-        window.location = "/";
-       } else{
-        // load previous URL from history list
-        history.back();
-       }
-     } else {
-        // load home page
-        window.location = "/";
-     }
-  };
-  container.appendChild(backToHomePage);
+      return "load home page";
+    } else{ 
+      history.back();
+      return "load previous URL from history list";
+    }
+   } else { 
+      window.location = "/";
+      return "load home page";
+   } 
 }
 
 // dowload full video button
