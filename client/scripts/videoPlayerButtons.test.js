@@ -7,6 +7,7 @@ const { JSDOM } = jsdom;
 const dom = new JSDOM();
 global.window = dom.window; 
 global.document = dom.window.document;   
+const container = document.createElement("section");
 let spy, mockHTML, mockHead, mockFavicon, mockArticle; 
 beforeAll(() => {
     spy = jest.spyOn(document, "getElementById");
@@ -24,6 +25,20 @@ beforeAll(() => {
     mockHTML.appendChild(mockArticle);
     spy.mockReturnValue(mockHTML); 
 });
+
+describe("backToHomePageButton", () =>  {    
+    it("container undefined", () =>  {  
+        const backToHomePageButton = videoPlayerButtons.backToHomePageButton();   
+        expect(backToHomePageButton).toBeDefined();       
+        expect(backToHomePageButton).toBe("container undefined");     
+    });
+
+    it("display backToHomePageButton", () =>  {  
+        const backToHomePageButton = videoPlayerButtons.backToHomePageButton(container);   
+        expect(backToHomePageButton).toBeDefined();       
+        expect(backToHomePageButton).toBe("backToHomePageButton");     
+    });  
+}); 
 
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
