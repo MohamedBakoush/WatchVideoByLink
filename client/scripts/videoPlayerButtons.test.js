@@ -40,6 +40,32 @@ describe("backToHomePageButton", () =>  {
     });  
 }); 
 
+describe("downloadVideoButton", () =>  {  
+    it("container undefined", () =>  {   
+        const downloadVideoButton = videoPlayerButtons.downloadVideoButton();   
+        expect(downloadVideoButton).toBeDefined();       
+        expect(downloadVideoButton).toBe("container undefined");     
+    });  
+    
+    it("videoSrc not string", () =>  {   
+        const downloadVideoButton = videoPlayerButtons.downloadVideoButton(container);   
+        expect(downloadVideoButton).toBeDefined();       
+        expect(downloadVideoButton).toBe("videoSrc not string");     
+    });   
+
+    it("videoType not string", () =>  {   
+        const downloadVideoButton = videoPlayerButtons.downloadVideoButton(container, "http://localhost:8080/video.mp4");   
+        expect(downloadVideoButton).toBeDefined();       
+        expect(downloadVideoButton).toBe("videoType not string");     
+    });   
+
+    it("display downloadVideoButton", () =>  {   
+        const downloadVideoButton = videoPlayerButtons.downloadVideoButton(container,  "http://localhost:8080/video.mp4", "video/mp4");   
+        expect(downloadVideoButton).toBeDefined();       
+        expect(downloadVideoButton).toBe("downloadVideoButton");     
+    });  
+}); 
+
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   
