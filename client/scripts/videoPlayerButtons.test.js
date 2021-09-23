@@ -26,6 +26,39 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("updateFileNameID", () =>  {    
+    beforeEach(() => {    
+        videoPlayerButtons.updateFileNameID(null); 
+    }); 
+
+    afterAll(() => {    
+        videoPlayerButtons.updateFileNameID(null); 
+    }); 
+
+    it("no input - expect undefined", () =>  {  
+        const fileNameID = videoPlayerButtons.updateFileNameID(null);  
+        expect(fileNameID).toBeUndefined();     
+    });   
+     
+    it("undefined input - expect undefined", () =>  { 
+        const fileNameID = videoPlayerButtons.updateFileNameID(undefined);  
+        expect(fileNameID).toBeUndefined();     
+        expect(fileNameID).toBe(undefined);  
+    });  
+     
+    it("number input - expect undefined", () =>  { 
+        const updatedFileNameID = videoPlayerButtons.updateFileNameID(123);  
+        expect(updatedFileNameID).toBeUndefined();  
+        expect(updatedFileNameID).toBe(undefined);     
+    }); 
+
+    it("string input - expect ccf40c5d-640b-44e8-ae3b-7e4563a44d29", () =>  { 
+        const updatedFileNameID = videoPlayerButtons.updateFileNameID("ccf40c5d-640b-44e8-ae3b-7e4563a44d29");  
+        expect(updatedFileNameID).toBeDefined(); 
+        expect(updatedFileNameID).toBe("ccf40c5d-640b-44e8-ae3b-7e4563a44d29");      
+    }); 
+}); 
+
 describe("backToHomePageButton", () =>  {    
     it("container undefined", () =>  {  
         const backToHomePageButton = videoPlayerButtons.backToHomePageButton();   
