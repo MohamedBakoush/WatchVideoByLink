@@ -160,6 +160,14 @@ describe("addStopDownloadOnWindowClose", () =>  {
     }); 
 });  
 
+describe("removeStopDownloadOnWindowClose", () =>  {  
+    it("activate removeStopDownloadOnWindowClose", () =>  { 
+        const removeStopDownloadOnWindowClose = videoPlayerButtons.removeStopDownloadOnWindowClose();   
+        expect(removeStopDownloadOnWindowClose).toBeDefined();       
+        expect(removeStopDownloadOnWindowClose).toBe("removeStopDownloadOnWindowClose");     
+    }); 
+});  
+
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   

@@ -216,8 +216,8 @@ export function addStopDownloadOnWindowClose() {
 
 // remove function stop download video stream when winodw closes
 export function removeStopDownloadOnWindowClose() {
-  console.log("removeStopDownloadOnWindowClose");
   window.removeEventListener("beforeunload", stopDownloadVideoStreamOnWindowsClose);
+  return "removeStopDownloadOnWindowClose";
 }
 
 // request to start download video stream
