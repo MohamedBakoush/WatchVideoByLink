@@ -2,6 +2,18 @@ import * as basic from "../scripts/basics.js";
 
 let fileNameID;
 
+export function updateFileNameID(updateFileNameID) {
+  if(updateFileNameID === null) { 
+    fileNameID = undefined;
+    return fileNameID;
+  } else if (typeof updateFileNameID !== "string" || updateFileNameID === undefined) {
+    return fileNameID;
+  } else {
+    fileNameID = updateFileNameID;
+    return fileNameID;
+  }
+}
+
 // controlBar at the top of the video player
 export function topPageControlBarContainer(player) {
   const topPageControlBarContainer =  document.createElement("div");
