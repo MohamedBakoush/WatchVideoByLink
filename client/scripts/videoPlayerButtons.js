@@ -223,20 +223,27 @@ export function removeStopDownloadOnWindowClose() {
 // request to start download video stream
 export async function downloadVideoStream(videoSrc, videoType) {
   try {
-    const payload = {
-      videoSrc: videoSrc,
-      videoType: videoType,
-    };
-    const response = await fetch("downloadVideoStream", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (response.ok) {
-      fileNameID = await response.json();
-      return fileNameID;
+    if (typeof videoSrc !== "string") {
+      return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+      return "videoType not string";
     } else {
-      return "failed record video file";
+      const payload = {
+        videoSrc: videoSrc,
+        videoType: videoType,
+      };
+      const response = await fetch("downloadVideoStream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        const fileNameID = await response.json();
+        const file_ID = updateFileNameID(fileNameID);
+        return file_ID;
+      } else {
+        return "failed record video file";
+      }
     }
   } catch (e) { // when an error occurs
     return "failed record video file";

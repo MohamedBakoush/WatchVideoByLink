@@ -168,6 +168,48 @@ describe("removeStopDownloadOnWindowClose", () =>  {
     }); 
 });  
 
+describe("downloadVideoStream", () =>  {  
+    afterAll(() => {     
+        global.fetch = jest.fn(); 
+        videoPlayerButtons.updateFileNameID(null); 
+    });  
+
+    it("videoSrc not string", async () =>  { 
+        const downloadVideoStream = await videoPlayerButtons.downloadVideoStream();   
+        expect(downloadVideoStream).toBeDefined();       
+        expect(downloadVideoStream).toBe("videoSrc not string");     
+    });  
+
+    it("videoType not string", async () =>  { 
+        const downloadVideoStream = await videoPlayerButtons.downloadVideoStream("http://localhost:8080/video.mp4");   
+        expect(downloadVideoStream).toBeDefined();       
+        expect(downloadVideoStream).toBe("videoType not string");     
+    });  
+
+    it("response ok - downloadVideoStream", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-id"  
+            })
+        );  
+        const downloadVideoStream = await videoPlayerButtons.downloadVideoStream("http://localhost:8080/video.mp4", "video/mp4");   
+        expect(downloadVideoStream).toBeDefined();       
+        expect(downloadVideoStream).toBe("video-id");     
+    });   
+
+    it("response not ok - failed record video file", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false 
+            })
+        );  
+        const downloadVideoStream = await videoPlayerButtons.downloadVideoStream("http://localhost:8080/video.mp4", "video/mp4");   
+        expect(downloadVideoStream).toBeDefined();       
+        expect(downloadVideoStream).toBe("failed record video file");     
+    }); 
+});  
+
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   
