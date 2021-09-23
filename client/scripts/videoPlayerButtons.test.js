@@ -253,6 +253,60 @@ describe("downloadVideo", () =>  {
     }); 
 });  
 
+describe("trimVideo", () =>  {  
+    afterAll(() => {     
+        global.fetch = jest.fn(); 
+        videoPlayerButtons.updateFileNameID(null); 
+    });  
+
+    it("videoSrc not string", async () =>  { 
+        const trimVideo = await videoPlayerButtons.trimVideo();   
+        expect(trimVideo).toBeDefined();       
+        expect(trimVideo).toBe("videoSrc not string");     
+    });  
+
+    it("videoType not string", async () =>  { 
+        const trimVideo = await videoPlayerButtons.trimVideo("http://localhost:8080/video.mp4");   
+        expect(trimVideo).toBeDefined();       
+        expect(trimVideo).toBe("videoType not string");     
+    });  
+
+    it("startTime undefined", async () =>  { 
+        const trimVideo = await videoPlayerButtons.trimVideo("http://localhost:8080/video.mp4", "video/mp4");   
+        expect(trimVideo).toBeDefined();       
+        expect(trimVideo).toBe("startTime undefined");     
+    });  
+
+    it("endTime undefined", async () =>  { 
+        const trimVideo = await videoPlayerButtons.trimVideo("http://localhost:8080/video.mp4", "video/mp4", 0);   
+        expect(trimVideo).toBeDefined();       
+        expect(trimVideo).toBe("endTime undefined");     
+    });  
+
+    it("response ok - trimVideo", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-id"  
+            })
+        );  
+        const trimVideo = await videoPlayerButtons.trimVideo("http://localhost:8080/video.mp4", "video/mp4", 0, 212);  
+        expect(trimVideo).toBeDefined();       
+        expect(trimVideo).toBe("video-id");     
+    }); 
+
+    it("response not ok - failed download trimed video file", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false 
+            })
+        );  
+        const trimVideo = await videoPlayerButtons.trimVideo("http://localhost:8080/video.mp4", "video/mp4", 0, 212);  
+        expect(trimVideo).toBeDefined();       
+        expect(trimVideo).toBe("failed download trimed video file");     
+    }); 
+});  
+
 describe("secondsToHms", () =>  {    
     it("sec undefined", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   
