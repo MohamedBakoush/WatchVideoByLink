@@ -177,23 +177,26 @@ export function downloadVideoButton(container, videoSrc, videoType) {
 
 // request to stop download video srteam
 export async function stopDownloadVideoStream() {
-  console.log(fileNameID);
-  const payload = {
-    id: fileNameID
-  };
-  const response = await fetch("stopDownloadVideoStream", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  let stopVideoDownloadResponse;
-  if (response.ok) {
-    stopVideoDownloadResponse = await response.json();
-    return stopVideoDownloadResponse;
+  const file_ID = updateFileNameID();
+  if (file_ID === undefined) {
+    return "fileNameID undefined";
   } else {
-    stopVideoDownloadResponse = "stop video stream download failed  ";
+    const payload = {
+      id: file_ID
+    };
+    const response = await fetch("stopDownloadVideoStream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    let stopVideoDownloadResponse;
+    if (response.ok) {
+      stopVideoDownloadResponse = await response.json();
+      return stopVideoDownloadResponse;
+    } else {
+      return "stop video stream download failed";
+    } 
   }
-  return stopVideoDownloadResponse;
 }
 
 // if the window closes then stop download of video stream
