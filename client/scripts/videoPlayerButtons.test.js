@@ -99,6 +99,60 @@ describe("downloadVideoButton", () =>  {
     });  
 }); 
 
+describe("stopDownloadVideoStream", () =>  {  
+    beforeEach(() => {     
+        videoPlayerButtons.updateFileNameID("newID");
+    });     
+      
+    afterAll(() => {    
+        videoPlayerButtons.updateFileNameID(null); 
+        global.fetch = jest.fn(); 
+    });  
+
+    it("fileNameID undefined", async () =>  { 
+        videoPlayerButtons.updateFileNameID(null); 
+        const stopDownloadVideoStream = await videoPlayerButtons.stopDownloadVideoStream();   
+        expect(stopDownloadVideoStream).toBeDefined();       
+        expect(stopDownloadVideoStream).toBe("fileNameID undefined");     
+    }); 
+    
+    it("stoped video stream download", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "stoped video stream download"  
+            })
+        );  
+        const stopDownloadVideoStream = await videoPlayerButtons.stopDownloadVideoStream();   
+        expect(stopDownloadVideoStream).toBeDefined();       
+        expect(stopDownloadVideoStream).toBe("stoped video stream download");     
+    });  
+
+    it("videoDetails dosnet exists", async () =>  {  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "videoDetails dosnet exists"  
+            })
+        );  
+        const stopDownloadVideoStream = await videoPlayerButtons.stopDownloadVideoStream();   
+        expect(stopDownloadVideoStream).toBeDefined();       
+        expect(stopDownloadVideoStream).toBe("videoDetails dosnet exists");     
+    });  
+
+    it("stop video stream download failed", async () =>  {  
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false  
+            })
+        );  
+        const stopDownloadVideoStream = await videoPlayerButtons.stopDownloadVideoStream();   
+        expect(stopDownloadVideoStream).toBeDefined();       
+        expect(stopDownloadVideoStream).toBe("stop video stream download failed");     
+    });  
+});   
+
+
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   
