@@ -152,6 +152,13 @@ describe("stopDownloadVideoStream", () =>  {
     });  
 });   
 
+describe("addStopDownloadOnWindowClose", () =>  {  
+    it("activate addStopDownloadOnWindowClose", () =>  { 
+        const addStopDownloadOnWindowClose = videoPlayerButtons.addStopDownloadOnWindowClose();   
+        expect(addStopDownloadOnWindowClose).toBeDefined();       
+        expect(addStopDownloadOnWindowClose).toBe("addStopDownloadOnWindowClose");     
+    }); 
+});  
 
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
