@@ -210,6 +210,49 @@ describe("downloadVideoStream", () =>  {
     }); 
 });  
 
+describe("downloadVideo", () =>  {  
+    afterAll(() => {     
+        global.fetch = jest.fn(); 
+        videoPlayerButtons.updateFileNameID(null); 
+    });  
+
+
+    it("videoSrc not string", async () =>  { 
+        const downloadVideo = await videoPlayerButtons.downloadVideo();   
+        expect(downloadVideo).toBeDefined();       
+        expect(downloadVideo).toBe("videoSrc not string");     
+    });  
+
+    it("videoType not string", async () =>  { 
+        const downloadVideo = await videoPlayerButtons.downloadVideo("http://localhost:8080/video.mp4");   
+        expect(downloadVideo).toBeDefined();       
+        expect(downloadVideo).toBe("videoType not string");     
+    });  
+
+    it("response ok - downloadVideo", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "video-id"  
+            })
+        );  
+        const downloadVideo = await videoPlayerButtons.downloadVideo("http://localhost:8080/video.mp4", "video/mp4");  
+        expect(downloadVideo).toBeDefined();       
+        expect(downloadVideo).toBe("video-id");     
+    }); 
+
+    it("response not ok - failed download video file", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false 
+            })
+        );  
+        const downloadVideo = await videoPlayerButtons.downloadVideo("http://localhost:8080/video.mp4", "video/mp4");  
+        expect(downloadVideo).toBeDefined();       
+        expect(downloadVideo).toBe("failed download video file");     
+    }); 
+});  
+
 describe("secondsToHms", () =>  {    
     it("Input value not number", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   

@@ -392,21 +392,27 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
 // request to download full video
 export async function downloadVideo(videoSrc, videoType) {
   try {
-    const payload = {
-      videoSrc: videoSrc,
-      videoType: videoType,
-    };
-    const response = await fetch("downloadVideo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (response.ok) {
-      fileNameID = await response.json();
-      console.log(fileNameID);
-      return fileNameID;
+    if (typeof videoSrc !== "string") {
+      return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+      return "videoType not string";
     } else {
-      return "failed download video file";
+      const payload = {
+        videoSrc: videoSrc,
+        videoType: videoType,
+      };
+      const response = await fetch("downloadVideo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        const fileNameID = await response.json();
+        const file_ID = updateFileNameID(fileNameID);
+        return file_ID;
+      } else {
+        return "failed download video file";
+      }
     }
   } catch (e) { // when an error occurs
     return "failed download video file";
