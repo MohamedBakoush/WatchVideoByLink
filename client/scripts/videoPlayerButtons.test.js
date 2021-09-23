@@ -254,10 +254,10 @@ describe("downloadVideo", () =>  {
 });  
 
 describe("secondsToHms", () =>  {    
-    it("Input value not number", () =>  {  
+    it("sec undefined", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   
         expect(secondsToHms).toBeDefined();       
-        expect(secondsToHms).toBe("Input value not number");     
+        expect(secondsToHms).toBe("sec undefined");     
     });  
 
     it("354354 -> 98:25:54", () =>  {  

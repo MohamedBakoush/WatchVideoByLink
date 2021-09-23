@@ -741,9 +741,9 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
 }
 
 // converts seconds to hours:min:sec
-export function secondsToHms(sec) {
-  if (typeof sec !== "number") {
-    return "Input value not number";
+export function secondsToHms(sec) { 
+  if (sec === undefined) {
+    return "sec undefined";
   } else {
     let hours = Math.floor(sec/3600);
     (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";
