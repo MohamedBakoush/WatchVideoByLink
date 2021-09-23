@@ -2,6 +2,7 @@ import * as basic from "../scripts/basics.js";
 
 let fileNameID;
 
+// update file name ID variable
 export function updateFileNameID(updateFileNameID) {
   if(updateFileNameID === null) { 
     fileNameID = undefined;
