@@ -345,6 +345,56 @@ describe("backToMainVideoButton", () =>  {
     }); 
 });  
 
+describe("createTrimVideo", () =>  { 
+    it("player undefined", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo();   
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("player undefined");     
+    }); 
+
+    it("downloadVideoContainer undefined", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container);    
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("downloadVideoContainer undefined");     
+    }); 
+
+    it("downloadVideoMenu undefined", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container, container);    
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("downloadVideoMenu undefined");     
+    }); 
+
+    it("downloadVideoButton undefined", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container, container, container);    
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("downloadVideoButton undefined");     
+    }); 
+
+    it("downloadVideoMenuContent undefined", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container, container, container, container);    
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("downloadVideoMenuContent undefined");     
+    }); 
+
+    it("videoSrc not string", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container, container, container, container, container);   
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("videoSrc not string");     
+    }); 
+
+    it("videoType not string", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container, container, container, container, container, "http://localhost:8080/video.mp4");   
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("videoType not string");     
+    }); 
+
+    it("createTrimVideo", () =>  { 
+        const createTrimVideo = videoPlayerButtons.createTrimVideo(container, container, container, container, container, "http://localhost:8080/video.mp4", "video/mp4");   
+        expect(createTrimVideo).toBeDefined();       
+        expect(createTrimVideo).toBe("createTrimVideo");     
+    }); 
+});  
+
 describe("secondsToHms", () =>  {    
     it("sec undefined", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   
