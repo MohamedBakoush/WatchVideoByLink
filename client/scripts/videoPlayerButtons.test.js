@@ -307,6 +307,44 @@ describe("trimVideo", () =>  {
     }); 
 });  
 
+describe("backToMainVideoButton", () =>  {  
+    it("downloadVideoContainer undefined", () =>  { 
+        const backToMainVideoButton = videoPlayerButtons.backToMainVideoButton();   
+        expect(backToMainVideoButton).toBeDefined();       
+        expect(backToMainVideoButton).toBe("downloadVideoContainer undefined");     
+    }); 
+    
+    it("downloadVideoButton undefined", () =>  { 
+        const backToMainVideoButton = videoPlayerButtons.backToMainVideoButton(container);   
+        expect(backToMainVideoButton).toBeDefined();       
+        expect(backToMainVideoButton).toBe("downloadVideoButton undefined");     
+    }); 
+    
+    it("downloadVideoMenu undefined", () =>  { 
+        const backToMainVideoButton = videoPlayerButtons.backToMainVideoButton(container, container);   
+        expect(backToMainVideoButton).toBeDefined();       
+        expect(backToMainVideoButton).toBe("downloadVideoMenu undefined");     
+    }); 
+
+    it("downloadTrimButton undefined", () =>  { 
+        const backToMainVideoButton = videoPlayerButtons.backToMainVideoButton(container, container, container);   
+        expect(backToMainVideoButton).toBeDefined();       
+        expect(backToMainVideoButton).toBe("downloadTrimButton undefined");     
+    }); 
+
+    it("trimVideoBody undefined", () =>  { 
+        const backToMainVideoButton = videoPlayerButtons.backToMainVideoButton(container, container, container, container);   
+        expect(backToMainVideoButton).toBeDefined();       
+        expect(backToMainVideoButton).toBe("trimVideoBody undefined");     
+    }); 
+
+    it("activate backToMainVideoButton", () =>  { 
+        const backToMainVideoButton = videoPlayerButtons.backToMainVideoButton(container, container, container, container, container);   
+        expect(backToMainVideoButton).toBeDefined();       
+        expect(backToMainVideoButton).toBe("backToMainVideoButton");     
+    }); 
+});  
+
 describe("secondsToHms", () =>  {    
     it("sec undefined", () =>  {  
         const secondsToHms = videoPlayerButtons.secondsToHms();   

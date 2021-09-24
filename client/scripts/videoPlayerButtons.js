@@ -456,19 +456,32 @@ export async function trimVideo(videoSrc, videoType, startTime, endTime) {
 }
 
 // close trim video inerface button
-function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody) {
-  const backToMainVideoButton = document.createElement("button");
-  backToMainVideoButton.title = "Close Trim Video";
-  backToMainVideoButton.className =  "backToMainVideoButton fa fa-times";
-  backToMainVideoButton.onclick = function(){
-    trimVideoBody.remove();
-    downloadTrimButton.disabled = false;
-    downloadVideoContainer.onmouseover = function(){
-      downloadVideoMenu.style.display = "block";
+export function backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody) {
+  if (downloadVideoContainer === undefined) {
+    return "downloadVideoContainer undefined";
+  } else if (downloadVideoButton === undefined) {
+    return "downloadVideoButton undefined";
+  } else if (downloadVideoMenu === undefined) {
+    return "downloadVideoMenu undefined";
+  } else if (downloadTrimButton === undefined) {
+    return "downloadTrimButton undefined";
+  } else if (trimVideoBody === undefined) {
+    return "trimVideoBody undefined";
+  } else {
+    const backToMainVideoButton = document.createElement("button");
+    backToMainVideoButton.title = "Close Trim Video";
+    backToMainVideoButton.className =  "backToMainVideoButton fa fa-times";
+    backToMainVideoButton.onclick = function(){
+      trimVideoBody.remove();
+      downloadTrimButton.disabled = false;
+      downloadVideoContainer.onmouseover = function(){
+        downloadVideoMenu.style.display = "block";
+      };
+      downloadVideoButton.title = "Download Video";
     };
-    downloadVideoButton.title = "Download Video";
-  };
-  trimVideoBody.appendChild(backToMainVideoButton);
+    trimVideoBody.appendChild(backToMainVideoButton);   
+    return "backToMainVideoButton";
+  }
 }
 
 // trim video interace
