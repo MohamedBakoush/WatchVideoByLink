@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const videoPlayerButtons = require("./videoPlayerButtons");   
+const videoPlayerButtons = require("../../client/scripts/videoPlayerButtons");   
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();

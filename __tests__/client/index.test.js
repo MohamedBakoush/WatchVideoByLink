@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const index = require("./index");  
+const index = require("../../client/scripts/index");  
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();

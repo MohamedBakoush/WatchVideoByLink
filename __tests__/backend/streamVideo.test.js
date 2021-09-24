@@ -1,4 +1,4 @@
-const streamVideo = require("./streamVideo");
+const streamVideo = require("../../streamVideo");
 const { v4: uuidv4 } = require("uuid");
 const ffprobe_path = "./ffprobe.exe";
 const ffmpeg_path = "./ffmpeg.exe";

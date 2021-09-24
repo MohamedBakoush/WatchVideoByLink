@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const currentVideoDownloads = require("./currentVideoDownloads");
+const currentVideoDownloads = require("../../client/scripts/currentVideoDownloads");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const basic = require("./basics");
+const basic = require("../../client/scripts/basics");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();
