@@ -1,0 +1,15 @@
+{
+  "videoPlayer": {
+    "volume": 1,
+    "muted": false,
+    "chromecast": false
+  },
+  "download": {
+    "compression": {
+      "downloadVideoStream": true,
+      "downloadVideo": true,
+      "trimVideo": true,
+      "downloadUploadedVideo": true
+    }
+  }
+}
