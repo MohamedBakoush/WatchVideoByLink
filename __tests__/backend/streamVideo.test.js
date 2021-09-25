@@ -5,6 +5,13 @@ const ffmpeg_path = "./ffmpeg.exe";
 const untrunc_path = "untrunc.exe";
 const working_video_path = "./media/working-video/video.mp4";
 
+beforeAll(() => {    
+    streamVideo.update_user_settings_path("__tests__/data/user-settings.test.json");
+    streamVideo.update_data_videos_path("__tests__/data/data-videos.test.json");
+    streamVideo.update_available_videos_path("__tests__/data/available-videos.test.json");
+    streamVideo.update_current_download_videos_path("__tests__/data/current-download-videos.test.json"); 
+});
+
 describe("update_ffprobe_path", () =>  {  
     afterAll(() => { 
         streamVideo.update_ffprobe_path(ffprobe_path);
