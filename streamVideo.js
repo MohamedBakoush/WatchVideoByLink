@@ -27,6 +27,26 @@ let ffmpeg_path = "./ffmpeg.exe";
 let untrunc_path = "untrunc.exe";
 let working_video_path = "./media/working-video/video.mp4";
 
+// updated user settings path
+function update_user_settings_path(newPath){ 
+  if (FileSystem.existsSync(newPath)) { 
+    try {  
+      const user_settings = FileSystem.readFileSync(newPath);  
+      if (typeof user_settings === "object") {
+        userSettings = JSON.parse(user_settings);
+        user_settings_path = newPath;
+        return "userSettings updated";
+      } else {
+        return "user_settings not object";
+      }   
+    } catch (error) {  
+      return error;
+    }
+  } else {
+    return "invalid path";
+  }
+}
+
 // updated ffprobe path
 function update_ffprobe_path(newPath){ 
   ffprobe_path = newPath;
@@ -2123,6 +2143,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 }
 
 module.exports = { // export modules
+  update_user_settings_path,
   streamVideo,
   updateVideoPlayerVolume,
   updateCompressVideoDownload,
