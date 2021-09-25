@@ -67,7 +67,7 @@ function update_data_videos_path(newPath){
   }
 }
 
-// updated available videos   path
+// updated available videos path
 function update_available_videos_path(newPath){ 
   if (FileSystem.existsSync(newPath)) {
     try {
