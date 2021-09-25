@@ -32,13 +32,13 @@ let working_video_path = "./media/working-video/video.mp4";
 function update_user_settings_path(newPath){ 
   if (FileSystem.existsSync(newPath)) { 
     try {  
-      const user_settings = FileSystem.readFileSync(newPath);  
-      if (typeof user_settings === "object") {
+      if (path.extname(newPath) === ".json") {
+        const user_settings = FileSystem.readFileSync(newPath);  
         userSettings = JSON.parse(user_settings);
         user_settings_path = newPath;
         return "userSettings updated";
       } else {
-        return "user_settings not object";
+        return "input path not json"; 
       }   
     } catch (error) {  
       return error;
@@ -52,13 +52,13 @@ function update_user_settings_path(newPath){
 function update_data_videos_path(newPath){ 
   if (FileSystem.existsSync(newPath)) {
     try {
-      const data_videos  = FileSystem.readFileSync(newPath);
-      if (typeof data_videos === "object") {
+      if (path.extname(newPath) === ".json") {
+        const data_videos  = FileSystem.readFileSync(newPath);
         videoData = JSON.parse(data_videos);
         data_videos_path = newPath;
         return "videoData updated";
       } else {
-        return "data_videos not object";
+        return "input path not json"; 
       }
     } catch (error) {
       return error;
@@ -72,13 +72,13 @@ function update_data_videos_path(newPath){
 function update_available_videos_path(newPath){ 
   if (FileSystem.existsSync(newPath)) {
     try {
-      const available_videos  = FileSystem.readFileSync(newPath);
-      if (typeof available_videos === "object") { 
+      if (path.extname(newPath) === ".json") {
+        const available_videos  = FileSystem.readFileSync(newPath);
         availableVideos = JSON.parse(available_videos);  
         available_videos_path = newPath; 
         return "availableVideos updated";
       } else {
-        return "available_videos not object";
+        return "input path not json"; 
       }
     } catch (error) {
       return error;
@@ -92,13 +92,13 @@ function update_available_videos_path(newPath){
 function update_current_download_videos_path(newPath){ 
   if (FileSystem.existsSync(newPath)) {
     try {
-      const current_download_videos = FileSystem.readFileSync(newPath);
-      if (typeof current_download_videos === "object") {
+      if (path.extname(newPath) === ".json") {
+        const current_download_videos = FileSystem.readFileSync(newPath);
         currentDownloadVideos = JSON.parse(current_download_videos);
         current_download_videos_path = newPath;
         return "currentDownloadVideos updated";
       } else {
-        return "current_download_videos not object";
+        return "input path not json"; 
       }
     } catch (error) {
       return error;
