@@ -17,8 +17,11 @@ let videoData = JSON.parse(data_videos);
 let available_videos_path = "data/available-videos.json";
 const available_videos  = FileSystem.readFileSync(available_videos_path);
 let availableVideos = JSON.parse(available_videos);
-const current_download_videos = FileSystem.readFileSync("data/current-download-videos.json");
+
+let current_download_videos_path = "data/current-download-videos.json";
+const current_download_videos = FileSystem.readFileSync(current_download_videos_path);
 let currentDownloadVideos = JSON.parse(current_download_videos);
+
 let ffprobe_path = "./ffprobe.exe";
 let ffmpeg_path = "./ffmpeg.exe";
 let untrunc_path = "untrunc.exe";
