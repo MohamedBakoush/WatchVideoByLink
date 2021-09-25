@@ -13,7 +13,9 @@ let userSettings = JSON.parse(user_settings);
 let data_videos_path = "data/data-videos.json";
 const data_videos  = FileSystem.readFileSync(data_videos_path);
 let videoData = JSON.parse(data_videos);
-const available_videos  = FileSystem.readFileSync("data/available-videos.json");
+ 
+let available_videos_path = "data/available-videos.json";
+const available_videos  = FileSystem.readFileSync(available_videos_path);
 let availableVideos = JSON.parse(available_videos);
 const current_download_videos = FileSystem.readFileSync("data/current-download-videos.json");
 let currentDownloadVideos = JSON.parse(current_download_videos);
