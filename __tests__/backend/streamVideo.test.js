@@ -82,6 +82,27 @@ describe("update_available_videos_path", () =>  {
     }); 
 }); 
 
+describe("update_current_download_videos_path", () =>  {  
+    afterAll(() => { 
+        streamVideo.update_current_download_videos_path("__tests__/data/current-download-videos.test.json");
+    });
+
+    it("invalid path", () =>  {
+        const updated = streamVideo.update_current_download_videos_path();
+        expect(updated).toBe("invalid path");  
+    });
+
+    it("input path not json", () =>  {
+        const updated = streamVideo.update_current_download_videos_path("__tests__/backend/streamVideo.test.js");
+        expect(updated).toBe("input path not json");  
+    }); 
+
+    it("currentDownloadVideos updated", () =>  {
+        const updated = streamVideo.update_current_download_videos_path("__tests__/data/current-download-videos.test.json");
+        expect(updated).toBe("currentDownloadVideos updated");  
+    }); 
+}); 
+
 describe("update_ffprobe_path", () =>  {  
     afterAll(() => { 
         streamVideo.update_ffprobe_path(ffprobe_path);
