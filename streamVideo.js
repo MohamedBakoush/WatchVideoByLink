@@ -87,6 +87,26 @@ function update_available_videos_path(newPath){
   }
 }
 
+// updated current download videos path
+function update_current_download_videos_path(newPath){ 
+  if (FileSystem.existsSync(newPath)) {
+    try {
+      const current_download_videos = FileSystem.readFileSync(newPath);
+      if (typeof current_download_videos === "object") {
+        currentDownloadVideos = JSON.parse(current_download_videos);
+        current_download_videos_path = newPath;
+        return "currentDownloadVideos updated";
+      } else {
+        return "current_download_videos not object";
+      }
+    } catch (error) {
+      return error;
+    }
+  } else {
+    return "invalid path";
+  }
+}
+
 // updated ffprobe path
 function update_ffprobe_path(newPath){ 
   ffprobe_path = newPath;
@@ -2186,6 +2206,7 @@ module.exports = { // export modules
   update_user_settings_path,
   update_data_videos_path,
   update_available_videos_path,
+  update_current_download_videos_path,
   streamVideo,
   updateVideoPlayerVolume,
   updateCompressVideoDownload,
