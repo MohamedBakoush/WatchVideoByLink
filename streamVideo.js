@@ -102,7 +102,7 @@ function getAllAvailableVideos(){
 function resetAvailableVideos(){
   availableVideos = {}; 
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
   return "resetAvailableVideos";
 }
 
@@ -119,7 +119,7 @@ function findAvailableVideosByID(id){
 function updateAvailableVideosByID(videoID, Data){
   availableVideos[videoID] = Data;
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
   return availableVideos[videoID];
 }
  
@@ -128,7 +128,7 @@ function deleteAvailableVideosByID(videoID){
   if (findAvailableVideosByID(videoID) !== undefined) {
     delete availableVideos[videoID]; 
     const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-    FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+    FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
     return `Deleted ${videoID}`; 
   } else {
     return `${videoID} Unavaiable`; 
@@ -144,7 +144,7 @@ function currentDownloads(){
 function resetCurrentDownloadVideos(){
   currentDownloadVideos = {};
   const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-  FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+  FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
   return "resetCurrentDownloadVideos";
 }
 
@@ -161,7 +161,7 @@ function findCurrentDownloadByID(id){
 function updateCurrentDownloadByID(videoID, Data){
   currentDownloadVideos[videoID] = Data;
   const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-  FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+  FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
   return currentDownloadVideos[videoID];
 }
 
@@ -170,7 +170,7 @@ function deleteCurrentDownloadByID(videoID){
   if (findCurrentDownloadByID(videoID) !== undefined) {
     delete currentDownloadVideos[videoID]; 
     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
     return `Deleted ${videoID}`;  
   } else {
     return `${videoID} Unavaiable`; 
@@ -229,7 +229,7 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
       } 
     };
     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
     // check if fileName_fixed_ending video has finnished downloading by checking if metadata exits
     const checkIfMetadataExists = setInterval(function(){ 
       //code goes here that will be run every intrerval.    
@@ -274,7 +274,7 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
                       } 
                     };
                     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-                    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+                    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
 
                     console.log("Video Transcoding succeeded !"); 
                     createThumbnail(path, newFilePath, fileName); 
@@ -345,7 +345,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffmpeg and ffprobe unavailable";   
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg is  unavailable
               if (thumbnailProgress == "completed" && compressionProgress !== "completed") {   
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffmpeg unavailable"; 
@@ -356,7 +356,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffmpeg unavailable";
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);           
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);           
             } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
               if (thumbnailProgress == "completed" && compressionProgress !== "completed") {   
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffprobe unavailable";  
@@ -367,51 +367,51 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffprobe unavailable";  
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(thumbnailProgress == "completed" && compressionProgress == "completed"){ // delete data (no longer needed)            
               delete currentDownloadVideos[`${fileName}`]; 
               const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);  
             } else if(thumbnailProgress == "completed" && compressionProgress !== "completed"){ 
               // update thumbanil unfinnished & compression completed              
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "completed"; 
               currentDownloadVideos[fileName]["compression"]["download-status"] = "unfinished download"; 
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);   
             } else if(thumbnailProgress !== "completed" && compressionProgress == "completed"){ 
               // update thumbanil unfinnished & compression completed              
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "unfinished download"; 
               currentDownloadVideos[fileName]["compression"]["download-status"] = "completed"; 
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);   
             } else { // update thumbanil & compression is unfinnished              
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "unfinished download"; 
               currentDownloadVideos[fileName]["compression"]["download-status"] = "unfinished download"; 
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);   
             }
           } else if (thumbnailProgress && !compressionProgress) {
             // thumbnail true compression false 
             if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg and ffprobe unavailable";  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg is  unavailable
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg unavailable";  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffprobe unavailable";  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(thumbnailProgress == "completed"){ // delete data (no longer needed)       
               delete currentDownloadVideos[`${fileName}`]; 
               const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);  
             } else{ // update thumbanil is unfinnished
               currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "unfinished download";
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);   
             }
           } else if (!thumbnailProgress && compressionProgress) {
             // thumbnail false compression true 
@@ -423,7 +423,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffmpeg and ffprobe unavailable";    
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg is  unavailable
               if (compressionProgress == "completed") {    
                 currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "ffmpeg unavailable"};
@@ -432,7 +432,7 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffmpeg unavailable";     
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
               if (compressionProgress == "completed") {    
                 currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "ffprobe unavailable"};
@@ -441,35 +441,35 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
                 currentDownloadVideos[fileName]["compression"]["download-status"] = "ffprobe unavailable";      
               }  
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(compressionProgress == "completed"){ // update thumbanil unfinnished 
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "unfinished download"};
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else { // update thumbanil & compression is unfinnished 
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "unfinished download"};
               currentDownloadVideos[fileName]["compression"]["download-status"] = "unfinished download";    
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             }
           } else {
             // thumbnail false compression false  
             if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "ffmpeg and ffprobe unavailable"};
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg is  unavailable
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "ffmpeg unavailable"}; 
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "ffprobe unavailable"}; 
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
             } else{ // update thumbanil is unfinnished
               currentDownloadVideos[fileName]["thumbnail"] = {"download-status": "unfinished download"};
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);   
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);   
             } 
           }
         }  else if(currentDownloadVideos[fileName]["video"]["download-status"] == "starting stream download" ||
@@ -482,15 +482,15 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
           } else if(!FileSystem.existsSync(untrunc_path)){//update untrunc is unavailable
             currentDownloadVideos[fileName]["video"]["download-status"] = "untrunc unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
           } else if(!FileSystem.existsSync(working_video_path)){//update working_video_path is unavailable
             currentDownloadVideos[fileName]["video"]["download-status"] = "working video for untrunc is unavailable";  
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
           } else{ // update video is unfinnished
             currentDownloadVideos[fileName]["video"]["download-status"] = "unfinished download";
             const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-            FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+            FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
           }
       } else {
         deleteAllVideoData(fileName);    
@@ -542,7 +542,7 @@ function completeUnfinnishedVideoDownload(fileName){
         // thumbnail true, compression true   
         delete currentDownloadVideos[`${fileName}`]; 
         const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-        FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);  
+        FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);  
         return "download status: completed";
       } else if(!thumbnailProgressCompleted && compressionProgressCompleted){ // redownload thumbnails
         // thumbnail false, compression true
@@ -835,7 +835,7 @@ async function downloadVideoStream(req, res) {
             };
           }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);    
         })
         .on("progress", function(data) {
           console.log("progress", data);
@@ -853,7 +853,7 @@ async function downloadVideoStream(req, res) {
           currentDownloadVideos[`${fileName}`]["video"]["download-status"] =  data.timemark;  
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);    
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);    
           
           if (stopVideoFileBool === true  && fileNameID == fileName) {
             try {
@@ -908,7 +908,7 @@ async function downloadVideoStream(req, res) {
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] = "starting thumbnail download"; 
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
 
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
@@ -1005,7 +1005,7 @@ async function downloadVideo(req, res) {
             };
           }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
 
         })
         .on("progress", function(data) {
@@ -1027,7 +1027,7 @@ async function downloadVideo(req, res) {
           } 
           
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
         })
         .on("end", function() {
           /// encoding is complete, so callback or move on at this point
@@ -1073,7 +1073,7 @@ async function downloadVideo(req, res) {
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";    
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
 
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
@@ -1173,7 +1173,7 @@ async function trimVideo(req, res) {
             };
           }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
         
         })
         .on("progress", function(data) {
@@ -1195,7 +1195,7 @@ async function trimVideo(req, res) {
           } 
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
         })
         .on("end", function() {
           if (compressTrimedVideo) { // addition of compress video data
@@ -1244,7 +1244,7 @@ async function trimVideo(req, res) {
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
 
           console.log("Video Transcoding succeeded !");
           const path = newFilePath+fileName+fileType;
@@ -1334,7 +1334,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 FileSystem.writeFileSync(data_videos_path, newVideoData); 
     
                 const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-                FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+                FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
     
                 console.log("progress", data);
               })
@@ -1391,7 +1391,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 FileSystem.writeFileSync(data_videos_path, newVideoData);
 
                 const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-                FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+                FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
                 console.log("Image Thumbnails succeeded !");
                 
                 if(currentDownloadVideos[`${fileName}`]["compression"] === undefined || currentDownloadVideos[`${fileName}`]["compression"]["download-status"] === "completed") { 
@@ -1401,7 +1401,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 } 
         
                 const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-                FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+                FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
     
               })
               .on("error", (error) => {
@@ -1428,15 +1428,15 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   } else if(!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg and ffprobe is  unavailable
     currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg and ffprobe unavailable";  
     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
   } else if(!FileSystem.existsSync(ffmpeg_path)){ //update ffmpeg is  unavailable
     currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffmpeg unavailable";  
     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
   } else if(!FileSystem.existsSync(ffprobe_path)){ //update ffprobe is  unavailable
     currentDownloadVideos[fileName]["thumbnail"]["download-status"] = "ffprobe unavailable";  
     const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
   }
 }
 
@@ -1552,7 +1552,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
               }  
 
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
 
               // stop video compression
               if (stopCompressedVideoFileBool === true  && fileNameID_Compression == fileName) {
@@ -1598,7 +1598,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                 };
               } 
               const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-              FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+              FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
           
               videoData[`${fileName}`]["compression"] = { 
                 path: newFilePath+fileName+fileType,
@@ -1614,7 +1614,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                 currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "completed"; 
               }            
               const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-              FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+              FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
             })
             .on("error", function(error) {
               /// error handling
@@ -1627,7 +1627,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                 if (currentDownloadVideos[`${fileName}`]["compression"]) {         
                   currentDownloadVideos[`${fileName}`]["compression"]["download-status"] = "ffmpeg was killed with signal SIGKILL"; 
                   const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-                  FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);
+                  FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
                 } 
               }
             })
@@ -1702,7 +1702,7 @@ function deleteAllVideoData(fileName, response) {  // check if videoid is valid
     if(currentDownloadVideos.hasOwnProperty(fileName)){  
       delete currentDownloadVideos[`${fileName}`]; 
       const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-      FileSystem.writeFileSync("data/current-download-videos.json", deleteCurrentDownloadVideos);
+      FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);
     }
     // delete videoData from server if exist
     // eslint-disable-next-line no-prototype-builtins
@@ -1716,7 +1716,7 @@ function deleteAllVideoData(fileName, response) {  // check if videoid is valid
     if(availableVideos.hasOwnProperty(fileName)){ 
       delete availableVideos[fileName];
       const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync("data/available-videos.json", newAvailableVideo);
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
     }
     // check if folder exists
     if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
@@ -1852,7 +1852,7 @@ async function changeVideoTitle(videoID, newVideoTitle) {
     try { 
       availableVideos[videoID]["info"]["title"] = newVideoTitle;  
       const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync("data/available-videos.json", newAvailableVideos);   
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
       return "video-title-changed";
     } catch (e) { 
       return "failed-to-change-video-title";   
@@ -1932,7 +1932,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
             };
           }
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
 
         })
         .on("progress", function(data) { 
@@ -1953,7 +1953,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
             }
           }           
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos); 
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
         })
         .on("end", function() { 
           /// encoding is complete, so callback or move on at this point
@@ -1999,7 +1999,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
           currentDownloadVideos[`${fileName}`]["thumbnail"]["download-status"] =  "starting thumbnail download";   
 
           const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-          FileSystem.writeFileSync("data/current-download-videos.json", newCurrentDownloadVideos);  
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);  
 
           console.log("Video Transcoding succeeded !");
           if (compressUploadedVideo) { // compress video
