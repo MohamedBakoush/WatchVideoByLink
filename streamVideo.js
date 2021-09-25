@@ -5,7 +5,9 @@ const { exec } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
 const youtubedl = require("youtube-dl");
-const user_settings = FileSystem.readFileSync("data/user-settings.json");
+
+let user_settings_path = "data/user-settings.json";
+const user_settings = FileSystem.readFileSync(user_settings_path);
 let userSettings = JSON.parse(user_settings);
 const data_videos  = FileSystem.readFileSync("data/data-videos.json");
 let videoData = JSON.parse(data_videos);
