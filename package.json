@@ -1,7 +1,7 @@
 {
-  "name": "WatchVideoByLink",
+  "name": "watchvideobylink",
   "version": "1.0.0",
-  "description": "Watch Videos By A Public Video Link",
+  "description": "WatchVideoByLink takes a public video URL and displays the video in a video player that has features which makes watching the provided video an enjoyable process.",
   "main": "server.js",
   "scripts": {
     "start": "node server",
