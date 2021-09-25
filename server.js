@@ -26,7 +26,8 @@ function videoLinkFromUrl(req, res){
 // update video player volume settings
 app.post("/updateVideoPlayerVolume", express.json(), updateVideoPlayerVolume);
 function updateVideoPlayerVolume(req, res) {
-  streamVideoFile.updateVideoPlayerVolume(req, res);
+  const updatedVolume = streamVideoFile.updateVideoPlayerVolume(req.body.updatedVideoPlayerVolume,  req.body.updatedVideoPlayerMuted);
+  res.json(updatedVolume);
 }
 
 // get video player settings
@@ -42,9 +43,9 @@ function streamImageById(req, res){
 }
 
 // delete video permently by video id header
-app.get("/delete-video-data-permanently/:id", deletevideoData);
-function deletevideoData(req, res){
-  streamVideoFile.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req, res, req.params.id);
+app.get("/delete-video-data-permanently/:id", deleteAllVideoData);
+function deleteAllVideoData(req, res){
+  streamVideoFile.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.params.id, res);
 }
 
 // stream original video by video id header
@@ -61,8 +62,8 @@ function streamCompressedVideoById(req, res){
 
 // change title of video
 app.post("/changeVideoTitle", express.json(), changeVideoTitle);
-function changeVideoTitle(req, res){
-  streamVideoFile.changeVideoTitle(req, res);
+async function changeVideoTitle(req, res){ 
+  res.json(await streamVideoFile.changeVideoTitle(req.body.videoID, req.body.newVideoTitle));
 }
 
 // get video data for specified video by id header
@@ -97,8 +98,8 @@ function trimVideo(req, res){
 
 // stop downloading live video stream header
 app.post("/stopDownloadVideoStream", express.json(), stopDownloadVideoStream);
-function stopDownloadVideoStream(req, res){
-  streamVideoFile.stopDownloadVideoStream(req, res);
+async function stopDownloadVideoStream(req, res){ 
+  res.json(await streamVideoFile.stopDownloadVideoStream(req.body.id));
 }
 
 // load path name /saved/videos with index.html page
@@ -116,8 +117,7 @@ function currentDownloads(req, res){
 // complete download unfinnished video by specified video id header
 app.post("/complete-unfinnished-video-download",  express.json(), completeUnfinnishedVideoDownload);
 function completeUnfinnishedVideoDownload(req, res){
-  // streamVideoFile.completeUnfinnishedVideoDownload(req, res);
-  res.json(streamVideoFile.completeUnfinnishedVideoDownload(req, res));
+  res.json(streamVideoFile.completeUnfinnishedVideoDownload(req.body.id));
 } 
 
 // adds html as extensions, dont need to write index.html
