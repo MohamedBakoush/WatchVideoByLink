@@ -12,6 +12,13 @@ beforeAll(() => {
     streamVideo.update_current_download_videos_path("__tests__/data/current-download-videos.test.json"); 
 });
 
+afterAll(() => {    
+    streamVideo.update_user_settings_path("data/user-settings.json");
+    streamVideo.update_data_videos_path("data/data-videos.json");
+    streamVideo.update_available_videos_path("data/available-videos.json");
+    streamVideo.update_current_download_videos_path("data/current-download-videos.json"); 
+}); 
+
 describe("update_ffprobe_path", () =>  {  
     afterAll(() => { 
         streamVideo.update_ffprobe_path(ffprobe_path);
