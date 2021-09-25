@@ -673,7 +673,7 @@ function updateVideoPlayerVolume(videoPlayerVolume, videoPlayerMuted) {
     userSettings["videoPlayer"].volume = videoPlayerVolume;
     userSettings["videoPlayer"].muted = videoPlayerMuted;
     const newUserSettings = JSON.stringify(userSettings, null, 2);
-    FileSystem.writeFileSync("data/user-settings.json", newUserSettings);  
+    FileSystem.writeFileSync(user_settings_path, newUserSettings);  
     return "updated-video-player-volume";
   } else if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted !== "boolean") {
     return "muted-invaid";
@@ -693,7 +693,7 @@ function updateCompressVideoDownload(downloadType, bool) {
       if (typeof bool == "boolean") {
         userSettings["download"]["compression"][`${downloadType}`] = bool;
         const newUserSettings = JSON.stringify(userSettings, null, 2);
-        FileSystem.writeFileSync("data/user-settings.json", newUserSettings);
+        FileSystem.writeFileSync(user_settings_path, newUserSettings);
         return `compress video download ${downloadType} updated`;
       } else {       
         return "invalid bool";
