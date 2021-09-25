@@ -1,4 +1,5 @@
 "use strict";
+const path = require("path");
 const FileSystem = require("fs");
 const stream = require("stream");
 const { exec } = require("child_process");
