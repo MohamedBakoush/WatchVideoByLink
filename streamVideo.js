@@ -9,7 +9,9 @@ const youtubedl = require("youtube-dl");
 let user_settings_path = "data/user-settings.json";
 const user_settings = FileSystem.readFileSync(user_settings_path);
 let userSettings = JSON.parse(user_settings);
-const data_videos  = FileSystem.readFileSync("data/data-videos.json");
+
+let data_videos_path = "data/data-videos.json";
+const data_videos  = FileSystem.readFileSync(data_videos_path);
 let videoData = JSON.parse(data_videos);
 const available_videos  = FileSystem.readFileSync("data/available-videos.json");
 let availableVideos = JSON.parse(available_videos);
