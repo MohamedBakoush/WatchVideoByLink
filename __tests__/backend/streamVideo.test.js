@@ -40,6 +40,27 @@ describe("update_user_settings_path", () =>  {
     }); 
 }); 
 
+describe("update_data_videos_path", () =>  {  
+    afterAll(() => { 
+        streamVideo.update_data_videos_path("__tests__/data/data-videos.test.json");
+    });
+
+    it("invalid path", () =>  {
+        const updated = streamVideo.update_data_videos_path();
+        expect(updated).toBe("invalid path");  
+    });
+
+    it("input path not json", () =>  {
+        const updated = streamVideo.update_data_videos_path("__tests__/backend/streamVideo.test.js");
+        expect(updated).toBe("input path not json");  
+    }); 
+
+    it("videoData updated", () =>  {
+        const updated = streamVideo.update_data_videos_path("__tests__/data/data-videos.test.json");
+        expect(updated).toBe("videoData updated");  
+    }); 
+}); 
+
 describe("update_ffprobe_path", () =>  {  
     afterAll(() => { 
         streamVideo.update_ffprobe_path(ffprobe_path);
