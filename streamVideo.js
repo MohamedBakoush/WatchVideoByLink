@@ -67,6 +67,26 @@ function update_data_videos_path(newPath){
   }
 }
 
+// updated available videos   path
+function update_available_videos_path(newPath){ 
+  if (FileSystem.existsSync(newPath)) {
+    try {
+      const available_videos  = FileSystem.readFileSync(newPath);
+      if (typeof available_videos === "object") { 
+        availableVideos = JSON.parse(available_videos);  
+        available_videos_path = newPath; 
+        return "availableVideos updated";
+      } else {
+        return "available_videos not object";
+      }
+    } catch (error) {
+      return error;
+    }
+  } else { 
+    return "invalid path";
+  }
+}
+
 // updated ffprobe path
 function update_ffprobe_path(newPath){ 
   ffprobe_path = newPath;
@@ -2165,6 +2185,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 module.exports = { // export modules
   update_user_settings_path,
   update_data_videos_path,
+  update_available_videos_path,
   streamVideo,
   updateVideoPlayerVolume,
   updateCompressVideoDownload,
