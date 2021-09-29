@@ -95,11 +95,13 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
       const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
       const linkContainer = basic.createLink(savedVideosThumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
-      const thumbnailContainer = basic.createSection(linkContainer, "section");
-      const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container");
-      const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, undefined, "thumbnail-image", videoInfo_ID);
+      linkContainer.draggable = true;
+      const thumbnailContainer = basic.createSection(linkContainer, "section", `${videoInfo_ID}-container`);
+      const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
+      const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
+      thumbnail.draggable = false;
       // menu options
-      const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars");
+      const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars", `${videoInfo_ID}-menu`);
       option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
