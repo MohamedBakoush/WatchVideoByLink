@@ -191,7 +191,31 @@ function dragDropAvailableVideoDetails(section, onUpdate){
           section.insertBefore(dragEl, target.nextSibling);  
         }
       } 
+      updateRearangedAvailableVideoDetails(dragEl.id, target.id);
       nextEl !== dragEl.nextSibling ? onUpdate(dragEl) : false;
+  }
+}
+
+// request to update selected available video details orientation
+async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
+  try {
+    const payload = {
+      selectedID: selectedID,
+      targetID: targetID
+    }; 
+    let requestResponse;
+    const response = await fetch("../updateRearangedAvailableVideoDetails", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (response.ok) { 
+      requestResponse = await response.json(); 
+      console.log(requestResponse);
+    }
+  } catch (error) {
+    basic.notify("error","Failed to update rearanged available video details"); 
+    return error;
   }
 }
 
