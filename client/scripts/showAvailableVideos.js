@@ -48,6 +48,7 @@ export function eachAvailableVideoDetails(videoDetails) {
         if(basic.searchableVideoDataArray.length !== 0){ 
           basic.searchableVideoDataArray.length = 0;
         } 
+        dragDropAvailableVideoDetails(savedVideosThumbnailContainer, function (){});
         Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
           if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
             // add video details into searchableVideoDataArray array 
@@ -136,6 +137,51 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
   } catch (error) { 
     return "showDetails didnt work";
   } 
+}
+
+// rearange available videos by drag and drop
+function dragDropAvailableVideoDetails(section, onUpdate){
+  let dragEl, nextEl, target;
+ 
+  section.addEventListener("dragstart", function(e){      
+    dragEl = e.target; 
+    nextEl = dragEl.nextSibling; 
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("Text", dragEl.textContent);
+    section.addEventListener("dragover", _onDragOver, false);
+    section.addEventListener("dragend", _onDragEnd, false);
+    dragEl.classList.add("dragging");
+  });
+  
+  function _onDragOver(e){
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move"; 
+      target = e.target;   
+      if (e.target.id.includes("-img")) { 
+        target = document.getElementById(e.target.id.replace("-img",""));  
+      } else if (e.target.id.includes("-menu")) { 
+        target = document.getElementById(e.target.id.replace("-menu",""));  
+      } else if (e.target.id.includes("-image-container")) { 
+        target = document.getElementById(e.target.id.replace("-image-container",""));  
+      } else if (e.target.id.includes("-title")) { 
+        target = document.getElementById(e.target.id.replace("-title",""));   
+      } 
+  } 
+
+  function _onDragEnd(e){
+      e.preventDefault();
+      dragEl.classList.remove("dragging");
+      section.removeEventListener("dragover", _onDragOver, false);
+      section.removeEventListener("dragend", _onDragEnd, false);
+      if( target && target !== dragEl && target.nodeName == "A"){
+        if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
+          section.insertBefore(dragEl, target); 
+        } else { 
+          section.insertBefore(dragEl, target.nextSibling);  
+        }
+      } 
+      nextEl !== dragEl.nextSibling ? onUpdate(dragEl) : false;
+  }
 }
 
 // on click option menu copy video link
