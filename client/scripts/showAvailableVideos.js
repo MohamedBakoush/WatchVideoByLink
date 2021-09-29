@@ -115,12 +115,21 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       thumbnail.addEventListener("mouseover", ( ) => { 
         if (typeof loopTroughThumbnails != "number"){
           loopTroughThumbnails = setInterval( () => {
-            if (mainThumbnailNumber == numberOfThumbnails) {
-              thumbnail.src =  mainThumbnail;
+            if (linkContainer.classList.contains("dragging")) { 
+              clearInterval(loopTroughThumbnails);
+              if (typeof loopTroughThumbnails == "number"){
+                loopTroughThumbnails = undefined;
+              }
               mainThumbnailNumber = 1;
-            } else {
-              mainThumbnailNumber = mainThumbnailNumber + 1;
               thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
+            } else { 
+              if (mainThumbnailNumber == numberOfThumbnails) {
+                thumbnail.src =  mainThumbnail;
+                mainThumbnailNumber = 1;
+              } else {
+                mainThumbnailNumber = mainThumbnailNumber + 1;
+                thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
+              }
             }
           }, 500); 
         }
