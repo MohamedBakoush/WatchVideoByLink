@@ -107,6 +107,10 @@
   cursor: default;
 }
 
+.dragging {
+  opacity: .5;  
+}  
+
 .option-play, .option-delete{
   display: inline-flex;
   align-items: center;
