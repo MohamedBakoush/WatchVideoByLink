@@ -171,8 +171,7 @@ function dragDropAvailableVideoDetails(section, onUpdate){
   
   function _onDragOver(e){
     e.preventDefault();
-    e.dataTransfer.dropEffect = "move"; 
-    target = e.target;   
+    e.dataTransfer.dropEffect = "move";
     if (e.target.id.includes("-img")) { 
       target = document.getElementById(e.target.id.replace("-img",""));  
     } else if (e.target.id.includes("-menu")) { 
@@ -181,16 +180,22 @@ function dragDropAvailableVideoDetails(section, onUpdate){
       target = document.getElementById(e.target.id.replace("-image-container",""));  
     } else if (e.target.id.includes("-title")) { 
       target = document.getElementById(e.target.id.replace("-title",""));   
-    } 
-    if (prevtarget !== undefined) { 
-      if (prevtarget.id !== target.id) {  
-        prevtarget.classList.remove("dragging-target"); 
-      }  else {  
-        target.classList.add("dragging-target"); 
-      }  
-      prevtarget = target;
+    } else { 
+      target = e.target; 
+    }
+    if(target.nodeName == "A"){
+      if (prevtarget !== undefined) { 
+        if (prevtarget.id !== target.id) {  
+          prevtarget.classList.remove("dragging-target"); 
+        }  else {  
+          target.classList.add("dragging-target"); 
+        }  
+        prevtarget = target;
+      } else  {
+        prevtarget = target;
+      }
     } else  {
-      prevtarget = target;
+      prevtarget.classList.remove("dragging-target"); 
     }
   } 
 
