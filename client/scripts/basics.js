@@ -10,6 +10,32 @@ export function favicon() {
   return document.getElementById("favicon");
 }
 
+// update searchableVideoDataArray orientation
+export function searchableVideoDataArray_move(from_id, to_id) {  
+  let selectedIDIndex, targetIDIndex; 
+  for (var i = 0; i < searchableVideoDataArray.length; i++) {
+    if (searchableVideoDataArray[i].info.id == to_id) { 
+      targetIDIndex = i;
+    }
+    if (searchableVideoDataArray[i].info.id == from_id) { 
+      selectedIDIndex = i;
+    }
+  }  
+  if (selectedIDIndex === undefined && targetIDIndex === undefined) {
+    return `${from_id} & ${to_id} undefined`;
+  } else if (selectedIDIndex === undefined) {
+    return `${from_id} undefined`;
+  } else if (targetIDIndex === undefined) {
+    return `${to_id} undefined`;
+  } else {
+    // remove `selectedIDIndex` item and store it
+    const removedItem = searchableVideoDataArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    searchableVideoDataArray.splice(targetIDIndex, 0, removedItem);   
+    return "searchableVideoDataArray updated successfully";
+  } 
+}
+
 // create a input element
 // with optional input type, id, classList and if input type is required or not
 export function inputType(container, type, idHere, classHere, required){
