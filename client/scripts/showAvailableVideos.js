@@ -190,8 +190,9 @@ function dragDropAvailableVideoDetails(section, onUpdate){
         } else { 
           section.insertBefore(dragEl, target.nextSibling);  
         }
+        basic.searchableVideoDataArray_move(dragEl.id, target.id);
+        updateRearangedAvailableVideoDetails(dragEl.id, target.id);
       } 
-      updateRearangedAvailableVideoDetails(dragEl.id, target.id);
       nextEl !== dragEl.nextSibling ? onUpdate(dragEl) : false;
   }
 }
