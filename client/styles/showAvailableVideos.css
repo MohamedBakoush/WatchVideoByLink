@@ -111,6 +111,10 @@
   opacity: .5;  
 }  
 
+.dragging-target-outline {
+  outline: 1px dashed #000;
+} 
+
 .option-play, .option-delete{
   display: inline-flex;
   align-items: center;

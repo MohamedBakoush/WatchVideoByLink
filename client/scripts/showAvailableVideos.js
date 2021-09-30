@@ -152,8 +152,7 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
 
 // rearange available videos by drag and drop
 function dragDropAvailableVideoDetails(section, onUpdate){
-  let dragEl, nextEl, target;
- 
+  let dragEl, nextEl, target, prevtarget;
   section.addEventListener("dragstart", function(e){      
     dragEl = e.target; 
     nextEl = dragEl.nextSibling; 
@@ -177,11 +176,23 @@ function dragDropAvailableVideoDetails(section, onUpdate){
     } else if (e.target.id.includes("-title")) { 
       target = document.getElementById(e.target.id.replace("-title",""));   
     } 
+    if (prevtarget !== undefined) { 
+      if (prevtarget.id !== target.id) {  
+        prevtarget.classList.remove("dragging-target-outline"); 
+      }  else {  
+        target.classList.add("dragging-target-outline"); 
+      }  
+      prevtarget = target;
+    } else  {
+      prevtarget = target;
+    }
   } 
 
   function _onDragEnd(e){
     e.preventDefault();
     dragEl.classList.remove("dragging");
+    target.classList.remove("dragging-target-outline"); 
+    prevtarget.classList.remove("dragging-target-outline"); 
     section.removeEventListener("dragover", _onDragOver, false);
     section.removeEventListener("dragend", _onDragEnd, false);
     if( target && target !== dragEl && target.nodeName == "A"){
