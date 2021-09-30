@@ -111,7 +111,7 @@
   opacity: .5;  
 }  
 
-.dragging-target-outline {
+.dragging-target {
   outline: 1px dashed #000;
 } 
 

@@ -178,9 +178,9 @@ function dragDropAvailableVideoDetails(section, onUpdate){
     } 
     if (prevtarget !== undefined) { 
       if (prevtarget.id !== target.id) {  
-        prevtarget.classList.remove("dragging-target-outline"); 
+        prevtarget.classList.remove("dragging-target"); 
       }  else {  
-        target.classList.add("dragging-target-outline"); 
+        target.classList.add("dragging-target"); 
       }  
       prevtarget = target;
     } else  {
@@ -191,8 +191,8 @@ function dragDropAvailableVideoDetails(section, onUpdate){
   function _onDragEnd(e){
     e.preventDefault();
     dragEl.classList.remove("dragging");
-    target.classList.remove("dragging-target-outline"); 
-    prevtarget.classList.remove("dragging-target-outline"); 
+    target.classList.remove("dragging-target"); 
+    prevtarget.classList.remove("dragging-target"); 
     section.removeEventListener("dragover", _onDragOver, false);
     section.removeEventListener("dragend", _onDragEnd, false);
     if( target && target !== dragEl && target.nodeName == "A"){
