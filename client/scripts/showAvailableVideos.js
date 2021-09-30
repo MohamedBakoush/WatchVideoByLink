@@ -165,35 +165,35 @@ function dragDropAvailableVideoDetails(section, onUpdate){
   });
   
   function _onDragOver(e){
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move"; 
-      target = e.target;   
-      if (e.target.id.includes("-img")) { 
-        target = document.getElementById(e.target.id.replace("-img",""));  
-      } else if (e.target.id.includes("-menu")) { 
-        target = document.getElementById(e.target.id.replace("-menu",""));  
-      } else if (e.target.id.includes("-image-container")) { 
-        target = document.getElementById(e.target.id.replace("-image-container",""));  
-      } else if (e.target.id.includes("-title")) { 
-        target = document.getElementById(e.target.id.replace("-title",""));   
-      } 
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move"; 
+    target = e.target;   
+    if (e.target.id.includes("-img")) { 
+      target = document.getElementById(e.target.id.replace("-img",""));  
+    } else if (e.target.id.includes("-menu")) { 
+      target = document.getElementById(e.target.id.replace("-menu",""));  
+    } else if (e.target.id.includes("-image-container")) { 
+      target = document.getElementById(e.target.id.replace("-image-container",""));  
+    } else if (e.target.id.includes("-title")) { 
+      target = document.getElementById(e.target.id.replace("-title",""));   
+    } 
   } 
 
   function _onDragEnd(e){
-      e.preventDefault();
-      dragEl.classList.remove("dragging");
-      section.removeEventListener("dragover", _onDragOver, false);
-      section.removeEventListener("dragend", _onDragEnd, false);
-      if( target && target !== dragEl && target.nodeName == "A"){
-        if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
-          section.insertBefore(dragEl, target); 
-        } else { 
-          section.insertBefore(dragEl, target.nextSibling);  
-        }
-        basic.searchableVideoDataArray_move(dragEl.id, target.id);
-        updateRearangedAvailableVideoDetails(dragEl.id, target.id);
-      } 
-      nextEl !== dragEl.nextSibling ? onUpdate(dragEl) : false;
+    e.preventDefault();
+    dragEl.classList.remove("dragging");
+    section.removeEventListener("dragover", _onDragOver, false);
+    section.removeEventListener("dragend", _onDragEnd, false);
+    if( target && target !== dragEl && target.nodeName == "A"){
+      if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
+        section.insertBefore(dragEl, target); 
+      } else { 
+        section.insertBefore(dragEl, target.nextSibling);  
+      }
+      basic.searchableVideoDataArray_move(dragEl.id, target.id);
+      updateRearangedAvailableVideoDetails(dragEl.id, target.id);
+    } 
+    nextEl !== dragEl.nextSibling ? onUpdate(dragEl) : false;
   }
 }
 
