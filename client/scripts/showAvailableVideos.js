@@ -211,8 +211,17 @@ async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
       body: JSON.stringify(payload),
     });
     if (response.ok) { 
-      requestResponse = await response.json(); 
-      console.log(requestResponse);
+      requestResponse = await response.json();  
+      if (requestResponse === `${selectedID} unavailable at availableVideos`) {
+        basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+        return `${selectedID} unavailable at availableVideos`; 
+      } else if (requestResponse === `${targetID} unavailable at availableVideos`) {
+        basic.notify("error", `${targetID} unavailable at availableVideos`); 
+        return `${targetID} unavailable at availableVideos`; 
+      } else {
+        basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent }`);    
+        return "availableVideos updated successfully"; 
+      }
     }
   } catch (error) {
     basic.notify("error","Failed to update rearanged available video details"); 
