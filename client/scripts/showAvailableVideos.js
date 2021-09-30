@@ -292,6 +292,7 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
       linkContainer.removeAttribute("href");
       option_menu.disabled = true;
       option_menu.classList = "thumbnail-option-menu";
+      linkContainer.draggable = false;
       // option_menu_container
       const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
       // copy video link
@@ -355,6 +356,7 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
                       option_menu.title = "menu";
                       linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
                       option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                      linkContainer.draggable = true;
                       option_menu.disabled = false;
                       option_menu_container.remove();
                       close_option_menu.remove();
@@ -378,6 +380,7 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
                   option_menu.title = "menu";
                   linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
                   option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                  linkContainer.draggable = true;
                   option_menu.disabled = false;
                   option_menu_container.remove();
                   close_option_menu.remove();
@@ -534,6 +537,7 @@ export function closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
       option_menu.title = "menu";
       linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
+      linkContainer.draggable = true;
       option_menu.disabled = false;
       option_menu_container.remove();
       close_option_menu.remove(); 
