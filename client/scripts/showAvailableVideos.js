@@ -102,6 +102,12 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       thumbnail.draggable = false;
       // menu options
       const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars", `${videoInfo_ID}-menu`);
+      option_menu.onmouseenter = () => {
+        linkContainer.draggable = false;
+      };
+      option_menu.onmouseleave = () => {
+        linkContainer.draggable = true;
+      };
       option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
