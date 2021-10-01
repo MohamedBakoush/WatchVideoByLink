@@ -102,6 +102,101 @@ describe("SearchableVideoDataArray_reset", () =>  {
     }); 
 }); 
 
+describe("searchableVideoDataArray_move", () =>  {   
+    const from_id = "id1";
+    const to_id = "id2";
+    
+    beforeAll(() => {     
+        basic.SearchableVideoDataArray_push({
+            "info": {
+                "title": "We the best",
+                "videoLink": {
+                    "src": "/video/e615e458-855d-44d3-b686-d82f82a43f27",
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/1",
+                    "2": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/2",
+                    "3": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/3",
+                    "4": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/4",
+                    "5": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/5",
+                    "6": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/6",
+                    "7": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/7",
+                    "8": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/8"
+                },
+                "id": `${from_id}`
+            }
+        });
+        basic.SearchableVideoDataArray_push({ 
+            "info": {
+                "title": "2",
+                "videoLink": {
+                    "src": "/video/77645385-e704-4c16-948a-f9284503dee9",
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/1",
+                    "2": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/2",
+                    "3": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/3",
+                    "4": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/4",
+                    "5": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/5",
+                    "6": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/6",
+                    "7": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/7",
+                    "8": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/8"
+                },
+                "id": `${to_id}`
+            } 
+        });
+     
+    });
+
+    afterAll(() => {   
+        basic.SearchableVideoDataArray_reset(); 
+    });
+
+    it("from_id && to_id undefined", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move(undefined, undefined);   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("from_id && to_id undefined");   
+    }); 
+    
+    it("from_id undefined", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move(undefined, "invaldID2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("from_id undefined");   
+    });  
+
+    it("to_id undefined", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move("invaldID1", undefined);   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("to_id undefined");   
+    });
+
+    it("from_id && to_id index not found", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move("invaldID1", "invaldID2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("invaldID1 && invaldID2 index not found");   
+    }); 
+
+    it("from_id index not found", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move("invaldID1", to_id);   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("invaldID1 index not found");   
+    }); 
+
+    it("to_id index not found", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move(from_id, "invaldID2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("invaldID2 index not found");   
+    });
+    
+    it("searchableVideoDataArray updated successfully", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move("id1", "id2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("searchableVideoDataArray updated successfully");   
+    }); 
+}); 
+
 describe("inputType", () =>  {    
     it("valid tagname", () =>  { 
         const input = basic.inputType(container);   
