@@ -180,6 +180,20 @@ describe("showDetails", () =>  {
     });
 });
 
+describe("dragDropAvailableVideoDetails", () =>  {  
+    it("section undefined", () =>  { 
+        const dragDrop = showAvailableVideos.dragDropAvailableVideoDetails();   
+        expect(dragDrop).toBeDefined();       
+        expect(dragDrop).toBe("section undefined");     
+    });  
+
+    it("dragDropAvailableVideoDetails", () =>  { 
+        const dragDrop = showAvailableVideos.dragDropAvailableVideoDetails(container);   
+        expect(dragDrop).toBeDefined();       
+        expect(dragDrop).toBe("dragDropAvailableVideoDetails");     
+    });  
+});
+
 describe("updateRearangedAvailableVideoDetails", () =>  { 
     const selectedID = "id1";
     const targetID = "id2";

@@ -48,7 +48,7 @@ export function eachAvailableVideoDetails(videoDetails) {
         if(basic.searchableVideoDataArray.length !== 0){ 
           basic.searchableVideoDataArray.length = 0;
         } 
-        dragDropAvailableVideoDetails(savedVideosThumbnailContainer, function (){});
+        dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
         Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
           if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
             // add video details into searchableVideoDataArray array 
@@ -157,17 +157,21 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
 }
 
 // rearange available videos by drag and drop
-function dragDropAvailableVideoDetails(section, onUpdate){
-  let dragEl, nextEl, target, prevtarget;
-  section.addEventListener("dragstart", function(e){      
-    dragEl = e.target; 
-    nextEl = dragEl.nextSibling; 
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("Text", dragEl.textContent);
-    section.addEventListener("dragover", _onDragOver, false);
-    section.addEventListener("dragend", _onDragEnd, false);
-    dragEl.classList.add("dragging");
-  });
+export function dragDropAvailableVideoDetails(section){
+  let dragEl, target, prevtarget;
+  if (section === undefined) {
+    return "section undefined";
+  } else { 
+    section.addEventListener("dragstart", function(e){      
+      dragEl = e.target; 
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("Text", dragEl.textContent);
+      section.addEventListener("dragover", _onDragOver, false);
+      section.addEventListener("dragend", _onDragEnd, false);
+      dragEl.classList.add("dragging");
+    });
+    return "dragDropAvailableVideoDetails";
+  }
   
   function _onDragOver(e){
     e.preventDefault();
@@ -215,7 +219,6 @@ function dragDropAvailableVideoDetails(section, onUpdate){
       basic.searchableVideoDataArray_move(dragEl.id, target.id);
       updateRearangedAvailableVideoDetails(dragEl.id, target.id);
     } 
-    nextEl !== dragEl.nextSibling ? onUpdate(dragEl) : false;
   }
 }
 
