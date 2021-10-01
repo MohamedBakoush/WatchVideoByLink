@@ -53,6 +53,17 @@ describe("favicon", () =>  {
     }); 
 }); 
 
+describe("SearchableVideoDataArray_reset", () =>  {    
+    it("reset", () =>  { 
+        const reset = basic.SearchableVideoDataArray_reset();     
+        expect(reset).toBe("reset SearchableVideoDataArray");    
+        const searchableVideoDataArray = basic.searchableVideoDataArray;   
+        expect(searchableVideoDataArray).toBeDefined();     
+        expect(searchableVideoDataArray).toEqual(expect.arrayContaining([]));
+        expect(searchableVideoDataArray).toEqual([]);   
+    }); 
+}); 
+
 describe("inputType", () =>  {    
     it("valid tagname", () =>  { 
         const input = basic.inputType(container);   
