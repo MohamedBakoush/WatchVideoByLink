@@ -1945,8 +1945,10 @@ async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
       return "availableVideos updated successfully";
     } else if (!checkIfSelectedIdExits && checkIfTargetIdExits) {
       return `${selectedID} unavailable at availableVideos`;
-    } else {
+    } else if (checkIfSelectedIdExits && !checkIfTargetIdExits) {
       return `${targetID} unavailable at availableVideos`;
+    } else {
+      return `${selectedID} && ${targetID} unavailable at availableVideos`;
     }
   } catch (error) {
     return error;
