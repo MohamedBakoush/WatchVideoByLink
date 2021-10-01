@@ -16,6 +16,12 @@ export function SearchableVideoDataArray_push(data) {
   return "updated SearchableVideoDataArray";
 }
 
+// return SearchableVideoDataArray to its inital state
+export function SearchableVideoDataArray_reset() {
+  searchableVideoDataArray = [];
+  return "reset SearchableVideoDataArray";
+}
+
 // update searchableVideoDataArray orientation
 export function searchableVideoDataArray_move(from_id, to_id) { 
   if (from_id === undefined && to_id === undefined) { 
