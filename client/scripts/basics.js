@@ -10,6 +10,12 @@ export function favicon() {
   return document.getElementById("favicon");
 }
 
+// push data to SearchableVideoDataArray
+export function SearchableVideoDataArray_push(data) {
+  searchableVideoDataArray.push(data);
+  return "updated SearchableVideoDataArray";
+}
+
 // update searchableVideoDataArray orientation
 export function searchableVideoDataArray_move(from_id, to_id) { 
   if (from_id === undefined && to_id === undefined) { 
