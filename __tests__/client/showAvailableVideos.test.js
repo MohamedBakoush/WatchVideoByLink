@@ -180,6 +180,92 @@ describe("showDetails", () =>  {
     });
 });
 
+describe("updateRearangedAvailableVideoDetails", () =>  { 
+    const selectedID = "id1";
+    const targetID = "id2";
+    
+    afterAll(() => {    
+        global.fetch = jest.fn();
+    }); 
+
+    it("selectedID & targetID undefined", async () =>  { 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails();   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe("selectedID & targetID undefined");     
+    });    
+
+    it("targetID undefined", async () =>  { 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(undefined, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe("selectedID undefined");     
+    });    
+
+    it("selectedID undefined", async () =>  { 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe("targetID undefined");     
+    });    
+
+    it("selectedID unavailable at availableVideos", async () =>  {         
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => `${selectedID} unavailable at availableVideos`  
+            })
+        ); 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe(`${selectedID} unavailable at availableVideos`);     
+    });
+
+    it("targetID unavailable at availableVideos", async () =>  {         
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => `${targetID} unavailable at availableVideos`  
+            })
+        ); 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe(`${targetID} unavailable at availableVideos`);     
+    });   
+    
+    it("availableVideos updated successfully", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => "availableVideos updated successfully"  
+            })
+        ); 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe("availableVideos updated successfully");     
+    });   
+    
+    it("Failed to update rearanged available video details", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => ""  
+            })
+        ); 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe("Failed to update rearanged available video details");     
+    });   
+    
+    it("Failed to update rearanged available video details", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: false
+            })
+        ); 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe("Failed to update rearanged available video details");     
+    });  
+});
+
 describe("optionMenuCopyOnClick", () =>  {  
     it("videoSrc not string", () =>  { 
         const optionMenuCopyOnClick = showAvailableVideos.optionMenuCopyOnClick();   

@@ -220,31 +220,48 @@ function dragDropAvailableVideoDetails(section, onUpdate){
 }
 
 // request to update selected available video details orientation
-async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
+export async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
   try {
-    const payload = {
-      selectedID: selectedID,
-      targetID: targetID
-    }; 
-    let requestResponse;
-    const response = await fetch("../updateRearangedAvailableVideoDetails", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (response.ok) { 
-      requestResponse = await response.json();  
-      if (requestResponse === `${selectedID} unavailable at availableVideos`) {
-        basic.notify("error", `${selectedID} unavailable at availableVideos`); 
-        return `${selectedID} unavailable at availableVideos`; 
-      } else if (requestResponse === `${targetID} unavailable at availableVideos`) {
-        basic.notify("error", `${targetID} unavailable at availableVideos`); 
-        return `${targetID} unavailable at availableVideos`; 
+      if (selectedID === undefined && targetID === undefined) {
+        basic.notify("error", "selectedID & targetID undefined"); 
+        return "selectedID & targetID undefined";
+      } else if (selectedID === undefined) {
+        basic.notify("error", "selectedID undefined"); 
+        return "selectedID undefined";
+      } else if (targetID === undefined) {
+        basic.notify("error", "targetID undefined"); 
+        return "targetID undefined";
       } else {
-        basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent }`);    
-        return "availableVideos updated successfully"; 
+        const payload = {
+          selectedID: selectedID,
+          targetID: targetID
+        }; 
+        let requestResponse;
+        const response = await fetch("../updateRearangedAvailableVideoDetails", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) { 
+          requestResponse = await response.json();  
+          if (requestResponse === "availableVideos updated successfully"){
+            basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);    
+            return "availableVideos updated successfully"; 
+          } else if (requestResponse === `${selectedID} unavailable at availableVideos`) {
+            basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+            return `${selectedID} unavailable at availableVideos`; 
+          } else if (requestResponse === `${targetID} unavailable at availableVideos`) {
+            basic.notify("error", `${targetID} unavailable at availableVideos`); 
+            return `${targetID} unavailable at availableVideos`; 
+          } else {        
+            basic.notify("error","Failed to update rearanged available video details"); 
+            return "Failed to update rearanged available video details";
+          }
+        } else {        
+          basic.notify("error","Failed to update rearanged available video details"); 
+          return "Failed to update rearanged available video details";
+        }
       }
-    }
   } catch (error) {
     basic.notify("error","Failed to update rearanged available video details"); 
     return error;
