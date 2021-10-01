@@ -53,6 +53,44 @@ describe("favicon", () =>  {
     }); 
 }); 
 
+describe("SearchableVideoDataArray_push", () =>  {    
+    afterAll(() => {   
+        basic.SearchableVideoDataArray_reset(); 
+    });
+
+    it("push", () =>  { 
+        const updated = basic.SearchableVideoDataArray_push({
+            "info": {
+                "title": "e615e458-855d-44d3-b686-d82f82a43f27",
+                "videoLink": {
+                    "src": "/video/e615e458-855d-44d3-b686-d82f82a43f27",
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/1",
+                    "2": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/2",
+                    "3": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/3",
+                    "4": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/4",
+                    "5": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/5",
+                    "6": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/6",
+                    "7": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/7",
+                    "8": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/8"
+                },
+                "id": "e615e458-855d-44d3-b686-d82f82a43f27"
+            }
+        });   
+        expect(updated).toBe("updated SearchableVideoDataArray");    
+        const searchableVideoDataArray = basic.searchableVideoDataArray;   
+        expect(searchableVideoDataArray).toBeDefined();     
+        expect(searchableVideoDataArray.length).toEqual(1);  
+        expect(searchableVideoDataArray[0].info.title).toEqual("e615e458-855d-44d3-b686-d82f82a43f27");  
+        expect(searchableVideoDataArray[0].info.videoLink.src).toEqual("/video/e615e458-855d-44d3-b686-d82f82a43f27");    
+        expect(searchableVideoDataArray[0].info.videoLink.type).toEqual("video/mp4");    
+        expect(Object.keys(searchableVideoDataArray[0]["info"]["thumbnailLink"]).length).toEqual(8);    
+        expect(searchableVideoDataArray[0].info.id).toEqual("e615e458-855d-44d3-b686-d82f82a43f27");   
+    }); 
+}); 
+
 describe("SearchableVideoDataArray_reset", () =>  {    
     it("reset", () =>  { 
         const reset = basic.SearchableVideoDataArray_reset();     
