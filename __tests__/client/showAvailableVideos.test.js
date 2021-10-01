@@ -230,6 +230,18 @@ describe("updateRearangedAvailableVideoDetails", () =>  {
         expect(updateRearangedAvailableVideoDetails).toBe(`${targetID} unavailable at availableVideos`);     
     });   
     
+    it("selectedID && targetID unavailable at availableVideos", async () =>  { 
+        global.fetch = jest.fn().mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => `${selectedID} && ${targetID} unavailable at availableVideos`  
+            })
+        ); 
+        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
+        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
+        expect(updateRearangedAvailableVideoDetails).toBe(`${selectedID} && ${targetID} unavailable at availableVideos`);     
+    });   
+    
     it("availableVideos updated successfully", async () =>  { 
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
@@ -240,18 +252,6 @@ describe("updateRearangedAvailableVideoDetails", () =>  {
         const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
         expect(updateRearangedAvailableVideoDetails).toBeDefined();       
         expect(updateRearangedAvailableVideoDetails).toBe("availableVideos updated successfully");     
-    });   
-    
-    it("Failed to update rearanged available video details", async () =>  { 
-        global.fetch = jest.fn().mockImplementation(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => ""  
-            })
-        ); 
-        const updateRearangedAvailableVideoDetails = await showAvailableVideos.updateRearangedAvailableVideoDetails(selectedID, targetID);   
-        expect(updateRearangedAvailableVideoDetails).toBeDefined();       
-        expect(updateRearangedAvailableVideoDetails).toBe("Failed to update rearanged available video details");     
     });   
     
     it("Failed to update rearanged available video details", async () =>  { 

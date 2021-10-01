@@ -254,8 +254,8 @@ export async function updateRearangedAvailableVideoDetails(selectedID, targetID)
             basic.notify("error", `${targetID} unavailable at availableVideos`); 
             return `${targetID} unavailable at availableVideos`; 
           } else {        
-            basic.notify("error","Failed to update rearanged available video details"); 
-            return "Failed to update rearanged available video details";
+            basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
+            return `${selectedID} && ${targetID} unavailable at availableVideos`;
           }
         } else {        
           basic.notify("error","Failed to update rearanged available video details"); 
