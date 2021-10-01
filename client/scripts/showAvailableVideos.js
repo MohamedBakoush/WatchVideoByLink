@@ -48,6 +48,7 @@ export function eachAvailableVideoDetails(videoDetails) {
         if(basic.searchableVideoDataArray.length !== 0){ 
           basic.searchableVideoDataArray.length = 0;
         } 
+        dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
         Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
           if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
             // add video details into searchableVideoDataArray array 
@@ -94,11 +95,19 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
       const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
       const linkContainer = basic.createLink(savedVideosThumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
-      const thumbnailContainer = basic.createSection(linkContainer, "section");
-      const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container");
-      const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, undefined, "thumbnail-image", videoInfo_ID);
+      linkContainer.draggable = true;
+      const thumbnailContainer = basic.createSection(linkContainer, "section", `${videoInfo_ID}-container`);
+      const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
+      const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
+      thumbnail.draggable = false;
       // menu options
-      const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars");
+      const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars", `${videoInfo_ID}-menu`);
+      option_menu.onmouseenter = () => {
+        linkContainer.draggable = false;
+      };
+      option_menu.onmouseleave = () => {
+        linkContainer.draggable = true;
+      };
       option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
@@ -112,12 +121,21 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       thumbnail.addEventListener("mouseover", ( ) => { 
         if (typeof loopTroughThumbnails != "number"){
           loopTroughThumbnails = setInterval( () => {
-            if (mainThumbnailNumber == numberOfThumbnails) {
-              thumbnail.src =  mainThumbnail;
+            if (linkContainer.classList.contains("dragging")) { 
+              clearInterval(loopTroughThumbnails);
+              if (typeof loopTroughThumbnails == "number"){
+                loopTroughThumbnails = undefined;
+              }
               mainThumbnailNumber = 1;
-            } else {
-              mainThumbnailNumber = mainThumbnailNumber + 1;
               thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
+            } else { 
+              if (mainThumbnailNumber == numberOfThumbnails) {
+                thumbnail.src =  mainThumbnail;
+                mainThumbnailNumber = 1;
+              } else {
+                mainThumbnailNumber = mainThumbnailNumber + 1;
+                thumbnail.src =  `${window.location.origin}${videoDetails.info.thumbnailLink[mainThumbnailNumber]}`;
+              }
             }
           }, 500); 
         }
@@ -136,6 +154,121 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
   } catch (error) { 
     return "showDetails didnt work";
   } 
+}
+
+// rearange available videos by drag and drop
+export function dragDropAvailableVideoDetails(section){
+  let dragEl, target, prevtarget;
+  if (section === undefined) {
+    return "section undefined";
+  } else { 
+    section.addEventListener("dragstart", function(e){      
+      dragEl = e.target; 
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("Text", dragEl.textContent);
+      section.addEventListener("dragover", _onDragOver, false);
+      section.addEventListener("dragend", _onDragEnd, false);
+      dragEl.classList.add("dragging");
+    });
+    return "dragDropAvailableVideoDetails";
+  }
+  
+  function _onDragOver(e){
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (e.target.id.includes("-img")) { 
+      target = document.getElementById(e.target.id.replace("-img",""));  
+    } else if (e.target.id.includes("-menu")) { 
+      target = document.getElementById(e.target.id.replace("-menu",""));  
+    } else if (e.target.id.includes("-image-container")) { 
+      target = document.getElementById(e.target.id.replace("-image-container",""));  
+    } else if (e.target.id.includes("-title")) { 
+      target = document.getElementById(e.target.id.replace("-title",""));   
+    } else { 
+      target = e.target; 
+    }
+    if(target.nodeName == "A"){
+      if (prevtarget !== undefined) { 
+        if (prevtarget.id !== target.id) {  
+          prevtarget.classList.remove("dragging-target"); 
+        }  else {  
+          target.classList.add("dragging-target"); 
+        }  
+        prevtarget = target;
+      } else  {
+        prevtarget = target;
+      }
+    } else  {
+      prevtarget.classList.remove("dragging-target"); 
+    }
+  } 
+
+  function _onDragEnd(e){
+    e.preventDefault();
+    dragEl.classList.remove("dragging");
+    target.classList.remove("dragging-target"); 
+    prevtarget.classList.remove("dragging-target"); 
+    section.removeEventListener("dragover", _onDragOver, false);
+    section.removeEventListener("dragend", _onDragEnd, false);
+    if( target && target !== dragEl && target.nodeName == "A"){
+      if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
+        section.insertBefore(dragEl, target); 
+      } else { 
+        section.insertBefore(dragEl, target.nextSibling);  
+      }
+      basic.searchableVideoDataArray_move(dragEl.id, target.id);
+      updateRearangedAvailableVideoDetails(dragEl.id, target.id);
+    } 
+  }
+}
+
+// request to update selected available video details orientation
+export async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
+  try {
+      if (selectedID === undefined && targetID === undefined) {
+        basic.notify("error", "selectedID & targetID undefined"); 
+        return "selectedID & targetID undefined";
+      } else if (selectedID === undefined) {
+        basic.notify("error", "selectedID undefined"); 
+        return "selectedID undefined";
+      } else if (targetID === undefined) {
+        basic.notify("error", "targetID undefined"); 
+        return "targetID undefined";
+      } else {
+        const payload = {
+          selectedID: selectedID,
+          targetID: targetID
+        }; 
+        let requestResponse;
+        const response = await fetch("../updateRearangedAvailableVideoDetails", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) { 
+          requestResponse = await response.json();  
+          if (requestResponse === "availableVideos updated successfully"){
+            basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);    
+            return "availableVideos updated successfully"; 
+          } else if (requestResponse === `${selectedID} unavailable at availableVideos`) {
+            basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+            return `${selectedID} unavailable at availableVideos`; 
+          } else if (requestResponse === `${targetID} unavailable at availableVideos`) {
+            basic.notify("error", `${targetID} unavailable at availableVideos`); 
+            return `${targetID} unavailable at availableVideos`; 
+          } else {        
+            basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
+            return `${selectedID} && ${targetID} unavailable at availableVideos`;
+          }
+        } else {        
+          basic.notify("error","Failed to update rearanged available video details"); 
+          return "Failed to update rearanged available video details";
+        }
+      }
+  } catch (error) {
+    basic.notify("error","Failed to update rearanged available video details"); 
+    return error;
+  }
 }
 
 // on click option menu copy video link
@@ -190,6 +323,7 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
       linkContainer.removeAttribute("href");
       option_menu.disabled = true;
       option_menu.classList = "thumbnail-option-menu";
+      linkContainer.draggable = false;
       // option_menu_container
       const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
       // copy video link
@@ -253,6 +387,7 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
                       option_menu.title = "menu";
                       linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
                       option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                      linkContainer.draggable = true;
                       option_menu.disabled = false;
                       option_menu_container.remove();
                       close_option_menu.remove();
@@ -276,6 +411,7 @@ export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, video
                   option_menu.title = "menu";
                   linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
                   option_menu.classList = "thumbnail-option-menu fa fa-bars";
+                  linkContainer.draggable = true;
                   option_menu.disabled = false;
                   option_menu_container.remove();
                   close_option_menu.remove();
@@ -432,6 +568,7 @@ export function closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
       option_menu.title = "menu";
       linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
       option_menu.classList = "thumbnail-option-menu fa fa-bars";
+      linkContainer.draggable = true;
       option_menu.disabled = false;
       option_menu_container.remove();
       close_option_menu.remove(); 

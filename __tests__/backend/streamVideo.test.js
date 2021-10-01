@@ -1791,6 +1791,74 @@ describe("stopCommpressedVideoDownload", () =>  {
     }); 
 });
 
+describe("updateRearangedAvailableVideoDetails", () =>  {  
+    const selectedID = uuidv4();
+    const targetID = uuidv4();
+    beforeAll(() => {       
+        streamVideo.updateAvailableVideosByID(selectedID, {
+            "info": {
+                "title": "test",
+                "videoLink": {
+                    "src": `/video/${selectedID}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${selectedID}/1`,
+                    "2": `/thumbnail/${selectedID}/2`,
+                    "3": `/thumbnail/${selectedID}/3`,
+                    "4": `/thumbnail/${selectedID}/4`,
+                    "5": `/thumbnail/${selectedID}/5`,
+                    "6": `/thumbnail/${selectedID}/6`,
+                    "7": `/thumbnail/${selectedID}/7`,
+                    "8": `/thumbnail/${selectedID}/8`
+                }
+            }
+        });
+        streamVideo.updateAvailableVideosByID(targetID, {
+            "info": {
+                "title": "test",
+                "videoLink": {
+                    "src": `/video/${targetID}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${targetID}/1`,
+                    "2": `/thumbnail/${targetID}/2`,
+                    "3": `/thumbnail/${targetID}/3`,
+                    "4": `/thumbnail/${targetID}/4`,
+                    "5": `/thumbnail/${targetID}/5`,
+                    "6": `/thumbnail/${targetID}/6`,
+                    "7": `/thumbnail/${targetID}/7`,
+                    "8": `/thumbnail/${targetID}/8`
+                }
+            }
+        });
+    });  
+
+    afterAll(() => {  
+        streamVideo.resetAvailableVideos();
+    });
+    
+    it("selectedID && targetID unavailable at availableVideos", async () =>  {
+        const updateRearangedAvailableVideoDetails = await streamVideo.updateRearangedAvailableVideoDetails("unavailableID1", "unavailableID2");
+        expect(updateRearangedAvailableVideoDetails).toBe("unavailableID1 && unavailableID2 unavailable at availableVideos");
+    }); 
+    
+    it("selectedID unavailable at availableVideos", async () =>  {
+        const updateRearangedAvailableVideoDetails = await streamVideo.updateRearangedAvailableVideoDetails("unavailableID", targetID);
+        expect(updateRearangedAvailableVideoDetails).toBe("unavailableID unavailable at availableVideos");
+    }); 
+
+    it("targetID unavailable at availableVideos", async () =>  {
+        const updateRearangedAvailableVideoDetails = await streamVideo.updateRearangedAvailableVideoDetails(selectedID, "unavailableID");
+        expect(updateRearangedAvailableVideoDetails).toBe("unavailableID unavailable at availableVideos");
+    }); 
+
+    it("availableVideos updated successfully", async () =>  {
+        const updateRearangedAvailableVideoDetails = await streamVideo.updateRearangedAvailableVideoDetails(selectedID, targetID);
+        expect(updateRearangedAvailableVideoDetails).toBe("availableVideos updated successfully");
+    }); 
+}); 
 
 describe("changeVideoTitle", () =>  {    
     const id = uuidv4();

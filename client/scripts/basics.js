@@ -10,6 +10,45 @@ export function favicon() {
   return document.getElementById("favicon");
 }
 
+// push data to SearchableVideoDataArray
+export function SearchableVideoDataArray_push(data) {
+  searchableVideoDataArray.push(data);
+  return "updated SearchableVideoDataArray";
+}
+
+// return SearchableVideoDataArray to its inital state
+export function SearchableVideoDataArray_reset() {
+  searchableVideoDataArray = [];
+  return "reset SearchableVideoDataArray";
+}
+
+// update searchableVideoDataArray orientation
+export function searchableVideoDataArray_move(from_id, to_id) { 
+  if (from_id === undefined && to_id === undefined) { 
+    return "from_id && to_id undefined";
+  } else if (from_id === undefined) {
+    return "from_id undefined";
+  } else if (to_id === undefined) {
+    return "to_id undefined";
+  } else { 
+    const selectedIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === from_id);
+    const targetIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === to_id);
+    if (selectedIDIndex === -1 && targetIDIndex === -1) {
+      return `${from_id} && ${to_id} index not found`;
+    } else if (selectedIDIndex === -1) {
+      return `${from_id} index not found`;
+    } else if (targetIDIndex === -1) {
+      return `${to_id} index not found`;
+    } else {
+      // remove `selectedIDIndex` item and store it
+      const removedItem = searchableVideoDataArray.splice(selectedIDIndex, 1)[0];
+      // insert stored item into position `targetIDIndex`
+      searchableVideoDataArray.splice(targetIDIndex, 0, removedItem);   
+      return "searchableVideoDataArray updated successfully";
+    } 
+  }
+}
+
 // create a input element
 // with optional input type, id, classList and if input type is required or not
 export function inputType(container, type, idHere, classHere, required){

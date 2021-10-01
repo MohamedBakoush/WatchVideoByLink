@@ -60,6 +60,12 @@ function streamCompressedVideoById(req, res){
   streamVideoFile.streamVideo(req, res, req.params.id, true);
 }
 
+// update selected available video details orientation
+app.post("/updateRearangedAvailableVideoDetails", express.json(), updateRearangedAvailableVideoDetails);
+async function updateRearangedAvailableVideoDetails(req, res){ 
+  res.json(await streamVideoFile.updateRearangedAvailableVideoDetails(req.body.selectedID, req.body.targetID));
+}
+
 // change title of video
 app.post("/changeVideoTitle", express.json(), changeVideoTitle);
 async function changeVideoTitle(req, res){ 

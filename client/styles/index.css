@@ -121,6 +121,7 @@ body, .index-body, .index-websiteContentContainer,
 .videoLinkInputLabel, .videoTypeInputLabel { 
   cursor: pointer !important;
   display: block !important;
+  -webkit-background-clip: padding-box !important;
   background-clip: padding-box !important;
   border: 1px solid transparent !important;
   border-radius: 32px !important;

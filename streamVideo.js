@@ -1922,6 +1922,39 @@ async function getVideoLinkFromUrl(req, res) {
   }
 }
 
+// update selected available video details orientation
+async function updateRearangedAvailableVideoDetails(selectedID, targetID) {   
+  try { 
+    const checkIfSelectedIdExits = await findAvailableVideosByID(selectedID);
+    const checkIfTargetIdExits = await findAvailableVideosByID(targetID);  
+    if (checkIfSelectedIdExits && checkIfTargetIdExits) {
+      // get selectedID and targetID index
+      const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
+      const targetIDIndex = Object.keys(availableVideos).indexOf(targetID); 
+      // turn availableVideos into an array
+      const availableVideosArray = Object.entries(availableVideos);    
+      // remove `selectedIDIndex` item and store it
+      const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+      // insert stored item into position `targetIDIndex`
+      availableVideosArray.splice(targetIDIndex, 0, removedItem);
+      // turn availableVideosArray back into an object
+      availableVideos = Object.fromEntries(availableVideosArray);      
+      // update availableVideos
+      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
+      return "availableVideos updated successfully";
+    } else if (!checkIfSelectedIdExits && checkIfTargetIdExits) {
+      return `${selectedID} unavailable at availableVideos`;
+    } else if (checkIfSelectedIdExits && !checkIfTargetIdExits) {
+      return `${targetID} unavailable at availableVideos`;
+    } else {
+      return `${selectedID} && ${targetID} unavailable at availableVideos`;
+    }
+  } catch (error) {
+    return error;
+  }
+}
+
 // change title of video  
 async function changeVideoTitle(videoID, newVideoTitle) { 
   // check if videoid is valid
@@ -2244,6 +2277,7 @@ module.exports = { // export modules
   deleteCurrentDownloadByID,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
+  updateRearangedAvailableVideoDetails,
   changeVideoTitle,
   uploadVideoFile
 };
