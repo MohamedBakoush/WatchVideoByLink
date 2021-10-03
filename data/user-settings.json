@@ -6,10 +6,10 @@
   },
   "download": {
     "compression": {
-      "downloadVideoStream": true,
-      "downloadVideo": true,
-      "trimVideo": true,
-      "downloadUploadedVideo": true
+      "downloadVideoStream": false,
+      "downloadVideo": false,
+      "trimVideo": false,
+      "downloadUploadedVideo": false
     }
   }
 }
