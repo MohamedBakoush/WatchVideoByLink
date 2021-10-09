@@ -176,6 +176,37 @@ export function createLink(container, herf, idHere, classHere, textContent) {
   }
 }
 
+// append image to container with features as, src, onload, onerror and optional  height, width
+export function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
+  try {
+    const image = document.createElement("img"); // create image element
+    if (height != undefined) { // assign height
+      image.height = height;
+    }
+    if (width != undefined) { // assign height
+      image.width = width;
+    }
+    if (idHere != undefined) { // assign id
+      image.id = idHere;
+    }
+    if (classHere != undefined) { // assign class
+      image.classList = classHere;
+    }   
+    if (src != undefined) { // assign src
+      image.src = src;
+    }    
+    image.onload = function () { 
+     container.appendChild(image); // append image in container
+    };
+    image.onerror = function () {
+      document.getElementById(videoInfo_ID).remove();  // remove image container
+    };
+    return image;
+  } catch (e) { // when an error occurs
+    return "appendImg didnt work";
+  }
+}
+
 export function notify(type,message){
   try {
     if (typeof message === "string") { 

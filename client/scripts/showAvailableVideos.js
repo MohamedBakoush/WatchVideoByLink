@@ -98,7 +98,7 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       linkContainer.draggable = true;
       const thumbnailContainer = basic.createSection(linkContainer, "section", `${videoInfo_ID}-container`);
       const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
-      const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
+      const thumbnail = basic.appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
       thumbnail.draggable = false;
       // menu options
       const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars", `${videoInfo_ID}-menu`);
@@ -620,37 +620,6 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
   } catch (error) {
     basic.notify("error","Failed fetch: Change Video Title");  
     return error;
-  }
-}
-
-// append image to container with features as, src, onload, onerror and optional  height, width
-export function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
-  try {
-    const image = document.createElement("img"); // create image element
-    if (height != undefined) { // assign height
-      image.height = height;
-    }
-    if (width != undefined) { // assign height
-      image.width = width;
-    }
-    if (idHere != undefined) { // assign id
-      image.id = idHere;
-    }
-    if (classHere != undefined) { // assign class
-      image.classList = classHere;
-    }   
-    if (src != undefined) { // assign src
-      image.src = src;
-    }    
-    image.onload = function () { 
-     container.appendChild(image); // append image in container
-    };
-    image.onerror = function () {
-      document.getElementById(videoInfo_ID).remove();  // remove image container
-    };
-    return image;
-  } catch (e) { // when an error occurs
-    return "appendImg didnt work";
   }
 }
 
