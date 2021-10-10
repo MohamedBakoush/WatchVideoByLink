@@ -384,7 +384,14 @@ export function stopAvailableVideoDownloadDetails(){
 // send request to server to delete video and all video data permently from the system
 export async function deleteVideoDataPermanently(videoID) {
   try {
-    const response = await fetch(`../delete-video-data-permanently/${videoID}`);
+    const payload = {
+      id: videoID
+    };  
+    const response = await fetch("../delete-video-data-permanently", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }); 
     if (response.ok) {
       const deleteVideoStatus = await response.json(); 
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {

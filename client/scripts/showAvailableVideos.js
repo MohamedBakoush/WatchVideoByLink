@@ -739,19 +739,28 @@ export function backToViewAvailableVideoButton(video_edit_body, video_edit_conta
 
 // send request to server to delete video and all video data permently from the system
 export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
-  try {
-    const response = await fetch(`../delete-video-data-permanently/${videoID}`);
-    if (response.ok) {
-      const deleteVideoStatus = await response.json();
+  try { 
+    const payload = {
+      id: videoID,
+      folderIDPath: folder.getFolderIDPath()
+    };  
+    const response = await fetch("../delete-video-data-permanently", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }); 
+    let deleteVideoStatus;
+    if (response.ok) { 
+      deleteVideoStatus = await response.json();
       if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
         //remove video from /saved/videos
         document.getElementById(videoID).remove();
         // delete searchable array item 
-        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID);
-        basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
+        const searchableArrayItemId = basic.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
+        basic.deleteIDFromSearchableVideoDataArray(searchableArrayItemId);
         // update Available Videos Container if no availabe videos
         if (savedVideosThumbnailContainer.childElementCount == 0) {
-          if(basic.searchableVideoDataArray.length == 0 ){
+          if(basic.getSearchableVideoDataArray().length == 0 ){
             savedVideosThumbnailContainer.remove();
             if (document.getElementById("searchBar")) {
               document.getElementById("searchBar").remove(); 
