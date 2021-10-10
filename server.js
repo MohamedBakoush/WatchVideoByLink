@@ -69,7 +69,7 @@ async function updateRearangedAvailableVideoDetails(req, res){
 // change title of video
 app.post("/changeVideoTitle", express.json(), changeVideoTitle);
 async function changeVideoTitle(req, res){ 
-  res.json(await streamVideoFile.changeVideoTitle(req.body.videoID, req.body.newVideoTitle));
+  res.json(await streamVideoFile.changeVideoTitle(req.body.videoID, req.body.newVideoTitle, req.body.folderIDPath));
 }
 
 // get video data for specified video by id header

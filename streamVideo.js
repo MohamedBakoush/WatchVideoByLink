@@ -1970,24 +1970,42 @@ async function updateRearangedAvailableVideoDetails(selectedID, targetID, folder
 }
 
 // change title of video  
-async function changeVideoTitle(videoID, newVideoTitle) { 
-  // check if videoid is valid
-  const videoDetails = await findAvailableVideosByID(videoID);
-  // if video dosent exist redirect to home page
-  if (videoDetails !== undefined && 
-    newVideoTitle !== undefined &&
-    typeof newVideoTitle == "string") { 
-    try { 
-      availableVideos[videoID]["info"]["title"] = newVideoTitle;  
-      const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
-      return "video-title-changed";
-    } catch (e) { 
-      return "failed-to-change-video-title";   
+async function changeVideoTitle(videoID, newVideoTitle, folderIDPath) { 
+  if (folderIDPath === undefined || folderIDPath.length === 0) { 
+    // check if videoid is valid
+    const videoDetails = await findAvailableVideosByID(videoID);
+    // if video dosent exist redirect to home page
+    if (videoDetails !== undefined && 
+      newVideoTitle !== undefined &&
+      typeof newVideoTitle == "string") { 
+      try { 
+        availableVideos[videoID]["info"]["title"] = newVideoTitle;  
+        const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideos);  
+        return {
+          "message": "video-title-changed",
+          "availableVideos": availableVideos
+        };
+      } catch (e) { 
+        return {
+          "message": "failed-to-change-video-title"
+        };  
+      }
+    } else  { 
+      return {
+        "message": "failed-to-change-video-title"
+      };  
     }
-  } else  { 
-    return "failed-to-change-video-title";   
-  }
+  } else {  
+    const availableVideosFolderIDPath = folderPathString(folderIDPath);    
+    eval(availableVideosFolderIDPath)[videoID]["info"]["title"] = newVideoTitle;  
+    const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+    FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
+    return {
+      "message": "video-title-changed",
+      "availableVideos": availableVideos
+    };
+  } 
 }
 
 // upload video file to ./media/video then downoald file
