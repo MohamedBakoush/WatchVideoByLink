@@ -1935,6 +1935,38 @@ function folderPathString(folderIDPath) {
   return folderPathString;
 }
 
+// update selected available video details orientation
+async function updateRearangedAvailableVideoDetails(selectedID, targetID, folderIDPath) {     
+  if (folderIDPath === undefined || folderIDPath.length == 0) { 
+    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
+    const targetIDIndex = Object.keys(availableVideos).indexOf(targetID);  
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(availableVideos);    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object
+    availableVideos = Object.fromEntries(availableVideosArray);    
+  }else { 
+    const availableVideosFolderIDPath = folderPathString(folderIDPath); 
+    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
+    const targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object  
+    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
+  }  
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
+  return {
+    "message": "availableVideos updated successfully",
+    "availableVideos": availableVideos
+  };
 }
 
 // change title of video  

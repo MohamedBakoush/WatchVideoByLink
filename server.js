@@ -63,7 +63,7 @@ function streamCompressedVideoById(req, res){
 // update selected available video details orientation
 app.post("/updateRearangedAvailableVideoDetails", express.json(), updateRearangedAvailableVideoDetails);
 async function updateRearangedAvailableVideoDetails(req, res){ 
-  res.json(await streamVideoFile.updateRearangedAvailableVideoDetails(req.body.selectedID, req.body.targetID));
+  res.json(await streamVideoFile.updateRearangedAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
 }
 
 // change title of video
