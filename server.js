@@ -60,6 +60,12 @@ function streamCompressedVideoById(req, res){
   streamVideoFile.streamVideo(req, res, req.params.id, true);
 }
 
+// create Folder at availableVideos
+app.post("/createFolder", express.json(), createFolder);
+function createFolder(req, res){ 
+  res.json(streamVideoFile.createFolder(req.body.folderIDPath, req.body.folderTitle));
+}
+
 // input selected element id out of folder element at availableVideos
 app.post("/inputSelectedIDOutOfFolderID", express.json(), inputSelectedIDOutOfFolderID);
 async function inputSelectedIDOutOfFolderID(req, res){ 
