@@ -1,4 +1,6 @@
 import * as basic from "../scripts/basics.js";
+import * as folder from "./folder.js";
+import * as folderPath from "./folderPath.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
@@ -41,9 +43,9 @@ export function eachAvailableVideoDetails(videoDetails) {
         let savedVideosThumbnailContainer; 
         if (document.getElementById("savedVideosThumbnailContainer")) { 
           document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
-          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
         } else { 
-          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
         }
         if(basic.searchableVideoDataArray.length !== 0){ 
           basic.searchableVideoDataArray.length = 0;
@@ -226,6 +228,7 @@ function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
 // rearange available videos by drag and drop
 export function dragDropAvailableVideoDetails(section){
   let dragEl, target, prevtarget;
+  const dragDropContainers = document.querySelectorAll(".dragDropContainer");
   if (section === undefined) {
     return "section undefined";
   } else { 
@@ -233,8 +236,10 @@ export function dragDropAvailableVideoDetails(section){
       dragEl = e.target; 
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("Text", dragEl.textContent);
-      section.addEventListener("dragover", _onDragOver, false);
-      section.addEventListener("dragend", _onDragEnd, false);
+      dragDropContainers.forEach(container => {  
+        container.addEventListener("dragover", _onDragOver, false);  
+        container.addEventListener("dragend", _onDragEnd, false);  
+      });
       dragEl.classList.add("dragging");
     });
     return "dragDropAvailableVideoDetails";
@@ -254,13 +259,16 @@ export function dragDropAvailableVideoDetails(section){
     } else { 
       target = e.target; 
     }
-    if(target.nodeName == "A"){
+    if(target.nodeName == "A" || e.target.id.includes("path-folder-")){
       if (prevtarget !== undefined) { 
-        if (prevtarget.id !== target.id) {  
+        if ((folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
+          (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
+          (prevtarget.id !== target.id)
+        ) {   
           prevtarget.classList.remove("dragging-target"); 
-        }  else {  
+        } else {  
           target.classList.add("dragging-target"); 
-        }  
+        }   
         prevtarget = target;
       } else  {
         prevtarget = target;
@@ -275,17 +283,32 @@ export function dragDropAvailableVideoDetails(section){
     dragEl.classList.remove("dragging");
     target.classList.remove("dragging-target"); 
     prevtarget.classList.remove("dragging-target"); 
-    section.removeEventListener("dragover", _onDragOver, false);
-    section.removeEventListener("dragend", _onDragEnd, false);
-    if( target && target !== dragEl && target.nodeName == "A"){
-      if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
-        section.insertBefore(dragEl, target); 
+    dragDropContainers.forEach(container => {  
+      container.removeEventListener("dragover", _onDragOver, false);
+      container.removeEventListener("dragend", _onDragEnd, false);
+    });     
+    
+    if (
+        (target && target !== dragEl && target.id.includes("path-folder-")) === true &&
+        (folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") === false &&
+        (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) === false
+      ) {  
+      folder.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
+      document.getElementById(dragEl.id).remove();
+    } else if( target && target !== dragEl && target.nodeName == "A"){
+      if (target.id.includes("folder-") && document.getElementById(dragEl.id)) { 
+        document.getElementById(dragEl.id).remove();
+        folder.inputSelectedIDIntoFolderID(dragEl.id, target.id);
       } else { 
-        section.insertBefore(dragEl, target.nextSibling);  
+        if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
+          section.insertBefore(dragEl, target); 
+        } else { 
+          section.insertBefore(dragEl, target.nextSibling);  
+        }
+        basic.searchableVideoDataArray_move(dragEl.id, target.id);
+        updateRearangedAvailableVideoDetails(dragEl.id, target.id);
       }
-      basic.searchableVideoDataArray_move(dragEl.id, target.id);
-      updateRearangedAvailableVideoDetails(dragEl.id, target.id);
-    } 
+    }    
   }
 }
 
