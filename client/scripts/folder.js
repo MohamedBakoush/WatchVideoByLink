@@ -1,3 +1,4 @@
+import * as basic from "./basics.js";
 export let folderIDPath = [];  
 
 // get current FolderID path
@@ -22,3 +23,16 @@ export function newfolderIDPath(newfolderIDPath) {
     folderIDPath = newfolderIDPath;
     return folderIDPath;
 } 
+
+// get available video details by folder path
+export function getAvailableVideoDetailsByFolderPath(folderPath) {
+    let folderPathString = "";
+    for (let i = 0; i < folderPath.length; i++) {  
+        if (i === 0) {
+            folderPathString = folderPathString.concat("basic.getAvailablevideoDetails()[\"",folderPath[i],"\"].content");
+        } else {
+            folderPathString = folderPathString.concat("[\"",folderPath[i],"\"].content");
+        } 
+    }  
+    return eval(folderPathString);
+}
