@@ -1935,6 +1935,21 @@ function folderPathString(folderIDPath) {
   return folderPathString;
 }
 
+// input selected element into folder element at availableVideos
+function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {   
+  if (folderIDPath === undefined || folderIDPath.length == 0) { 
+    availableVideos[folderID].content[`${selectedID}`] = availableVideos[selectedID];
+    delete availableVideos[selectedID]; 
+  }else {  
+    const availableVideosFolderIDPath = folderPathString(folderIDPath);
+    eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
+    delete eval(availableVideosFolderIDPath)[selectedID]; 
+  } 
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
+  return availableVideos;
+}
+
 // update selected available video details orientation
 async function updateRearangedAvailableVideoDetails(selectedID, targetID, folderIDPath) {     
   if (folderIDPath === undefined || folderIDPath.length == 0) { 
@@ -2309,6 +2324,7 @@ module.exports = { // export modules
   deleteCurrentDownloadByID,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
+  inputSelectedIDIntoFolderID,
   updateRearangedAvailableVideoDetails,
   changeVideoTitle,
   uploadVideoFile
