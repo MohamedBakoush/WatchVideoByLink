@@ -68,6 +68,25 @@ export function eachAvailableVideoDetails(videoDetails) {
   }
 }
 
+// display folder or video details to client
+export function displayVideoDetails(savedVideosThumbnailContainer, videoDetails) { 
+  basic.resetSearchableVideoDataArray();
+  Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
+    if (videoInfo_ID.includes("folder-")) {  
+      basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+      showFolderDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
+    } else {
+      if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
+        // add video details into searchableVideoDataArray array 
+        videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID; 
+        basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+        // display video details
+        showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
+      } 
+    }
+  });
+}
+
 // load video details to user which include thumbnail image, video id as title and option menu
 export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails) {
   try {
