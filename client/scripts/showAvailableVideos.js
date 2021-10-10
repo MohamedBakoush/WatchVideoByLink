@@ -328,6 +328,7 @@ export async function updateRearangedAvailableVideoDetails(selectedID, targetID)
         return "targetID undefined";
       } else {
         const payload = {
+          folderIDPath: folder.getFolderIDPath(),
           selectedID: selectedID,
           targetID: targetID
         }; 
@@ -338,14 +339,16 @@ export async function updateRearangedAvailableVideoDetails(selectedID, targetID)
           body: JSON.stringify(payload),
         });
         if (response.ok) { 
-          requestResponse = await response.json();  
-          if (requestResponse === "availableVideos updated successfully"){
-            basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);    
+          requestResponse = await response.json();   
+          if (requestResponse.message === "availableVideos updated successfully"){
+            basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+            const availablevideoDetails = requestResponse.availableVideos; 
+            basic.setNewAvailablevideoDetails(availablevideoDetails);
             return "availableVideos updated successfully"; 
-          } else if (requestResponse === `${selectedID} unavailable at availableVideos`) {
+          } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
             basic.notify("error", `${selectedID} unavailable at availableVideos`); 
             return `${selectedID} unavailable at availableVideos`; 
-          } else if (requestResponse === `${targetID} unavailable at availableVideos`) {
+          } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
             basic.notify("error", `${targetID} unavailable at availableVideos`); 
             return `${targetID} unavailable at availableVideos`; 
           } else {        
@@ -676,7 +679,8 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
   try {
     const payload = {
       videoID: videoID,
-      newVideoTitle: newVideoTitle
+      newVideoTitle: newVideoTitle,
+      folderIDPath: folder.getFolderIDPath()
     }; 
 
     const response = await fetch("../changeVideoTitle", {
@@ -689,9 +693,11 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
     if (response.ok) {
       // get json data from response
       requestResponse = await response.json(); 
-      if (requestResponse == "video-title-changed") {
+      if (requestResponse.message == "video-title-changed") { 
+        const availablevideoDetails = requestResponse.availableVideos; 
+        basic.setNewAvailablevideoDetails(availablevideoDetails);
         // find array id of searchableVideoDataArray by videoID
-        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID);
+        const searchableArrayItemId = basic.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
         if (searchableArrayItemId !== -1) {// change video title from old to new
           document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
           basic.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
