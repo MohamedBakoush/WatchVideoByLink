@@ -730,7 +730,7 @@ export function backToViewAvailableVideoButton(video_edit_body, video_edit_conta
         video_edit_container.remove();
       };
       video_edit_body.appendChild(backToMainVideoButton);
-      return "backToViewAvailableVideoButton successful"; 
+      return backToMainVideoButton; 
     }
   } catch (error) {
     return "backToViewAvailableVideoButton didnt work";
