@@ -11,13 +11,28 @@ export function favicon() {
 }
 
 // push data to SearchableVideoDataArray
-export function SearchableVideoDataArray_push(data) {
-  searchableVideoDataArray.push(data);
+export function getSearchableVideoDataArray() { 
+  return searchableVideoDataArray;
+}
+
+// push data to SearchableVideoDataArray
+export function pushDataToSearchableVideoDataArray(data) { 
+  if (data === undefined) { 
+    return "data undefined";
+  }  else { 
+    searchableVideoDataArray.push(data);
+    return "updated SearchableVideoDataArray";
+  } 
+} 
+
+// delete data from SearchableVideoDataArray by id
+export function deleteIDFromSearchableVideoDataArray(id) { 
+  searchableVideoDataArray.splice(id, 1);
   return "updated SearchableVideoDataArray";
 }
 
 // return SearchableVideoDataArray to its inital state
-export function SearchableVideoDataArray_reset() {
+export function resetSearchableVideoDataArray() {
   searchableVideoDataArray = [];
   return "reset SearchableVideoDataArray";
 }
