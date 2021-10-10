@@ -87,3 +87,34 @@ export function createFolderOnClick() {
     };
 }
 
+// create folder
+export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
+    const folderIDPath = getFolderIDPath();
+    const payload = { 
+        folderIDPath: folderIDPath,
+        folderTitle: folderTitle
+    };  
+    const response = await fetch("../createFolder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    let requestResponse;
+    if (response.ok) {  
+        requestResponse = await response.json();     
+        const availablevideoDetails = requestResponse.availableVideos; 
+        basic.setNewAvailablevideoDetails(availablevideoDetails);
+        let showDetails;  
+        if (folderIDPath.length  === 0 || folderIDPath === undefined) { 
+            basic.pushDataToSearchableVideoDataArray(availablevideoDetails[requestResponse.folderID]);
+            showDetails = showAvailableVideos.showFolderDetails(savedVideosThumbnailContainer, requestResponse.folderID, availablevideoDetails[requestResponse.folderID]);  
+        } else { 
+            const availableVideosFolderIDPath = getAvailableVideoDetailsByFolderPath(folderIDPath); 
+            basic.pushDataToSearchableVideoDataArray(availableVideosFolderIDPath[requestResponse.folderID]);
+            showDetails = showAvailableVideos.showFolderDetails(savedVideosThumbnailContainer, requestResponse.folderID, availableVideosFolderIDPath[requestResponse.folderID]);  
+        }     
+        if (showDetails == "showFolderDetails") {  
+            savedVideosThumbnailContainer.insertBefore(document.getElementById(requestResponse.folderID), [...savedVideosThumbnailContainer.children][0]); 
+        }  
+    }
+}
