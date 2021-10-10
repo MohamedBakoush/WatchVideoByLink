@@ -1935,6 +1935,32 @@ function folderPathString(folderIDPath) {
   return folderPathString;
 }
 
+// input selected element id out of folder element at availableVideos
+function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {  
+  const fromFolderID = [...folderIDPath];
+  const tooFolderID = [...folderIDPath];
+  if (folderID == "folder-main") {
+    tooFolderID.length = 0;
+  } else {
+    const fodlerIDIndex = tooFolderID.indexOf(folderID); 
+    tooFolderID.splice(fodlerIDIndex+1, 9e9);  
+    tooFolderID.length = fodlerIDIndex+1; 
+  }  
+  if (tooFolderID === undefined || tooFolderID.length == 0) {  
+    const availableVideosFromFolderIDPath = folderPathString(fromFolderID);   
+    availableVideos[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
+    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+  }else {     
+    const availableVideosFromFolderIDPath = folderPathString(fromFolderID);  
+    const availableVideosTooFolderIDPath = folderPathString(tooFolderID); 
+    eval(availableVideosTooFolderIDPath)[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
+    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+  } 
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
+  return availableVideos;
+}
+
 // input selected element into folder element at availableVideos
 function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {   
   if (folderIDPath === undefined || folderIDPath.length == 0) { 
@@ -2324,6 +2350,7 @@ module.exports = { // export modules
   deleteCurrentDownloadByID,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
+  inputSelectedIDOutOfFolderID,
   inputSelectedIDIntoFolderID,
   updateRearangedAvailableVideoDetails,
   changeVideoTitle,
