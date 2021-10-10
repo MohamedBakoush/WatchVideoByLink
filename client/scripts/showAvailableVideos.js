@@ -156,6 +156,39 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
   } 
 }
 
+// load folder details to user 
+export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, videoDetails) {
+  let folder_name = videoDetails.info.title;
+  videoDetails["info"]["id"] = folderInfoID;
+  basic.pushDataToSearchableVideoDataArray(videoDetails[folderInfoID]); 
+  
+  const folderContainerLink = basic.createLink(savedVideosThumbnailContainer, undefined, folderInfoID, "folderContainer"); 
+  folderContainerLink.draggable = true; 
+  folderContainerLink.onclick = function(e){
+    e.preventDefault();  
+    folderOnClick(savedVideosThumbnailContainer, videoDetails);
+  };
+
+  folderContainerLink.onmouseenter = function(e){
+    e.preventDefault();
+    folderContainerLink.style.cursor = "pointer";
+    folderTitleContainer.style["text-decoration"] = "underline";
+  };
+  
+  folderContainerLink.onmouseleave = function(e){
+    e.preventDefault();
+    folderContainerLink.style.cursor = "default";
+    folderTitleContainer.style["text-decoration"] = "none";
+  };
+
+  const folderContainer = basic.createSection(folderContainerLink, "section");
+  basic.createSection(folderContainer, "section", "folder-image-container fa fa-folder", `${folderInfoID}-image-container`);
+  const folderTitleContainer = basic.createLink(folderContainer, undefined, `${folderInfoID}-title-container`, "folderTitleContainer");
+  basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfoID}-title`, folder_name);   
+
+  return "showFolderDetails";
+}
+
 // rearange available videos by drag and drop
 export function dragDropAvailableVideoDetails(section){
   let dragEl, target, prevtarget;
