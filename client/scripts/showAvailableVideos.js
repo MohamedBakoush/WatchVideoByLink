@@ -7,11 +7,11 @@ import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 export async function loadVideoDetails() {
   try {
     const response = await fetch("../all-available-video-data");
-    let availablevideoDetails;
     if (response.ok) {
-      availablevideoDetails = await response.json();
-      searchBar();
-      eachAvailableVideoDetails(availablevideoDetails);
+      const availablevideoDetails = await response.json(); 
+      basic.setNewAvailablevideoDetails(availablevideoDetails);
+      const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
+      searchBar(searchBarContainer); 
       const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
       folderPath.homepagePath(pathContainer);
       return "Video details loaded";
@@ -789,9 +789,9 @@ export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailCo
 }
 
 // find video by filtering trough each available video by textinput
-export function searchBar(){
+export function searchBar(container){
   // create search input
-  const searchBar = basic.inputType(basic.websiteContentContainer(), "text", "searchBar", "searchBar", true);
+  const searchBar = basic.inputType(container, "text", "searchBar", "searchBar", true);
   searchBar.name = "searchBar";
   searchBar.placeholder="Type to search";
   // filters trough video data by name at every key press
@@ -808,7 +808,7 @@ export function searchBarKeyUp(searchString) {
     const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
     const noSearchableVideoData = document.getElementById("noSearchableVideoData");
     // check from searchableVideoDataArray if any video data title matches input string
-    const filteredsearchableVideoData = basic.searchableVideoDataArray.filter((video) => {
+    const filteredsearchableVideoData = basic.getSearchableVideoDataArray().filter((video) => {
       return (
         video.info.title.toLowerCase().includes(searchString.toLowerCase())
       );
@@ -818,7 +818,7 @@ export function searchBarKeyUp(searchString) {
     // check if inputed key phrase available data is avaiable or not to either display data or state the problem
     if (filteredsearchableVideoData.length == 0) {
       //  check if filtered available data is avaiable or not to show the correct msg
-      if (basic.searchableVideoDataArray.length == 0) {
+      if (basic.getSearchableVideoDataArray().length == 0) {
         if (savedVideosThumbnailContainer) {      
           const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
           basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
@@ -838,7 +838,11 @@ export function searchBarKeyUp(searchString) {
       }
       // display filterd details to client
       filteredsearchableVideoData.forEach(function(data) {   
-        showDetails(savedVideosThumbnailContainer, data.info.id, data);
+        if (data.info.id.includes("folder-")) {
+          showFolderDetails(savedVideosThumbnailContainer, data.info.id, data);
+        } else { 
+          showDetails(savedVideosThumbnailContainer, data.info.id, data);
+        } 
       });
       return "Display filterd avaiable video data";
     } 
