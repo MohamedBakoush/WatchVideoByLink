@@ -14,6 +14,7 @@ export async function loadVideoDetails() {
       searchBar(searchBarContainer); 
       const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
       folderPath.homepagePath(pathContainer);
+      eachAvailableVideoDetails(availablevideoDetails, searchBarContainer); 
       return "Video details loaded";
     } else {
       return "Failed to load video details";
@@ -31,7 +32,7 @@ export async function loadVideoDetails() {
 
 // if there is available videoDetails then get each video Details and send the data to showDetails
 // if there are no videoDetails then show  noAvailableVideos msg
-export function eachAvailableVideoDetails(videoDetails) {
+export function eachAvailableVideoDetails(videoDetails, searchBarContainer) {
   try {
     if (typeof videoDetails == "object") {
       if (Object.keys(videoDetails).length == 0) { // no available videos
@@ -49,19 +50,18 @@ export function eachAvailableVideoDetails(videoDetails) {
         } else { 
           savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
         }
-        if(basic.searchableVideoDataArray.length !== 0){ 
-          basic.searchableVideoDataArray.length = 0;
+        if(basic.getSearchableVideoDataArray().length !== 0){ 
+          basic.resetSearchableVideoDataArray();
         } 
+        // createFolderButton 
+        const createFolderButton = basic.createLink(searchBarContainer, "javascript:;", undefined, "button category-link", "Create Folder"); 
+        createFolderButton.onclick = function(e){
+          e.preventDefault(); 
+          folder.createFolderOnClick();
+        };
+        folder.resetInsideFolderID();
         dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
-        Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
-          if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
-            // add video details into searchableVideoDataArray array 
-            videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID;
-            basic.searchableVideoDataArray.push(videoDetails[videoInfo_ID]);
-            // display video details
-            showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
-          }
-        });
+        displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
         return "available videos";
       }
     } else {
