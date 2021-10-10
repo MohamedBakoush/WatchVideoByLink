@@ -12,6 +12,8 @@ export async function loadVideoDetails() {
       availablevideoDetails = await response.json();
       searchBar();
       eachAvailableVideoDetails(availablevideoDetails);
+      const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
+      folderPath.homepagePath(pathContainer);
       return "Video details loaded";
     } else {
       return "Failed to load video details";
