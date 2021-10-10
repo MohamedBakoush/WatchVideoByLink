@@ -1,5 +1,5 @@
 /* video edit setting css */
-.video-edit-article{
+.video-edit-article, .create_folder_article{
   background-color: rgb(255 255 255);
   border-radius: .3em;
   max-width: 40rem;
@@ -9,7 +9,24 @@
   border: 1px solid #e1e4e8;
   border-radius: 6px;
 }
-.video-edit-body{
+
+.create_folder_article{
+  width: 25rem;
+}
+ 
+@media only screen and (max-width: 749px){ 
+  .create_folder_article{ 
+    width: 362.5px !important;
+  }
+}
+
+@media only screen and (max-width: 379px){ 
+  .create_folder_article{
+    width: 290px !important;
+  }
+}
+
+.video-edit-body, .create_folder_body{
   position: absolute;
   top: 50%;
   left: 50%;
@@ -24,20 +41,27 @@
   padding: 5px 16px;
 }
 
-.deleteVideoContainer, .videoTitleEditContainer{
+.deleteVideoContainer, .videoTitleEditContainer, .createFolderTitleEditButtonsContainer, .createFolderTitleEditContainer{
   display: grid;
-  grid-template-columns: 1fr 1fr;
   padding: 1rem 1rem 0.5rem 1rem;
 }
 
-.dangerZone-title, .video-edit-form-title{
+.deleteVideoContainer, .videoTitleEditContainer, .createFolderTitleEditButtonsContainer{
+  grid-template-columns: 1fr 1fr;
+}
+
+.createFolderTitleEditContainer{
+  grid-template-columns: 1fr;
+}
+
+.dangerZone-title, .video-edit-form-title, .create-folder-form-title{
   font-weight: 400;
   padding: 1rem 0 1rem 0;
 }
-.video-edit-form-title{
+.video-edit-form-title, .create-folder-form-title{
   text-align: center;
 }
-.video_edit_container{
+.video_edit_container, .create_folder_container{
   width: 100vw;
   position: fixed;
   top: 0;
@@ -52,7 +76,7 @@
   border-color: #d73a49;
 }
 
-.deleteVideoButton, .videoTitleEditButton{
+.deleteVideoButton, .videoTitleEditButton, .createFolderTitleEditButton{
   background-color: #fafbfc;
   box-shadow: 0 1px 0 rgba(27,31,35,.04), inset 0 1px 0 hsla(0,0%,100%,.25);
   transition: background-color .2s cubic-bezier(.3,0,.5,1);
@@ -83,16 +107,16 @@
   background-color: #be222e;
 }
 
-.videoTitleEditButton{
+.videoTitleEditButton, .createFolderTitleEditButton{
   color: #000000;
 }
 
-.videoTitleEditButton:hover{
+.videoTitleEditButton:hover, .createFolderTitleEditButton:hover{
   color: rgb(0,0,0);
   background-color: rgba(178, 178, 178, 0.15)
 }
 
-.deleteVideoButton:hover, .videoTitleEditButton:hover{
+.deleteVideoButton:hover, .videoTitleEditButton:hover, .createFolderTitleEditButton:hover{
   border-color: rgba(27,31,35,.15);
   box-shadow: inset 0 1px 0 rgba(134,24,29,.2);
 }
@@ -115,6 +139,6 @@
   color: #000;
 }
 
-.videoTitleEditInput {
+.videoTitleEditInput, .createFolderTitleEditInput{
   width: 100%
 }
