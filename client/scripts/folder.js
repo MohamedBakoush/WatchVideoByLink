@@ -118,3 +118,43 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
         }  
     }
 }
+
+// input selected element by id into folder by id 
+export async function inputSelectedIDIntoFolderID(selectedID, folderID) { 
+    const payload = {
+        folderIDPath: getFolderIDPath(),
+        folderID: folderID,
+        selectedID: selectedID
+    }; 
+    let requestResponse;
+    const response = await fetch("../inputSelectedIDIntoFolderID", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    if (response.ok) { 
+        requestResponse = await response.json();  
+        const availablevideoDetails = requestResponse;
+        basic.setNewAvailablevideoDetails(availablevideoDetails);
+    }
+}
+  
+// input selected element by id out of folder by id 
+export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {  
+    const payload = {
+        folderIDPath: getFolderIDPath(),
+        folderID: folderID,
+        selectedID: selectedID
+    }; 
+    let requestResponse;
+    const response = await fetch("../inputSelectedIDOutOfFolderID", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    if (response.ok) { 
+        requestResponse = await response.json();     
+        const availablevideoDetails = requestResponse;
+        basic.setNewAvailablevideoDetails(availablevideoDetails);
+    }
+}
