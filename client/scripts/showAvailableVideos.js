@@ -208,6 +208,21 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
   return "showFolderDetails";
 }
 
+// when folder element is click on 
+function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
+  document.getElementById("searchBar").value = ""; 
+  savedVideosThumbnailContainer.remove();
+  savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+  folder.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
+  
+  folderPath.breakPath(document.getElementById("pathContainer"), videoDetails.info.id);
+  folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), videoDetails.info.id, videoDetails.info.title); 
+
+  const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(folder.getFolderIDPath());   
+  dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
+  displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);
+}
+
 // rearange available videos by drag and drop
 export function dragDropAvailableVideoDetails(section){
   let dragEl, target, prevtarget;
