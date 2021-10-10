@@ -43,9 +43,9 @@ function streamImageById(req, res){
 }
 
 // delete video permently by video id header
-app.get("/delete-video-data-permanently/:id", deleteAllVideoData);
-function deleteAllVideoData(req, res){
-  streamVideoFile.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.params.id, res);
+app.post("/delete-video-data-permanently", express.json(), deleteAllVideoData);
+function deleteAllVideoData(req, res){  
+  streamVideoFile.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath, res);
 }
 
 // stream original video by video id header

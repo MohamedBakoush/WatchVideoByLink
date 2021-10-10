@@ -1740,7 +1740,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
 }
 
 // check if video compression is downloading before data deletion 
-async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, response) {
+async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath, response) {
   // stop video compression
   const stopCommpressedVideoDownloadBool = await stopCommpressedVideoDownload(videoID); 
   if (stopCommpressedVideoDownloadBool) {
@@ -1753,30 +1753,30 @@ async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoI
           || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
             // stop interval and start data deletion when videoData is completed or ffmpeg was killed with signal SIGKILL
             clearInterval(checkDownloadStatus); 
-            return deleteAllVideoData(videoID, response); 
+            return deleteAllVideoData(videoID, folderIDPath, response); 
           } else if(currentDownloadVideos[videoID]["compression"]){
             if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
             || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
               // stop interval and start data deletion when currentDownloadVideos is completed or ffmpeg was killed with signal SIGKILL
               clearInterval(checkDownloadStatus); 
-              return deleteAllVideoData(videoID, response); 
+              return deleteAllVideoData(videoID, folderIDPath, response); 
             } 
           } 
         } else { // stop interval and start data deletion
           clearInterval(checkDownloadStatus);            
-          return deleteAllVideoData(videoID, response); 
+          return deleteAllVideoData(videoID, folderIDPath, response); 
         }
       } catch (e) { // error occurs 
         console.log(e);  
       }
     }, 500); 
   } else { // compressed video isn't downloading 
-    return deleteAllVideoData(videoID, response); 
+    return deleteAllVideoData(videoID, folderIDPath, response); 
   }
 }
 
 // deletes all video id data
-function deleteAllVideoData(fileName, response) {  // check if videoid is valid
+function deleteAllVideoData(fileName, folderIDPath, response) {  // check if videoid is valid
   try {
     // delete currentDownloadVideos from server if exist
     // eslint-disable-next-line no-prototype-builtins
@@ -1792,12 +1792,28 @@ function deleteAllVideoData(fileName, response) {  // check if videoid is valid
       const deleteVideoData = JSON.stringify(videoData, null, 2);
       FileSystem.writeFileSync(data_videos_path, deleteVideoData);
     }  
-    // delete availableVideos from server if exist
-    // eslint-disable-next-line no-prototype-builtins
-    if(availableVideos.hasOwnProperty(fileName)){ 
-      delete availableVideos[fileName];
-      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
+    // delete availableVideos from server if exist  
+    try { 
+      if (folderIDPath === undefined || folderIDPath.length === 0) {
+        // eslint-disable-next-line no-prototype-builtins  
+        if (availableVideos.hasOwnProperty(fileName)) {
+          delete availableVideos[fileName]; 
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+        } 
+      } else {  
+        const availableVideosFolderIDPath = folderPathString(folderIDPath);   
+        delete eval(availableVideosFolderIDPath)[fileName];  
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+      }   
+    } catch (error) {
+      // eslint-disable-next-line no-prototype-builtins  
+      if (availableVideos.hasOwnProperty(fileName)) {
+        delete availableVideos[fileName]; 
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+      } 
     }
     // check if folder exists
     if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
