@@ -1,4 +1,16 @@
 export let searchableVideoDataArray = []; 
+export let availablevideoDetails;
+
+// get available video details
+export function getAvailablevideoDetails() {
+  return availablevideoDetails;
+}
+
+// set new FolderID path
+export function setNewAvailablevideoDetails(newAvailablevideoDetails) {  
+  availablevideoDetails = newAvailablevideoDetails;
+  return availablevideoDetails;
+} 
 
 // return websiteContentContainer
 export function websiteContentContainer() {
