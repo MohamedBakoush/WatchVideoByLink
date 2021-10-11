@@ -3,7 +3,7 @@ const path = require("path");
 const express = require("express");
 const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
-const streamVideoFile = require("./streamVideo");
+const streamVideoFile = require("./backend/scripts/streamVideo");
 const app = express();
 app.use(upload({
   limits: { fileSize: 1024 * 1024 * 1024 },
