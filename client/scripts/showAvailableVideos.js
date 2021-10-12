@@ -10,11 +10,7 @@ export async function loadVideoDetails() {
     if (response.ok) {
       const availablevideoDetails = await response.json(); 
       basic.setNewAvailablevideoDetails(availablevideoDetails);
-      const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
-      searchBar(searchBarContainer); 
-      const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
-      folderPath.homepagePath(pathContainer);
-      eachAvailableVideoDetails(availablevideoDetails, searchBarContainer); 
+      eachAvailableVideoDetails(availablevideoDetails); 
       return "Video details loaded";
     } else {
       return "Failed to load video details";
@@ -32,7 +28,7 @@ export async function loadVideoDetails() {
 
 // if there is available videoDetails then get each video Details and send the data to showDetails
 // if there are no videoDetails then show  noAvailableVideos msg
-export function eachAvailableVideoDetails(videoDetails, searchBarContainer) {
+export function eachAvailableVideoDetails(videoDetails) {
   try {
     if (typeof videoDetails == "object") {
       if (Object.keys(videoDetails).length == 0) { // no available videos
@@ -43,6 +39,13 @@ export function eachAvailableVideoDetails(videoDetails, searchBarContainer) {
         basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
         return "no available videos";
       } else {
+        // search bar
+        const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
+        searchBar(searchBarContainer); 
+        // folder path 
+        const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
+        folderPath.homepagePath(pathContainer);
+        // videos tumbnails contailer 
         let savedVideosThumbnailContainer; 
         if (document.getElementById("savedVideosThumbnailContainer")) { 
           document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
@@ -50,17 +53,20 @@ export function eachAvailableVideoDetails(videoDetails, searchBarContainer) {
         } else { 
           savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
         }
+        // make sure searchable video is empty
         if(basic.getSearchableVideoDataArray().length !== 0){ 
           basic.resetSearchableVideoDataArray();
         } 
-        // createFolderButton 
+        // create folder button 
         const createFolderButton = basic.createLink(searchBarContainer, "javascript:;", undefined, "button category-link", "Create Folder"); 
         createFolderButton.onclick = function(e){
           e.preventDefault(); 
           folder.createFolderOnClick();
         };
         folder.resetInsideFolderID();
+        // activate drag drop for available video details
         dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
+        // display video details
         displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
         return "available videos";
       }
