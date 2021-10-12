@@ -1454,13 +1454,13 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                       }; 
                     }
                   } else if (i < 10) {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}00${i}${fileType}`;
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   } else if (i < 100) {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}0${i}${fileType}`;
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   } else {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}${i}${fileType}`;
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   }
                   if (i == numberOfCreatedScreenshots) {
@@ -1490,7 +1490,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                   console.log(`Encoding Error: ${error.message}`);
               })
               .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
-              .output(`${newFilePath}${imageFileName}%03d${fileType}`)
+              .output(`${newFilePath}${fileName}-${imageFileName}%03d${fileType}`)
               .run();
         } else { // duration less or equal to 0
           try { // delete data
