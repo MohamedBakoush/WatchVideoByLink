@@ -1995,11 +1995,17 @@ function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {
     const availableVideosFromFolderIDPath = folderPathString(fromFolderID);   
     availableVideos[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
     delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+    if (selectedID.includes("folder-")) { 
+      availableVideos[selectedID].info["inside-folder"] = folderID; 
+    }   
   }else {     
     const availableVideosFromFolderIDPath = folderPathString(fromFolderID);  
     const availableVideosTooFolderIDPath = folderPathString(tooFolderID); 
     eval(availableVideosTooFolderIDPath)[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
     delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+    if (selectedID.includes("folder-")) { 
+      eval(availableVideosTooFolderIDPath)[selectedID].info["inside-folder"] = folderID; 
+    }  
   } 
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
   FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
@@ -2011,10 +2017,16 @@ function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {
   if (folderIDPath === undefined || folderIDPath.length == 0) { 
     availableVideos[folderID].content[`${selectedID}`] = availableVideos[selectedID];
     delete availableVideos[selectedID]; 
+    if (selectedID.includes("folder-")) {
+      availableVideos[folderID].content[`${selectedID}`].info["inside-folder"] = folderID;
+    }    
   }else {  
     const availableVideosFolderIDPath = folderPathString(folderIDPath);
     eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
     delete eval(availableVideosFolderIDPath)[selectedID]; 
+    if (selectedID.includes("folder-")) {
+      eval(availableVideosFolderIDPath)[folderID].content[selectedID].info["inside-folder"] = folderID;
+    }    
   } 
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
   FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
