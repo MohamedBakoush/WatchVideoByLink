@@ -394,7 +394,7 @@ export async function deleteVideoDataPermanently(videoID) {
     }); 
     if (response.ok) {
       const deleteVideoStatus = await response.json(); 
-      if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
+      if (deleteVideoStatus == `deleted-${videoID}-permanently`) {
         basic.notify("success",`Deleted: ${videoID}`);   
         const videoDownloadStatusContainer = document.getElementById(`${videoID}-download-status-container`);    
         if(videoDownloadStatusContainer !== null){

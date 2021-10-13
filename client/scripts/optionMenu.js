@@ -538,7 +538,7 @@ export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailCo
       let deleteVideoStatus;
       if (response.ok) { 
         deleteVideoStatus = await response.json();
-        if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
+        if (deleteVideoStatus ==  `deleted-${videoID}-permanently`) {
           //remove video from /saved/videos
           document.getElementById(videoID).remove();
           // delete searchable array item 

@@ -1739,39 +1739,48 @@ async function compression_VP9(videofile, newFilePath, fileName) {
   }
 }
 
+// set timeout for a set amount of time in ms
+function sleep(ms) {
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+}
+
 // check if video compression is downloading before data deletion 
 async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
   // stop video compression
   const stopCommpressedVideoDownloadBool = await stopCommpressedVideoDownload(videoID); 
-  if (stopCommpressedVideoDownloadBool) {
-    const checkDownloadStatus = setInterval( function(){ 
-      // try untill compressed video gets killed with signal SIGKILL or finnishes download 
-      try { 
-        if (videoData[videoID]["compression"]) {
-          if (videoData[videoID]["compression"]["download"] == "completed" 
-          || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
-            // stop interval and start data deletion when videoData is completed or ffmpeg was killed with signal SIGKILL
-            clearInterval(checkDownloadStatus); 
-            return deleteAllVideoData(videoID, folderIDPath); 
-          } else if(currentDownloadVideos[videoID]["compression"]){
-            if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
-            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
-              // stop interval and start data deletion when currentDownloadVideos is completed or ffmpeg was killed with signal SIGKILL
-              clearInterval(checkDownloadStatus); 
-              return deleteAllVideoData(videoID, folderIDPath); 
-            } 
-          } 
-        } else { // stop interval and start data deletion
-          clearInterval(checkDownloadStatus);            
-          return deleteAllVideoData(videoID, folderIDPath); 
-        }
-      } catch (e) { // error occurs 
-        console.log(e);  
-      }
-    }, 500); 
+  if (stopCommpressedVideoDownloadBool) { 
+    await checkCompressedVideoDownloadStatus(videoID);
+    return deleteAllVideoData(videoID, folderIDPath); 
   } else { // compressed video isn't downloading 
     return deleteAllVideoData(videoID, folderIDPath); 
   }
+}
+
+// try untill compressed video gets killed with signal SIGKILL or finnishes download 
+async function checkCompressedVideoDownloadStatus(videoID) {
+  try {
+    if (videoData[videoID]["compression"]) {
+      if (videoData[videoID]["compression"]["download"] == "completed" 
+      || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
+        return "start deletion"; 
+      } else if(currentDownloadVideos[videoID]["compression"]){
+        if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
+        || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
+          return "start deletion";    
+        } 
+      } else {  
+        await sleep(200);
+        return checkCompressedVideoDownloadStatus(videoID); 
+      }
+    } else { // stop interval and start data deletion
+      return "start deletion"; 
+    }
+  } catch (error) { 
+    await sleep(200);
+    return checkCompressedVideoDownloadStatus(videoID); 
+  } 
 }
 
 // deletes all video id data
