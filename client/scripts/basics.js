@@ -226,7 +226,9 @@ export function appendImg(container, src, width, height, idHere, classHere, vide
      container.appendChild(image); // append image in container
     };
     image.onerror = function () {
-      document.getElementById(videoInfo_ID).remove();  // remove image container
+      if (document.getElementById(videoInfo_ID)) { // remove image container
+        document.getElementById(videoInfo_ID).remove(); 
+      }
     };
     return image;
   } catch (e) { // when an error occurs
