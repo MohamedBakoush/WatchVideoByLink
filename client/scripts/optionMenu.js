@@ -312,7 +312,7 @@ export function optionVideoMenuEditOnClick(savedVideosThumbnailContainer, videoS
         basic.createSection(video_title_edit_content_container, "strong", undefined, undefined, "Video Title");
         const video_title_edit_content_input = basic.inputType(video_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
         video_title_edit_content_input.placeholder = video_name;
-      
+        video_title_edit_content_input.focus();
         const video_title_edit_button_container = basic.createSection(video_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
         const videoTitleEditButton = basic.createSection(video_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change video title");
       
@@ -393,7 +393,7 @@ export function optionFolderMenuEditOnClick(savedVideosThumbnailContainer, folde
     basic.createSection(video_title_edit_content_container, "strong", undefined, undefined, "Folder Title");
     const video_title_edit_content_input = basic.inputType(video_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
     video_title_edit_content_input.placeholder = folder_name;
-
+    video_title_edit_content_input.focus();
     const video_title_edit_button_container = basic.createSection(video_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
     const videoTitleEditButton = basic.createSection(video_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change folder title");
 
