@@ -71,17 +71,18 @@ export function createFolderOnClick() {
     const create_folder_title_edit_content_container = basic.createSection(create_folder_title_edit_settings_li, "section");
     basic.createSection(create_folder_title_edit_content_container, "strong", undefined, undefined, "Name");
     const create_folder_title_edit_content_input = basic.inputType(create_folder_title_edit_content_container, "text", undefined, "createFolderTitleEditInput", false);
-    create_folder_title_edit_content_input.placeholder = "Folder Name";
+    create_folder_title_edit_content_input.placeholder = "Folder Name"; 
+    create_folder_title_edit_content_input.focus();
 
     const create_folder_title_edit_button_container = basic.createSection(create_folder_title_edit_settings_container, "section", "createFolderTitleEditButtonsContainer");
-    const cancelCreateFolder = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Cancel");
-    cancelCreateFolder.onclick = function(){
-        document.body.style.removeProperty("overflow");
-        create_folder_container.remove();
-    };
     const create = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Create");  
     create.onclick = function(){   
         createFolder(document.getElementById("savedVideosThumbnailContainer"), create_folder_title_edit_content_input.value);
+        document.body.style.removeProperty("overflow");
+        create_folder_container.remove();
+    };
+    const cancelCreateFolder = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Cancel");
+    cancelCreateFolder.onclick = function(){
         document.body.style.removeProperty("overflow");
         create_folder_container.remove();
     };

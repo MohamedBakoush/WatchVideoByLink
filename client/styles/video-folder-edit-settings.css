@@ -46,6 +46,11 @@
   padding: 1rem 1rem 0.5rem 1rem;
 }
 
+.createFolderTitleEditButtonsContainer{
+  grid-auto-flow: dense;
+  direction: rtl;
+}
+
 .deleteVideoContainer, .videoTitleEditContainer, .createFolderTitleEditButtonsContainer{
   grid-template-columns: 1fr 1fr;
 }
