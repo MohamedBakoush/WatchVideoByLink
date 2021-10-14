@@ -1840,13 +1840,17 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
         deleteSpecifiedVideo(fileName); 
       }
       if (i == array.length - 1) {
-        if (Object.keys(eval(availableVideosFolderIDPath)).length == 0) {    
-          const newPath = availableVideosFolderIDPath.replace(`["${currentFolderID}"].content`, "");
-          const insideFolderID = eval(newPath)[currentFolderID].info["inside-folder"]; 
-          deleteSpecifiedAvailableVideosDataByCustomPath(currentFolderID, newPath); 
-          if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(eval(newPath)).length == 0) { 
-            deleteAllFolderData(newPath, insideFolderID, startingFolderID); 
+        try {
+          if (Object.keys(eval(availableVideosFolderIDPath)).length == 0) {    
+            const newPath = availableVideosFolderIDPath.replace(`["${currentFolderID}"].content`, "");
+            const insideFolderID = eval(newPath)[currentFolderID].info["inside-folder"]; 
+            deleteSpecifiedAvailableVideosDataByCustomPath(currentFolderID, newPath); 
+            if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(eval(newPath)).length == 0) { 
+              deleteAllFolderData(newPath, insideFolderID, startingFolderID); 
+            } 
           } 
+        } catch (error) {
+          return error;
         }
       }
     });
