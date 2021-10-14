@@ -170,8 +170,16 @@ export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {
         body: JSON.stringify(payload),
     });
     if (response.ok) { 
-        requestResponse = await response.json();     
-        const availablevideoDetails = requestResponse;
-        basic.setNewAvailablevideoDetails(availablevideoDetails);
-    }
+        requestResponse = await response.json();  
+        if (requestResponse.message == "successfully-inputed-selected-out-of-folder") {
+            basic.notify("success", `Moved: ${selectedID} out of ${folderID}`);    
+            const availablevideoDetails = requestResponse.availableVideos;
+            basic.setNewAvailablevideoDetails(availablevideoDetails);
+        } else {
+            basic.notify("error", `Failed Moved: ${selectedID} out of ${folderID}`);    
+        } 
+    } else { 
+        basic.notify("error",`Failed Fetch: input ${selectedID} out of ${folderID}`);
+        return "Failed to Complete Request";
+    } 
 }

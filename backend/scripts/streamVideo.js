@@ -2071,8 +2071,11 @@ function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {
     }  
   } 
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-  return availableVideos;
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+  return {
+    "message": "successfully-inputed-selected-out-of-folder",
+    "availableVideos": availableVideos
+  };
 }
 
 // input selected element into folder element at availableVideos
