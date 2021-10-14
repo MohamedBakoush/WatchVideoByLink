@@ -143,9 +143,17 @@ export async function inputSelectedIDIntoFolderID(selectedID, folderID) {
     });
     if (response.ok) { 
         requestResponse = await response.json();  
-        const availablevideoDetails = requestResponse;
-        basic.setNewAvailablevideoDetails(availablevideoDetails);
-    }
+        if (requestResponse.message == "successfully-inputed-selected-into-folder") {
+            basic.notify("success", `Moved: ${selectedID} into ${folderID}`);    
+            const availablevideoDetails = requestResponse.availableVideos;
+            basic.setNewAvailablevideoDetails(availablevideoDetails);
+        } else {
+            basic.notify("error", `Failed Moved: ${selectedID} into ${folderID}`);    
+        }
+    } else { 
+        basic.notify("error",`Failed Fetch: input ${selectedID} into ${folderID}`);
+        return "Failed to Complete Request";
+    } 
 }
   
 // input selected element by id out of folder by id 
