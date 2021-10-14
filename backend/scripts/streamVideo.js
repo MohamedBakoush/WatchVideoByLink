@@ -2037,6 +2037,7 @@ function createFolder(folderIDPath, folderTitle) {
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
   FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
   return {
+    "message": "folder-created",
     "folderID": newfolderID,
     "availableVideos": availableVideos
   };
