@@ -93,7 +93,7 @@ export function noSearchableVideoData() {
 }
 
 // remove noSearchableVideoData if exits
-export function removeSearchableVideoData() {
+export function removeNoSearchableVideoData() {
   if (document.getElementById("noSearchableVideoData")) {
     document.getElementById("noSearchableVideoData").remove();
   }
@@ -264,16 +264,21 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
   return "showFolderDetails";
 }
 
+// reset search bar value
+export function resetSearchBarValue() {
+  if (document.getElementById("searchBar")) {
+    document.getElementById("searchBar").value = ""; 
+  }
+}
+
 // when folder element is click on 
 export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
-  document.getElementById("searchBar").value = ""; 
+  basic.resetSearchableVideoDataArray();
+  resetSearchBarValue();
   savedVideosThumbnailContainer.remove();
   savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
   folder.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
-  
-  folderPath.breakPath(document.getElementById("pathContainer"), videoDetails.info.id);
   folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), videoDetails.info.id, videoDetails.info.title); 
-
   const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(folder.getFolderIDPath());   
   dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
   displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);
@@ -505,7 +510,7 @@ export function searchBarKeyUp(searchString) {
         return "key phrase unavailable";
       }
     } else {
-      removeSearchableVideoData();
+      removeNoSearchableVideoData();
       // display filterd details to client
       filteredsearchableVideoData.forEach(function(data) {   
         if (data.info.id.includes("folder-")) {

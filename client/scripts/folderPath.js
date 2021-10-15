@@ -42,6 +42,7 @@ export function homepagePath(pathContainer) {
 
 // display folder path by name 
 export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerID, folderTitle) {
+    basic.createSection(pathContainer, "section", "path", `path-break-${fodlerID}`, "/");
     const path = basic.createSection(pathContainer, "section", "path pathClick", `path-${fodlerID}`, folderTitle);
     path.onmouseenter = function(e){   
         e.preventDefault();    
@@ -59,7 +60,10 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
         path.classList.remove("dragging-target"); 
     };
     path.onclick = function(e){
-        e.preventDefault();    
+        e.preventDefault();  
+        showAvailableVideos.removeNoAvailableVideosDetails();
+        showAvailableVideos.removeNoSearchableVideoData();
+        showAvailableVideos.resetSearchBarValue();
         path.classList.remove("pathClick");   
         path.classList.remove("dragging-target"); 
         path.classList.add("pathClickLast");  
