@@ -132,6 +132,7 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
 
 // input selected element by id into folder by id 
 export async function inputSelectedIDIntoFolderID(selectedID, folderID) { 
+    const fileNames = getInputSelectedIDIntoFolderIDFileNames(selectedID, folderID);
     const payload = {
         folderIDPath: getFolderIDPath(),
         folderID: folderID,
@@ -148,18 +149,44 @@ export async function inputSelectedIDIntoFolderID(selectedID, folderID) {
         if (requestResponse.message == "successfully-inputed-selected-into-folder") {
             basic.deleteIDFromSearchableVideoDataArray(selectedID);   
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
-            basic.notify("success", `Moved: ${selectedID} into ${folderID}`); 
+            basic.notify("success", `Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`); 
         } else {
-            basic.notify("error", `Failed Moved: ${selectedID} into ${folderID}`);    
+            basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);    
         }
     } else { 
-        basic.notify("error",`Failed Fetch: input ${selectedID} into ${folderID}`);
+        basic.notify("error",`Failed Fetch: Input ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);
         return "Failed to Complete Request";
     } 
 }
   
+// get selected and folder file names 
+function getInputSelectedIDIntoFolderIDFileNames(selectedID, folderID) {
+    let selectedIDTitle, folderIDTitle;
+    try {  
+        if (getFolderIDPath().length == 0) { 
+            const availableVideosPath = basic.getAvailablevideoDetails();
+            selectedIDTitle = availableVideosPath[selectedID].info.title; 
+            folderIDTitle = availableVideosPath[folderID].info.title;  
+        } else {
+            const availableVideosFolderIDPath = getAvailableVideoDetailsByFolderPath(getFolderIDPath()); 
+            selectedIDTitle = availableVideosFolderIDPath[selectedID].info.title; 
+            folderIDTitle = availableVideosFolderIDPath[folderID].info.title;  
+        }   
+        return  {
+            selectedIDTitle: selectedIDTitle,
+            folderIDTitle: folderIDTitle
+        }; 
+    } catch (error) {
+        return  {
+            selectedIDTitle: selectedID,
+            folderIDTitle: folderID
+        };  
+    }
+}
+
 // input selected element by id out of folder by id 
 export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {  
+    const fileNames = getInputSelectedIDOutOfFolderIDFileNames(selectedID, folderID);
     const payload = {
         folderIDPath: getFolderIDPath(),
         folderID: folderID,
@@ -176,12 +203,45 @@ export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {
         if (requestResponse.message == "successfully-inputed-selected-out-of-folder") {
             basic.deleteIDFromSearchableVideoDataArray(selectedID);
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
-            basic.notify("success", `Moved: ${selectedID} out of ${folderID}`);    
+            basic.notify("success", `Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
         } else {
-            basic.notify("error", `Failed Moved: ${selectedID} out of ${folderID}`);    
+            basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
         } 
     } else { 
-        basic.notify("error",`Failed Fetch: input ${selectedID} out of ${folderID}`);
+        basic.notify("error",`Failed Fetch: Input ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);
         return "Failed to Complete Request";
     } 
+}
+
+// get selected and folder file names
+function getInputSelectedIDOutOfFolderIDFileNames(selectedID, folderID) {
+    try {
+        const availableVideosPath = basic.getAvailablevideoDetails();
+        let selectedIDTitle, folderIDTitle;
+        // get title selectedID 
+        const availableVideosFolderIDPath = getAvailableVideoDetailsByFolderPath(getFolderIDPath()); 
+        selectedIDTitle = availableVideosFolderIDPath[selectedID].info.title;  
+        // get title folderID 
+        let folderPath = [];  
+        folderPath.push(...getFolderIDPath()); 
+        const fodlerIDIndex = folderPath.indexOf(folderID);     
+        if (folderID == "folder-main") {  
+            folderIDTitle = "Main Folder";
+        } else if (fodlerIDIndex == 0) { 
+            folderIDTitle = availableVideosPath[folderID].info.title;   
+        } else {    
+            folderPath.length = fodlerIDIndex;    
+            const availableVideosFolderIDPath2 = getAvailableVideoDetailsByFolderPath(folderPath); 
+            folderIDTitle = availableVideosFolderIDPath2[folderID].info.title; 
+        }    
+        return  {
+            selectedIDTitle: selectedIDTitle,
+            folderIDTitle: folderIDTitle
+        };  
+    } catch (error) { 
+        return  {
+            selectedIDTitle: selectedID,
+            folderIDTitle: folderID
+        };  
+    }
 }
