@@ -31,45 +31,36 @@ export async function loadVideoDetails() {
 export function eachAvailableVideoDetails(videoDetails) {
   try {
     if (typeof videoDetails == "object") {
-      if (Object.keys(videoDetails).length == 0) { // no available videos
-        if (document.getElementById("searchBar")) {
-          document.getElementById("searchBar").remove(); 
-        }
-        const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-        basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-        return "no available videos";
-      } else {
-        // search bar
-        const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
-        searchBar(searchBarContainer); 
-        // folder path 
-        const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
-        folderPath.homepagePath(pathContainer);
-        // videos tumbnails contailer 
-        let savedVideosThumbnailContainer; 
-        if (document.getElementById("savedVideosThumbnailContainer")) { 
-          document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
-          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-        } else { 
-          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-        }
-        // make sure searchable video is empty
-        if(basic.getSearchableVideoDataArray().length !== 0){ 
-          basic.resetSearchableVideoDataArray();
-        } 
-        // create folder button 
-        const createFolderButton = basic.createLink(searchBarContainer, "javascript:;", undefined, "button category-link", "Create Folder"); 
-        createFolderButton.onclick = function(e){
-          e.preventDefault(); 
-          folder.createFolderOnClick();
-        };
-        folder.resetInsideFolderID();
-        // activate drag drop for available video details
-        dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
-        // display video details
-        displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
-        return "available videos";
+      // search bar
+      const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
+      searchBar(searchBarContainer); 
+      // folder path 
+      const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
+      folderPath.homepagePath(pathContainer);
+      // videos tumbnails contailer 
+      let savedVideosThumbnailContainer; 
+      if (document.getElementById("savedVideosThumbnailContainer")) { 
+        document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
+        savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+      } else { 
+        savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
       }
+      // make sure searchable video is empty
+      if(basic.getSearchableVideoDataArray().length !== 0){ 
+        basic.resetSearchableVideoDataArray();
+      } 
+      // create folder button 
+      const createFolderButton = basic.createLink(searchBarContainer, "javascript:;", undefined, "button category-link", "Create Folder"); 
+      createFolderButton.onclick = function(e){
+        e.preventDefault(); 
+        folder.createFolderOnClick();
+      };
+      folder.resetInsideFolderID();
+      // activate drag drop for available video details
+      dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
+      // display video details
+      displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
+      return "available videos"; 
     } else {
       return "input not an object";
     }
@@ -78,23 +69,59 @@ export function eachAvailableVideoDetails(videoDetails) {
   }
 }
 
+// display noAvailableVideosDetails no if exits
+export function noAvailableVideosDetails() {
+  if (!document.getElementById("noAvailableVideosContainer")) {
+    const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noAvailableVideosContainer");
+    basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+  } 
+}
+
+// remove noAvailableVideosDetails if exits
+export function removeNoAvailableVideosDetails() {
+  if (document.getElementById("noAvailableVideosContainer")) {
+    document.getElementById("noAvailableVideosContainer").remove();
+  }
+}
+
+// display noSearchableVideoData no if exits
+export function noSearchableVideoData() {
+  if (!document.getElementById("noSearchableVideoData")) {
+    const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
+    basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+  }
+}
+
+// remove noSearchableVideoData if exits
+export function removeSearchableVideoData() {
+  if (document.getElementById("noSearchableVideoData")) {
+    document.getElementById("noSearchableVideoData").remove();
+  }
+}
+
 // display folder or video details to client
 export function displayVideoDetails(savedVideosThumbnailContainer, videoDetails) { 
-  basic.resetSearchableVideoDataArray();
-  Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
-    if (videoInfo_ID.includes("folder-")) {  
-      basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
-      showFolderDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
-    } else {
-      if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
-        // add video details into searchableVideoDataArray array 
-        videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID; 
+  if (Object.keys(videoDetails).length == 0) { // no available videos
+    noAvailableVideosDetails();
+    return "no available videoDetails";
+  } else {
+    basic.resetSearchableVideoDataArray();
+    Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
+      if (videoInfo_ID.includes("folder-")) {  
         basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
-        // display video details
-        showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
-      } 
-    }
-  });
+        showFolderDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
+      } else {
+        if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
+          // add video details into searchableVideoDataArray array 
+          videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID; 
+          basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+          // display video details
+          showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
+        } 
+      }
+    }); 
+    return "available videoDetails";
+  }
 }
 
 // load video details to user which include thumbnail image, video id as title and option menu
@@ -457,7 +484,6 @@ export function searchBar(container){
 export function searchBarKeyUp(searchString) { 
   if (typeof searchString == "string") {
     const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
-    const noSearchableVideoData = document.getElementById("noSearchableVideoData");
     // check from searchableVideoDataArray if any video data title matches input string
     const filteredsearchableVideoData = basic.getSearchableVideoDataArray().filter((video) => {
       return (
@@ -469,24 +495,17 @@ export function searchBarKeyUp(searchString) {
     // check if inputed key phrase available data is avaiable or not to either display data or state the problem
     if (filteredsearchableVideoData.length == 0) {
       //  check if filtered available data is avaiable or not to show the correct msg
-      if (basic.getSearchableVideoDataArray().length == 0) {
+      if (basic.getSearchableVideoDataArray().length == 0) { 
         if (savedVideosThumbnailContainer) {      
-          const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+          noAvailableVideosDetails();
         } 
         return "no avaiable video data";
       } else { 
-        if (!noSearchableVideoData) {
-          const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-          basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
-        }  
+        noSearchableVideoData();
         return "key phrase unavailable";
       }
     } else {
-      //  remove noSearchableVideoDatacontaier if exits
-      if(noSearchableVideoData){ 
-        noSearchableVideoData.remove();
-      }
+      removeSearchableVideoData();
       // display filterd details to client
       filteredsearchableVideoData.forEach(function(data) {   
         if (data.info.id.includes("folder-")) {

@@ -1,4 +1,5 @@
 import * as basic from "../scripts/basics.js";
+import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 
@@ -281,14 +282,9 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
               if (savedVideosThumbnailContainer.childElementCount == 0) {
                 if(basic.searchableVideoDataArray.length == 0 ){
                   savedVideosThumbnailContainer.remove();
-                  if (document.getElementById("searchBar")) {
-                    document.getElementById("searchBar").remove(); 
-                  }
-                  const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-                  basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+                  showAvailableVideos.noAvailableVideosDetails();
                 } else {
-                  const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-                  basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+                  showAvailableVideos.noSearchableVideoData();
                 }
               }
             }

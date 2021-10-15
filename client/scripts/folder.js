@@ -104,6 +104,7 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
     if (response.ok) {  
         requestResponse = await response.json();     
         if (requestResponse.message == "folder-created") {
+            showAvailableVideos.removeNoAvailableVideosDetails();
             const availablevideoDetails = requestResponse.availableVideos; 
             basic.notify("success", `Created Folder: ${folderTitle}`);     
             basic.setNewAvailablevideoDetails(availablevideoDetails);

@@ -545,17 +545,11 @@ export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailCo
           const searchableArrayItemId = basic.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
           basic.deleteIDFromSearchableVideoDataArray(searchableArrayItemId);
           // update Available Videos Container if no availabe videos
-          if (savedVideosThumbnailContainer.childElementCount == 0) {
-            if(basic.getSearchableVideoDataArray().length == 0 ){
-              savedVideosThumbnailContainer.remove();
-              if (document.getElementById("searchBar")) {
-                document.getElementById("searchBar").remove(); 
-              }
-              const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-              basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+          if (savedVideosThumbnailContainer.childElementCount == 0) {  
+            if(basic.getSearchableVideoDataArray().length == 0){ 
+              showAvailableVideos.noAvailableVideosDetails();
             } else {
-              const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-              basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+              showAvailableVideos.noSearchableVideoData();
             }
           }
           basic.notify("success",`Deleted: ${videoID}`);
