@@ -39,7 +39,8 @@ export function pushDataToSearchableVideoDataArray(data) {
 
 // delete data from SearchableVideoDataArray by id
 export function deleteIDFromSearchableVideoDataArray(id) { 
-  searchableVideoDataArray.splice(id, 1);
+  const searchableArrayItemId = getSearchableVideoDataArray().findIndex(x => x.info.id === id);
+  searchableVideoDataArray.splice(searchableArrayItemId, 1);
   return "updated SearchableVideoDataArray";
 }
 

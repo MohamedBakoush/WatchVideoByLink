@@ -145,9 +145,9 @@ export async function inputSelectedIDIntoFolderID(selectedID, folderID) {
     if (response.ok) { 
         requestResponse = await response.json();  
         if (requestResponse.message == "successfully-inputed-selected-into-folder") {
-            basic.notify("success", `Moved: ${selectedID} into ${folderID}`);    
-            const availablevideoDetails = requestResponse.availableVideos;
-            basic.setNewAvailablevideoDetails(availablevideoDetails);
+            basic.deleteIDFromSearchableVideoDataArray(selectedID);   
+            basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
+            basic.notify("success", `Moved: ${selectedID} into ${folderID}`); 
         } else {
             basic.notify("error", `Failed Moved: ${selectedID} into ${folderID}`);    
         }
@@ -173,9 +173,9 @@ export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {
     if (response.ok) { 
         requestResponse = await response.json();  
         if (requestResponse.message == "successfully-inputed-selected-out-of-folder") {
+            basic.deleteIDFromSearchableVideoDataArray(selectedID);
+            basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
             basic.notify("success", `Moved: ${selectedID} out of ${folderID}`);    
-            const availablevideoDetails = requestResponse.availableVideos;
-            basic.setNewAvailablevideoDetails(availablevideoDetails);
         } else {
             basic.notify("error", `Failed Moved: ${selectedID} out of ${folderID}`);    
         } 

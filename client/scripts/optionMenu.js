@@ -542,8 +542,7 @@ export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailCo
           //remove video from /saved/videos
           document.getElementById(videoID).remove();
           // delete searchable array item 
-          const searchableArrayItemId = basic.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
-          basic.deleteIDFromSearchableVideoDataArray(searchableArrayItemId);
+          basic.deleteIDFromSearchableVideoDataArray(videoID);
           // update Available Videos Container if no availabe videos
           if (savedVideosThumbnailContainer.childElementCount == 0) {  
             if(basic.getSearchableVideoDataArray().length == 0){ 
