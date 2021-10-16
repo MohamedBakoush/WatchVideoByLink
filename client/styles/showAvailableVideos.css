@@ -54,7 +54,7 @@
   width: 362.5px; 
   float: left;
   position: relative;
-  padding: 0.5rem 0.25rem 0 0.25rem; 
+  padding: 0.5rem 0.25rem 0.15rem 0.25rem; 
   border-radius: 4px;
   overflow: hidden;
 }
@@ -129,6 +129,29 @@
 .dragging-target {
   outline: 1px dashed #000;
 } 
+
+.dragging-target-left {
+  border-left: 0.15rem #61acca solid;   
+  margin-left: -0.15rem; 
+}  
+.dragging-target-middle { 
+  outline: 0.15rem #61acca solid;   
+} 
+ 
+.dragging-target-right {  
+  border-right: 0.15rem #61acca solid;  
+  margin-right: -0.15rem; 
+} 
+
+.dragging-target-top { 
+  border-top: 0.15rem #61acca solid;    
+  margin-top: -0.15rem; 
+} 
+
+.dragging-target-bottom { 
+  border-bottom: 0.15rem #61acca solid;  
+  margin-bottom: -0.15rem; 
+}  
 
 .option-play, .option-delete{
   display: inline-flex;

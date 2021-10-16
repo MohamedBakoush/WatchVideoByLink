@@ -286,7 +286,7 @@ export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
 
 // rearange available videos by drag and drop
 export function dragDropAvailableVideoDetails(section){
-  let dragEl, target, prevtarget;
+  let dragEl, target, prevtarget, dragElTargetPosition;
   const dragDropContainers = document.querySelectorAll(".dragDropContainer");
   if (section === undefined) {
     return "section undefined";
@@ -318,30 +318,120 @@ export function dragDropAvailableVideoDetails(section){
     } else { 
       target = e.target; 
     }
-    if(target.nodeName == "A" || e.target.id.includes("path-folder-")){
+    if(target.nodeName == "A" || e.target.id.includes("path-folder-")){ 
+      var rect = target.getBoundingClientRect();
+      var x = e.clientX - rect.left; //x position within the element.
+      var y = e.clientY - rect.top;  //y position within the element.
+      const maxWidth = rect.right - rect.left;
+      const maxHight = rect.bottom - rect.top;  
       if (prevtarget !== undefined) { 
         if ((folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
           (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
           (prevtarget.id !== target.id)
-        ) {   
-          prevtarget.classList.remove("dragging-target"); 
-        } else {  
-          target.classList.add("dragging-target"); 
+        ) {    
+          prevtarget.classList.remove("dragging-target");
+          prevtarget.classList.remove("dragging-target-left");
+          prevtarget.classList.remove("dragging-target-middle"); 
+          prevtarget.classList.remove("dragging-target-right"); 
+          prevtarget.classList.remove("dragging-target-top"); 
+          prevtarget.classList.remove("dragging-target-bottom"); 
+        } else { 
+          if ( e.target.id.includes("path-folder-")) { 
+            target.classList.add("dragging-target"); 
+          } else {
+            if (target.id === dragEl.id) {
+              target.classList.add("dragging-target-middle"); 
+            } else {
+              if (window.innerWidth <= 749) {
+                if (target.id.includes("folder-")) {  
+                  if (y > (maxHight / 3) * 2) { 
+                    dragElTargetPosition = "bottom";
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    prevtarget.classList.remove("dragging-target-top"); 
+                    target.classList.add("dragging-target-bottom"); 
+                  } else if (y > (maxHight / 3) * 1) { 
+                    dragElTargetPosition = "inside-folder";
+                    prevtarget.classList.remove("dragging-target-bottom"); 
+                    prevtarget.classList.remove("dragging-target-top"); 
+                    target.classList.add("dragging-target-middle"); 
+                  } else if (y > 0) {  
+                    dragElTargetPosition = "top";
+                    prevtarget.classList.remove("dragging-target-bottom"); 
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    target.classList.add("dragging-target-top"); 
+                  }  
+                } else {    
+                  if (y > (maxHight / 2) * 1) { 
+                    dragElTargetPosition = "bottom";
+                    prevtarget.classList.remove("dragging-target-top"); 
+                    target.classList.add("dragging-target-bottom");
+                  } else if (y > 0) {  
+                    dragElTargetPosition = "top";
+                    prevtarget.classList.remove("dragging-target-bottom"); 
+                    target.classList.add("dragging-target-top");
+                  } 
+                } 
+              } else {
+                if (target.id.includes("folder-")) { 
+                  if (x > (maxWidth / 4) * 3) { 
+                    dragElTargetPosition = "right";
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    prevtarget.classList.remove("dragging-target-left"); 
+                    target.classList.add("dragging-target-right"); 
+                  } else if (x > (maxWidth / 4) * 1) {   
+                    dragElTargetPosition = "inside-folder";
+                    prevtarget.classList.remove("dragging-target-left"); 
+                    prevtarget.classList.remove("dragging-target-right"); 
+                    target.classList.add("dragging-target-middle"); 
+                  } else if (x > 0) { 
+                    dragElTargetPosition = "left"; 
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    prevtarget.classList.remove("dragging-target-right"); 
+                    target.classList.add("dragging-target-left");  
+                  } 
+                } else {  
+                  if (x > (maxWidth / 2)) { 
+                    dragElTargetPosition = "right"; 
+                    prevtarget.classList.remove("dragging-target-left"); 
+                    target.classList.add("dragging-target-right"); 
+                  } else if (x > 0) {    
+                    dragElTargetPosition = "left"; 
+                    prevtarget.classList.remove("dragging-target-right"); 
+                    target.classList.add("dragging-target-left");  
+                  }  
+                }
+              } 
+            } 
+          }
         }   
         prevtarget = target;
       } else  {
         prevtarget = target;
       }
-    } else  {
-      prevtarget.classList.remove("dragging-target"); 
+    } else  { 
+      prevtarget.classList.remove("dragging-target");
+      prevtarget.classList.remove("dragging-target-left");
+      prevtarget.classList.remove("dragging-target-middle"); 
+      prevtarget.classList.remove("dragging-target-right"); 
+      prevtarget.classList.remove("dragging-target-top"); 
+      prevtarget.classList.remove("dragging-target-bottom"); 
     }
   } 
 
   function _onDragEnd(e){
     e.preventDefault();
-    dragEl.classList.remove("dragging");
-    target.classList.remove("dragging-target"); 
-    prevtarget.classList.remove("dragging-target"); 
+    dragEl.classList.remove("dragging"); 
+    target.classList.remove("dragging-target");
+    target.classList.remove("dragging-target-left");
+    target.classList.remove("dragging-target-middle"); 
+    target.classList.remove("dragging-target-right");   
+    target.classList.remove("dragging-target-top");     
+    target.classList.remove("dragging-target-bottom");
+    prevtarget.classList.remove("dragging-target-left");
+    prevtarget.classList.remove("dragging-target-middle"); 
+    prevtarget.classList.remove("dragging-target-right");   
+    prevtarget.classList.remove("dragging-target-top");     
+    prevtarget.classList.remove("dragging-target-bottom");
     dragDropContainers.forEach(container => {  
       container.removeEventListener("dragover", _onDragOver, false);
       container.removeEventListener("dragend", _onDragEnd, false);
@@ -355,18 +445,34 @@ export function dragDropAvailableVideoDetails(section){
       folder.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
       document.getElementById(dragEl.id).remove();
     } else if( target && target !== dragEl && target.nodeName == "A"){
-      if (target.id.includes("folder-") && document.getElementById(dragEl.id)) { 
+      if (dragElTargetPosition == "inside-folder") {
         document.getElementById(dragEl.id).remove();
         folder.inputSelectedIDIntoFolderID(dragEl.id, target.id);
-      } else { 
-        if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
+      } else if (dragElTargetPosition == "left") { 
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
           section.insertBefore(dragEl, target); 
-        } else { 
-          section.insertBefore(dragEl, target.nextSibling);  
+          basic.searchableVideoDataArray_move_before(dragEl.id, target.id);
+          moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
         }
-        basic.searchableVideoDataArray_move(dragEl.id, target.id);
-        updateRearangedAvailableVideoDetails(dragEl.id, target.id);
-      }
+      } else if (dragElTargetPosition == "right") { 
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) - 1) { 
+          section.insertBefore(dragEl, target.nextSibling);  
+          basic.searchableVideoDataArray_move_after(dragEl.id, target.id);
+          moveSelectedIdAfterTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        }
+      } else if (dragElTargetPosition == "top") {
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
+          section.insertBefore(dragEl, target); 
+          basic.searchableVideoDataArray_move_before(dragEl.id, target.id);
+          moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        } 
+      }  else if (dragElTargetPosition == "bottom") { 
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) - 1) { 
+          section.insertBefore(dragEl, target.nextSibling); 
+          basic.searchableVideoDataArray_move_after(dragEl.id, target.id);
+          moveSelectedIdAfterTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        } 
+      } 
     }    
   }
 }
