@@ -2102,11 +2102,14 @@ function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {
   };
 }
 
-// update selected available video details orientation
-async function updateRearangedAvailableVideoDetails(selectedID, targetID, folderIDPath) {     
+// move selected id data to before target id data at available video details
+function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
   if (folderIDPath === undefined || folderIDPath.length == 0) { 
     const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
-    const targetIDIndex = Object.keys(availableVideos).indexOf(targetID);  
+    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);
+    if (selectedIDIndex > targetIDIndex) { 
+      targetIDIndex = targetIDIndex + 1;
+    }
     // turn availableVideos into an array
     const availableVideosArray = Object.entries(availableVideos);    
     // remove `selectedIDIndex` item and store it
@@ -2115,10 +2118,13 @@ async function updateRearangedAvailableVideoDetails(selectedID, targetID, folder
     availableVideosArray.splice(targetIDIndex, 0, removedItem);
     // turn availableVideosArray back into an object
     availableVideos = Object.fromEntries(availableVideosArray);    
-  }else { 
+  } else { 
     const availableVideosFolderIDPath = folderPathString(folderIDPath); 
     const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
-    const targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
+    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);
+    if (selectedIDIndex > targetIDIndex) { 
+      targetIDIndex = targetIDIndex + 1;
+    }
     // turn availableVideos into an array
     const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
     // remove `selectedIDIndex` item and store it
@@ -2127,7 +2133,47 @@ async function updateRearangedAvailableVideoDetails(selectedID, targetID, folder
     availableVideosArray.splice(targetIDIndex, 0, removedItem);
     // turn availableVideosArray back into an object  
     eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
-  }  
+  }
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
+  return {
+    "message": "availableVideos updated successfully",
+    "availableVideos": availableVideos
+  };
+}
+
+// move selected id data to after target id data at available video details
+function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
+  if (folderIDPath === undefined || folderIDPath.length == 0) {  
+    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
+    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);    
+    if (targetIDIndex > selectedIDIndex) { 
+      targetIDIndex = targetIDIndex - 1;
+    }
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(availableVideos);    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object
+    availableVideos = Object.fromEntries(availableVideosArray);    
+  } else { 
+    const availableVideosFolderIDPath = folderPathString(folderIDPath); 
+    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
+    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
+    if (targetIDIndex > selectedIDIndex) { 
+      targetIDIndex = targetIDIndex - 1;
+    }
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object  
+    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
+  }
   const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
   FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
   return {
@@ -2479,7 +2525,8 @@ module.exports = { // export modules
   createFolder,
   inputSelectedIDOutOfFolderID,
   inputSelectedIDIntoFolderID,
-  updateRearangedAvailableVideoDetails,
+  moveSelectedIdBeforeTargetIdAtAvailableVideoDetails,
+  moveSelectedIdAfterTargetIdAtAvailableVideoDetails,
   changeVideoTitle,
   uploadVideoFile
 };

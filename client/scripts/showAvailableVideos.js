@@ -372,51 +372,103 @@ export function dragDropAvailableVideoDetails(section){
 }
 
 // request to update selected available video details orientation
-export async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
+async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetID) {
   try {
-      if (selectedID === undefined && targetID === undefined) {
-        basic.notify("error", "selectedID & targetID undefined"); 
-        return "selectedID & targetID undefined";
-      } else if (selectedID === undefined) {
-        basic.notify("error", "selectedID undefined"); 
-        return "selectedID undefined";
-      } else if (targetID === undefined) {
-        basic.notify("error", "targetID undefined"); 
-        return "targetID undefined";
-      } else {
-        const payload = {
-          folderIDPath: folder.getFolderIDPath(),
-          selectedID: selectedID,
-          targetID: targetID
-        }; 
-        let requestResponse;
-        const response = await fetch("../updateRearangedAvailableVideoDetails", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (response.ok) { 
-          requestResponse = await response.json();   
-          if (requestResponse.message === "availableVideos updated successfully"){
-            basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
-            const availablevideoDetails = requestResponse.availableVideos; 
-            basic.setNewAvailablevideoDetails(availablevideoDetails);
-            return "availableVideos updated successfully"; 
-          } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
-            basic.notify("error", `${selectedID} unavailable at availableVideos`); 
-            return `${selectedID} unavailable at availableVideos`; 
-          } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
-            basic.notify("error", `${targetID} unavailable at availableVideos`); 
-            return `${targetID} unavailable at availableVideos`; 
-          } else {        
-            basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
-            return `${selectedID} && ${targetID} unavailable at availableVideos`;
-          }
+    if (selectedID === undefined && targetID === undefined) {
+      basic.notify("error", "selectedID & targetID undefined"); 
+      return "selectedID & targetID undefined";
+    } else if (selectedID === undefined) {
+      basic.notify("error", "selectedID undefined"); 
+      return "selectedID undefined";
+    } else if (targetID === undefined) {
+      basic.notify("error", "targetID undefined"); 
+      return "targetID undefined";
+    } else {
+      const payload = {
+        folderIDPath: folder.getFolderIDPath(),
+        selectedID: selectedID,
+        targetID: targetID
+      }; 
+      let requestResponse;
+      const response = await fetch("../moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) { 
+        requestResponse = await response.json();   
+        if (requestResponse.message === "availableVideos updated successfully"){
+          basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+          const availablevideoDetails = requestResponse.availableVideos; 
+          basic.setNewAvailablevideoDetails(availablevideoDetails);
+          return "availableVideos updated successfully"; 
+        } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
+          basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+          return `${selectedID} unavailable at availableVideos`; 
+        } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
+          basic.notify("error", `${targetID} unavailable at availableVideos`); 
+          return `${targetID} unavailable at availableVideos`; 
         } else {        
-          basic.notify("error","Failed to update rearanged available video details"); 
-          return "Failed to update rearanged available video details";
+          basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
+          return `${selectedID} && ${targetID} unavailable at availableVideos`;
         }
+      } else {        
+        basic.notify("error","Failed to update rearanged available video details"); 
+        return "Failed to update rearanged available video details";
       }
+    }
+  } catch (error) {
+    basic.notify("error","Failed to update rearanged available video details"); 
+    return error;
+  } 
+}
+
+// request to update selected available video details orientation
+async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID) { 
+  try {
+    if (selectedID === undefined && targetID === undefined) {
+      basic.notify("error", "selectedID & targetID undefined"); 
+      return "selectedID & targetID undefined";
+    } else if (selectedID === undefined) {
+      basic.notify("error", "selectedID undefined"); 
+      return "selectedID undefined";
+    } else if (targetID === undefined) {
+      basic.notify("error", "targetID undefined"); 
+      return "targetID undefined";
+    } else {
+      const payload = {
+        folderIDPath: folder.getFolderIDPath(),
+        selectedID: selectedID,
+        targetID: targetID
+      }; 
+      let requestResponse;
+      const response = await fetch("../moveSelectedIdAfterTargetIdAtAvailableVideoDetails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) { 
+        requestResponse = await response.json();   
+        if (requestResponse.message === "availableVideos updated successfully"){
+          basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+          const availablevideoDetails = requestResponse.availableVideos; 
+          basic.setNewAvailablevideoDetails(availablevideoDetails);
+          return "availableVideos updated successfully"; 
+        } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
+          basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+          return `${selectedID} unavailable at availableVideos`; 
+        } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
+          basic.notify("error", `${targetID} unavailable at availableVideos`); 
+          return `${targetID} unavailable at availableVideos`; 
+        } else {        
+          basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
+          return `${selectedID} && ${targetID} unavailable at availableVideos`;
+        }
+      } else {        
+        basic.notify("error","Failed to update rearanged available video details"); 
+        return "Failed to update rearanged available video details";
+      }
+    }
   } catch (error) {
     basic.notify("error","Failed to update rearanged available video details"); 
     return error;

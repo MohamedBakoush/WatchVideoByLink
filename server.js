@@ -78,10 +78,16 @@ async function inputSelectedIDIntoFolderID(req, res){
   res.json(await streamVideoFile.inputSelectedIDIntoFolderID(req.body.selectedID, req.body.folderID, req.body.folderIDPath));
 }
 
-// update selected available video details orientation
-app.post("/updateRearangedAvailableVideoDetails", express.json(), updateRearangedAvailableVideoDetails);
-async function updateRearangedAvailableVideoDetails(req, res){ 
-  res.json(await streamVideoFile.updateRearangedAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
+// move selected id data to before target id data at available video details
+app.post("/moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", express.json(), moveSelectedIdBeforeTargetIdAtAvailableVideoDetails);
+async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(req, res){ 
+  res.json(await streamVideoFile.moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
+}
+
+// move selected id data to after target id data at available video details
+app.post("/moveSelectedIdAfterTargetIdAtAvailableVideoDetails", express.json(), moveSelectedIdAfterTargetIdAtAvailableVideoDetails);
+async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(req, res){ 
+  res.json(await streamVideoFile.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
 }
 
 // change title of video
