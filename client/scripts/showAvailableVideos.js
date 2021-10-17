@@ -167,7 +167,7 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
       const linkContainer = basic.createLink(savedVideosThumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
       linkContainer.draggable = true;
-      const thumbnailContainer = basic.createSection(linkContainer, "section", `${videoInfo_ID}-container`);
+      const thumbnailContainer = basic.createSection(linkContainer, "section", undefined, `${videoInfo_ID}-container`);
       const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
       const thumbnail = basic.appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
       thumbnail.draggable = false;
@@ -252,7 +252,7 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
     folderTitleContainer.style["text-decoration"] = "none";
   };
 
-  const folderContainer = basic.createSection(folderContainerLink, "section", `${folderInfoID}-container`);
+  const folderContainer = basic.createSection(folderContainerLink, "section", undefined, `${folderInfoID}-container`);
   basic.createSection(folderContainer, "section", "folder-image-container fa fa-folder", `${folderInfoID}-image-container`);
   const folderTitleContainer = basic.createLink(folderContainer, undefined, `${folderInfoID}-title-container`, "folderTitleContainer");
   basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfoID}-title`, folder_name);   
@@ -328,6 +328,8 @@ export function dragDropAvailableVideoDetails(section){
       target = document.getElementById(e.target.id.replace("-menu",""));  
     } else if (e.target.id.includes("-image-container")) { 
       target = document.getElementById(e.target.id.replace("-image-container",""));  
+    } else if (e.target.id.includes("-container")) {
+      target = document.getElementById(e.target.id.replace("-container",""));
     } else if (e.target.id.includes("-title")) { 
       target = document.getElementById(e.target.id.replace("-title",""));   
     } else { 
