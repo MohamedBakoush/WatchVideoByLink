@@ -76,7 +76,7 @@ and once everything is done the video will be found available in /saved/videos w
     - Displayed by Folder Icon, selected Folder title
       - When a folder gets clicked it will display folder content
   - Menu: Video/Folder
-    - Get sharable link button (only for saved videos)
+    - Get sharable link button (only for video)
       - If clicked the video URL link will be copied for ease of shareability
     - Edit button
       - If clicked Edit mode will be shown with such features as 
