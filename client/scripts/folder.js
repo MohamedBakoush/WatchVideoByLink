@@ -149,6 +149,8 @@ export async function inputSelectedIDIntoFolderID(selectedID, folderID) {
         if (requestResponse.message == "successfully-inputed-selected-into-folder") {
             basic.deleteIDFromSearchableVideoDataArray(selectedID);   
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
+            // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
+            showAvailableVideos.noAvailableOrSearchableVideoMessage();
             basic.notify("success", `Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`); 
         } else {
             basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);    
@@ -203,6 +205,8 @@ export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {
         if (requestResponse.message == "successfully-inputed-selected-out-of-folder") {
             basic.deleteIDFromSearchableVideoDataArray(selectedID);
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
+            // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
+            showAvailableVideos.noAvailableOrSearchableVideoMessage();
             basic.notify("success", `Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
         } else {
             basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    

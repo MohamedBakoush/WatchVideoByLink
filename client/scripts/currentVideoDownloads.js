@@ -278,15 +278,8 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
               // delete searchable array item 
               const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === video_ID);
               basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
-              // update Available Videos Container if no availabe videos
-              if (savedVideosThumbnailContainer.childElementCount == 0) {
-                if(basic.searchableVideoDataArray.length == 0 ){
-                  savedVideosThumbnailContainer.remove();
-                  showAvailableVideos.noAvailableVideosDetails();
-                } else {
-                  showAvailableVideos.noSearchableVideoData();
-                }
-              }
+              // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario if no availabe videos
+              showAvailableVideos.noAvailableOrSearchableVideoMessage();
             }
           }
         };

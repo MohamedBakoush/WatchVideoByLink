@@ -99,6 +99,21 @@ export function removeNoSearchableVideoData() {
   }
 }
 
+// if savedVideosThumbnailContainer is empty, display either noAvailableVideosDetails or noSearchableVideoData depending on the senario 
+export function noAvailableOrSearchableVideoMessage() {
+  if (document.getElementById("savedVideosThumbnailContainer")) {
+    if (document.getElementById("savedVideosThumbnailContainer").childElementCount == 0) {  
+      if(basic.getSearchableVideoDataArray().length == 0){ 
+          noAvailableVideosDetails();
+          return "no avaiable video data";
+      } else {
+          noSearchableVideoData();
+          return "key phrase unavailable";
+      }
+    }
+  } 
+}
+
 // display folder or video details to client
 export function displayVideoDetails(savedVideosThumbnailContainer, videoDetails) { 
   if (Object.keys(videoDetails).length == 0) { // no available videos
@@ -167,7 +182,7 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
-        optionMenu.optionVideoMenuOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
+        optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
       };
       // video title container - if user want to be redirected to video player even if menu is active when onclick
       const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
@@ -657,17 +672,9 @@ export function searchBarKeyUp(searchString) {
     savedVideosThumbnailContainer.innerHTML = ""; 
     // check if inputed key phrase available data is avaiable or not to either display data or state the problem
     if (filteredsearchableVideoData.length == 0) {
-      //  check if filtered available data is avaiable or not to show the correct msg
-      if (basic.getSearchableVideoDataArray().length == 0) { 
-        if (savedVideosThumbnailContainer) {      
-          noAvailableVideosDetails();
-        } 
-        return "no avaiable video data";
-      } else { 
-        noSearchableVideoData();
-        return "key phrase unavailable";
-      }
+      noAvailableOrSearchableVideoMessage();
     } else {
+      removeNoAvailableVideosDetails();
       removeNoSearchableVideoData();
       // display filterd details to client
       filteredsearchableVideoData.forEach(function(data) {   
