@@ -1,46 +1,85 @@
 /* search bar */
 
-.searchBar{ 
+.searchBarContainer, .pathContainer{ 
     display: block !important;
+    margin: auto;
+}
+
+.pathClick:hover { 
+    cursor: pointer; 
+}
+.pathClickLast:hover { 
+    cursor: default; 
+}
+
+.path{ 
+    float: left;
+    margin-right: 3.6px;
+}
+ 
+.searchBar{  
     border: 0px !important; 
     background: none !important;
-    width: calc((362.5px * 6) + (0.25rem * 8));
-    margin: auto;
+    width: calc((362.5px * 6) + (0.25rem * 8) - (110px)); 
+    height: 2.1875rem;
+    margin-right: .2rem; 
+    font-weight: 700;
+    letter-spacing: -.005em;
+    line-height: 1.44444;
+    padding: 0 1.25rem;
 }
 
 @media only screen and (max-width: 2229px){
     .searchBar{  
-        width: calc((362.5px * 5) + (0.25rem * 6));
+        width: calc((362.5px * 5) + (0.25rem * 6) - (1.25rem * 2) - (110px));
+    }
+    .pathContainer{  
+        width: calc((362.5px * 5) + (0.25rem * 6) - (1.25rem * 2));
     }
 }
 
 @media only screen and (max-width: 1859px){
     .searchBar{   
-        width: calc((362.5px * 4) + (0.25rem * 4));
+        width: calc((362.5px * 4) + (0.25rem * 4) - (1.25rem * 2) - (110px));
+    }
+    .pathContainer{  
+        width: calc((362.5px * 4) + (0.25rem * 4) - (1.25rem * 2));
     }
 }
 
 @media only screen and (max-width: 1489px){
     .searchBar{  
-        width: calc((362.5px * 3) + (0.25rem * 2));
+        width: calc((362.5px * 3) + (0.25rem * 2) - (1.25rem * 2) - (110px));
+    }
+    .pathContainer{  
+        width: calc((362.5px * 3) + (0.25rem * 2) - (1.25rem * 2));
     }
 }
 
 @media only screen and (max-width: 1129px){ 
     .searchBar{  
-        width: calc(362.5px * 2);
+        width: calc(362.5px * 2 - (1.25rem * 2) - (110px));
+    }
+    .pathContainer{  
+        width: calc(362.5px * 2 - (1.25rem * 2));
     }
 }
 
 @media only screen and (max-width: 749px){ 
     .searchBar{  
-        width: 362.5px;
+        width: calc(362.5px - (1.25rem * 2) - (110px))
+    }
+    .pathContainer{  
+        width: calc(362.5px - (1.25rem * 2));
     }
 }
 
 /* Mobile  friendly */
 @media only screen and (max-width: 379px){ 
-    .searchBar { 
-      width: 290px !important; 
+    .searchBar, .pathContainer { 
+        width: calc(290px - 1.25rem - 110px) !important; 
+    } 
+    .pathContainer { 
+        width: 290px !important; 
     } 
   }

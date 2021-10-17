@@ -29,9 +29,9 @@ WatchVideoByLink takes a public video URL link and display the video in a custom
 
 Inside each video player there are diffrent features which makes the watching experience an enjoyable process but what video/mp4 (MP4), video/webm (WebM) and application/x-mpegURL (HLS) have in common is the ability to download/record the provided video for as long of a video duration that the user wants provided by how long the original video is.
 
-After the downloaded/recorded video has finished downloading, 
+After the downloaded/recorded video finishes downloading 
 - Thumbnail creation gets taken into action: 8 snapshots of the video gets taken
-- VP9 video compression gets taken into action: video/mp4 -> video/webm
+- (optional) VP9 video compression gets taken into action: video/mp4 -> video/webm
 
 and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
 
@@ -39,7 +39,7 @@ and once everything is done the video will be found available in /saved/videos w
 - Shareable link gets provided in the address bar when video is viewable.
 - When a video finished recording/completes its downloaded 
   - H.264 video/mp4 becomes playable at /video/:id 
-- When a video completes a VP9 compression
+- (optional) When a video completes a VP9 compression
   - VP9 video/webm becomes playable at /compressed/:id 
 - Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
 - View current videos/video compressions/thumbnails downloads from homepage or /saved/videos
@@ -55,7 +55,7 @@ and once everything is done the video will be found available in /saved/videos w
     - .mp4 / .webm files
     - playbackRates
     - seek-buttons
-    - chromecast
+    - (optional) chromecast
     - download full video or by specified start and end times
   - Video Type: HLS Supports:
     - .m3u8 files
@@ -63,22 +63,50 @@ and once everything is done the video will be found available in /saved/videos w
   - Video Type: MPEG-DASH Supports:
     - .mpd files
   - Video Type: Automatic:
-    - takes a URL link and tries to find the videoSrc and videoType if successful it will be shown in the correct video player
+    - Takes a URL link and tries to find the videoSrc and videoType if successful it will be shown in the correct video player
     - using /?auto=URL will also activate the search
-- /saved/videos
-  - Shows all available videos by their thumbnails and video title (video id as title by default)
-    - if the thumbnail is hovered over a series of images from the video will be displayed to show what the video is about
-    - if the thumbnail is clicked it will redirect the user to the specified video
-  - Menu button is available on the top right corner of each available thumbnail which if clicked shows
-    - Get sharable link button
-      - if clicked the video URL link will be copied for ease of shareability
+- /saved/videos 
+  - Video
+    - Displayed by Video Thumbnail, Video Title
+      - When a video thumbnail gets hovered over a series of images from the video will be displayed to show what the video is about
+      - When a video thumbnail gets clicked it will redirect the user to the specified video
+  - Folder
+    - Create Folder
+      - Choose Title
+    - Displayed by Folder Icon, selected Folder title
+      - When a folder gets clicked it will display folder content
+  - Menu: Video/Folder
+    - Get sharable link button (only for video)
+      - If clicked the video URL link will be copied for ease of shareability
     - Edit button
-      - if clicked Edit mode will be shown with such features as 
+      - If clicked Edit mode will be shown with such features as 
         - Change video title
-        - Delete this video which once clicked deletes the video plus all its data permanently from the system 
+        - Deletes video or folder content when clicked plus all its data permanently from the system
     - Change video title
+  - Drag Drop Folder/Video
+    - When a video/folder gets dragged over target Folder
+      - Table layout
+        - Top: The video/folder will be placed before the video
+        - Middle: The video/folder will be placed inside the folder
+        - Buttom: The video/folder will be placed after the video
+      - Grid layout
+        - Left: The video/folder will be placed before the folder
+        - Middle: The video/folder will be placed inside the folder
+        - Right: The video/folder will be placed after the folder
+    - When a video/folder gets dragged over target video
+      - Table layout
+        - Top: The video/folder will be placed before the video
+        - Buttom: The video/folder will be placed after the video
+      - Grid layout
+        - Left: The video/folder will be placed before the video
+        - Right: The video/folder will be placed after the video
+    - When a video/folder gets dragged over target folder path
+      - The folder/video gets placed inside the specified folder path
+  - Folder Path 
+    - Displays current folder path
+      - If a folder name is clicked the folder content will load and folder path gets update 
   - Search
-    - Find available video by video title
+    - Searches for available video/folders by their title (local to selected folder)
   
 ## Installation
 

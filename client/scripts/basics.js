@@ -1,4 +1,16 @@
 export let searchableVideoDataArray = []; 
+export let availablevideoDetails;
+
+// get available video details
+export function getAvailablevideoDetails() {
+  return availablevideoDetails;
+}
+
+// set new FolderID path
+export function setNewAvailablevideoDetails(newAvailablevideoDetails) {  
+  availablevideoDetails = newAvailablevideoDetails;
+  return availablevideoDetails;
+} 
 
 // return websiteContentContainer
 export function websiteContentContainer() {
@@ -11,19 +23,35 @@ export function favicon() {
 }
 
 // push data to SearchableVideoDataArray
-export function SearchableVideoDataArray_push(data) {
-  searchableVideoDataArray.push(data);
+export function getSearchableVideoDataArray() { 
+  return searchableVideoDataArray;
+}
+
+// push data to SearchableVideoDataArray
+export function pushDataToSearchableVideoDataArray(data) { 
+  if (data === undefined) { 
+    return "data undefined";
+  }  else { 
+    searchableVideoDataArray.push(data);
+    return "updated SearchableVideoDataArray";
+  } 
+} 
+
+// delete data from SearchableVideoDataArray by id
+export function deleteIDFromSearchableVideoDataArray(id) { 
+  const searchableArrayItemId = getSearchableVideoDataArray().findIndex(x => x.info.id === id);
+  searchableVideoDataArray.splice(searchableArrayItemId, 1);
   return "updated SearchableVideoDataArray";
 }
 
 // return SearchableVideoDataArray to its inital state
-export function SearchableVideoDataArray_reset() {
+export function resetSearchableVideoDataArray() {
   searchableVideoDataArray = [];
   return "reset SearchableVideoDataArray";
 }
 
-// update searchableVideoDataArray orientation
-export function searchableVideoDataArray_move(from_id, to_id) { 
+// move from id data to before to id data at searchableVideoDataArray
+export function searchableVideoDataArray_move_before(from_id, to_id) {
   if (from_id === undefined && to_id === undefined) { 
     return "from_id && to_id undefined";
   } else if (from_id === undefined) {
@@ -32,14 +60,47 @@ export function searchableVideoDataArray_move(from_id, to_id) {
     return "to_id undefined";
   } else { 
     const selectedIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === from_id);
-    const targetIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === to_id);
+    let targetIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === to_id);
     if (selectedIDIndex === -1 && targetIDIndex === -1) {
       return `${from_id} && ${to_id} index not found`;
     } else if (selectedIDIndex === -1) {
       return `${from_id} index not found`;
     } else if (targetIDIndex === -1) {
       return `${to_id} index not found`;
-    } else {
+    } else { 
+      if (targetIDIndex > selectedIDIndex) { 
+        targetIDIndex = targetIDIndex - 1;
+      }
+      // remove `selectedIDIndex` item and store it
+      const removedItem = searchableVideoDataArray.splice(selectedIDIndex, 1)[0];
+      // insert stored item into position `targetIDIndex`
+      searchableVideoDataArray.splice(targetIDIndex, 0, removedItem);   
+      return "searchableVideoDataArray updated successfully";
+    } 
+  }
+}
+
+// move from id data to after to id data at searchableVideoDataArray
+export function searchableVideoDataArray_move_after(from_id, to_id) {
+  if (from_id === undefined && to_id === undefined) { 
+    return "from_id && to_id undefined";
+  } else if (from_id === undefined) {
+    return "from_id undefined";
+  } else if (to_id === undefined) {
+    return "to_id undefined";
+  } else { 
+    const selectedIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === from_id);
+    let targetIDIndex = searchableVideoDataArray.findIndex(x => x.info.id === to_id);
+    if (selectedIDIndex === -1 && targetIDIndex === -1) {
+      return `${from_id} && ${to_id} index not found`;
+    } else if (selectedIDIndex === -1) {
+      return `${from_id} index not found`;
+    } else if (targetIDIndex === -1) {
+      return `${to_id} index not found`;
+    } else {        
+      if (selectedIDIndex > targetIDIndex) { 
+        targetIDIndex = targetIDIndex + 1;
+      }
       // remove `selectedIDIndex` item and store it
       const removedItem = searchableVideoDataArray.splice(selectedIDIndex, 1)[0];
       // insert stored item into position `targetIDIndex`
@@ -173,6 +234,39 @@ export function createLink(container, herf, idHere, classHere, textContent) {
     return linkContainer; // return linkContainer
   } catch (e) { // return fail
     return "createLink didnt work";
+  }
+}
+
+// append image to container with features as, src, onload, onerror and optional  height, width
+export function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
+  try {
+    const image = document.createElement("img"); // create image element
+    if (height != undefined) { // assign height
+      image.height = height;
+    }
+    if (width != undefined) { // assign height
+      image.width = width;
+    }
+    if (idHere != undefined) { // assign id
+      image.id = idHere;
+    }
+    if (classHere != undefined) { // assign class
+      image.classList = classHere;
+    }   
+    if (src != undefined) { // assign src
+      image.src = src;
+    }    
+    image.onload = function () { 
+     container.appendChild(image); // append image in container
+    };
+    image.onerror = function () {
+      if (document.getElementById(videoInfo_ID)) { // remove image container
+        document.getElementById(videoInfo_ID).remove(); 
+      }
+    };
+    return image;
+  } catch (e) { // when an error occurs
+    return "appendImg didnt work";
   }
 }
 

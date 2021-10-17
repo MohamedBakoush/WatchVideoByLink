@@ -1,4 +1,5 @@
 import * as basic from "../scripts/basics.js";
+import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 
@@ -277,20 +278,8 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
               // delete searchable array item 
               const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === video_ID);
               basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
-              // update Available Videos Container if no availabe videos
-              if (savedVideosThumbnailContainer.childElementCount == 0) {
-                if(basic.searchableVideoDataArray.length == 0 ){
-                  savedVideosThumbnailContainer.remove();
-                  if (document.getElementById("searchBar")) {
-                    document.getElementById("searchBar").remove(); 
-                  }
-                  const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-                  basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-                } else {
-                  const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-                  basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
-                }
-              }
+              // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario if no availabe videos
+              showAvailableVideos.noAvailableOrSearchableVideoMessage();
             }
           }
         };
@@ -384,10 +373,17 @@ export function stopAvailableVideoDownloadDetails(){
 // send request to server to delete video and all video data permently from the system
 export async function deleteVideoDataPermanently(videoID) {
   try {
-    const response = await fetch(`../delete-video-data-permanently/${videoID}`);
+    const payload = {
+      id: videoID
+    };  
+    const response = await fetch("../delete-video-data-permanently", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }); 
     if (response.ok) {
       const deleteVideoStatus = await response.json(); 
-      if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
+      if (deleteVideoStatus == `deleted-${videoID}-permanently`) {
         basic.notify("success",`Deleted: ${videoID}`);   
         const videoDownloadStatusContainer = document.getElementById(`${videoID}-download-status-container`);    
         if(videoDownloadStatusContainer !== null){

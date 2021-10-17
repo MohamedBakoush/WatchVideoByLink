@@ -1,15 +1,16 @@
 import * as basic from "../scripts/basics.js";
-import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+import * as folder from "./folder.js";
+import * as folderPath from "./folderPath.js";
+import * as optionMenu from "../scripts/optionMenu.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 export async function loadVideoDetails() {
   try {
     const response = await fetch("../all-available-video-data");
-    let availablevideoDetails;
     if (response.ok) {
-      availablevideoDetails = await response.json();
-      searchBar();
-      eachAvailableVideoDetails(availablevideoDetails);
+      const availablevideoDetails = await response.json(); 
+      basic.setNewAvailablevideoDetails(availablevideoDetails);
+      eachAvailableVideoDetails(availablevideoDetails); 
       return "Video details loaded";
     } else {
       return "Failed to load video details";
@@ -30,41 +31,111 @@ export async function loadVideoDetails() {
 export function eachAvailableVideoDetails(videoDetails) {
   try {
     if (typeof videoDetails == "object") {
-      if (Object.keys(videoDetails).length == 0) { // no available videos
-        if (document.getElementById("searchBar")) {
-          document.getElementById("searchBar").remove(); 
-        }
-        const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-        basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-        return "no available videos";
-      } else {
-        let savedVideosThumbnailContainer; 
-        if (document.getElementById("savedVideosThumbnailContainer")) { 
-          document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
-          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-        } else { 
-          savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-        }
-        if(basic.searchableVideoDataArray.length !== 0){ 
-          basic.searchableVideoDataArray.length = 0;
-        } 
-        dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
-        Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
-          if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
-            // add video details into searchableVideoDataArray array 
-            videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID;
-            basic.searchableVideoDataArray.push(videoDetails[videoInfo_ID]);
-            // display video details
-            showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
-          }
-        });
-        return "available videos";
+      // search bar
+      const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
+      searchBar(searchBarContainer); 
+      // folder path 
+      const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
+      folderPath.homepagePath(pathContainer);
+      // videos tumbnails contailer 
+      let savedVideosThumbnailContainer; 
+      if (document.getElementById("savedVideosThumbnailContainer")) { 
+        document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
+        savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+      } else { 
+        savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
       }
+      // make sure searchable video is empty
+      if(basic.getSearchableVideoDataArray().length !== 0){ 
+        basic.resetSearchableVideoDataArray();
+      } 
+      // create folder button 
+      const createFolderButton = basic.createLink(searchBarContainer, "javascript:;", undefined, "button category-link", "Create Folder"); 
+      createFolderButton.onclick = function(e){
+        e.preventDefault(); 
+        folder.createFolderOnClick();
+      };
+      folder.resetInsideFolderID();
+      // activate drag drop for available video details
+      dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
+      // display video details
+      displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
+      return "available videos"; 
     } else {
       return "input not an object";
     }
   } catch (error) {
     return error;
+  }
+}
+
+// display noAvailableVideosDetails no if exits
+export function noAvailableVideosDetails() {
+  if (!document.getElementById("noAvailableVideosContainer")) {
+    const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noAvailableVideosContainer");
+    basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+  } 
+}
+
+// remove noAvailableVideosDetails if exits
+export function removeNoAvailableVideosDetails() {
+  if (document.getElementById("noAvailableVideosContainer")) {
+    document.getElementById("noAvailableVideosContainer").remove();
+  }
+}
+
+// display noSearchableVideoData no if exits
+export function noSearchableVideoData() {
+  if (!document.getElementById("noSearchableVideoData")) {
+    const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
+    basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+  }
+}
+
+// remove noSearchableVideoData if exits
+export function removeNoSearchableVideoData() {
+  if (document.getElementById("noSearchableVideoData")) {
+    document.getElementById("noSearchableVideoData").remove();
+  }
+}
+
+// if savedVideosThumbnailContainer is empty, display either noAvailableVideosDetails or noSearchableVideoData depending on the senario 
+export function noAvailableOrSearchableVideoMessage() {
+  if (document.getElementById("savedVideosThumbnailContainer")) {
+    if (document.getElementById("savedVideosThumbnailContainer").childElementCount == 0) {  
+      if(basic.getSearchableVideoDataArray().length == 0){ 
+          noAvailableVideosDetails();
+          return "no avaiable video data";
+      } else {
+          noSearchableVideoData();
+          return "key phrase unavailable";
+      }
+    }
+  } 
+}
+
+// display folder or video details to client
+export function displayVideoDetails(savedVideosThumbnailContainer, videoDetails) { 
+  if (Object.keys(videoDetails).length == 0) { // no available videos
+    noAvailableVideosDetails();
+    return "no available videoDetails";
+  } else {
+    basic.resetSearchableVideoDataArray();
+    Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
+      if (videoInfo_ID.includes("folder-")) {  
+        basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+        showFolderDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
+      } else {
+        if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
+          // add video details into searchableVideoDataArray array 
+          videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID; 
+          basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+          // display video details
+          showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
+        } 
+      }
+    }); 
+    return "available videoDetails";
   }
 }
 
@@ -96,9 +167,9 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
       const linkContainer = basic.createLink(savedVideosThumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
       linkContainer.draggable = true;
-      const thumbnailContainer = basic.createSection(linkContainer, "section", `${videoInfo_ID}-container`);
+      const thumbnailContainer = basic.createSection(linkContainer, "section", undefined, `${videoInfo_ID}-container`);
       const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
-      const thumbnail = appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
+      const thumbnail = basic.appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
       thumbnail.draggable = false;
       // menu options
       const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars", `${videoInfo_ID}-menu`);
@@ -111,7 +182,7 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
-        optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
+        optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
       };
       // video title container - if user want to be redirected to video player even if menu is active when onclick
       const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
@@ -156,9 +227,82 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
   } 
 }
 
+// load folder details to user 
+export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, videoDetails) {
+  let folder_name = videoDetails.info.title;
+  videoDetails["info"]["id"] = folderInfoID;
+  basic.pushDataToSearchableVideoDataArray(videoDetails[folderInfoID]); 
+  
+  const folderContainerLink = basic.createLink(savedVideosThumbnailContainer, undefined, folderInfoID, "folderContainer"); 
+  folderContainerLink.draggable = true; 
+  folderContainerLink.onclick = function(e){
+    e.preventDefault();  
+    folderOnClick(savedVideosThumbnailContainer, videoDetails);
+  };
+
+  folderContainerLink.onmouseenter = function(e){
+    e.preventDefault();
+    folderContainerLink.style.cursor = "pointer";
+    folderTitleContainer.style["text-decoration"] = "underline";
+  };
+  
+  folderContainerLink.onmouseleave = function(e){
+    e.preventDefault();
+    folderContainerLink.style.cursor = "default";
+    folderTitleContainer.style["text-decoration"] = "none";
+  };
+
+  const folderContainer = basic.createSection(folderContainerLink, "section", undefined, `${folderInfoID}-container`);
+  basic.createSection(folderContainer, "section", "folder-image-container fa fa-folder", `${folderInfoID}-image-container`);
+  const folderTitleContainer = basic.createLink(folderContainer, undefined, `${folderInfoID}-title-container`, "folderTitleContainer");
+  basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfoID}-title`, folder_name);   
+
+  // menu options
+  const option_menu = basic.createSection(folderContainer, "button", "thumbnail-option-menu fa fa-bars", `${folderInfoID}-menu`);
+  option_menu.onmouseenter = () => {
+    folderContainerLink.onclick = null;
+    folderContainer.draggable = false;
+  };
+  option_menu.onmouseleave = () => {
+    folderContainerLink.onclick = function(e){
+      e.preventDefault();  
+      folderOnClick(savedVideosThumbnailContainer, videoDetails);
+    };
+    folderContainer.draggable = true;
+  };
+  option_menu.title = "menu";
+  option_menu.onclick = function(e){
+    e.preventDefault();
+    optionMenu.optionFolderMenuOnClick(savedVideosThumbnailContainer, folderInfoID, folder_name, option_menu, folderContainerLink, folderContainer, folderTitleContainer, videoDetails);
+  };
+
+  return "showFolderDetails";
+}
+
+// reset search bar value
+export function resetSearchBarValue() {
+  if (document.getElementById("searchBar")) {
+    document.getElementById("searchBar").value = ""; 
+  }
+}
+
+// when folder element is click on 
+export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
+  basic.resetSearchableVideoDataArray();
+  resetSearchBarValue();
+  savedVideosThumbnailContainer.remove();
+  savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+  folder.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
+  folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), videoDetails.info.id, videoDetails.info.title); 
+  const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(folder.getFolderIDPath());   
+  dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
+  displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);
+}
+
 // rearange available videos by drag and drop
 export function dragDropAvailableVideoDetails(section){
-  let dragEl, target, prevtarget;
+  let dragEl, target, prevtarget, dragElTargetPosition;
+  const dragDropContainers = document.querySelectorAll(".dragDropContainer");
   if (section === undefined) {
     return "section undefined";
   } else { 
@@ -166,8 +310,10 @@ export function dragDropAvailableVideoDetails(section){
       dragEl = e.target; 
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("Text", dragEl.textContent);
-      section.addEventListener("dragover", _onDragOver, false);
-      section.addEventListener("dragend", _onDragEnd, false);
+      dragDropContainers.forEach(container => {  
+        container.addEventListener("dragover", _onDragOver, false);  
+        container.addEventListener("dragend", _onDragEnd, false);  
+      });
       dragEl.classList.add("dragging");
     });
     return "dragDropAvailableVideoDetails";
@@ -182,400 +328,273 @@ export function dragDropAvailableVideoDetails(section){
       target = document.getElementById(e.target.id.replace("-menu",""));  
     } else if (e.target.id.includes("-image-container")) { 
       target = document.getElementById(e.target.id.replace("-image-container",""));  
+    } else if (e.target.id.includes("-container")) {
+      target = document.getElementById(e.target.id.replace("-container",""));
     } else if (e.target.id.includes("-title")) { 
       target = document.getElementById(e.target.id.replace("-title",""));   
     } else { 
       target = e.target; 
     }
-    if(target.nodeName == "A"){
+    if(target.nodeName == "A" || e.target.id.includes("path-folder-")){ 
+      var rect = target.getBoundingClientRect();
+      var x = e.clientX - rect.left; //x position within the element.
+      var y = e.clientY - rect.top;  //y position within the element.
+      const maxWidth = rect.right - rect.left;
+      const maxHight = rect.bottom - rect.top;  
       if (prevtarget !== undefined) { 
-        if (prevtarget.id !== target.id) {  
-          prevtarget.classList.remove("dragging-target"); 
-        }  else {  
-          target.classList.add("dragging-target"); 
-        }  
+        if ((folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
+          (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
+          (prevtarget.id !== target.id)
+        ) {    
+          prevtarget.classList.remove("dragging-target");
+          prevtarget.classList.remove("dragging-target-left");
+          prevtarget.classList.remove("dragging-target-middle"); 
+          prevtarget.classList.remove("dragging-target-right"); 
+          prevtarget.classList.remove("dragging-target-top"); 
+          prevtarget.classList.remove("dragging-target-bottom"); 
+        } else { 
+          if ( e.target.id.includes("path-folder-")) { 
+            target.classList.add("dragging-target"); 
+          } else {
+            if (target.id === dragEl.id) {
+              target.classList.add("dragging-target-middle"); 
+            } else {
+              if (window.innerWidth <= 749) {
+                if (target.id.includes("folder-")) {  
+                  if (y > (maxHight / 3) * 2) { 
+                    dragElTargetPosition = "bottom";
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    prevtarget.classList.remove("dragging-target-top"); 
+                    target.classList.add("dragging-target-bottom"); 
+                  } else if (y > (maxHight / 3) * 1) { 
+                    dragElTargetPosition = "inside-folder";
+                    prevtarget.classList.remove("dragging-target-bottom"); 
+                    prevtarget.classList.remove("dragging-target-top"); 
+                    target.classList.add("dragging-target-middle"); 
+                  } else if (y > 0) {  
+                    dragElTargetPosition = "top";
+                    prevtarget.classList.remove("dragging-target-bottom"); 
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    target.classList.add("dragging-target-top"); 
+                  }  
+                } else {    
+                  if (y > (maxHight / 2) * 1) { 
+                    dragElTargetPosition = "bottom";
+                    prevtarget.classList.remove("dragging-target-top"); 
+                    target.classList.add("dragging-target-bottom");
+                  } else if (y > 0) {  
+                    dragElTargetPosition = "top";
+                    prevtarget.classList.remove("dragging-target-bottom"); 
+                    target.classList.add("dragging-target-top");
+                  } 
+                } 
+              } else {
+                if (target.id.includes("folder-")) { 
+                  if (x > (maxWidth / 4) * 3) { 
+                    dragElTargetPosition = "right";
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    prevtarget.classList.remove("dragging-target-left"); 
+                    target.classList.add("dragging-target-right"); 
+                  } else if (x > (maxWidth / 4) * 1) {   
+                    dragElTargetPosition = "inside-folder";
+                    prevtarget.classList.remove("dragging-target-left"); 
+                    prevtarget.classList.remove("dragging-target-right"); 
+                    target.classList.add("dragging-target-middle"); 
+                  } else if (x > 0) { 
+                    dragElTargetPosition = "left"; 
+                    prevtarget.classList.remove("dragging-target-middle"); 
+                    prevtarget.classList.remove("dragging-target-right"); 
+                    target.classList.add("dragging-target-left");  
+                  } 
+                } else {  
+                  if (x > (maxWidth / 2)) { 
+                    dragElTargetPosition = "right"; 
+                    prevtarget.classList.remove("dragging-target-left"); 
+                    target.classList.add("dragging-target-right"); 
+                  } else if (x > 0) {    
+                    dragElTargetPosition = "left"; 
+                    prevtarget.classList.remove("dragging-target-right"); 
+                    target.classList.add("dragging-target-left");  
+                  }  
+                }
+              } 
+            } 
+          }
+        }   
         prevtarget = target;
       } else  {
         prevtarget = target;
       }
-    } else  {
-      prevtarget.classList.remove("dragging-target"); 
+    } else  { 
+      prevtarget.classList.remove("dragging-target");
+      prevtarget.classList.remove("dragging-target-left");
+      prevtarget.classList.remove("dragging-target-middle"); 
+      prevtarget.classList.remove("dragging-target-right"); 
+      prevtarget.classList.remove("dragging-target-top"); 
+      prevtarget.classList.remove("dragging-target-bottom"); 
     }
   } 
 
   function _onDragEnd(e){
     e.preventDefault();
-    dragEl.classList.remove("dragging");
-    target.classList.remove("dragging-target"); 
-    prevtarget.classList.remove("dragging-target"); 
-    section.removeEventListener("dragover", _onDragOver, false);
-    section.removeEventListener("dragend", _onDragEnd, false);
-    if( target && target !== dragEl && target.nodeName == "A"){
-      if ([...section.children].indexOf(dragEl) > [...section.children].indexOf(target)) { 
-        section.insertBefore(dragEl, target); 
-      } else { 
-        section.insertBefore(dragEl, target.nextSibling);  
-      }
-      basic.searchableVideoDataArray_move(dragEl.id, target.id);
-      updateRearangedAvailableVideoDetails(dragEl.id, target.id);
-    } 
+    dragEl.classList.remove("dragging"); 
+    target.classList.remove("dragging-target");
+    target.classList.remove("dragging-target-left");
+    target.classList.remove("dragging-target-middle"); 
+    target.classList.remove("dragging-target-right");   
+    target.classList.remove("dragging-target-top");     
+    target.classList.remove("dragging-target-bottom");
+    prevtarget.classList.remove("dragging-target-left");
+    prevtarget.classList.remove("dragging-target-middle"); 
+    prevtarget.classList.remove("dragging-target-right");   
+    prevtarget.classList.remove("dragging-target-top");     
+    prevtarget.classList.remove("dragging-target-bottom");
+    dragDropContainers.forEach(container => {  
+      container.removeEventListener("dragover", _onDragOver, false);
+      container.removeEventListener("dragend", _onDragEnd, false);
+    });     
+    
+    if (
+        (target && target !== dragEl && target.id.includes("path-folder-")) === true &&
+        (folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") === false &&
+        (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) === false
+      ) {  
+      folder.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
+      document.getElementById(dragEl.id).remove();
+    } else if( target && target !== dragEl && target.nodeName == "A"){
+      if (dragElTargetPosition == "inside-folder") {
+        document.getElementById(dragEl.id).remove();
+        folder.inputSelectedIDIntoFolderID(dragEl.id, target.id);
+      } else if (dragElTargetPosition == "left") { 
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
+          section.insertBefore(dragEl, target); 
+          basic.searchableVideoDataArray_move_before(dragEl.id, target.id);
+          moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        }
+      } else if (dragElTargetPosition == "right") { 
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) - 1) { 
+          section.insertBefore(dragEl, target.nextSibling);  
+          basic.searchableVideoDataArray_move_after(dragEl.id, target.id);
+          moveSelectedIdAfterTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        }
+      } else if (dragElTargetPosition == "top") {
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
+          section.insertBefore(dragEl, target); 
+          basic.searchableVideoDataArray_move_before(dragEl.id, target.id);
+          moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        } 
+      }  else if (dragElTargetPosition == "bottom") { 
+        if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) - 1) { 
+          section.insertBefore(dragEl, target.nextSibling); 
+          basic.searchableVideoDataArray_move_after(dragEl.id, target.id);
+          moveSelectedIdAfterTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
+        } 
+      } 
+    }    
   }
 }
 
 // request to update selected available video details orientation
-export async function updateRearangedAvailableVideoDetails(selectedID, targetID) {
+async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetID) {
   try {
-      if (selectedID === undefined && targetID === undefined) {
-        basic.notify("error", "selectedID & targetID undefined"); 
-        return "selectedID & targetID undefined";
-      } else if (selectedID === undefined) {
-        basic.notify("error", "selectedID undefined"); 
-        return "selectedID undefined";
-      } else if (targetID === undefined) {
-        basic.notify("error", "targetID undefined"); 
-        return "targetID undefined";
-      } else {
-        const payload = {
-          selectedID: selectedID,
-          targetID: targetID
-        }; 
-        let requestResponse;
-        const response = await fetch("../updateRearangedAvailableVideoDetails", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (response.ok) { 
-          requestResponse = await response.json();  
-          if (requestResponse === "availableVideos updated successfully"){
-            basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);    
-            return "availableVideos updated successfully"; 
-          } else if (requestResponse === `${selectedID} unavailable at availableVideos`) {
-            basic.notify("error", `${selectedID} unavailable at availableVideos`); 
-            return `${selectedID} unavailable at availableVideos`; 
-          } else if (requestResponse === `${targetID} unavailable at availableVideos`) {
-            basic.notify("error", `${targetID} unavailable at availableVideos`); 
-            return `${targetID} unavailable at availableVideos`; 
-          } else {        
-            basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
-            return `${selectedID} && ${targetID} unavailable at availableVideos`;
-          }
+    if (selectedID === undefined && targetID === undefined) {
+      basic.notify("error", "selectedID & targetID undefined"); 
+      return "selectedID & targetID undefined";
+    } else if (selectedID === undefined) {
+      basic.notify("error", "selectedID undefined"); 
+      return "selectedID undefined";
+    } else if (targetID === undefined) {
+      basic.notify("error", "targetID undefined"); 
+      return "targetID undefined";
+    } else {
+      const payload = {
+        folderIDPath: folder.getFolderIDPath(),
+        selectedID: selectedID,
+        targetID: targetID
+      }; 
+      let requestResponse;
+      const response = await fetch("../moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) { 
+        requestResponse = await response.json();   
+        if (requestResponse.message === "availableVideos updated successfully"){
+          basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+          const availablevideoDetails = requestResponse.availableVideos; 
+          basic.setNewAvailablevideoDetails(availablevideoDetails);
+          return "availableVideos updated successfully"; 
+        } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
+          basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+          return `${selectedID} unavailable at availableVideos`; 
+        } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
+          basic.notify("error", `${targetID} unavailable at availableVideos`); 
+          return `${targetID} unavailable at availableVideos`; 
         } else {        
-          basic.notify("error","Failed to update rearanged available video details"); 
-          return "Failed to update rearanged available video details";
+          basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
+          return `${selectedID} && ${targetID} unavailable at availableVideos`;
         }
+      } else {        
+        basic.notify("error","Failed to update rearanged available video details"); 
+        return "Failed to update rearanged available video details";
       }
+    }
   } catch (error) {
     basic.notify("error","Failed to update rearanged available video details"); 
     return error;
-  }
+  } 
 }
 
-// on click option menu copy video link
-export function optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy) { 
+// request to update selected available video details orientation
+async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID) { 
   try {
-    if (typeof videoSrc !== "string") {
-      basic.notify("error","Copied Video Link: Invalid videoSrc");
-      return "videoSrc not string";
-    } else if (typeof videoType !== "string") {
-      basic.notify("error","Copied Video Link: Invalid videoType");
-      return "videoType not string";
+    if (selectedID === undefined && targetID === undefined) {
+      basic.notify("error", "selectedID & targetID undefined"); 
+      return "selectedID & targetID undefined";
+    } else if (selectedID === undefined) {
+      basic.notify("error", "selectedID undefined"); 
+      return "selectedID undefined";
+    } else if (targetID === undefined) {
+      basic.notify("error", "targetID undefined"); 
+      return "targetID undefined";
     } else {
-      const tempCopyLink = document.createElement("textarea");
-      document.body.appendChild(tempCopyLink);
-      tempCopyLink.value = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-      tempCopyLink.select();
-      document.execCommand("copy");
-      document.body.removeChild(tempCopyLink);
-      option_menu_copy.textContent = "Copied";
-      basic.notify("success","Copied Video Link");
-      return "optionMenuCopyOnClick";
+      const payload = {
+        folderIDPath: folder.getFolderIDPath(),
+        selectedID: selectedID,
+        targetID: targetID
+      }; 
+      let requestResponse;
+      const response = await fetch("../moveSelectedIdAfterTargetIdAtAvailableVideoDetails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) { 
+        requestResponse = await response.json();   
+        if (requestResponse.message === "availableVideos updated successfully"){
+          basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+          const availablevideoDetails = requestResponse.availableVideos; 
+          basic.setNewAvailablevideoDetails(availablevideoDetails);
+          return "availableVideos updated successfully"; 
+        } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
+          basic.notify("error", `${selectedID} unavailable at availableVideos`); 
+          return `${selectedID} unavailable at availableVideos`; 
+        } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
+          basic.notify("error", `${targetID} unavailable at availableVideos`); 
+          return `${targetID} unavailable at availableVideos`; 
+        } else {        
+          basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
+          return `${selectedID} && ${targetID} unavailable at availableVideos`;
+        }
+      } else {        
+        basic.notify("error","Failed to update rearanged available video details"); 
+        return "Failed to update rearanged available video details";
+      }
     }
   } catch (error) {
-    basic.notify("error","Copied Video Link: Failed to execute function properly");
-    return "optionMenuCopyOnClick didnt work";
-  }
-}
-
-// on click option menu
-export function optionMenuOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer) {
-  try { 
-    if (savedVideosThumbnailContainer === undefined) {  
-      return "savedVideosThumbnailContainer undefined";
-    } else if (typeof videoSrc !== "string") {  
-      return "videoSrc not string";
-    } else if (typeof videoType !== "string") {  
-      return "videoType not string";
-    } else if (typeof videoInfo_ID !== "string") {  
-      return "videoInfo_ID not string";
-    } else if (typeof video_name !== "string") {  
-      return "video_name not string";
-    } else if (option_menu === undefined) {  
-      return "option_menu undefined";
-    } else if (linkContainer === undefined) {  
-      return "linkContainer undefined";
-    } else if (thumbnailContainer === undefined) {  
-      return "thumbnailContainer undefined";
-    } else if (thumbnailTitleContainer === undefined) {  
-      return "thumbnailTitleContainer undefined";
-    } else {  
-      option_menu.title = "";
-      linkContainer.removeAttribute("href");
-      option_menu.disabled = true;
-      option_menu.classList = "thumbnail-option-menu";
-      linkContainer.draggable = false;
-      // option_menu_container
-      const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
-      // copy video link
-      const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
-      option_menu_copy.title = "Get shareable link";
-      option_menu_copy.onclick = function(e){
-        e.preventDefault();
-        optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy);
-      };
-      // check if video title is same as dispalyed by ${videoInfo_ID}-title id
-      if (video_name !== document.getElementById(`${videoInfo_ID}-title`).textContent) { 
-        video_name = document.getElementById(`${videoInfo_ID}-title`).textContent;
-      }
-      // update ${videoInfo_ID}-title id into input text box
-      document.getElementById(`${videoInfo_ID}-title`).remove();
-      const inputNewTitle = basic.createInput(document.getElementById(`${videoInfo_ID}-title-container`),"text", video_name, `${videoInfo_ID}-title`, "inputNewTitle");
-      document.getElementById(`${videoInfo_ID}-title-container`).removeAttribute("href");
-      inputNewTitle.onkeypress = function(e){ // on input new title key press
-        if (!e) e = window.event;
-        var keyCode = e.code || e.key;
-        if (keyCode == "Enter"){ 
-          video_name = inputNewTitle.value;
-          changeVideoTitle(videoInfo_ID, video_name);
-          inputNewTitle.blur();
-          return false;
-        }
-      };
-      // show video edit info menu
-      const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
-      option_menu_edit.title = "Edit";
-      option_menu_edit.onclick = function(e){
-        e.preventDefault();
-        optionMenuEditOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, inputNewTitle);
-      };
-      // close video edit info menu
-      const close_option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-times");
-      close_option_menu.title = "Close menu";
-      close_option_menu.onclick = function(e){
-        e.preventDefault();
-        closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
-      };
-      // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
-      const isHover = e => e.parentElement.querySelector(":hover") === e;
-      const checkHoverFunction = function checkHover() {
-        let hovered = isHover(linkContainer); 
-        if (hovered !== checkHover.hovered) { 
-          checkHover.hovered = hovered;  
-          const checkIfInputActive = setInterval(function(){ 
-              if (document.activeElement.id === `${videoInfo_ID}-title`) {
-                hovered = checkHover.hovered; 
-                inputNewTitle.onkeypress = function(e){
-                  if (!e) e = window.event;
-                  var keyCode = e.code || e.key;
-                  if (keyCode == "Enter"){
-                    video_name = inputNewTitle.value;
-                    changeVideoTitle(videoInfo_ID, video_name);  
-                    if (hovered  === false) {
-                      document.getElementById(`${videoInfo_ID}-title`).remove();
-                      basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-                      document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-                      option_menu.title = "menu";
-                      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-                      option_menu.classList = "thumbnail-option-menu fa fa-bars";
-                      linkContainer.draggable = true;
-                      option_menu.disabled = false;
-                      option_menu_container.remove();
-                      close_option_menu.remove();
-                      document.removeEventListener("mousemove", checkHoverFunction);
-                      clearInterval(checkIfInputActive);
-                    } else {
-                      inputNewTitle.blur();
-                    }
-                    return false;
-                  }
-                };
-              } else{
-                if (hovered === false) { 
-                  if (video_name !== inputNewTitle.value) {
-                    video_name = inputNewTitle.value;
-                    changeVideoTitle(videoInfo_ID, video_name); 
-                  }
-                  document.getElementById(`${videoInfo_ID}-title`).remove();
-                  basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-                  document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-                  option_menu.title = "menu";
-                  linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-                  option_menu.classList = "thumbnail-option-menu fa fa-bars";
-                  linkContainer.draggable = true;
-                  option_menu.disabled = false;
-                  option_menu_container.remove();
-                  close_option_menu.remove();
-                  document.removeEventListener("mousemove", checkHoverFunction);
-                } 
-                clearInterval(checkIfInputActive);
-            }
-          }, 50); 
-        }
-      };
-      document.addEventListener("mousemove", checkHoverFunction);
-      return "optionMenuOnClick";
-    }
-  } catch (error) { 
-    return "optionMenuOnClick didnt work";
-  }  
-}
-
-// on click option menu edit
-export function optionMenuEditOnClick(savedVideosThumbnailContainer, videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, inputNewTitle) {
-  try {
-    if (savedVideosThumbnailContainer === undefined) {
-      return "savedVideosThumbnailContainer undefined";
-    } else if (typeof videoSrc !== "string") {  
-      return "videoSrc not string";
-    } else if (typeof videoType !== "string") {  
-      return "videoType not string";
-    } else if (typeof videoInfo_ID !== "string") {  
-      return "videoInfo_ID not string";
-    } else if (typeof video_name !== "string") {  
-      return "video_name not string";
-    } else if (option_menu === undefined) {  
-      return "option_menu undefined";
-    } else if (option_menu_container === undefined) {  
-      return "option_menu_container undefined";
-    } else if (close_option_menu === undefined) {  
-      return "close_option_menu undefined";
-    } else if (linkContainer === undefined) {  
-      return "linkContainer undefined";
-    } else if (inputNewTitle === undefined) {  
-      return "inputNewTitle undefined";
-    } else {
-      if(document.getElementById("download-status-container"))  { 
-        document.getElementById("download-status-container").remove(); 
-        currentVideoDownloads.stopAvailableVideoDownloadDetails();  
-      }
-      if (video_name !== inputNewTitle.value) {
-        video_name = inputNewTitle.value;
-        changeVideoTitle(videoInfo_ID, video_name); 
-      }
-      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-      option_menu.classList = "thumbnail-option-menu fa fa-bars";
-      option_menu_container.remove();
-      close_option_menu.remove();
-      document.body.style.overflow ="hidden";
-      const video_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
-      const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body");
-      backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu, option_menu_container,close_option_menu);
-      const video_edit_article = basic.createSection(video_edit_body, "article", "video-edit-article");
-      const video_edit_form = basic.createSection(video_edit_article, "form");
-    
-      const video_edit_form_title = basic.createSection(video_edit_form, "section");
-      basic.createSection(video_edit_form_title, "h2", "video-edit-form-title", undefined, "Edit mode");
-    
-      // Video title 
-      const video_title_edit_settings_container = basic.createSection(video_edit_form, "section");
-      const video_title_edit_settings_ul = basic.createSection(video_title_edit_settings_container, "ul");
-      const video_title_edit_settings_li = basic.createSection(video_title_edit_settings_ul, "li", "videoTitleEditContainer");
-    
-      const video_title_edit_content_container = basic.createSection(video_title_edit_settings_li, "section");
-      basic.createSection(video_title_edit_content_container, "strong", undefined, undefined, "Video Title");
-      const video_title_edit_content_input = basic.inputType(video_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
-      video_title_edit_content_input.placeholder = video_name;
-    
-      const video_title_edit_button_container = basic.createSection(video_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
-      const videoTitleEditButton = basic.createSection(video_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change video title");
-    
-      videoTitleEditButton.onclick = function(e){
-        e.preventDefault();  
-        document.body.style.removeProperty("overflow");
-        video_edit_container.remove();
-        if (document.getElementById(`${videoInfo_ID}-title`)) { 
-          video_name = video_title_edit_content_input.value;
-          changeVideoTitle(videoInfo_ID, video_name); 
-        } else {
-          basic.notify("error",`ID ${videoInfo_ID}-title is Missing`); 
-        }
-      };
-    
-      // Danger zone setting 
-      const dangerZone_title_container = basic.createSection(video_edit_form, "section");
-      basic.createSection(dangerZone_title_container, "h2", "dangerZone-title", undefined, "Danger Zone");
-    
-      const dangerZone_settingsContainer = basic.createSection(video_edit_form, "section", "dangerZone-settingsContainer");
-      const dangerZone_settings_ul = basic.createSection(dangerZone_settingsContainer, "ul");
-      const dangerZone_settings_li = basic.createSection(dangerZone_settings_ul, "li", "deleteVideoContainer");
-    
-      // Delete video 
-      const deleteVideoContentContainer = basic.createSection(dangerZone_settings_li, "section");
-      basic.createSection(deleteVideoContentContainer, "strong", undefined, undefined, "Delete this video");
-      basic.createSection(deleteVideoContentContainer, "p", undefined, undefined, "Once you delete a video, there is no going back. Please be certain.");
-    
-      const deleteVideoButtonContainer = basic.createSection(dangerZone_settings_li, "section", "deleteVideoButtonContainer");
-      const deleteVideoButton = basic.createSection(deleteVideoButtonContainer, "button", "deleteVideoButton", undefined, "Delete this video");
-      deleteVideoButton.onclick = function(e){
-        e.preventDefault();
-        const confirmVideoDelete = confirm("Press OK to permanently delete video");
-        if (confirmVideoDelete) {
-          // remove container
-          document.body.style.removeProperty("overflow");
-          video_edit_container.remove();
-          //delete data permanently
-          deleteVideoDataPermanently(videoInfo_ID, savedVideosThumbnailContainer);
-        }
-      };
-      return "optionMenuEditOnClick";
-    }
-  } catch (error) {
-    return "optionMenuEditOnClick didnt work";
-  }
-}
-
-// on click close option menu
-export function closeOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle) {
-  try {
-    if (typeof videoSrc !== "string") {  
-      return "videoSrc not string";
-    } else if (typeof videoType !== "string") {  
-      return "videoType not string";
-    } else if (typeof videoInfo_ID !== "string") {  
-      return "videoInfo_ID not string";
-    } else if (typeof video_name !== "string") {  
-      return "video_name not string";
-    } else if (option_menu === undefined) {  
-      return "option_menu undefined";
-    } else if (option_menu_container === undefined) {  
-      return "option_menu_container undefined";
-    } else if (close_option_menu === undefined) {  
-      return "close_option_menu undefined";
-    } else if (linkContainer === undefined) {  
-      return "linkContainer undefined";
-    } else if (thumbnailTitleContainer === undefined) {  
-      return "thumbnailTitleContainer undefined";
-    } else if (inputNewTitle === undefined) {  
-      return "inputNewTitle undefined";
-    } else {  
-      if (video_name !== inputNewTitle.value) {
-        video_name = inputNewTitle.value;
-        changeVideoTitle(videoInfo_ID, video_name); 
-      }
-      document.getElementById(`${videoInfo_ID}-title`).remove();
-      document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-      basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-      option_menu.title = "menu";
-      linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-      option_menu.classList = "thumbnail-option-menu fa fa-bars";
-      linkContainer.draggable = true;
-      option_menu.disabled = false;
-      option_menu_container.remove();
-      close_option_menu.remove(); 
-      return "closeOptionMenuOnClick"; 
-    }
-  } catch (error) {
-    return "closeOptionMenuOnClick didnt work";
+    basic.notify("error","Failed to update rearanged available video details"); 
+    return error;
   }
 }
 
@@ -584,7 +603,8 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
   try {
     const payload = {
       videoID: videoID,
-      newVideoTitle: newVideoTitle
+      newVideoTitle: newVideoTitle,
+      folderIDPath: folder.getFolderIDPath()
     }; 
 
     const response = await fetch("../changeVideoTitle", {
@@ -597,9 +617,11 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
     if (response.ok) {
       // get json data from response
       requestResponse = await response.json(); 
-      if (requestResponse == "video-title-changed") {
+      if (requestResponse.message == "video-title-changed") { 
+        const availablevideoDetails = requestResponse.availableVideos; 
+        basic.setNewAvailablevideoDetails(availablevideoDetails);
         // find array id of searchableVideoDataArray by videoID
-        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID);
+        const searchableArrayItemId = basic.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
         if (searchableArrayItemId !== -1) {// change video title from old to new
           document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
           basic.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
@@ -623,105 +645,11 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
   }
 }
 
-// append image to container with features as, src, onload, onerror and optional  height, width
-export function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
-  try {
-    const image = document.createElement("img"); // create image element
-    if (height != undefined) { // assign height
-      image.height = height;
-    }
-    if (width != undefined) { // assign height
-      image.width = width;
-    }
-    if (idHere != undefined) { // assign id
-      image.id = idHere;
-    }
-    if (classHere != undefined) { // assign class
-      image.classList = classHere;
-    }   
-    if (src != undefined) { // assign src
-      image.src = src;
-    }    
-    image.onload = function () { 
-     container.appendChild(image); // append image in container
-    };
-    image.onerror = function () {
-      document.getElementById(videoInfo_ID).remove();  // remove image container
-    };
-    return image;
-  } catch (e) { // when an error occurs
-    return "appendImg didnt work";
-  }
-}
-
-// close edit menu button
-export function backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu) {
-  try {
-    if (video_edit_body == undefined || video_edit_container == undefined || option_menu == undefined ) {  
-      return "backToViewAvailableVideoButton didnt work";
-    } else {
-      const backToMainVideoButton = document.createElement("button");
-      option_menu.title = "menu";
-      backToMainVideoButton.title = "Close Edit mode";
-      backToMainVideoButton.className =  "backToViewAvailableVideoButton fa fa-times";
-      backToMainVideoButton.onclick = function(){
-        document.body.style.removeProperty("overflow");
-        video_edit_container.remove();
-      };
-      video_edit_body.appendChild(backToMainVideoButton);
-      return "backToViewAvailableVideoButton successful"; 
-    }
-  } catch (error) {
-    return "backToViewAvailableVideoButton didnt work";
-  }
-}
-
-// send request to server to delete video and all video data permently from the system
-export async function deleteVideoDataPermanently(videoID, savedVideosThumbnailContainer) {
-  try {
-    const response = await fetch(`../delete-video-data-permanently/${videoID}`);
-    if (response.ok) {
-      const deleteVideoStatus = await response.json();
-      if (deleteVideoStatus == `video-id-${videoID}-data-permanently-deleted`) {
-        //remove video from /saved/videos
-        document.getElementById(videoID).remove();
-        // delete searchable array item 
-        const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === videoID);
-        basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
-        // update Available Videos Container if no availabe videos
-        if (savedVideosThumbnailContainer.childElementCount == 0) {
-          if(basic.searchableVideoDataArray.length == 0 ){
-            savedVideosThumbnailContainer.remove();
-            if (document.getElementById("searchBar")) {
-              document.getElementById("searchBar").remove(); 
-            }
-            const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-            basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-          } else {
-            const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-            basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
-          }
-        }
-        basic.notify("success",`Deleted: ${videoID}`);
-        return `video-id-${videoID}-data-permanently-deleted`;
-      } else {
-        basic.notify("error",`Failed Delete: ${videoID}`);
-        return `video-id-${videoID}-data-failed-to-permanently-deleted`;
-      }  
-    } else { 
-      basic.notify("error","Failed Fetch: Video Deletion");
-      return "Failed to Complete Request";
-    } 
-  } catch (error) {  
-    basic.notify("error","Failed Fetch: Video Deletion");
-    return error;
-  }
-}
 
 // find video by filtering trough each available video by textinput
-export function searchBar(){
+export function searchBar(container){
   // create search input
-  const searchBar = basic.inputType(basic.websiteContentContainer(), "text", "searchBar", "searchBar", true);
+  const searchBar = basic.inputType(container, "text", "searchBar", "searchBar", true);
   searchBar.name = "searchBar";
   searchBar.placeholder="Type to search";
   // filters trough video data by name at every key press
@@ -736,9 +664,8 @@ export function searchBar(){
 export function searchBarKeyUp(searchString) { 
   if (typeof searchString == "string") {
     const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
-    const noSearchableVideoData = document.getElementById("noSearchableVideoData");
     // check from searchableVideoDataArray if any video data title matches input string
-    const filteredsearchableVideoData = basic.searchableVideoDataArray.filter((video) => {
+    const filteredsearchableVideoData = basic.getSearchableVideoDataArray().filter((video) => {
       return (
         video.info.title.toLowerCase().includes(searchString.toLowerCase())
       );
@@ -747,28 +674,17 @@ export function searchBarKeyUp(searchString) {
     savedVideosThumbnailContainer.innerHTML = ""; 
     // check if inputed key phrase available data is avaiable or not to either display data or state the problem
     if (filteredsearchableVideoData.length == 0) {
-      //  check if filtered available data is avaiable or not to show the correct msg
-      if (basic.searchableVideoDataArray.length == 0) {
-        if (savedVideosThumbnailContainer) {      
-          const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer");
-          basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
-        } 
-        return "no avaiable video data";
-      } else { 
-        if (!noSearchableVideoData) {
-          const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-          basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
-        }  
-        return "key phrase unavailable";
-      }
+      noAvailableOrSearchableVideoMessage();
     } else {
-      //  remove noSearchableVideoDatacontaier if exits
-      if(noSearchableVideoData){ 
-        noSearchableVideoData.remove();
-      }
+      removeNoAvailableVideosDetails();
+      removeNoSearchableVideoData();
       // display filterd details to client
       filteredsearchableVideoData.forEach(function(data) {   
-        showDetails(savedVideosThumbnailContainer, data.info.id, data);
+        if (data.info.id.includes("folder-")) {
+          showFolderDetails(savedVideosThumbnailContainer, data.info.id, data);
+        } else { 
+          showDetails(savedVideosThumbnailContainer, data.info.id, data);
+        } 
       });
       return "Display filterd avaiable video data";
     } 

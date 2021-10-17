@@ -1,4 +1,4 @@
-@import url("video-edit-settings.css");
+@import url("video-folder-edit-settings.css");
 
 .savedVideosThumbnailContainer{
     padding: 0.5rem 0.25rem 0 0.25rem; 
@@ -37,20 +37,24 @@
   }
 }
 
-.videoThumbnailContainer, .thumbnailTitleContainer{
+.videoThumbnailContainer, .thumbnailTitleContainer, .folderTitleContainer{
   color: rgb(0,0,0);
   text-decoration: none;
 }
+
+.folderContainer:hover{
+  cursor: pointer;
+} 
 
 .videoThumbnailContainer:hover{
   text-decoration: underline;
 }
 
-.videoThumbnailContainer { 
+.videoThumbnailContainer, .folderContainer { 
   width: 362.5px; 
   float: left;
   position: relative;
-  padding: 0.5rem 0.25rem 0 0.25rem; 
+  padding: 0.5rem 0.25rem 0.15rem 0.25rem; 
   border-radius: 4px;
   overflow: hidden;
 }
@@ -59,6 +63,17 @@
   background: rgb(0,0,0);
   height: 204px;
   margin-bottom: 0.271rem;
+}
+
+.folder-image-container{ 
+  background: none;
+  font-size: 19em;
+  display: inline-flex;
+  align-items: center; 
+  padding: 0 .2939em;
+  height: 204px;
+  margin-bottom: 0.271rem;
+  color: #121317;
 }
 
 .thumbnail-image{ 
@@ -115,6 +130,29 @@
   outline: 1px dashed #000;
 } 
 
+.dragging-target-left {
+  border-left: 0.15rem #61acca solid;   
+  margin-left: -0.15rem; 
+}  
+.dragging-target-middle { 
+  outline: 0.15rem #61acca solid;   
+} 
+ 
+.dragging-target-right {  
+  border-right: 0.15rem #61acca solid;  
+  margin-right: -0.15rem; 
+} 
+
+.dragging-target-top { 
+  border-top: 0.15rem #61acca solid;    
+  margin-top: -0.15rem; 
+} 
+
+.dragging-target-bottom { 
+  border-bottom: 0.15rem #61acca solid;  
+  margin-bottom: -0.15rem; 
+}  
+
 .option-play, .option-delete{
   display: inline-flex;
   align-items: center;
@@ -151,10 +189,15 @@
 
 /* Mobile  friendly */
 @media only screen and (max-width: 379px){ 
-  .videoThumbnailContainer { 
+  .videoThumbnailContainer, .folderContainer { 
     width: 290px !important; 
   }
-  .thumbnail-image-container{  
+  .folder-image-container { 
+    font-size: 165px;
+    padding: 0 .3773em;
+  }
+
+  .thumbnail-image-container, .folder-image-container{  
     height: 165px !important;  
   }
   .thumbnail-image{ 

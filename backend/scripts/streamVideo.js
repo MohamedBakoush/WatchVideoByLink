@@ -1454,13 +1454,13 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                       }; 
                     }
                   } else if (i < 10) {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}00${i}${fileType}`;
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   } else if (i < 100) {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}0${i}${fileType}`;
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   } else {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${imageFileName}${i}${fileType}`;
+                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`;
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   }
                   if (i == numberOfCreatedScreenshots) {
@@ -1490,7 +1490,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                   console.log(`Encoding Error: ${error.message}`);
               })
               .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
-              .output(`${newFilePath}${imageFileName}%03d${fileType}`)
+              .output(`${newFilePath}${fileName}-${imageFileName}%03d${fileType}`)
               .run();
         } else { // duration less or equal to 0
           try { // delete data
@@ -1739,140 +1739,218 @@ async function compression_VP9(videofile, newFilePath, fileName) {
   }
 }
 
+// set timeout for a set amount of time in ms
+function sleep(ms) {
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+}
+
 // check if video compression is downloading before data deletion 
-async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, response) {
+async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
   // stop video compression
   const stopCommpressedVideoDownloadBool = await stopCommpressedVideoDownload(videoID); 
-  if (stopCommpressedVideoDownloadBool) {
-    console.log(stopCommpressedVideoDownloadBool);
-    const checkDownloadStatus = setInterval( function(){ 
-      // try untill compressed video gets killed with signal SIGKILL or finnishes download 
-      try { 
-        if (videoData[videoID]["compression"]) {
-          if (videoData[videoID]["compression"]["download"] == "completed" 
-          || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
-            // stop interval and start data deletion when videoData is completed or ffmpeg was killed with signal SIGKILL
-            clearInterval(checkDownloadStatus); 
-            return deleteAllVideoData(videoID, response); 
-          } else if(currentDownloadVideos[videoID]["compression"]){
-            if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
-            || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
-              // stop interval and start data deletion when currentDownloadVideos is completed or ffmpeg was killed with signal SIGKILL
-              clearInterval(checkDownloadStatus); 
-              return deleteAllVideoData(videoID, response); 
-            } 
-          } 
-        } else { // stop interval and start data deletion
-          clearInterval(checkDownloadStatus);            
-          return deleteAllVideoData(videoID, response); 
-        }
-      } catch (e) { // error occurs 
-        console.log(e);  
-      }
-    }, 500); 
+  if (stopCommpressedVideoDownloadBool) { 
+    await checkCompressedVideoDownloadStatus(videoID);
+    return deleteAllVideoData(videoID, folderIDPath); 
   } else { // compressed video isn't downloading 
-    return deleteAllVideoData(videoID, response); 
+    return deleteAllVideoData(videoID, folderIDPath); 
   }
 }
 
-// deletes all video id data
-function deleteAllVideoData(fileName, response) {  // check if videoid is valid
+// try untill compressed video gets killed with signal SIGKILL or finnishes download 
+async function checkCompressedVideoDownloadStatus(videoID) {
   try {
-    // delete currentDownloadVideos from server if exist
-    // eslint-disable-next-line no-prototype-builtins
-    if(currentDownloadVideos.hasOwnProperty(fileName)){  
-      delete currentDownloadVideos[`${fileName}`]; 
-      const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-      FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);
+    if (videoData[videoID]["compression"]) {
+      if (videoData[videoID]["compression"]["download"] == "completed" 
+      || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
+        return "start deletion"; 
+      } else if(currentDownloadVideos[videoID]["compression"]){
+        if (currentDownloadVideos[videoID]["compression"]["download-status"] == "completed"
+        || currentDownloadVideos[fileNameID]["compression"]["download-status"] == "ffmpeg was killed with signal SIGKILL") {  
+          return "start deletion";    
+        } 
+      } else {  
+        await sleep(200);
+        return checkCompressedVideoDownloadStatus(videoID); 
+      }
+    } else { // stop interval and start data deletion
+      return "start deletion"; 
     }
-    // delete videoData from server if exist
-    // eslint-disable-next-line no-prototype-builtins
-    if (videoData.hasOwnProperty(fileName)) {
-      delete videoData[`${fileName}`]; 
-      const deleteVideoData = JSON.stringify(videoData, null, 2);
-      FileSystem.writeFileSync(data_videos_path, deleteVideoData);
-    }  
-    // delete availableVideos from server if exist
-    // eslint-disable-next-line no-prototype-builtins
-    if(availableVideos.hasOwnProperty(fileName)){ 
-      delete availableVideos[fileName];
+  } catch (error) { 
+    await sleep(200);
+    return checkCompressedVideoDownloadStatus(videoID); 
+  } 
+}
+
+// deletes all video id data
+function deleteAllVideoData(fileName, folderIDPath) {
+  try {   
+    if (fileName.includes("folder-")) {  
+      if (
+        (folderIDPath === undefined || folderIDPath.length === 0)
+        && availableVideos.hasOwnProperty(fileName)) // eslint-disable-line
+      { 
+        const availableVideosFolderIDPath = "";  
+        deleteAllFolderData(availableVideosFolderIDPath.concat("availableVideos[\"",fileName,"\"].content"), fileName, fileName); 
+      } else {  
+        const availableVideosFolderIDPath = folderPathString(folderIDPath); 
+        deleteAllFolderData(availableVideosFolderIDPath.concat("[\"",fileName,"\"].content"), fileName, fileName);
+      }    
+    } else { 
+      // delete currentDownloadVideos by id if exist 
+      deleteSpecifiedCurrentDownloadVideosData(fileName);
+      // delete videoData by id if exist 
+      deleteSpecifiedVideoData(fileName); 
+      // delete availableVideos by id if exist  
+      deleteSpecifiedAvailableVideosData(fileName, folderIDPath);
+      // delete specified video by id if exist  
+      deleteSpecifiedVideo(fileName); 
+    }
+    return `deleted-${fileName}-permanently`;
+  } catch (error) {
+    return `failed-to-delete-${fileName}-permanently`;
+  }
+}
+
+// delete all folder content plus selected folder
+// 1. If folder is detected go in, Delete all video data found 
+// 2. if folder is empty delete folder and go up one folder, if folder contained folders repeat 1 
+// 3. stop when current folder id reached starting folder id
+function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, startingFolderID) {  
+  if (Object.keys(eval(availableVideosFolderIDPath)).length == 0) {
+    const newAvailableVideosFolderPath = availableVideosFolderIDPath.replace(`["${currentFolderID}"].content`, "");  
+    const insideFolderID = eval(newAvailableVideosFolderPath)[currentFolderID].info["inside-folder"]; 
+    deleteSpecifiedAvailableVideosDataByCustomPath(currentFolderID, newAvailableVideosFolderPath); 
+    if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(eval(newAvailableVideosFolderPath)).length == 0) {
+      deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
+    } 
+  } else {
+    Object.keys(eval(availableVideosFolderIDPath)).forEach(function(fileName, i, array) {
+      if (fileName.includes("folder-")) {
+        deleteAllFolderData(availableVideosFolderIDPath.concat("[\"",fileName,"\"].content"), fileName, startingFolderID); 
+      } else { 
+        // delete specified video by id from availableVideos
+        deleteSpecifiedAvailableVideosDataByCustomPath(fileName, availableVideosFolderIDPath); 
+        // delete currentDownloadVideos by id if exist 
+        deleteSpecifiedCurrentDownloadVideosData(fileName);
+        // delete videoData by id if exist 
+        deleteSpecifiedVideoData(fileName); 
+        // delete specified video by id if exist  
+        deleteSpecifiedVideo(fileName); 
+      }
+      if (i == array.length - 1) {
+        try {
+          if (Object.keys(eval(availableVideosFolderIDPath)).length == 0) {    
+            const newPath = availableVideosFolderIDPath.replace(`["${currentFolderID}"].content`, "");
+            const insideFolderID = eval(newPath)[currentFolderID].info["inside-folder"]; 
+            deleteSpecifiedAvailableVideosDataByCustomPath(currentFolderID, newPath); 
+            if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(eval(newPath)).length == 0) { 
+              deleteAllFolderData(newPath, insideFolderID, startingFolderID); 
+            } 
+          } 
+        } catch (error) {
+          return error;
+        }
+      }
+    });
+  }
+}
+ 
+// delete currentDownloadVideos by id if exist
+function deleteSpecifiedCurrentDownloadVideosData(fileName) {
+  if(currentDownloadVideos.hasOwnProperty(fileName)){  // eslint-disable-line
+    delete currentDownloadVideos[`${fileName}`]; 
+    const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+    FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);
+  }
+}
+
+// delete videoData by id if exist
+function deleteSpecifiedVideoData(fileName) {   
+  if (videoData.hasOwnProperty(fileName)) { // eslint-disable-line
+    delete videoData[`${fileName}`]; 
+    const deleteVideoData = JSON.stringify(videoData, null, 2);
+    FileSystem.writeFileSync(data_videos_path, deleteVideoData);
+  }  
+}
+
+// delete availableVideos from server if exist  
+function deleteSpecifiedAvailableVideosData(fileName, folderIDPath, availableVideosFolderIDPath) {  
+  try { 
+    if (availableVideosFolderIDPath !== undefined) {
+      delete eval(availableVideosFolderIDPath)[fileName]; 
       const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-    }
-    // check if folder exists
-    if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
-      FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+    } else if (folderIDPath === undefined || folderIDPath.length === 0) { 
+      if (availableVideos.hasOwnProperty(fileName)) { // eslint-disable-line
+        delete availableVideos[fileName]; 
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+      } 
+    } else {  
+      const availableVideosFolderIDPath = folderPathString(folderIDPath);   
+      delete eval(availableVideosFolderIDPath)[fileName];  
+      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+    }   
+  } catch (error) {
+    if (availableVideos.hasOwnProperty(fileName)) { // eslint-disable-line
+      delete availableVideos[fileName]; 
+      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+    } 
+  }
+}
+
+// delete specified video by id from availableVideos
+function deleteSpecifiedAvailableVideosDataByCustomPath(fileName, availableVideosFolderIDPath) {  
+  delete eval(availableVideosFolderIDPath)[fileName]; 
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+}
+
+// delete specified video from server if exist  
+function deleteSpecifiedVideo(fileName) {  
+  // check if folder exists
+  if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+    FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
+      if (err) throw err;
+      if (!files.length) {
+        // directory empty, delete folder
+        FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+          if (err) throw err; 
+          return `video-id-${fileName}-data-permanently-deleted`;
+        });
+      } else {
+        // folder not empty
+        FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
           if (err) throw err;
-          if (!files.length) {
-            // directory empty, delete folder
-            FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+          let completedCount = 0;
+          for (const file of files) {
+            completedCount += 1;
+            FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`, (err) => {
               if (err) throw err;
-              try {
-                if (response !== undefined) {
-                  response.json(`video-id-${fileName}-data-permanently-deleted`);
-                } else {
-                  return `video-id-${fileName}-data-permanently-deleted`;
-                }
-              } catch (error) {
-                return `video-id-${fileName}-data-permanently-deleted`;
-              }
-            });
-          } else {
-            // folder not empty
-            FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
-              if (err) throw err;
-              let completedCount = 0;
-              for (const file of files) {
-                completedCount += 1;
-                FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`, (err) => {
-                  if (err) throw err;
-                  // delete the video
-                  FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
-                    if (err) throw err;
-                    if (files.length == completedCount) { // if file length is same as completedCount then delete folder
-                      // reset completedCount
-                      completedCount = 0;
-                      // delete folder
-                      FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-                        if (err) throw err;  
-                        try {
-                          if (response !== undefined) {
-                            response.json(`video-id-${fileName}-data-permanently-deleted`);
-                          } else {
-                            return `video-id-${fileName}-data-permanently-deleted`;
-                          }
-                        } catch (error) {
-                          return `video-id-${fileName}-data-permanently-deleted`;
-                        }
-                      });
-                    }
+              // delete the video
+              FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
+                if (err) throw err;
+                if (files.length == completedCount) { // if file length is same as completedCount then delete folder
+                  // reset completedCount
+                  completedCount = 0;
+                  // delete folder
+                  FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
+                    if (err) throw err;  
+                    return `video-id-${fileName}-data-permanently-deleted`;
                   });
-                });
-              }
+                }
+              });
             });
           }
         });
-    } else{ // folder dosent exit 
-      try {
-        if (response !== undefined) {
-          response.json(`video-id-${fileName}-data-permanently-deleted`);
-        } else {
-          return `video-id-${fileName}-data-permanently-deleted`;
-        }
-      } catch (error) {
-        return `video-id-${fileName}-data-permanently-deleted`;
       }
-    }
-  } catch (error) {
-    try {
-      if (response !== undefined) {
-        response.json(`video-id-${fileName}-data-failed-to-permanently-deleted`);
-      } else {
-        return `video-id-${fileName}-data-failed-to-permanently-deleted`;
-      }
-    } catch (error) {
-      return `video-id-${fileName}-data-failed-to-permanently-deleted`;
-    }
+    });
+  } else{ // folder dosent exit 
+    return `video-id-${fileName}-data-permanently-deleted`;
   }
 }
 
@@ -1922,58 +2000,225 @@ async function getVideoLinkFromUrl(req, res) {
   }
 }
 
-// update selected available video details orientation
-async function updateRearangedAvailableVideoDetails(selectedID, targetID) {   
-  try { 
-    const checkIfSelectedIdExits = await findAvailableVideosByID(selectedID);
-    const checkIfTargetIdExits = await findAvailableVideosByID(targetID);  
-    if (checkIfSelectedIdExits && checkIfTargetIdExits) {
-      // get selectedID and targetID index
-      const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
-      const targetIDIndex = Object.keys(availableVideos).indexOf(targetID); 
-      // turn availableVideos into an array
-      const availableVideosArray = Object.entries(availableVideos);    
-      // remove `selectedIDIndex` item and store it
-      const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-      // insert stored item into position `targetIDIndex`
-      availableVideosArray.splice(targetIDIndex, 0, removedItem);
-      // turn availableVideosArray back into an object
-      availableVideos = Object.fromEntries(availableVideosArray);      
-      // update availableVideos
-      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-      return "availableVideos updated successfully";
-    } else if (!checkIfSelectedIdExits && checkIfTargetIdExits) {
-      return `${selectedID} unavailable at availableVideos`;
-    } else if (checkIfSelectedIdExits && !checkIfTargetIdExits) {
-      return `${targetID} unavailable at availableVideos`;
+// get available video details by folder path
+function folderPathString(folderIDPath) {
+  let folderPathString = "";
+  for (let i = 0; i < folderIDPath.length; i++) {  
+    if (i === 0) {
+      folderPathString = folderPathString.concat("availableVideos[\"",folderIDPath[i],"\"].content");
     } else {
-      return `${selectedID} && ${targetID} unavailable at availableVideos`;
+      folderPathString = folderPathString.concat("[\"",folderIDPath[i],"\"].content");
+    } 
+  }  
+  return folderPathString;
+}
+
+// create Folder at availableVideos
+function createFolder(folderIDPath, folderTitle) { 
+  const newfolderID = `folder-${uuidv4()}`;  
+  if (folderIDPath === undefined || folderIDPath.length == 0) { 
+    availableVideos[newfolderID] = {
+      "info": {
+        "title": folderTitle, 
+        "inside-folder": "folder-main"
+      },
+      "content": {}
+    };    
+  }else { 
+    const availableVideosFolderIDPath = folderPathString(folderIDPath);  
+    eval(availableVideosFolderIDPath)[newfolderID] = {
+      "info": {
+        "title": folderTitle, 
+        "inside-folder": folderIDPath[[folderIDPath.length - 1] ]
+      },
+      "content": {}
+    }; 
+  }  
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+  return {
+    "message": "folder-created",
+    "folderID": newfolderID,
+    "availableVideos": availableVideos
+  };
+}
+
+// input selected element id out of folder element at availableVideos
+function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {  
+  const fromFolderID = [...folderIDPath];
+  const tooFolderID = [...folderIDPath];
+  if (folderID == "folder-main") {
+    tooFolderID.length = 0;
+  } else {
+    const fodlerIDIndex = tooFolderID.indexOf(folderID); 
+    tooFolderID.splice(fodlerIDIndex+1, 9e9);  
+    tooFolderID.length = fodlerIDIndex+1; 
+  }  
+  if (tooFolderID === undefined || tooFolderID.length == 0) {  
+    const availableVideosFromFolderIDPath = folderPathString(fromFolderID);   
+    availableVideos[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
+    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+    if (selectedID.includes("folder-")) { 
+      availableVideos[selectedID].info["inside-folder"] = folderID; 
+    }   
+  }else {     
+    const availableVideosFromFolderIDPath = folderPathString(fromFolderID);  
+    const availableVideosTooFolderIDPath = folderPathString(tooFolderID); 
+    eval(availableVideosTooFolderIDPath)[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
+    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+    if (selectedID.includes("folder-")) { 
+      eval(availableVideosTooFolderIDPath)[selectedID].info["inside-folder"] = folderID; 
+    }  
+  } 
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+  return {
+    "message": "successfully-inputed-selected-out-of-folder",
+    "availableVideos": availableVideos
+  };
+}
+
+// input selected element into folder element at availableVideos
+function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {   
+  if (folderIDPath === undefined || folderIDPath.length == 0) { 
+    availableVideos[folderID].content[`${selectedID}`] = availableVideos[selectedID];
+    delete availableVideos[selectedID]; 
+    if (selectedID.includes("folder-")) {
+      availableVideos[folderID].content[`${selectedID}`].info["inside-folder"] = folderID;
+    }    
+  }else {  
+    const availableVideosFolderIDPath = folderPathString(folderIDPath);
+    eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
+    delete eval(availableVideosFolderIDPath)[selectedID]; 
+    if (selectedID.includes("folder-")) {
+      eval(availableVideosFolderIDPath)[folderID].content[selectedID].info["inside-folder"] = folderID;
+    }    
+  } 
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+  return {
+    "message": "successfully-inputed-selected-into-folder",
+    "availableVideos": availableVideos
+  };
+}
+
+// move selected id data to before target id data at available video details
+function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
+  if (folderIDPath === undefined || folderIDPath.length == 0) { 
+    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
+    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);
+    if (selectedIDIndex > targetIDIndex) { 
+      targetIDIndex = targetIDIndex + 1;
     }
-  } catch (error) {
-    return error;
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(availableVideos);    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object
+    availableVideos = Object.fromEntries(availableVideosArray);    
+  } else { 
+    const availableVideosFolderIDPath = folderPathString(folderIDPath); 
+    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
+    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);
+    if (selectedIDIndex > targetIDIndex) { 
+      targetIDIndex = targetIDIndex + 1;
+    }
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object  
+    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
   }
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
+  return {
+    "message": "availableVideos updated successfully",
+    "availableVideos": availableVideos
+  };
+}
+
+// move selected id data to after target id data at available video details
+function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
+  if (folderIDPath === undefined || folderIDPath.length == 0) {  
+    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
+    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);    
+    if (targetIDIndex > selectedIDIndex) { 
+      targetIDIndex = targetIDIndex - 1;
+    }
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(availableVideos);    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object
+    availableVideos = Object.fromEntries(availableVideosArray);    
+  } else { 
+    const availableVideosFolderIDPath = folderPathString(folderIDPath); 
+    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
+    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
+    if (targetIDIndex > selectedIDIndex) { 
+      targetIDIndex = targetIDIndex - 1;
+    }
+    // turn availableVideos into an array
+    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
+    // remove `selectedIDIndex` item and store it
+    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+    // insert stored item into position `targetIDIndex`
+    availableVideosArray.splice(targetIDIndex, 0, removedItem);
+    // turn availableVideosArray back into an object  
+    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
+  }
+  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
+  return {
+    "message": "availableVideos updated successfully",
+    "availableVideos": availableVideos
+  };
 }
 
 // change title of video  
-async function changeVideoTitle(videoID, newVideoTitle) { 
-  // check if videoid is valid
-  const videoDetails = await findAvailableVideosByID(videoID);
-  // if video dosent exist redirect to home page
-  if (videoDetails !== undefined && 
-    newVideoTitle !== undefined &&
-    typeof newVideoTitle == "string") { 
-    try { 
-      availableVideos[videoID]["info"]["title"] = newVideoTitle;  
-      const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
-      return "video-title-changed";
-    } catch (e) { 
-      return "failed-to-change-video-title";   
+async function changeVideoTitle(videoID, newVideoTitle, folderIDPath) { 
+  if (folderIDPath === undefined || folderIDPath.length === 0) { 
+    // check if videoid is valid
+    const videoDetails = await findAvailableVideosByID(videoID);
+    // if video dosent exist redirect to home page
+    if (videoDetails !== undefined && 
+      newVideoTitle !== undefined &&
+      typeof newVideoTitle == "string") { 
+      try { 
+        availableVideos[videoID]["info"]["title"] = newVideoTitle;  
+        const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideos);  
+        return {
+          "message": "video-title-changed",
+          "availableVideos": availableVideos
+        };
+      } catch (e) { 
+        return {
+          "message": "failed-to-change-video-title"
+        };  
+      }
+    } else  { 
+      return {
+        "message": "failed-to-change-video-title"
+      };  
     }
-  } else  { 
-    return "failed-to-change-video-title";   
-  }
+  } else {  
+    const availableVideosFolderIDPath = folderPathString(folderIDPath);    
+    eval(availableVideosFolderIDPath)[videoID]["info"]["title"] = newVideoTitle;  
+    const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+    FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
+    return {
+      "message": "video-title-changed",
+      "availableVideos": availableVideos
+    };
+  } 
 }
 
 // upload video file to ./media/video then downoald file
@@ -2277,7 +2522,11 @@ module.exports = { // export modules
   deleteCurrentDownloadByID,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
-  updateRearangedAvailableVideoDetails,
+  createFolder,
+  inputSelectedIDOutOfFolderID,
+  inputSelectedIDIntoFolderID,
+  moveSelectedIdBeforeTargetIdAtAvailableVideoDetails,
+  moveSelectedIdAfterTargetIdAtAvailableVideoDetails,
   changeVideoTitle,
   uploadVideoFile
 };
