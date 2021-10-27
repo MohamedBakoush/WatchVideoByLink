@@ -23,9 +23,22 @@ let current_download_videos_path = "data/current-download-videos.json";
 const current_download_videos = FileSystem.readFileSync(current_download_videos_path);
 let currentDownloadVideos = JSON.parse(current_download_videos);
 
-let ffprobe_path = "./ffprobe.exe";
-let ffmpeg_path = "./ffmpeg.exe";
-let untrunc_path = "untrunc.exe";
+let ffprobe_path, ffmpeg_path, untrunc_path; 
+if (FileSystem.existsSync("./ffprobe.exe")) { // user input
+    ffprobe_path = "./ffprobe.exe";
+} else { //docker
+    ffprobe_path = "ffprobe";
+} 
+if (FileSystem.existsSync("./ffmpeg.exe")) { // user input
+    ffmpeg_path = "./ffmpeg.exe";
+} else { //docker
+    ffmpeg_path = "ffmpeg";
+}    
+if (FileSystem.existsSync("untrunc.exe")) { // user input
+  untrunc_path = "untrunc.exe";
+} else { //docker
+  untrunc_path = "./untrunc-master/untrunc";
+}  
 let working_video_path = "./media/working-video/video.mp4";
 
 // updated user settings path
