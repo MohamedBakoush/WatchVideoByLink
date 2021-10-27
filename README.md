@@ -17,6 +17,13 @@ WatchVideoByLink takes a public video/mp4, video/webm, application/x-mpegURL or 
 * [How WatchVideoByLink Works](#how-watchvideobylink-works)
 * [Features](#features) 
 * [Installation](#installation)  
+  * [Docker](#docker) 
+  * [Requirements to run WatchVideoByLink](#requirements-to-run-watchvideobylink) 
+  * [Requirements to unlock additional features](#requirements-to-unlock-additional-features) 
+  * [Clone Repository](#clone-repository) 
+  * [Install Dependencies](#install-dependencies) 
+  * [Download Working Videos For Untrunc](#download-working-videos-for-untrunc) 
+  * [Start Server](#start-server) 
 * [License](#license)
 
 ## Reason For Creation
@@ -109,6 +116,12 @@ and once everything is done the video will be found available in /saved/videos w
     - Searches for available video/folders by their title (local to selected folder)
   
 ## Installation
+ 
+### Docker
+You can use the included Dockerfile to build and execute the package as a container.
+
+	docker build -t watchvideobylink .
+	docker run -p 8080:8080 watchvideobylink
 
 ### Requirements to run WatchVideoByLink
   - [Node.js](https://nodejs.org/en/) - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
