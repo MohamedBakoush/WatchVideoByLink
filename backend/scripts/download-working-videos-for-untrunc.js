@@ -1,9 +1,17 @@
 "use strict";
 const FileSystem = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
-const ffprobe_path = "./ffprobe.exe";
-const ffmpeg_path = "./ffmpeg.exe";
-
+let ffprobe_path, ffmpeg_path; 
+if (FileSystem.existsSync("./ffprobe.exe")) {
+    ffprobe_path = "./ffprobe.exe";
+} else {
+    ffprobe_path = "ffprobe";
+} 
+if (FileSystem.existsSync("./ffmpeg.exe")) {
+    ffmpeg_path = "./ffmpeg.exe";
+} else {
+    ffmpeg_path = "ffmpeg";
+}    
 const command = new ffmpeg();
 // Big Buck Bunny
 // Blender Foundation | www.blender.org
