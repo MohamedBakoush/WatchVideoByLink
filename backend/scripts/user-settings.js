@@ -50,19 +50,23 @@ function updateUserSettingsData(path_array, data) {
 } 
 
 // get specified user setting
-function getUserSettings(path_array) { 
-    if (path_array.length !== 0 || path_array !== undefined) { 
-        let dataPath = "userSettings";
-        for (let i = 0; i < path_array.length; i++) { 
-            if (i == path_array.length - 1) { 
-                return eval(dataPath)[path_array[i]];
-            } else  { 
-                dataPath += `[path_array[${i}]]`;
-            }
+function getUserSettings(path_array) {  
+    if (path_array !== undefined) { 
+        if (path_array.length !== 0) { 
+            let dataPath = "userSettings";
+            for (let i = 0; i < path_array.length; i++) { 
+                if (i == path_array.length - 1) { 
+                    return eval(dataPath)[path_array[i]];
+                } else  { 
+                    dataPath += `[path_array[${i}]]`;
+                }
+            } 
+        }  else  { 
+            return "invalid array path";
         } 
-    }  else  { 
+    } else {
         return userSettings;
-    } 
+    }
 }   
 
 // update video player volume settings
