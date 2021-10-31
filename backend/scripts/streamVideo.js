@@ -6,10 +6,7 @@ const { exec } = require("child_process");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
 const youtubedl = require("youtube-dl");
-
-let user_settings_path = "data/user-settings.json";
-const user_settings = FileSystem.readFileSync(user_settings_path);
-let userSettings = JSON.parse(user_settings);
+const userSettings = require("./user-settings");
 
 let data_videos_path = "data/data-videos.json";
 const data_videos  = FileSystem.readFileSync(data_videos_path);
@@ -27,26 +24,6 @@ let ffprobe_path = "./ffprobe.exe";
 let ffmpeg_path = "./ffmpeg.exe";
 let untrunc_path = "untrunc.exe";
 let working_video_path = "./media/working-video/video.mp4";
-
-// updated user settings path
-function update_user_settings_path(newPath){ 
-  if (FileSystem.existsSync(newPath)) { 
-    try {  
-      if (path.extname(newPath) === ".json") {
-        const user_settings = FileSystem.readFileSync(newPath);  
-        userSettings = JSON.parse(user_settings);
-        user_settings_path = newPath;
-        return "userSettings updated";
-      } else {
-        return "input path not json"; 
-      }   
-    } catch (error) {  
-      return error;
-    }
-  } else {
-    return "invalid path";
-  }
-}
 
 // updated data videos path
 function update_data_videos_path(newPath){ 
@@ -748,50 +725,6 @@ async function streamThumbnail(request, response, videoID, thumbnailID) {
   }
 }
 
-// update video player volume settings
-function updateVideoPlayerVolume(videoPlayerVolume, videoPlayerMuted) {
-  if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted == "boolean") {
-    userSettings["videoPlayer"].volume = videoPlayerVolume;
-    userSettings["videoPlayer"].muted = videoPlayerMuted;
-    const newUserSettings = JSON.stringify(userSettings, null, 2);
-    FileSystem.writeFileSync(user_settings_path, newUserSettings);  
-    return "updated-video-player-volume";
-  } else if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted !== "boolean") {
-    return "muted-invaid";
-  } else if (isNaN(videoPlayerVolume) && typeof videoPlayerMuted == "boolean") {
-    return "volume-invaid";
-  } else {
-    return "volume-muted-invaid";
-  }
-}
-
-// update compress Video Download
-function updateCompressVideoDownload(downloadType, bool) {
-  try {
-    if (userSettings["download"]["compression"][`${downloadType}`] == true ||
-        userSettings["download"]["compression"][`${downloadType}`] == false
-    ) {
-      if (typeof bool == "boolean") {
-        userSettings["download"]["compression"][`${downloadType}`] = bool;
-        const newUserSettings = JSON.stringify(userSettings, null, 2);
-        FileSystem.writeFileSync(user_settings_path, newUserSettings);
-        return `compress video download ${downloadType} updated`;
-      } else {       
-        return "invalid bool";
-      }
-    } else {
-      return "invalid download type";
-    }
-  } catch (error) {
-    return "update failed";
-  }
-}
-
-// get video player settings
-function getVideoPlayerSettings() { 
-  return userSettings["videoPlayer"];
-}
-
 // ends ffmpeg (finishes download video)
 const stop = (command) => {
   return command.ffmpegProc.stdin.write("q");
@@ -835,21 +768,6 @@ async function checkIfVideoSrcOriginalPathExits(videoSrc) {
   } 
 }
 
-// check if video compress true or false
-function checkIfVideoCompress(downloadType) {
-  try {
-    if (userSettings["download"]["compression"][`${downloadType}`] == true ||
-        userSettings["download"]["compression"][`${downloadType}`] == false
-      ) {
-      return userSettings.download.compression[`${downloadType}`]; 
-    } else {
-      return false; 
-    }
-  } catch (error) {
-    return false; 
-  }  
-}
-
 let fileNameID;
 let stopVideoFileBool = false;
 async function stopDownloadVideoStream(id) {
@@ -867,7 +785,7 @@ async function stopDownloadVideoStream(id) {
 async function downloadVideoStream(req, res) {
   const command = new ffmpeg();
   const videofile = req.body.videoSrc;
-  const compressVideoStream = checkIfVideoCompress("downloadVideoStream");
+  const compressVideoStream = userSettings.checkIfVideoCompress("downloadVideoStream");
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
@@ -1039,7 +957,7 @@ async function downloadVideo(req, res) {
   const command = new ffmpeg();
   const videoSrc = req.body.videoSrc;
   const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
-  const compressVideo = checkIfVideoCompress("downloadVideo");
+  const compressVideo = userSettings.checkIfVideoCompress("downloadVideo");
   const filepath = "media/video/";
   const fileName = uuidv4();
   const fileType = ".mp4";
@@ -1202,7 +1120,7 @@ async function trimVideo(req, res) {
   const command = new ffmpeg();
   const videoSrc = req.body.videoSrc;
   const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
-  const compressTrimedVideo = checkIfVideoCompress("trimVideo");
+  const compressTrimedVideo = userSettings.checkIfVideoCompress("trimVideo");
   const start = req.body.newStartTime;
   const end = req.body.newEndTime;
   const filepath = "media/video/";
@@ -2244,7 +2162,7 @@ function uploadVideoFile(req, res) {
 // download full video
 async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
   const command = new ffmpeg(); 
-  const compressUploadedVideo = checkIfVideoCompress("downloadUploadedVideo");
+  const compressUploadedVideo = userSettings.checkIfVideoCompress("downloadUploadedVideo");
   const filepath = "media/video/"; 
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
@@ -2482,15 +2400,11 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 }
 
 module.exports = { // export modules
-  update_user_settings_path,
   update_data_videos_path,
   update_available_videos_path,
   update_current_download_videos_path,
   streamVideo,
-  updateVideoPlayerVolume,
-  updateCompressVideoDownload,
   checkIfVideoSrcOriginalPathExits,
-  checkIfVideoCompress,
   stopCommpressedVideoDownload,
   stopDownloadVideoStream,
   downloadVideoStream,
@@ -2514,7 +2428,6 @@ module.exports = { // export modules
   deleteAllVideoData,
   checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
   getVideoLinkFromUrl,
-  getVideoPlayerSettings,
   currentDownloads,
   resetCurrentDownloadVideos,
   findCurrentDownloadByID,

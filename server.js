@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
+const userSettings = require("./backend/scripts/user-settings");
 const streamVideoFile = require("./backend/scripts/streamVideo");
 const app = express();
 app.use(upload({
@@ -26,14 +27,14 @@ function videoLinkFromUrl(req, res){
 // update video player volume settings
 app.post("/updateVideoPlayerVolume", express.json(), updateVideoPlayerVolume);
 function updateVideoPlayerVolume(req, res) {
-  const updatedVolume = streamVideoFile.updateVideoPlayerVolume(req.body.updatedVideoPlayerVolume,  req.body.updatedVideoPlayerMuted);
+  const updatedVolume = userSettings.updateVideoPlayerVolume(req.body.updatedVideoPlayerVolume,  req.body.updatedVideoPlayerMuted);
   res.json(updatedVolume);
 }
 
 // get video player settings
 app.get("/getVideoPlayerSettings", getVideoPlayerSettings);
 function getVideoPlayerSettings(req, res) {
-  res.json(streamVideoFile.getVideoPlayerSettings());
+  res.json(userSettings.getUserSettings(["videoPlayer"]));
 }
 
 // get video thumbnail by video id and thumbnail number header
