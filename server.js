@@ -4,6 +4,7 @@ const express = require("express");
 const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
 const userSettings = require("./backend/scripts/user-settings");
+const currentDownloadVideos = require("./backend/scripts/current-download-videos");
 const streamVideoFile = require("./backend/scripts/streamVideo");
 const app = express();
 app.use(upload({
@@ -140,9 +141,9 @@ function savedVideos(req, res){
 }
 
 //show current downloads
-app.get("/current-video-downloads", currentDownloads);
-function currentDownloads(req, res){
-  res.json(streamVideoFile.currentDownloads());
+app.get("/current-video-downloads", getCurrentDownloads);
+function getCurrentDownloads(req, res){
+  res.json(currentDownloadVideos.getCurrentDownloads());
 }
 
 // complete download unfinnished video by specified video id header
