@@ -86,14 +86,6 @@ function updateCurrentDownloadVideos(path_array, data) {
   }   
 }
 
-// deletes current video downloads by for provided id
-function updateCurrentDownloadByID(videoID, Data){
-    currentDownloadVideos[videoID] = Data;
-    const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
-    return currentDownloadVideos[videoID];
-}
-
 // delete currentDownloadVideos by id if exist
 function deleteSpecifiedCurrentDownloadVideosData(fileName) {
   if (findCurrentDownloadByID(fileName) !== undefined) {
@@ -110,7 +102,6 @@ module.exports = { // export modules
   getCurrentDownloads,
   resetCurrentDownloadVideos,
   findCurrentDownloadByID,
-  updateCurrentDownloadByID,
   updateCurrentDownloadVideos,
   deleteSpecifiedCurrentDownloadVideosData
 };

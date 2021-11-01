@@ -71,14 +71,6 @@ function findVideosByID(id){
     }
 }
 
-// updates video data by for provided id
-function updateVideoDataByID(videoID, Data){
-    videoData[videoID] = Data;
-    const newVideoData = JSON.stringify(videoData, null, 2);
-    FileSystem.writeFileSync(data_videos_path, newVideoData);
-    return videoData[videoID];
-}
-
 // update video data
 function updateVideoData(path_array, data) {
     if (path_array.length !== 0 || path_array !== undefined) { 
@@ -111,7 +103,6 @@ module.exports = { // export modules
     getVideoData,
     resetVideoData,
     findVideosByID, 
-    updateVideoDataByID,
     updateVideoData,
     deleteSpecifiedVideoData,
 };
