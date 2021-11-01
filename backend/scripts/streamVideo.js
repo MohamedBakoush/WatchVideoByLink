@@ -8,10 +8,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const youtubedl = require("youtube-dl");
 const userSettings = require("./user-settings");
 const currentDownloadVideos = require("./current-download-videos");
-
-let data_videos_path = "data/data-videos.json";
-const data_videos  = FileSystem.readFileSync(data_videos_path);
-let videoData = JSON.parse(data_videos);
+const videoData = require("./data-videos");
  
 let available_videos_path = "data/available-videos.json";
 const available_videos  = FileSystem.readFileSync(available_videos_path);
@@ -21,26 +18,6 @@ let ffprobe_path = "./ffprobe.exe";
 let ffmpeg_path = "./ffmpeg.exe";
 let untrunc_path = "untrunc.exe";
 let working_video_path = "./media/working-video/video.mp4";
-
-// updated data videos path
-function update_data_videos_path(newPath){ 
-  if (FileSystem.existsSync(newPath)) {
-    try {
-      if (path.extname(newPath) === ".json") {
-        const data_videos  = FileSystem.readFileSync(newPath);
-        videoData = JSON.parse(data_videos);
-        data_videos_path = newPath;
-        return "videoData updated";
-      } else {
-        return "input path not json"; 
-      }
-    } catch (error) {
-      return error;
-    }
-  } else {
-    return "invalid path";
-  }
-}
 
 // updated available videos path
 function update_available_videos_path(newPath){ 
@@ -84,48 +61,6 @@ function update_untrunc_path(newPath){
 function update_working_video_path(newPath){ 
   working_video_path = newPath;
   return working_video_path;
-}
-
-// returns current video downloads
-function getAllVideoData(){
-  return videoData;
-}
-
-// return video data to its inital state
-function resetVideoData(){
-  videoData = {};
-  const newVideoData = JSON.stringify(videoData, null, 2);
-  FileSystem.writeFileSync(data_videos_path, newVideoData);
-  return "resetVideoData";
-}
-
-// check if id provided is corresponding to videos
-function findVideosByID(id){
-  if (videoData[id] === undefined) { // if id is invalid
-    return undefined;
-  } else { // if valid return videos[id]
-    return videoData[id];
-  }
-}
-
-// updates video data by for provided id
-function updateVideoDataByID(videoID, Data){
-  videoData[videoID] = Data;
-  const newVideoData = JSON.stringify(videoData, null, 2);
-  FileSystem.writeFileSync(data_videos_path, newVideoData);
-  return videoData[videoID];
-}
-
-// deletes video data by for provided id
-function deleteVideoDataByID(videoID){ 
-  if (findVideosByID(videoID) !== undefined) {
-    delete videoData[videoID]; 
-    const newVideoData = JSON.stringify(videoData, null, 2);
-    FileSystem.writeFileSync(data_videos_path, newVideoData);
-    return `Deleted ${videoID}`; 
-  } else {
-    return `${videoID} Unavaiable`; 
-  }
 }
 
 // returns all availableVideos data
@@ -238,7 +173,7 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
                   if (FileSystem.existsSync(fileName_original_ending)) {
                     console.log(`\n rename ${fileName_fixed_ending} to ${fileName_original_ending} \n`);
                     /// encoding is complete, so callback or move on at this point
-                    videoData[`${fileName}`] = {
+                    videoData.updateVideoData([`${fileName}`], {
                       video : {
                         originalVideoSrc : "unknown",
                         originalVideoType : "unknown",
@@ -250,10 +185,7 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
                         path: {},
                         download: "starting"
                       }
-                    };
-
-                    const newData = JSON.stringify(videoData, null, 2);
-                    FileSystem.writeFileSync(data_videos_path, newData); 
+                    });
 
                     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
                       video : { 
@@ -516,7 +448,7 @@ function completeUnfinnishedVideoDownload(fileName){
 // if video videoId is valid then stream video
 async function streamVideo(request, response, videoID, displayCompressedVideo){
   // check if videoid is valid
-  const videoDetails = await findVideosByID(videoID);
+  const videoDetails = await videoData.findVideosByID(videoID);
   // if video dosent exist redirect to home page
   if (videoDetails == undefined) {
     response.status(404).redirect("/");
@@ -581,7 +513,7 @@ async function streamVideo(request, response, videoID, displayCompressedVideo){
 
 // streams available thumbnail images  provided by videoID and thumbnailID
 async function streamThumbnail(request, response, videoID, thumbnailID) {
-  const videoDetails = await findVideosByID(videoID);
+  const videoDetails = await videoData.findVideosByID(videoID);
   if (videoDetails == undefined) {
     response.status(404).redirect("/");
   }else {
@@ -619,7 +551,7 @@ const SIGKILL = (command) => {
 async function checkIfVideoSrcOriginalPathExits(videoSrc) {
   try {
     if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
-      const videoDetails = await findVideosByID(videoSrc.split("/video/")[1]);
+      const videoDetails = await videoData.findVideosByID(videoSrc.split("/video/")[1]);
       if (videoDetails === undefined) { // videofile = inputted videos src
         return videoSrc;
       } else {
@@ -630,7 +562,7 @@ async function checkIfVideoSrcOriginalPathExits(videoSrc) {
         } 
       }
     } else if (videoSrc.includes("/compressed/")) {
-      const videoDetails = await findVideosByID(videoSrc.split("/compressed/")[1]);
+      const videoDetails = await videoData.findVideosByID(videoSrc.split("/compressed/")[1]);
       if (videoDetails === undefined) { // videofile = inputted videos src
         return videoSrc;
       } else {
@@ -651,7 +583,7 @@ async function checkIfVideoSrcOriginalPathExits(videoSrc) {
 let fileNameID;
 let stopVideoFileBool = false;
 async function stopDownloadVideoStream(id) {
-  const videoDetails = await findVideosByID(id);
+  const videoDetails = await videoData.findVideosByID(id);
   if (videoDetails !== undefined) {
     stopVideoFileBool = true;
     fileNameID = id; 
@@ -670,7 +602,7 @@ async function downloadVideoStream(req, res) {
   const fileName = uuidv4();
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
-  const videoDetails = await findVideosByID(fileName);
+  const videoDetails = await videoData.findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -679,17 +611,13 @@ async function downloadVideoStream(req, res) {
       command.addInput(videofile)
         .on("start", function() {
           res.json(fileName);
-          /// log something maybe
-          videoData[`${fileName}`] = {
+          videoData.updateVideoData([`${fileName}`], {
             video : {
               originalVideoSrc : req.body.videoSrc,
               originalVideoType : req.body.videoType,
               download : "starting stream download"
             }
-          };
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          });
           
           if (compressVideoStream) { // addition of compress video data
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
@@ -717,15 +645,12 @@ async function downloadVideoStream(req, res) {
         .on("progress", function(data) {
           console.log("progress", data);
 
-          if(videoData[`${fileName}`]["video"]["download"] !== "downloading"){
-            videoData[`${fileName}`]["video"]["timemark"] = data.timemark; 
-            videoData[`${fileName}`]["video"]["download"] = "downloading"; 
+          if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
+            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+            videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
           } else {
-            videoData[`${fileName}`]["video"]["timemark"] = data.timemark; 
+            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
           } 
-          
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
 
           currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
 
@@ -741,7 +666,7 @@ async function downloadVideoStream(req, res) {
         .on("end", function() {
           /// encoding is complete, so callback or move on at this point
           if (compressVideoStream) { // addition of compress video data
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video : {
                 originalVideoSrc : req.body.videoSrc,
                 originalVideoType : req.body.videoType,
@@ -756,9 +681,9 @@ async function downloadVideoStream(req, res) {
                 path: {},
                 download: "starting"
               }
-            };
+            });
           } else {
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video : {
                 originalVideoSrc : req.body.videoSrc,
                 originalVideoType : req.body.videoType,
@@ -770,10 +695,8 @@ async function downloadVideoStream(req, res) {
                 path: {},
                 download: "starting"
               }
-            };
+            });
           }
-          const newData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newData);
 
           currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
           if (compressVideoStream) { // addition of compress video data 
@@ -834,7 +757,7 @@ async function downloadVideo(req, res) {
   const fileName = uuidv4();
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
-  const videoDetails = await findVideosByID(fileName);
+  const videoDetails = await videoData.findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -843,15 +766,13 @@ async function downloadVideo(req, res) {
       command.addInput(videofile)
         .on("start", function() {
           res.json(fileName);
-          videoData[`${fileName}`] = {
+          videoData.updateVideoData([`${fileName}`], {
             video : {
               originalVideoSrc : req.body.videoSrc,
               originalVideoType : req.body.videoType,
               download : "starting full video download"
             }
-          };
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          });
 
           if (compressVideo) { // addition of compress video data
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
@@ -879,10 +800,7 @@ async function downloadVideo(req, res) {
         .on("progress", function(data) {
           console.log("progress", data);
 
-          videoData[`${fileName}`]["video"]["download"] = data.percent; 
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
 
           if(data.percent < 0){ 
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
@@ -897,7 +815,7 @@ async function downloadVideo(req, res) {
         .on("end", function() {
           /// encoding is complete, so callback or move on at this point
           if (compressVideo) { // addition of compress video data
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video: {
                 originalVideoSrc : req.body.videoSrc,
                 originalVideoType : req.body.videoType,
@@ -912,9 +830,9 @@ async function downloadVideo(req, res) {
                 path: {},
                 download: "starting"
               }
-            };
+            });
           } else {
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video: {
                 originalVideoSrc : req.body.videoSrc,
                 originalVideoType : req.body.videoType,
@@ -926,10 +844,8 @@ async function downloadVideo(req, res) {
                 path: {},
                 download: "starting"
               }
-            }; 
+            });
           }
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
 
           currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
           if (compressVideo) { // addition of compress video data   
@@ -990,7 +906,7 @@ async function trimVideo(req, res) {
   const fileName = uuidv4();
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
-  const videoDetails = await findVideosByID(fileName);
+  const videoDetails = await videoData.findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -999,7 +915,7 @@ async function trimVideo(req, res) {
       command.addInput(videofile)
         .on("start", function() {
           res.json(fileName);
-          videoData[`${fileName}`] = {
+          videoData.updateVideoData([`${fileName}`], {
             video:{
               originalVideoSrc : req.body.videoSrc,
               originalVideoType : req.body.videoType,
@@ -1007,10 +923,7 @@ async function trimVideo(req, res) {
               newVideoEndTime: req.body.newEndTime,
               download : "starting trim video download"
             }
-          };
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          });
           
           if (compressTrimedVideo) { // addition of compress video data
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
@@ -1039,10 +952,7 @@ async function trimVideo(req, res) {
         .on("progress", function(data) {
           console.log("progress", data);
 
-          videoData[`${fileName}`]["video"]["download"] = data.percent; 
-          
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
 
           if(data.percent < 0){ 
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
@@ -1057,7 +967,7 @@ async function trimVideo(req, res) {
         })
         .on("end", function() {
           if (compressTrimedVideo) { // addition of compress video data
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video: {
                 originalVideoSrc: req.body.videoSrc,
                 originalVideoType: req.body.videoType,
@@ -1074,9 +984,9 @@ async function trimVideo(req, res) {
                 path: {},
                 download: "starting"
               }
-            };
+            });
           } else {
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video: {
                 originalVideoSrc: req.body.videoSrc,
                 originalVideoType: req.body.videoType,
@@ -1090,10 +1000,8 @@ async function trimVideo(req, res) {
                 path: {},
                 download: "starting"
               }
-            };
+            });
           }
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
      
           currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
           if (compressTrimedVideo) { // addition of compress video data
@@ -1150,7 +1058,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   const numberOfImages = 8;
   let duration = 0;
   let numberOfCreatedScreenshots = 0;
-  const videoDetails = await findVideosByID(fileName);
+  const videoDetails = await videoData.findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
     if (videoDetails !== undefined) {
       ffmpeg.ffprobe(videofile, (error, metadata) => {
@@ -1169,26 +1077,23 @@ async function createThumbnail(videofile, newFilePath, fileName) {
               })
     
               .on("progress", (data) => {
+                console.log("progress", data);
                 // update numberOfCreatedScreenshots
                 numberOfCreatedScreenshots = data.frames; 
     
                 if(data.percent < 0){ // if data.percent is less then 0 then show 0.00%
-                  videoData[`${fileName}`]["thumbnail"].download =  0.00;
+                  videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
                   currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
                 }else{ //update data with with data.percent
                   try {
-                    videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+                    videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
                     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent.toFixed(2)}%`);
                   } catch (error) {
-                    videoData[`${fileName}`]["thumbnail"].download =  data.percent;
+                    videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
                     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent}%`);
                   }
                 }
-                // update data to database
-                const newVideoData = JSON.stringify(videoData, null, 2);
-                FileSystem.writeFileSync(data_videos_path, newVideoData); 
     
-                console.log("progress", data);
               })
               .on("end", () => {
                 // encoding is complete
@@ -1225,22 +1130,19 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                       }; 
                     }
                   } else if (i < 10) {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`;
+                    videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   } else if (i < 100) {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`;
+                    videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`);
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   } else {
-                    videoData[`${fileName}`]["thumbnail"].path[i] = `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`;
+                    videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`);
                     availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
                   }
                   if (i == numberOfCreatedScreenshots) {
-                    videoData[`${fileName}`]["thumbnail"].download = "completed";
+                    videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
                   }
                 }
-
-                const newVideoData = JSON.stringify(videoData, null, 2);
-                FileSystem.writeFileSync(data_videos_path, newVideoData);
 
                 const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
                 FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
@@ -1262,7 +1164,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
               .run();
         } else { // duration less or equal to 0
           try { // delete data
-            if (videoData[`${fileName}`] || currentDownloadVideos.getCurrentDownloads()[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
+            if (videoData.getVideoData([`${fileName}`]) || currentDownloadVideos.getCurrentDownloads()[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
               // delete all data
               deleteAllVideoData(fileName);
             } 
@@ -1290,7 +1192,7 @@ let stopCompressedVideoFileBool = false;
 // else return false
 async function stopCommpressedVideoDownload(fileNameID) { 
   try {
-    const videoDetails = await findVideosByID(fileNameID);
+    const videoDetails = await videoData.findVideosByID(fileNameID);
     const currentDownloads = await currentDownloadVideos.findCurrentDownloadByID(fileNameID); 
     let videoDataCompressionProgress, currentDownloadCompressionProgress; 
     try {
@@ -1357,7 +1259,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
   const command = new ffmpeg();
   const fileType = ".webm";
   let duration = 0;
-  const videoDetails = await findVideosByID(fileName);
+  const videoDetails = await videoData.findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists 
     if (videoDetails !== undefined) {
       ffmpeg.ffprobe(videofile, (error, metadata) => {
@@ -1374,9 +1276,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
               console.log(`${fileName} compression-download-status: starting`);
             })
             .on("progress", function(data) { 
-              videoData[`${fileName}`]["compression"]["download"] = data.percent;       
-              const newVideoData = JSON.stringify(videoData, null, 2);
-              FileSystem.writeFileSync(data_videos_path, newVideoData);
+              videoData.updateVideoData([`${fileName}`, "compression", "download"], data.percent);
 
               if(data.percent < 0){
                 currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "0.00%");
@@ -1440,13 +1340,11 @@ async function compression_VP9(videofile, newFilePath, fileName) {
               const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
               FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
           
-              videoData[`${fileName}`]["compression"] = { 
+              videoData.updateVideoData([`${fileName}`, "compression"], { 
                 path: newFilePath+fileName+fileType,
                 videoType: "video/webm",
                 download: "completed"
-              };           
-              const newVideoData = JSON.stringify(videoData, null, 2);
-              FileSystem.writeFileSync(data_videos_path, newVideoData);
+              });
 
               if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) === "completed") { 
                 currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
@@ -1457,10 +1355,8 @@ async function compression_VP9(videofile, newFilePath, fileName) {
             .on("error", function(error) {
               /// error handling
               if (error.message === "ffmpeg was killed with signal SIGKILL") {
-                if (videoData[`${fileName}`]["compression"]) {              
-                  videoData[`${fileName}`]["compression"]["download"] = "ffmpeg was killed with signal SIGKILL";   
-                  const newVideoData = JSON.stringify(videoData, null, 2);
-                  FileSystem.writeFileSync(data_videos_path, newVideoData);
+                if (videoData.getVideoData([`${fileName}`,"compression"])) {       
+                  videoData.updateVideoData([`${fileName}`, "compression", "download"], "ffmpeg was killed with signal SIGKILL");
                 }  
                 if (currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"])) {      
                   currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "ffmpeg was killed with signal SIGKILL");   
@@ -1473,7 +1369,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
             .run(); 
         } else { 
           try { // duration less or equal to 0
-            if (videoData[`${fileName}`] || currentDownloadVideos.getCurrentDownloads([`${fileName}`])) { // if videodata and currentDownloadVideos is avaiable 
+            if (videoData.getVideoData([`${fileName}`]) || currentDownloadVideos.getCurrentDownloads([`${fileName}`])) { // if videodata and currentDownloadVideos is avaiable 
               // delete all data
               deleteAllVideoData(fileName);
             } 
@@ -1516,9 +1412,9 @@ async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoI
 // try untill compressed video gets killed with signal SIGKILL or finnishes download 
 async function checkCompressedVideoDownloadStatus(videoID) {
   try {
-    if (videoData[videoID]["compression"]) {
-      if (videoData[videoID]["compression"]["download"] == "completed" 
-      || videoData[videoID]["compression"]["download"] == "ffmpeg was killed with signal SIGKILL") {  
+    if (videoData.getVideoData([`${videoID}`, "compression"])) {
+      if (videoData.getVideoData([`${videoID}`, "compression", "download"]) == "completed" 
+      || videoData.getVideoData([`${videoID}`, "compression", "download"]) == "ffmpeg was killed with signal SIGKILL") {  
         return "start deletion"; 
       } else if(currentDownloadVideos.getCurrentDownloads([videoID, "compression"])){
         if (currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "completed"
@@ -1556,7 +1452,7 @@ function deleteAllVideoData(fileName, folderIDPath) {
       // delete currentDownloadVideos by id if exist 
       currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
       // delete videoData by id if exist 
-      deleteSpecifiedVideoData(fileName); 
+      videoData.deleteSpecifiedVideoData(fileName); 
       // delete availableVideos by id if exist  
       deleteSpecifiedAvailableVideosData(fileName, folderIDPath);
       // delete specified video by id if exist  
@@ -1590,7 +1486,7 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
         // delete currentDownloadVideos by id if exist 
         currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
         // delete videoData by id if exist 
-        deleteSpecifiedVideoData(fileName); 
+        videoData.deleteSpecifiedVideoData(fileName); 
         // delete specified video by id if exist  
         deleteSpecifiedVideo(fileName); 
       }
@@ -1612,15 +1508,6 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
   }
 }
  
-// delete videoData by id if exist
-function deleteSpecifiedVideoData(fileName) {   
-  if (videoData.hasOwnProperty(fileName)) { // eslint-disable-line
-    delete videoData[`${fileName}`]; 
-    const deleteVideoData = JSON.stringify(videoData, null, 2);
-    FileSystem.writeFileSync(data_videos_path, deleteVideoData);
-  }  
-}
-
 // delete availableVideos from server if exist  
 function deleteSpecifiedAvailableVideosData(fileName, folderIDPath, availableVideosFolderIDPath) {  
   try { 
@@ -1995,7 +1882,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const path = newFilePath+fileName+fileType; 
-  const videoDetails = await findVideosByID(fileName);
+  const videoDetails = await videoData.findVideosByID(fileName);
   if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -2004,15 +1891,13 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
       command.addInput(videofile)
         .on("start", function() {  
           res.json("downloading-uploaded-video");
-          videoData[`${fileName}`] = {
+          videoData.updateVideoData([`${fileName}`], {
             video:{
               originalVideoSrc : "unknown",
               originalVideoType : fileMimeType,
               download : "starting uploaded video download"
             }
-          };
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          });
           
           if (compressUploadedVideo) { // addition of compress video data
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
@@ -2041,10 +1926,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
         .on("progress", function(data) { 
           console.log("progress", data);
 
-          videoData[`${fileName}`]["video"]["download"] = data.percent; 
-
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
+          videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
 
           if(data.percent < 0){ 
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
@@ -2059,7 +1941,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
         .on("end", function() { 
           /// encoding is complete, so callback or move on at this point
           if (compressUploadedVideo) { // addition of compress video data
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video: {
                 originalVideoSrc : videofile,
                 originalVideoType: fileMimeType,
@@ -2074,9 +1956,9 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
                 path: {},
                 download: "starting"
               }
-            };
+            });
           } else {
-            videoData[`${fileName}`] = {
+            videoData.updateVideoData([`${fileName}`], {
               video: {
                 originalVideoSrc : videofile,
                 originalVideoType: fileMimeType,
@@ -2088,10 +1970,8 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
                 path: {},
                 download: "starting"
               }
-            }; 
+            });
           }
-          const newVideoData = JSON.stringify(videoData, null, 2);
-          FileSystem.writeFileSync(data_videos_path, newVideoData);
 
           currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
           if (compressUploadedVideo) { // addition of compress video data
@@ -2221,7 +2101,6 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 }
 
 module.exports = { // export modules
-  update_data_videos_path,
   update_available_videos_path,
   streamVideo,
   checkIfVideoSrcOriginalPathExits,
@@ -2230,11 +2109,6 @@ module.exports = { // export modules
   downloadVideoStream,
   downloadVideo,
   trimVideo,
-  updateVideoDataByID,
-  deleteVideoDataByID,
-  findVideosByID,
-  resetVideoData,
-  getAllVideoData,
   getAllAvailableVideos,
   resetAvailableVideos,
   findAvailableVideosByID,

@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
+const videoData = require("./backend/scripts/data-videos");
 const userSettings = require("./backend/scripts/user-settings");
 const currentDownloadVideos = require("./backend/scripts/current-download-videos");
 const streamVideoFile = require("./backend/scripts/streamVideo");
@@ -101,7 +102,7 @@ async function changeVideoTitle(req, res){
 // get video data for specified video by id header
 app.get("/video-data/:id", findVideosByID);
 function findVideosByID(req, res){
-  res.json(streamVideoFile.findVideosByID(req.params.id));
+  res.json(videoData.findVideosByID(req.params.id));
 }
 
 // get all available video data header
