@@ -39,6 +39,22 @@ function update_working_video_path(newPath){
   return working_video_path;
 }
 
+// check if ffmpeg ffprobe exits
+function checkIfFFmpegFFprobeExits() {
+  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists 
+      return "ffmpeg-ffprobe-exits";
+  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
+      console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory"); 
+      return "Cannot-find-ffmpeg-ffprobe";
+  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
+      console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory"); 
+      return "Cannot-find-ffmpeg";
+  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
+      console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory"); 
+      return "Cannot-find-ffprobe";
+  }
+}
+
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   if(FileSystem.existsSync(fileName_original_ending) == true){  
