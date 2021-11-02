@@ -1,5 +1,4 @@
 "use strict";
-const path = require("path");
 const FileSystem = require("fs");
 const stream = require("stream");
 const { exec } = require("child_process");
@@ -9,35 +8,12 @@ const youtubedl = require("youtube-dl");
 const userSettings = require("./user-settings");
 const currentDownloadVideos = require("./current-download-videos");
 const videoData = require("./data-videos");
+const availableVideos = require("./available-videos");
  
-let available_videos_path = "data/available-videos.json";
-const available_videos  = FileSystem.readFileSync(available_videos_path);
-let availableVideos = JSON.parse(available_videos);
-
 let ffprobe_path = "./ffprobe.exe";
 let ffmpeg_path = "./ffmpeg.exe";
 let untrunc_path = "untrunc.exe";
 let working_video_path = "./media/working-video/video.mp4";
-
-// updated available videos path
-function update_available_videos_path(newPath){ 
-  if (FileSystem.existsSync(newPath)) {
-    try {
-      if (path.extname(newPath) === ".json") {
-        const available_videos  = FileSystem.readFileSync(newPath);
-        availableVideos = JSON.parse(available_videos);  
-        available_videos_path = newPath; 
-        return "availableVideos updated";
-      } else {
-        return "input path not json"; 
-      }
-    } catch (error) {
-      return error;
-    }
-  } else { 
-    return "invalid path";
-  }
-}
 
 // updated ffprobe path
 function update_ffprobe_path(newPath){ 
@@ -61,48 +37,6 @@ function update_untrunc_path(newPath){
 function update_working_video_path(newPath){ 
   working_video_path = newPath;
   return working_video_path;
-}
-
-// returns all availableVideos data
-function getAllAvailableVideos(){
-  return availableVideos;
-}
-
-// return available Videos to its inital state
-function resetAvailableVideos(){
-  availableVideos = {}; 
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-  return "resetAvailableVideos";
-}
-
-// check if id provided is corresponding to available videos
-function findAvailableVideosByID(id){
-  if (availableVideos[id] === undefined) {  
-    return undefined;
-  } else { 
-    return availableVideos[id];
-  }
-}
-
-// updates available videos by for provided id
-function updateAvailableVideosByID(videoID, Data){
-  availableVideos[videoID] = Data;
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-  return availableVideos[videoID];
-}
- 
-// deletes available videos by for provided id
-function deleteAvailableVideosByID(videoID){ 
-  if (findAvailableVideosByID(videoID) !== undefined) {
-    delete availableVideos[videoID]; 
-    const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-    FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-    return `Deleted ${videoID}`; 
-  } else {
-    return `${videoID} Unavaiable`; 
-  }
 }
 
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
@@ -1100,11 +1034,10 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
                   if (i == 0){
                     try {
-                      if (availableVideos[`${fileName}`]["info"]) {
-                        availableVideos[`${fileName}`]["info"].thumbnailLink = {  
-                        };
-                      } else {
-                        availableVideos[`${fileName}`] = {
+                      if (availableVideos.getAvailableVideos([`${fileName}`, "info"])) {
+                        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
+                      } else {            
+                        availableVideos.updateAvailableVideoData([`${fileName}`], {
                           info:{
                             title: fileName,
                             videoLink: {
@@ -1114,10 +1047,10 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                             thumbnailLink: {
                             }
                           }
-                        }; 
+                        });
                       }
                     } catch (error) {
-                      availableVideos[`${fileName}`] = {
+                      availableVideos.updateAvailableVideoData([`${fileName}`], {
                         info:{
                           title: fileName,
                           videoLink: {
@@ -1127,26 +1060,22 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                           thumbnailLink: {
                           }
                         }
-                      }; 
+                      });
                     }
                   } else if (i < 10) {
                     videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);
-                    availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
+                    availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
                   } else if (i < 100) {
                     videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`);
-                    availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
+                    availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
                   } else {
                     videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`);
-                    availableVideos[`${fileName}`].info.thumbnailLink[i] = `/thumbnail/${fileName}/${i}`;
+                    availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
                   }
                   if (i == numberOfCreatedScreenshots) {
                     videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
                   }
                 }
-
-                const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-                FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-                console.log("Image Thumbnails succeeded !");
                 
                 if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) === "completed") { 
                   currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
@@ -1308,11 +1237,11 @@ async function compression_VP9(videofile, newFilePath, fileName) {
               /// encoding is complete
               console.log(`${fileName} compression-download-status: complete`); 
               try {
-                if (availableVideos[`${fileName}`]["info"]) {
-                  availableVideos[`${fileName}`]["info"]["videoLink"].compressdSrc = `/compressed/${fileName}`;  
-                  availableVideos[`${fileName}`]["info"]["videoLink"].compressedType = "video/webm";
+                if (availableVideos.getAvailableVideos([`${fileName}`,"info"])) {
+                  availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
+                  availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressedType"], "video/webm");
                 } else{
-                  availableVideos[`${fileName}`] = {
+                  availableVideos.updateAvailableVideoData([`${fileName}`], {
                     info:{
                       title: fileName,
                       videoLink: {
@@ -1322,10 +1251,10 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                         compressedType : "video/webm"
                       }
                     }
-                  };
+                  });
                 }              
               } catch (error) {
-                availableVideos[`${fileName}`] = {
+                availableVideos.updateAvailableVideoData([`${fileName}`], {
                   info:{
                     title: fileName,
                     videoLink: {
@@ -1335,10 +1264,8 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                       compressedType : "video/webm"
                     }
                   }
-                };
+                });
               } 
-              const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-              FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
           
               videoData.updateVideoData([`${fileName}`, "compression"], { 
                 path: newFilePath+fileName+fileType,
@@ -1438,15 +1365,11 @@ async function checkCompressedVideoDownloadStatus(videoID) {
 function deleteAllVideoData(fileName, folderIDPath) {
   try {   
     if (fileName.includes("folder-")) {  
-      if (
-        (folderIDPath === undefined || folderIDPath.length === 0)
-        && availableVideos.hasOwnProperty(fileName)) // eslint-disable-line
-      { 
-        const availableVideosFolderIDPath = "";  
-        deleteAllFolderData(availableVideosFolderIDPath.concat("availableVideos[\"",fileName,"\"].content"), fileName, fileName); 
+      if ((folderIDPath === undefined || folderIDPath.length === 0) && availableVideos.getAvailableVideos([fileName]) !== "invalid array path"){ 
+        deleteAllFolderData([fileName, "content"], fileName, fileName); 
       } else {  
-        const availableVideosFolderIDPath = folderPathString(folderIDPath); 
-        deleteAllFolderData(availableVideosFolderIDPath.concat("[\"",fileName,"\"].content"), fileName, fileName);
+        const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
+        deleteAllFolderData(availableVideosFolderIDPath, fileName, fileName);
       }    
     } else { 
       // delete currentDownloadVideos by id if exist 
@@ -1454,7 +1377,7 @@ function deleteAllVideoData(fileName, folderIDPath) {
       // delete videoData by id if exist 
       videoData.deleteSpecifiedVideoData(fileName); 
       // delete availableVideos by id if exist  
-      deleteSpecifiedAvailableVideosData(fileName, folderIDPath);
+      availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath);
       // delete specified video by id if exist  
       deleteSpecifiedVideo(fileName); 
     }
@@ -1468,21 +1391,23 @@ function deleteAllVideoData(fileName, folderIDPath) {
 // 1. If folder is detected go in, Delete all video data found 
 // 2. if folder is empty delete folder and go up one folder, if folder contained folders repeat 1 
 // 3. stop when current folder id reached starting folder id
-function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, startingFolderID) {  
-  if (Object.keys(eval(availableVideosFolderIDPath)).length == 0) {
-    const newAvailableVideosFolderPath = availableVideosFolderIDPath.replace(`["${currentFolderID}"].content`, "");  
-    const insideFolderID = eval(newAvailableVideosFolderPath)[currentFolderID].info["inside-folder"]; 
-    deleteSpecifiedAvailableVideosDataByCustomPath(currentFolderID, newAvailableVideosFolderPath); 
-    if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(eval(newAvailableVideosFolderPath)).length == 0) {
+function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, startingFolderID) { 
+  if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {
+    const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
+    newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
+    const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
+    const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
+    availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath);
+    if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" && Object.keys(availableVideos.getAvailableVideos(newAvailableVideosFolderPath)).length == 0) {
       deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
     } 
   } else {
-    Object.keys(eval(availableVideosFolderIDPath)).forEach(function(fileName, i, array) {
+    Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).forEach(function(fileName, i, array) {
       if (fileName.includes("folder-")) {
-        deleteAllFolderData(availableVideosFolderIDPath.concat("[\"",fileName,"\"].content"), fileName, startingFolderID); 
+        deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, startingFolderID); 
       } else { 
         // delete specified video by id from availableVideos
-        deleteSpecifiedAvailableVideosDataByCustomPath(fileName, availableVideosFolderIDPath); 
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath);
         // delete currentDownloadVideos by id if exist 
         currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
         // delete videoData by id if exist 
@@ -1491,13 +1416,15 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
         deleteSpecifiedVideo(fileName); 
       }
       if (i == array.length - 1) {
-        try {
-          if (Object.keys(eval(availableVideosFolderIDPath)).length == 0) {    
-            const newPath = availableVideosFolderIDPath.replace(`["${currentFolderID}"].content`, "");
-            const insideFolderID = eval(newPath)[currentFolderID].info["inside-folder"]; 
-            deleteSpecifiedAvailableVideosDataByCustomPath(currentFolderID, newPath); 
-            if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(eval(newPath)).length == 0) { 
-              deleteAllFolderData(newPath, insideFolderID, startingFolderID); 
+        try { 
+          if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {   
+            const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
+            newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
+            const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
+            const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
+            availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath);
+            if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(availableVideos.getAvailableVideos(availableVideosFolderIDPath)).length == 0) { 
+              deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
             } 
           } 
         } catch (error) {
@@ -1508,41 +1435,6 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
   }
 }
  
-// delete availableVideos from server if exist  
-function deleteSpecifiedAvailableVideosData(fileName, folderIDPath, availableVideosFolderIDPath) {  
-  try { 
-    if (availableVideosFolderIDPath !== undefined) {
-      delete eval(availableVideosFolderIDPath)[fileName]; 
-      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-    } else if (folderIDPath === undefined || folderIDPath.length === 0) { 
-      if (availableVideos.hasOwnProperty(fileName)) { // eslint-disable-line
-        delete availableVideos[fileName]; 
-        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-        FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-      } 
-    } else {  
-      const availableVideosFolderIDPath = folderPathString(folderIDPath);   
-      delete eval(availableVideosFolderIDPath)[fileName];  
-      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-    }   
-  } catch (error) {
-    if (availableVideos.hasOwnProperty(fileName)) { // eslint-disable-line
-      delete availableVideos[fileName]; 
-      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-    } 
-  }
-}
-
-// delete specified video by id from availableVideos
-function deleteSpecifiedAvailableVideosDataByCustomPath(fileName, availableVideosFolderIDPath) {  
-  delete eval(availableVideosFolderIDPath)[fileName]; 
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-}
-
 // delete specified video from server if exist  
 function deleteSpecifiedVideo(fileName) {  
   // check if folder exists
@@ -1633,226 +1525,6 @@ async function getVideoLinkFromUrl(req, res) {
   }
 }
 
-// get available video details by folder path
-function folderPathString(folderIDPath) {
-  let folderPathString = "";
-  for (let i = 0; i < folderIDPath.length; i++) {  
-    if (i === 0) {
-      folderPathString = folderPathString.concat("availableVideos[\"",folderIDPath[i],"\"].content");
-    } else {
-      folderPathString = folderPathString.concat("[\"",folderIDPath[i],"\"].content");
-    } 
-  }  
-  return folderPathString;
-}
-
-// create Folder at availableVideos
-function createFolder(folderIDPath, folderTitle) { 
-  const newfolderID = `folder-${uuidv4()}`;  
-  if (folderIDPath === undefined || folderIDPath.length == 0) { 
-    availableVideos[newfolderID] = {
-      "info": {
-        "title": folderTitle, 
-        "inside-folder": "folder-main"
-      },
-      "content": {}
-    };    
-  }else { 
-    const availableVideosFolderIDPath = folderPathString(folderIDPath);  
-    eval(availableVideosFolderIDPath)[newfolderID] = {
-      "info": {
-        "title": folderTitle, 
-        "inside-folder": folderIDPath[[folderIDPath.length - 1] ]
-      },
-      "content": {}
-    }; 
-  }  
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-  return {
-    "message": "folder-created",
-    "folderID": newfolderID,
-    "availableVideos": availableVideos
-  };
-}
-
-// input selected element id out of folder element at availableVideos
-function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {  
-  const fromFolderID = [...folderIDPath];
-  const tooFolderID = [...folderIDPath];
-  if (folderID == "folder-main") {
-    tooFolderID.length = 0;
-  } else {
-    const fodlerIDIndex = tooFolderID.indexOf(folderID); 
-    tooFolderID.splice(fodlerIDIndex+1, 9e9);  
-    tooFolderID.length = fodlerIDIndex+1; 
-  }  
-  if (tooFolderID === undefined || tooFolderID.length == 0) {  
-    const availableVideosFromFolderIDPath = folderPathString(fromFolderID);   
-    availableVideos[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
-    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
-    if (selectedID.includes("folder-")) { 
-      availableVideos[selectedID].info["inside-folder"] = folderID; 
-    }   
-  }else {     
-    const availableVideosFromFolderIDPath = folderPathString(fromFolderID);  
-    const availableVideosTooFolderIDPath = folderPathString(tooFolderID); 
-    eval(availableVideosTooFolderIDPath)[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
-    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
-    if (selectedID.includes("folder-")) { 
-      eval(availableVideosTooFolderIDPath)[selectedID].info["inside-folder"] = folderID; 
-    }  
-  } 
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-  return {
-    "message": "successfully-inputed-selected-out-of-folder",
-    "availableVideos": availableVideos
-  };
-}
-
-// input selected element into folder element at availableVideos
-function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {   
-  if (folderIDPath === undefined || folderIDPath.length == 0) { 
-    availableVideos[folderID].content[`${selectedID}`] = availableVideos[selectedID];
-    delete availableVideos[selectedID]; 
-    if (selectedID.includes("folder-")) {
-      availableVideos[folderID].content[`${selectedID}`].info["inside-folder"] = folderID;
-    }    
-  }else {  
-    const availableVideosFolderIDPath = folderPathString(folderIDPath);
-    eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
-    delete eval(availableVideosFolderIDPath)[selectedID]; 
-    if (selectedID.includes("folder-")) {
-      eval(availableVideosFolderIDPath)[folderID].content[selectedID].info["inside-folder"] = folderID;
-    }    
-  } 
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-  return {
-    "message": "successfully-inputed-selected-into-folder",
-    "availableVideos": availableVideos
-  };
-}
-
-// move selected id data to before target id data at available video details
-function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
-  if (folderIDPath === undefined || folderIDPath.length == 0) { 
-    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
-    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);
-    if (selectedIDIndex > targetIDIndex) { 
-      targetIDIndex = targetIDIndex + 1;
-    }
-    // turn availableVideos into an array
-    const availableVideosArray = Object.entries(availableVideos);    
-    // remove `selectedIDIndex` item and store it
-    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-    // insert stored item into position `targetIDIndex`
-    availableVideosArray.splice(targetIDIndex, 0, removedItem);
-    // turn availableVideosArray back into an object
-    availableVideos = Object.fromEntries(availableVideosArray);    
-  } else { 
-    const availableVideosFolderIDPath = folderPathString(folderIDPath); 
-    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
-    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);
-    if (selectedIDIndex > targetIDIndex) { 
-      targetIDIndex = targetIDIndex + 1;
-    }
-    // turn availableVideos into an array
-    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
-    // remove `selectedIDIndex` item and store it
-    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-    // insert stored item into position `targetIDIndex`
-    availableVideosArray.splice(targetIDIndex, 0, removedItem);
-    // turn availableVideosArray back into an object  
-    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
-  }
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
-  return {
-    "message": "availableVideos updated successfully",
-    "availableVideos": availableVideos
-  };
-}
-
-// move selected id data to after target id data at available video details
-function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
-  if (folderIDPath === undefined || folderIDPath.length == 0) {  
-    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
-    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);    
-    if (targetIDIndex > selectedIDIndex) { 
-      targetIDIndex = targetIDIndex - 1;
-    }
-    // turn availableVideos into an array
-    const availableVideosArray = Object.entries(availableVideos);    
-    // remove `selectedIDIndex` item and store it
-    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-    // insert stored item into position `targetIDIndex`
-    availableVideosArray.splice(targetIDIndex, 0, removedItem);
-    // turn availableVideosArray back into an object
-    availableVideos = Object.fromEntries(availableVideosArray);    
-  } else { 
-    const availableVideosFolderIDPath = folderPathString(folderIDPath); 
-    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
-    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
-    if (targetIDIndex > selectedIDIndex) { 
-      targetIDIndex = targetIDIndex - 1;
-    }
-    // turn availableVideos into an array
-    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
-    // remove `selectedIDIndex` item and store it
-    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-    // insert stored item into position `targetIDIndex`
-    availableVideosArray.splice(targetIDIndex, 0, removedItem);
-    // turn availableVideosArray back into an object  
-    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
-  }
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
-  return {
-    "message": "availableVideos updated successfully",
-    "availableVideos": availableVideos
-  };
-}
-
-// change title of video  
-async function changeVideoTitle(videoID, newVideoTitle, folderIDPath) { 
-  if (folderIDPath === undefined || folderIDPath.length === 0) { 
-    // check if videoid is valid
-    const videoDetails = await findAvailableVideosByID(videoID);
-    // if video dosent exist redirect to home page
-    if (videoDetails !== undefined && 
-      newVideoTitle !== undefined &&
-      typeof newVideoTitle == "string") { 
-      try { 
-        availableVideos[videoID]["info"]["title"] = newVideoTitle;  
-        const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-        FileSystem.writeFileSync(available_videos_path, newAvailableVideos);  
-        return {
-          "message": "video-title-changed",
-          "availableVideos": availableVideos
-        };
-      } catch (e) { 
-        return {
-          "message": "failed-to-change-video-title"
-        };  
-      }
-    } else  { 
-      return {
-        "message": "failed-to-change-video-title"
-      };  
-    }
-  } else {  
-    const availableVideosFolderIDPath = folderPathString(folderIDPath);    
-    eval(availableVideosFolderIDPath)[videoID]["info"]["title"] = newVideoTitle;  
-    const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-    FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
-    return {
-      "message": "video-title-changed",
-      "availableVideos": availableVideos
-    };
-  } 
-}
 
 // upload video file to ./media/video then downoald file
 function uploadVideoFile(req, res) {
@@ -2101,7 +1773,6 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
 }
 
 module.exports = { // export modules
-  update_available_videos_path,
   streamVideo,
   checkIfVideoSrcOriginalPathExits,
   stopCommpressedVideoDownload,
@@ -2109,11 +1780,6 @@ module.exports = { // export modules
   downloadVideoStream,
   downloadVideo,
   trimVideo,
-  getAllAvailableVideos,
-  resetAvailableVideos,
-  findAvailableVideosByID,
-  updateAvailableVideosByID,
-  deleteAvailableVideosByID,
   update_ffprobe_path,
   update_ffmpeg_path, 
   update_untrunc_path,
@@ -2124,11 +1790,5 @@ module.exports = { // export modules
   getVideoLinkFromUrl,
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
-  createFolder,
-  inputSelectedIDOutOfFolderID,
-  inputSelectedIDIntoFolderID,
-  moveSelectedIdBeforeTargetIdAtAvailableVideoDetails,
-  moveSelectedIdAfterTargetIdAtAvailableVideoDetails,
-  changeVideoTitle,
   uploadVideoFile
 };
