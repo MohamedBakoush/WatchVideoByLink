@@ -1188,7 +1188,8 @@ async function compression_VP9(videofile, newFilePath, fileName) {
   const fileType = ".webm";
   let duration = 0;
   const videoDetails = await videoData.findVideosByID(fileName);
-  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists 
+  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
     if (videoDetails !== undefined) {
       ffmpeg.ffprobe(videofile, (error, metadata) => {
         try { // get video duration 
@@ -1307,12 +1308,8 @@ async function compression_VP9(videofile, newFilePath, fileName) {
     } else {  
       return "videoDetails dosnet exists";
     } 
-  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
-    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory"); 
-  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
-    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory"); 
-  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
-    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory"); 
+  } else { 
+    console.log(ffmpegAvaiable);
   }
 }
 
