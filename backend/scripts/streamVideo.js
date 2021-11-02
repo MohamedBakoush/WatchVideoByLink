@@ -553,7 +553,8 @@ async function downloadVideoStream(req, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await videoData.findVideosByID(fileName);
-  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
+  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
           FileSystem.mkdirSync(`${filepath}${fileName}/`);
@@ -685,16 +686,9 @@ async function downloadVideoStream(req, res) {
         // TODO: create new fileName and try again
         console.log("videoDetails already exists");
       }
-  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
-    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
-    res.json("Cannot-find-ffmpeg-ffprobe");
-  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
-    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
-    res.json("Cannot-find-ffmpeg");
-  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
-    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
-    res.json("Cannot-find-ffprobe");
-  }
+  } else { 
+    res.json(ffmpegAvaiable);
+  } 
 }
 
 // download full video
