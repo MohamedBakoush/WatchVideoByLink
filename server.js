@@ -3,6 +3,10 @@ const path = require("path");
 const express = require("express");
 const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
+const videoData = require("./backend/scripts/data-videos");
+const userSettings = require("./backend/scripts/user-settings");
+const availableVideos = require("./backend/scripts/available-videos");
+const currentDownloadVideos = require("./backend/scripts/current-download-videos");
 const streamVideoFile = require("./backend/scripts/streamVideo");
 const app = express();
 app.use(upload({
@@ -26,14 +30,14 @@ function videoLinkFromUrl(req, res){
 // update video player volume settings
 app.post("/updateVideoPlayerVolume", express.json(), updateVideoPlayerVolume);
 function updateVideoPlayerVolume(req, res) {
-  const updatedVolume = streamVideoFile.updateVideoPlayerVolume(req.body.updatedVideoPlayerVolume,  req.body.updatedVideoPlayerMuted);
+  const updatedVolume = userSettings.updateVideoPlayerVolume(req.body.updatedVideoPlayerVolume,  req.body.updatedVideoPlayerMuted);
   res.json(updatedVolume);
 }
 
 // get video player settings
 app.get("/getVideoPlayerSettings", getVideoPlayerSettings);
 function getVideoPlayerSettings(req, res) {
-  res.json(streamVideoFile.getVideoPlayerSettings());
+  res.json(userSettings.getUserSettings(["videoPlayer"]));
 }
 
 // get video thumbnail by video id and thumbnail number header
@@ -63,49 +67,49 @@ function streamCompressedVideoById(req, res){
 // create Folder at availableVideos
 app.post("/createFolder", express.json(), createFolder);
 function createFolder(req, res){ 
-  res.json(streamVideoFile.createFolder(req.body.folderIDPath, req.body.folderTitle));
+  res.json(availableVideos.createFolder(req.body.folderIDPath, req.body.folderTitle));
 }
 
 // input selected element id out of folder element at availableVideos
 app.post("/inputSelectedIDOutOfFolderID", express.json(), inputSelectedIDOutOfFolderID);
 async function inputSelectedIDOutOfFolderID(req, res){ 
-  res.json(await streamVideoFile.inputSelectedIDOutOfFolderID(req.body.selectedID, req.body.folderID, req.body.folderIDPath));
+  res.json(await availableVideos.inputSelectedIDOutOfFolderID(req.body.selectedID, req.body.folderID, req.body.folderIDPath));
 }
 
 // input selected element into folder element at availableVideos
 app.post("/inputSelectedIDIntoFolderID", express.json(), inputSelectedIDIntoFolderID);
 async function inputSelectedIDIntoFolderID(req, res){ 
-  res.json(await streamVideoFile.inputSelectedIDIntoFolderID(req.body.selectedID, req.body.folderID, req.body.folderIDPath));
+  res.json(await availableVideos.inputSelectedIDIntoFolderID(req.body.selectedID, req.body.folderID, req.body.folderIDPath));
 }
 
 // move selected id data to before target id data at available video details
 app.post("/moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", express.json(), moveSelectedIdBeforeTargetIdAtAvailableVideoDetails);
 async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(req, res){ 
-  res.json(await streamVideoFile.moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
+  res.json(await availableVideos.moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
 }
 
 // move selected id data to after target id data at available video details
 app.post("/moveSelectedIdAfterTargetIdAtAvailableVideoDetails", express.json(), moveSelectedIdAfterTargetIdAtAvailableVideoDetails);
 async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(req, res){ 
-  res.json(await streamVideoFile.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
+  res.json(await availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(req.body.selectedID, req.body.targetID, req.body.folderIDPath));
 }
 
 // change title of video
 app.post("/changeVideoTitle", express.json(), changeVideoTitle);
 async function changeVideoTitle(req, res){ 
-  res.json(await streamVideoFile.changeVideoTitle(req.body.videoID, req.body.newVideoTitle, req.body.folderIDPath));
+  res.json(await availableVideos.changeTitle(req.body.videoID, req.body.newVideoTitle, req.body.folderIDPath));
 }
 
 // get video data for specified video by id header
 app.get("/video-data/:id", findVideosByID);
 function findVideosByID(req, res){
-  res.json(streamVideoFile.findVideosByID(req.params.id));
+  res.json(videoData.findVideosByID(req.params.id));
 }
 
 // get all available video data header
 app.get("/all-available-video-data", getAllAvailableVideos);
 function getAllAvailableVideos(req, res){
-  res.json(streamVideoFile.getAllAvailableVideos());
+  res.json(availableVideos.getAvailableVideos());
 }
 
 // download live video stream header
@@ -139,9 +143,9 @@ function savedVideos(req, res){
 }
 
 //show current downloads
-app.get("/current-video-downloads", currentDownloads);
-function currentDownloads(req, res){
-  res.json(streamVideoFile.currentDownloads());
+app.get("/current-video-downloads", getCurrentDownloads);
+function getCurrentDownloads(req, res){
+  res.json(currentDownloadVideos.getCurrentDownloads());
 }
 
 // complete download unfinnished video by specified video id header

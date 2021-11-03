@@ -44,7 +44,6 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
         // update ${videoInfo_ID}-title id into input text box
         document.getElementById(`${videoInfo_ID}-title`).remove();
         const inputNewTitle = basic.createInput(document.getElementById(`${videoInfo_ID}-title-container`),"text", video_name, `${videoInfo_ID}-title`, "inputNewTitle");
-        inputNewTitle.focus();
         document.getElementById(`${videoInfo_ID}-title-container`).removeAttribute("href");
         inputNewTitle.onkeypress = function(e){ // on input new title key press
           if (!e) e = window.event;
@@ -141,7 +140,6 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     // update ${videoInfo_ID}-title id into input text box
     document.getElementById(`${folderInfo_ID}-title`).remove();
     const inputNewTitle = basic.createInput(document.getElementById(`${folderInfo_ID}-title-container`),"text", folder_name, `${folderInfo_ID}-title`, "inputNewTitle");
-    inputNewTitle.focus();
     inputNewTitle.onkeypress = function(e){ // on input new title key press
       if (!e) e = window.event;
       var keyCode = e.code || e.key;
