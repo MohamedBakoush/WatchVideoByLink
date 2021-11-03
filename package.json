@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "download-working-videos-for-untrunc": "node ./backend/scripts/download-working-videos-for-untrunc.js",
+    "download-working-videos-for-untrunc": "node ./backend/setup/download-working-videos-for-untrunc.js",
     "test": "jest"
   },
   "repository": {
