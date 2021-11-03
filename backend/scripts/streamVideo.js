@@ -1551,7 +1551,8 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
   const newFilePath = `${filepath}${fileName}/`;
   const path = newFilePath+fileName+fileType; 
   const videoDetails = await videoData.findVideosByID(fileName);
-  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists
+  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
           FileSystem.mkdirSync(`${filepath}${fileName}/`);
@@ -1653,38 +1654,13 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
           }
           createThumbnail(path, newFilePath, fileName); 
 
-          if (FileSystem.existsSync(videofile)) { 
-            // move video file to deleted-videos folder
-            // if video is active it will make the video not viewable if someone wants to view it
-            FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-              if (err) throw err;  
-              console.log("moved video thats going to be deleted");
-              //  delete the video
-              FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-                if (err) throw err;
-                console.log("deleted video");
-              });  
-            });
-          } 
+          deleteOrignialUploadedVideoFile(videofile, fileName);
         })
         .on("error", function(error) {
           /// error handling
           console.log("[streamVideo.js-downloadUploadedVideo]", `Encoding Error: ${error.message}`);
           if (error.message === "Cannot find ffmpeg") {
-            // delete original video if exists
-            if (FileSystem.existsSync(videofile)) { 
-              // move video file to deleted-videos folder
-              // if video is active it will make the video not viewable if someone wants to view it
-              FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-                if (err) throw err;  
-                console.log("moved video thats going to be deleted");
-                //  delete the video
-                FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-                  if (err) throw err;
-                  console.log("deleted video");
-                });  
-              });
-            }
+            deleteOrignialUploadedVideoFile(videofile, fileName);
             // delete created folder
             FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
               if (err) throw err;
@@ -1692,22 +1668,9 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
             });
             res.json("Cannot-find-ffmpeg");
           } else {
-            // delete original video if exists
-            if (FileSystem.existsSync(videofile)) { 
-              // move video file to deleted-videos folder
-              // if video is active it will make the video not viewable if someone wants to view it
-              FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-                if (err) throw err;  
-                console.log("moved video thats going to be deleted");
-                //  delete the video
-                FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-                  if (err) throw err;
-                  console.log("deleted video");
-                });  
-              });
-            }
             // there could be diffrent types of errors that exists and some may contain content in the newly created path
             // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+            deleteOrignialUploadedVideoFile(videofile, fileName);
             res.json("ffmpeg-failed");
           }
         })
@@ -1717,55 +1680,26 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
       } else { 
         console.log("videoDetails already exists");
       }   
-  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
-    console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
-    if (FileSystem.existsSync(videofile)) { 
-      // move video file to deleted-videos folder
-      // if video is active it will make the video not viewable if someone wants to view it
-      FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-        if (err) throw err;  
-        console.log("moved video thats going to be deleted");
-        //  delete the video
-        FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-          if (err) throw err;
-          console.log("deleted video");
-        });  
-      });
-    } 
-    res.json("Cannot-find-ffmpeg-ffprobe");
-  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
-    console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
-    if (FileSystem.existsSync(videofile)) { 
-      // move video file to deleted-videos folder
-      // if video is active it will make the video not viewable if someone wants to view it
-      FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-        if (err) throw err;  
-        console.log("moved video thats going to be deleted");
-        //  delete the video
-        FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-          if (err) throw err;
-          console.log("deleted video");
-        });  
-      });
-    } 
-    res.json("Cannot-find-ffmpeg");
-  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
-    console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory");
-    if (FileSystem.existsSync(videofile)) { 
-      // move video file to deleted-videos folder
-      // if video is active it will make the video not viewable if someone wants to view it
-      FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-        if (err) throw err;  
-        console.log("moved video thats going to be deleted");
-        //  delete the video
-        FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-          if (err) throw err;
-          console.log("deleted video");
-        });  
-      });
-    } 
-    res.json("Cannot-find-ffprobe");
+  } else {
+    deleteOrignialUploadedVideoFile(videofile, fileName);
+    res.json(ffmpegAvaiable);
   }
+}
+
+function deleteOrignialUploadedVideoFile(videofile, fileName) { 
+    if (FileSystem.existsSync(videofile)) { 
+        // move video file to deleted-videos folder
+        // if video is active it will make the video not viewable if someone wants to view it
+        FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
+            if (err) throw err;  
+            console.log("moved video thats going to be deleted");
+            //  delete the video
+            FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
+                if (err) throw err;
+                console.log("deleted video");
+            });  
+        });
+    } 
 }
 
 module.exports = { // export modules
