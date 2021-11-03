@@ -9,10 +9,23 @@ const userSettings = require("./user-settings");
 const currentDownloadVideos = require("./current-download-videos");
 const videoData = require("./data-videos");
 const availableVideos = require("./available-videos");
- 
-let ffprobe_path = "./ffprobe.exe";
-let ffmpeg_path = "./ffmpeg.exe";
-let untrunc_path = "untrunc.exe";
+
+let ffprobe_path, ffmpeg_path, untrunc_path; 
+if (FileSystem.existsSync("./ffprobe.exe")) { // user input
+    ffprobe_path = "./ffprobe.exe";
+} else { //docker
+    ffprobe_path = "ffprobe";
+} 
+if (FileSystem.existsSync("./ffmpeg.exe")) { // user input
+    ffmpeg_path = "./ffmpeg.exe";
+} else { //docker
+    ffmpeg_path = "ffmpeg";
+}    
+if (FileSystem.existsSync("untrunc.exe")) { // user input
+  untrunc_path = "untrunc.exe";
+} else { //docker
+  untrunc_path = "./untrunc-master/untrunc";
+}  
 let working_video_path = "./media/working-video/video.mp4";
 
 // updated ffprobe path
