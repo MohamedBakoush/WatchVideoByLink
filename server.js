@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
+const stream = require("./backend/scripts/stream");
 const videoData = require("./backend/scripts/data-videos");
 const userSettings = require("./backend/scripts/user-settings");
 const availableVideos = require("./backend/scripts/available-videos");
@@ -43,7 +44,7 @@ function getVideoPlayerSettings(req, res) {
 // get video thumbnail by video id and thumbnail number header
 app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
 function streamImageById(req, res){
-  streamVideoFile.streamThumbnail(req, res, req.params.videoID, req.params.thumbnailID);
+  stream.streamThumbnail(req, res, req.params.videoID, req.params.thumbnailID);
 }
 
 // delete video permently by video id header
@@ -55,13 +56,13 @@ async function deleteAllVideoData(req, res){
 // stream original video by video id header
 app.get("/video/:id", streamOriginalVideoById);
 function streamOriginalVideoById(req, res){
-  streamVideoFile.streamVideo(req, res, req.params.id, false);
+  stream.streamVideo(req, res, req.params.id, false);
 }
 
 // stream compressed video by video id header
 app.get("/compressed/:id", streamCompressedVideoById);
 function streamCompressedVideoById(req, res){
-  streamVideoFile.streamVideo(req, res, req.params.id, true);
+  stream.streamVideo(req, res, req.params.id, true);
 }
 
 // create Folder at availableVideos
