@@ -41,9 +41,7 @@ function update_working_video_path(newPath){
 
 // check if ffmpeg ffprobe exits
 function checkIfFFmpegFFprobeExits() {
-  if (FileSystem.existsSync(ffprobe_path) && FileSystem.existsSync(ffmpeg_path)) { //files exists 
-      return "ffmpeg-ffprobe-exits";
-  } else if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
+  if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
       console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory"); 
       return "Cannot-find-ffmpeg-ffprobe";
   } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
@@ -52,6 +50,8 @@ function checkIfFFmpegFFprobeExits() {
   } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
       console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory"); 
       return "Cannot-find-ffprobe";
+  } else { //files exists 
+    return "ffmpeg-ffprobe-exits";
   }
 }
 
