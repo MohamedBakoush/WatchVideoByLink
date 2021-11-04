@@ -8,67 +8,12 @@ const userSettings = require("./user-settings");
 const currentDownloadVideos = require("./current-download-videos");
 const videoData = require("./data-videos");
 const availableVideos = require("./available-videos");
-
-let ffprobe_path, ffmpeg_path, untrunc_path; 
-if (FileSystem.existsSync("./ffprobe.exe")) { // user input
-    ffprobe_path = "./ffprobe.exe";
-} else { //docker
-    ffprobe_path = "ffprobe";
-} 
-if (FileSystem.existsSync("./ffmpeg.exe")) { // user input
-    ffmpeg_path = "./ffmpeg.exe";
-} else { //docker
-    ffmpeg_path = "ffmpeg";
-}    
-if (FileSystem.existsSync("untrunc.exe")) { // user input
-  untrunc_path = "untrunc.exe";
-} else { //docker
-  untrunc_path = "./untrunc-master/untrunc";
-}  
-let working_video_path = "./media/working-video/video.mp4";
-
-// updated ffprobe path
-function update_ffprobe_path(newPath){ 
-  ffprobe_path = newPath;
-  return ffprobe_path;
-}
-
-// updated ffmpeg path
-function update_ffmpeg_path(newPath){ 
-  ffmpeg_path = newPath;
-  return ffmpeg_path;
-}
-
-// updated untrun path
-function update_untrunc_path(newPath){ 
-  untrunc_path = newPath;
-  return untrunc_path;
-}
-
-// updated working video path
-function update_working_video_path(newPath){ 
-  working_video_path = newPath;
-  return working_video_path;
-}
-
-// check if ffmpeg ffprobe exits
-function checkIfFFmpegFFprobeExits() {
-  if (!FileSystem.existsSync(ffprobe_path) && !FileSystem.existsSync(ffmpeg_path)) { //files dont exists
-      console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory"); 
-      return "Cannot-find-ffmpeg-ffprobe";
-  } else if (!FileSystem.existsSync(ffmpeg_path)) { //file dosent exists
-      console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory"); 
-      return "Cannot-find-ffmpeg";
-  } else if (!FileSystem.existsSync(ffprobe_path)) { //file dosent exists
-      console.log("Encoding Error: Cannot find ffprobe in WatchVideoByLink directory"); 
-      return "Cannot-find-ffprobe";
-  } else { //files exists 
-    return "ffmpeg-ffprobe-exits";
-  }
-}
+const ffmpegPath = require("./ffmpeg-path");
 
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
+  const untrunc_path = ffmpegPath.get_untrunc_path();
+  const working_video_path = ffmpegPath.get_working_video_path();
   if(FileSystem.existsSync(fileName_original_ending) == true){  
     exec(`${untrunc_path} ${working_video_path} ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
       if (error) {
@@ -187,6 +132,10 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
 
 // check for unfinnished video/thumbnail download when the application get started 
 function cheackForAvailabeUnFinishedVideoDownloads(){  
+  const ffmpeg_path = ffmpegPath.get_ffmpeg_path();
+  const ffprobe_path = ffmpegPath.get_ffprobe_path();
+  const untrunc_path = ffmpegPath.get_untrunc_path();
+  const working_video_path = ffmpegPath.get_working_video_path();
   if(Object.keys(currentDownloadVideos.getCurrentDownloads()).length !== 0){  // if there is available data in currentDownloads()
     Object.keys(currentDownloadVideos.getCurrentDownloads()).forEach(function(fileName) { // for each currentDownloads get id as fileName 
       // assign download status variable if available with correct progress status
@@ -473,7 +422,7 @@ async function downloadVideoStream(req, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -622,7 +571,7 @@ async function downloadVideo(req, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -765,7 +714,7 @@ async function trimVideo(req, res) {
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
   const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -911,7 +860,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   let duration = 0;
   let numberOfCreatedScreenshots = 0;
   const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") { 
     if (videoDetails !== undefined) {
       ffmpeg.ffprobe(videofile, (error, metadata) => {
@@ -1108,7 +1057,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
   const fileType = ".webm";
   let duration = 0;
   const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
     if (videoDetails !== undefined) {
       ffmpeg.ffprobe(videofile, (error, metadata) => {
@@ -1471,7 +1420,7 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
   const newFilePath = `${filepath}${fileName}/`;
   const path = newFilePath+fileName+fileType; 
   const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = checkIfFFmpegFFprobeExits();
+  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
     if (videoDetails == undefined) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
@@ -1629,10 +1578,6 @@ module.exports = { // export modules
   downloadVideoStream,
   downloadVideo,
   trimVideo,
-  update_ffprobe_path,
-  update_ffmpeg_path, 
-  update_untrunc_path,
-  update_working_video_path,
   deleteAllVideoData,
   checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
   getVideoLinkFromUrl,
