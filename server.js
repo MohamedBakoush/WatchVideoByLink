@@ -5,6 +5,7 @@ const upload = require("express-fileupload");
 const favicon = require("serve-favicon");
 const stream = require("./backend/scripts/stream");
 const videoData = require("./backend/scripts/data-videos");
+const deleteData = require("./backend/scripts/delete-data");
 const userSettings = require("./backend/scripts/user-settings");
 const availableVideos = require("./backend/scripts/available-videos");
 const currentDownloadVideos = require("./backend/scripts/current-download-videos");
@@ -50,7 +51,7 @@ function streamImageById(req, res){
 // delete video permently by video id header
 app.post("/delete-video-data-permanently", express.json(), deleteAllVideoData);
 async function deleteAllVideoData(req, res){  
-  res.json(await streamVideoFile.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath));
+  res.json(await deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath));
 }
 
 // stream original video by video id header
