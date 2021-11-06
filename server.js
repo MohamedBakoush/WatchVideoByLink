@@ -1,15 +1,19 @@
 "use strict";
 const path = require("path");
 const express = require("express");
+const favicon = require("serve-favicon"); 
 const upload = require("express-fileupload");
-const favicon = require("serve-favicon");
-const stream = require("./backend/scripts/stream-video-image");
 const videoData = require("./backend/scripts/data-videos");
 const deleteData = require("./backend/scripts/delete-data");
+const stream = require("./backend/scripts/stream-video-image");
 const userSettings = require("./backend/scripts/user-settings");
 const availableVideos = require("./backend/scripts/available-videos");
+const ffmpegUploadVideo = require("./backend/scripts/ffmpeg-upload-video");
+const ffmpegDownloadVideo = require("./backend/scripts/ffmpeg-download-video");
+const ffmpegDownloadStream = require("./backend/scripts/ffmpeg-download-stream");
 const currentDownloadVideos = require("./backend/scripts/current-download-videos");
-const streamVideoFile = require("./backend/scripts/streamVideo");
+const ffmpegUnfinishedVideo = require("./backend/scripts/ffmpeg-unfinished-videos");
+const youtubedlDownloadVideo = require("./backend/scripts/youtubedl-download-video");
 const app = express();
 app.use(upload({
   limits: { fileSize: 1024 * 1024 * 1024 },
@@ -20,13 +24,13 @@ app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico
 // take uploaded video file and downloads it
 app.post("/uploadVideoFile", uploadVideoFile);
 function uploadVideoFile(req, res){
-  streamVideoFile.uploadVideoFile(req, res);
+  ffmpegUploadVideo.uploadVideoFile(req, res);
 }
 
 // converts url link to video link
 app.post("/getVideoLinkFromUrl", express.json(), videoLinkFromUrl);
 function videoLinkFromUrl(req, res){
-  streamVideoFile.getVideoLinkFromUrl(req, res);
+  youtubedlDownloadVideo.getVideoLinkFromUrl(req, res);
 }
 
 // update video player volume settings
@@ -117,25 +121,25 @@ function getAllAvailableVideos(req, res){
 // download live video stream header
 app.post("/downloadVideoStream", express.json(), downloadVideoStream);
 function downloadVideoStream(req, res){
-  streamVideoFile.downloadVideoStream(req, res);
+  ffmpegDownloadStream.downloadVideoStream(req, res);
 }
 
 // download video header
 app.post("/downloadVideo", express.json(), downloadVideo);
 function downloadVideo(req, res){
-  streamVideoFile.downloadVideo(req, res);
+  ffmpegDownloadVideo.downloadVideo(req, res);
 }
 
 // download video from specified section header
 app.post("/trimVideo", express.json(), trimVideo);
 function trimVideo(req, res){
-  streamVideoFile.trimVideo(req, res);
+  ffmpegDownloadVideo.trimVideo(req, res);
 }
 
 // stop downloading live video stream header
 app.post("/stopDownloadVideoStream", express.json(), stopDownloadVideoStream);
 async function stopDownloadVideoStream(req, res){ 
-  res.json(await streamVideoFile.stopDownloadVideoStream(req.body.id));
+  res.json(await ffmpegDownloadStream.stopDownloadVideoStream(req.body.id));
 }
 
 // load path name /saved/videos with index.html page
@@ -153,7 +157,7 @@ function getCurrentDownloads(req, res){
 // complete download unfinnished video by specified video id header
 app.post("/complete-unfinnished-video-download",  express.json(), completeUnfinnishedVideoDownload);
 function completeUnfinnishedVideoDownload(req, res){
-  res.json(streamVideoFile.completeUnfinnishedVideoDownload(req.body.id));
+  res.json(ffmpegUnfinishedVideo.completeUnfinnishedVideoDownload(req.body.id));
 } 
 
 // adds html as extensions, dont need to write index.html
@@ -169,5 +173,5 @@ app.set("port", (process.env.PORT || 8080));
 app.listen(app.get("port"), function() { 
   console.log("Server running at:" + app.get("port"));
   // cheack for available unfinished video downloads
-  streamVideoFile.cheackForAvailabeUnFinishedVideoDownloads();
+  ffmpegUnfinishedVideo.cheackForAvailabeUnFinishedVideoDownloads();
 });

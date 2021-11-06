@@ -107,6 +107,15 @@ function checkIfFFmpegFFprobeExits() {
     }
 }
 
+// ends ffmpeg peacefully
+function STOP(command) {
+    return command.ffmpegProc.stdin.write("q");
+}
+
+// ends ffmpeg forcefully
+function SIGKILL(command) {
+    return command.kill("SIGKILL");
+}
 
 module.exports = { // export modules
   get_ffprobe_path,
@@ -117,5 +126,7 @@ module.exports = { // export modules
   update_untrunc_path,
   get_working_video_path,
   update_working_video_path,
-  checkIfFFmpegFFprobeExits
+  checkIfFFmpegFFprobeExits,
+  STOP,
+  SIGKILL
 };

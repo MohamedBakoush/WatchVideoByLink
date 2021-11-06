@@ -1,9 +1,9 @@
 "use strict";
 const FileSystem = require("fs");
 const currentDownloadVideos = require("./current-download-videos");
+const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const availableVideos = require("./available-videos");
-const streamVideo = require("./streamVideo");
 
 // set timeout for a set amount of time in ms
 function sleep(ms) {
@@ -15,7 +15,7 @@ function sleep(ms) {
 // check if video compression is downloading before data deletion 
 async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
   // stop video compression
-  const stopCommpressedVideoDownloadBool = await streamVideo.stopCommpressedVideoDownload(videoID); 
+  const stopCommpressedVideoDownloadBool = await ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
   if (stopCommpressedVideoDownloadBool) { 
     await checkCompressedVideoDownloadStatus(videoID);
     return deleteAllVideoData(videoID, folderIDPath); 
@@ -170,11 +170,29 @@ function deleteSpecifiedVideo(fileName) {
   }
 }
 
+// delete video file with provided video path
+function delete_video_with_provided_path(videofile, fileName) {
+  if (FileSystem.existsSync(videofile)) { 
+      // move video file to deleted-videos folder
+      // if video is active it will make the video not viewable if someone wants to view it
+      FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
+          if (err) throw err;  
+          console.log("moved video thats going to be deleted");
+          //  delete the video
+          FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
+              if (err) throw err;
+              console.log("deleted video");
+          });  
+      });
+  } 
+}
+
 module.exports = { // export modules
     sleep,
     checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
     checkCompressedVideoDownloadStatus,
     deleteAllVideoData,
     deleteAllFolderData,
-    deleteSpecifiedVideo
+    deleteSpecifiedVideo,
+    delete_video_with_provided_path
 };
