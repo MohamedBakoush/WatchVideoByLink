@@ -6,7 +6,7 @@ import * as optionMenu from "../scripts/optionMenu.js";
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 export async function loadVideoDetails() {
   try {
-    const response = await fetch("../all-available-video-data");
+    const response = await fetch("../all-available-video-data", {cache: "no-store"});
     if (response.ok) {
       const availablevideoDetails = await response.json(); 
       basic.setNewAvailablevideoDetails(availablevideoDetails);
