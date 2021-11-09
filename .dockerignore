@@ -6,6 +6,16 @@ media/video/**
 media/working-video/**
 media/deleted-videos/** 
 
+# Json Files
+data/available-videos.json
+__tests__/data/available-videos.test.json
+data/current-download-videos.json
+__tests__/data/current-download-videos.test.json
+data/data-videos.json
+__tests__/data/data-videos.test.json
+data/user-settings.json
+__tests__/data/user-settings.test.json
+
 # file types
 *.mp4
 *.webm
