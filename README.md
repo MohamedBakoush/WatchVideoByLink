@@ -22,7 +22,7 @@ WatchVideoByLink takes a public video/mp4, video/webm, application/x-mpegURL or 
   * [Requirements to unlock additional features](#requirements-to-unlock-additional-features) 
   * [Clone Repository](#clone-repository) 
   * [Install Dependencies](#install-dependencies) 
-  * [Download Working Videos For Untrunc](#download-working-videos-for-untrunc) 
+  * [Build necessary tasks](#build-necessary-tasks) 
   * [Start Server](#start-server) 
 * [License](#license)
 
@@ -159,11 +159,11 @@ Install dependencies by:
 npm install
 ```
 
-## Download Working Videos For Untrunc
-Download working videos for untrunc by:
+## Build necessary tasks
+Build tasks by:
 
 ```
-npm run-script download-working-videos-for-untrunc
+npm run build
 ```
 
 ## Start Server

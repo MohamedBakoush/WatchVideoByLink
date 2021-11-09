@@ -36,8 +36,8 @@ RUN npm install
 # Bundle app source
 COPY . . 
 
-# Instal working video for untrunc
-RUN npm run-script download-working-videos-for-untrunc
+# Build necessary tasks
+RUN npm run build
 
 ENV PORT=8080
 
