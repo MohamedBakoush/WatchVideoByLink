@@ -36,7 +36,7 @@ RUN npm install
 # Bundle app source
 COPY . . 
 
-# Build
+# Build necessary tasks
 RUN npm run build
 
 ENV PORT=8080
