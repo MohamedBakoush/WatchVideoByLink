@@ -36,7 +36,7 @@ After the downloaded/recorded video finishes downloading
 - Thumbnail creation gets taken into action: 8 snapshots of the video gets taken
 - (optional) VP9 video compression gets taken into action: video/mp4 -> video/webm
 
-and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
+once everything is done the video will be found available at /saved/videos with features to make it easy to look up, identify and organize each download video.
 
 ## Features 
 - Shareable link gets provided in the address bar when video is viewable.
