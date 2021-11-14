@@ -140,7 +140,6 @@ You can use the included Dockerfile to build and execute the package as a contai
     - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
 
 ### Clone Repository
-You can clone the repository to a local destination using git:
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
 cd WatchVideoByLink
