@@ -3,18 +3,17 @@
 </p>
 
 <p align="center">
-  <img width="200" src="/client/images/favicon/favicon.png" alt="WatchVideoByLink"/>
+  <img width="200" src="./client/images/favicon/favicon.png" alt="WatchVideoByLink"/>
 </p> 
 
 <hr/>
 
 ## Overview
 
-WatchVideoByLink takes a public video/mp4, video/webm, application/x-mpegURL or application/dash+xml URL Link and displays the video in a video player that has features which makes watching the provided video an enjoyable process.
+WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types.
 
 ## Table of Contents
-* [Reason For Creation](#reason-for-creation)
-* [How WatchVideoByLink Works](#how-watchvideobylink-works)
+* [What is WatchVideoByLink](#what-is-watchvideobylink)
 * [Features](#features) 
 * [Installation](#installation)  
   * [Docker](#docker) 
@@ -24,13 +23,10 @@ WatchVideoByLink takes a public video/mp4, video/webm, application/x-mpegURL or 
   * [Install Dependencies](#install-dependencies) 
   * [Build necessary tasks](#build-necessary-tasks) 
   * [Start Server](#start-server) 
+* [Contributing](#contributing)  
 * [License](#license)
 
-## Reason For Creation
-
-When working with various types of video files for personal projects, the process of creating a new video element to test if a video files works keeps occurring, to speed up the process of testing the creation of this repository was created by allowing an individual to view .mp4, .webm, .m3u8 or .mpd files from a simple URL link.
-
-## How WatchVideoByLink Works
+## What is WatchVideoByLink
 
 WatchVideoByLink takes a public video URL link and display the video in a custom video player depending on the video type, WatchVideoByLink currently supports video/mp4 (MP4), video/webm (WebM), application/x-mpegURL (HLS) or application/dash+xml (MPEG-DASH) URL Links, Automatic video type is also available but works a little bit differently as the system will try to get a video type and video link from the provided URL link.
 
@@ -40,7 +36,7 @@ After the downloaded/recorded video finishes downloading
 - Thumbnail creation gets taken into action: 8 snapshots of the video gets taken
 - (optional) VP9 video compression gets taken into action: video/mp4 -> video/webm
 
-and once everything is done the video will be found available in /saved/videos with features to make it easy to identify which video is which (sorted from newest to oldest).
+once everything is done the video will be found available at /saved/videos with features to make it easy to look up, identify and organize each download video.
 
 ## Features 
 - Shareable link gets provided in the address bar when video is viewable.
@@ -143,8 +139,7 @@ You can use the included Dockerfile to build and execute the package as a contai
   - It may be due to missing MSVCR100.dll File.
     - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
 
-## Clone Repository
-You can clone the repository to a local destination using git:
+### Clone Repository
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
 cd WatchVideoByLink
@@ -152,28 +147,39 @@ cd WatchVideoByLink
 
 Alternatively you may download and unpack the [zip](https://github.com/MohamedBakoush/WatchVideoByLink/archive/master.zip)
 
-## Install Dependencies
-Install dependencies by:
+### Install Dependencies
 
 ```
 npm install
 ```
 
-## Build necessary tasks
-Build tasks by:
+### Build necessary tasks
 
 ```
 npm run build
 ```
 
-## Start Server
-Run Server by:
+### Start Server
 
 ```
 npm start
 ```
 
 Then open `http://localhost:8080` in your preferred browser.
+
+## Contributing
+
+👍🎉 First off, thanks for taking the time to contribute! 🎉👍
+
+If you have a suggestion that would make WatchVideoByLink better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b new-feature`)
+3. Commit your Changes (`git commit -m "a short description of the change"`)
+4. Push to the Branch (`git push origin new-feature`)
+5. Open a Pull Request
+    
+[Github - Contributing to projects article](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) 
 
 <hr/>
 
