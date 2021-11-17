@@ -42,7 +42,7 @@ export function homepagePath(pathContainer) {
 
 // display folder path by name 
 export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerID, folderTitle) {
-    basic.createSection(pathContainer, "section", "path", `path-break-${fodlerID}`, "/");
+    breakPath(pathContainer, fodlerID);
     const path = basic.createSection(pathContainer, "section", "path pathClick", `path-${fodlerID}`, folderTitle);
     path.onmouseenter = function(e){   
         e.preventDefault();    
