@@ -10,33 +10,63 @@ export function getFolderIDPath() {
 
 // push new FolderID path or get current FolderID path
 export function pushNewFolderIDToFolderIDPath(newInsiderFolderID) { 
+    // push newInsiderFolderID to history
+    if (document.location.search == "") { 
+        history.pushState(null, "", `${document.location.pathname}?=${newInsiderFolderID}`);
+    } else {
+        history.pushState(null, "", `${document.location.pathname}${document.location.search}&${newInsiderFolderID}`);
+    }
+    // push newInsiderFolderID to folderIDPath
     folderIDPath.push(newInsiderFolderID); 
     return folderIDPath;
 }
 
 // reset FolderID path to its inital state
-export function resetInsideFolderID() { 
+export function resetInsideFolderID() {  
+    // url herf and pathname
+    const url_search = window.location.search;
+    const url_pathname = window.location.pathname;
+    // push /saved/videos to history
+    if (url_pathname === "/saved/videos" && url_search !== "") { 
+        history.pushState(null, "", "/saved/videos");
+    }
+    // reset folderIDPath
     folderIDPath = []; 
     return folderIDPath;
 }
 
 // set new FolderID path
-export function newfolderIDPath(newfolderIDPath) {  
+export function newfolderIDPath(newfolderIDPath) {   
+    // push newfolderIDPath to history
+    let newfolderIDPathString = "";
+    for (let i = 0; i < newfolderIDPath.length; i++) {  
+        if (i === 0) {
+            newfolderIDPathString = newfolderIDPathString.concat("?=",newfolderIDPath[i]);
+        } else {
+            newfolderIDPathString = newfolderIDPathString.concat("&",newfolderIDPath[i]);
+        } 
+    }  
+    history.pushState(null, "", `/saved/videos${newfolderIDPathString}`);
+    // set newfolderIDPath as new folderIDPath
     folderIDPath = newfolderIDPath;
     return folderIDPath;
 } 
 
 // get available video details by folder path
 export function getAvailableVideoDetailsByFolderPath(folderPath) {
-    let folderPathString = "";
-    for (let i = 0; i < folderPath.length; i++) {  
-        if (i === 0) {
-            folderPathString = folderPathString.concat("basic.getAvailablevideoDetails()[\"",folderPath[i],"\"].content");
-        } else {
-            folderPathString = folderPathString.concat("[\"",folderPath[i],"\"].content");
-        } 
-    }  
-    return eval(folderPathString);
+    try {
+        let folderPathString = "";
+        for (let i = 0; i < folderPath.length; i++) {  
+            if (i === 0) {
+                folderPathString = folderPathString.concat("basic.getAvailablevideoDetails()[\"",folderPath[i],"\"].content");
+            } else {
+                folderPathString = folderPathString.concat("[\"",folderPath[i],"\"].content");
+            } 
+        }  
+        return eval(folderPathString);  
+    } catch (error) {
+        return undefined;
+    }
 }
 
 // display create folder container
