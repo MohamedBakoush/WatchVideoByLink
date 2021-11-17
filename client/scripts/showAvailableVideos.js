@@ -4,13 +4,13 @@ import * as folderPath from "./folderPath.js";
 import * as optionMenu from "../scripts/optionMenu.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
-export async function loadVideoDetails() {
+export async function loadVideoDetails(initalFolderPath) {
   try {
     const response = await fetch("../all-available-video-data", {cache: "no-store"});
     if (response.ok) {
       const availablevideoDetails = await response.json(); 
       basic.setNewAvailablevideoDetails(availablevideoDetails);
-      eachAvailableVideoDetails(availablevideoDetails); 
+      eachAvailableVideoDetails(availablevideoDetails, initalFolderPath);
       return "Video details loaded";
     } else {
       return "Failed to load video details";
@@ -28,7 +28,7 @@ export async function loadVideoDetails() {
 
 // if there is available videoDetails then get each video Details and send the data to showDetails
 // if there are no videoDetails then show  noAvailableVideos msg
-export function eachAvailableVideoDetails(videoDetails) {
+export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
   try {
     if (typeof videoDetails == "object") {
       // search bar
@@ -55,11 +55,36 @@ export function eachAvailableVideoDetails(videoDetails) {
         e.preventDefault(); 
         folder.createFolderOnClick();
       };
-      folder.resetInsideFolderID();
+      folder.resetInsideFolderID();  
+      // reset search bar value
+      resetSearchBarValue();
       // activate drag drop for available video details
       dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
-      // display video details
-      displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
+      if (initalFolderPath !== undefined) {
+        const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(initalFolderPath);
+        if (availableVideosFolderIDPath !== undefined) {
+          folder.newfolderIDPath(initalFolderPath);
+          // get folder contet from specified path
+          let folderPathString = "";
+          for (let i = 0; i < initalFolderPath.length; i++) {  
+              if (i === 0) {
+                folderPathString = folderPathString.concat("videoDetails[\"",initalFolderPath[i],"\"].content");
+                folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), initalFolderPath[i], videoDetails[initalFolderPath[i]]["info"]["title"]); 
+              } else {
+                folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), initalFolderPath[i], eval(folderPathString)[initalFolderPath[i]]["info"]["title"]); 
+                folderPathString = folderPathString.concat("[\"",initalFolderPath[i],"\"].content");
+              } 
+          }  
+          // display video details
+          displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);  
+        } else {
+          // display video details
+          displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
+        }
+      } else {
+        // display video details
+        displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
+      }
       return "available videos"; 
     } else {
       return "input not an object";
@@ -694,7 +719,7 @@ export function searchBarKeyUp(searchString) {
 }
 
 // load pageLoaded to html page when requested
-export function pageLoaded() {
-  loadVideoDetails();
+export function pageLoaded(initalFolderPath) {
+  loadVideoDetails(initalFolderPath);
   return "pageLoaded";
 }

@@ -591,6 +591,7 @@ export function pageLoaded() {
   };
   // url herf and pathname
   const url_href = window.location.href;
+  const url_search = window.location.search;
   const url_pathname = window.location.pathname;
   // show website content depending on url_href/url_pathname
   if (url_href.includes("?t=") && url_href.includes("?v=")) { // play specified video
@@ -604,9 +605,13 @@ export function pageLoaded() {
     const url_link = basic.checkForPercentEncoding(url_link_from_auto);
     getVideoUrlAuto(url_link);
     return "Get Video URL Auto";
-  } else if (url_pathname === "/saved/videos") { // show saved video
+  } else if (url_pathname === "/saved/videos" && url_search == "") { // show saved video homepage
     navigationBar.loadNavigationBar("/saved/videos");
     showAvailableVideos.pageLoaded();
+    return "show saved video";
+  } else if (url_pathname === "/saved/videos" && url_search !== "") { // show saved video specified path 
+    navigationBar.loadNavigationBar("/saved/videos");
+    showAvailableVideos.pageLoaded((document.location.search.replaceAll("?=", "")).split("&"));
     return "show saved video";
   } else { // show homepage
     navigationBar.loadNavigationBar();
