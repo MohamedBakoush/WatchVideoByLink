@@ -12,9 +12,9 @@ export function getFolderIDPath() {
 export function pushNewFolderIDToFolderIDPath(newInsiderFolderID) { 
     // push newInsiderFolderID to history
     if (document.location.search == "") { 
-        history.pushState(null, "", `${document.location.pathname}?=${newInsiderFolderID}`);
+        history.pushState(null, "", `/saved/videos?=${newInsiderFolderID}`);
     } else {
-        history.pushState(null, "", `${document.location.pathname}${document.location.search}&${newInsiderFolderID}`);
+        history.pushState(null, "", `/saved/videos${document.location.search}&${newInsiderFolderID}`);
     }
     // push newInsiderFolderID to folderIDPath
     folderIDPath.push(newInsiderFolderID); 
@@ -23,15 +23,17 @@ export function pushNewFolderIDToFolderIDPath(newInsiderFolderID) {
 
 // reset FolderID path to its inital state
 export function resetInsideFolderID() {  
-    // url herf and pathname
-    const url_search = window.location.search;
-    const url_pathname = window.location.pathname;
-    // push /saved/videos to history
-    if (url_pathname === "/saved/videos" && url_search !== "") { 
-        history.pushState(null, "", "/saved/videos");
-    }
-    // reset folderIDPath
-    folderIDPath = []; 
+    if (folderIDPath.length !== 0) {
+        // url herf and pathname
+        const url_search = window.location.search;
+        const url_pathname = window.location.pathname;
+        // push /saved/videos to history
+        if (url_pathname === "/saved/videos" && url_search !== "") { 
+            history.pushState(null, "", "/saved/videos");
+        }
+        // reset folderIDPath
+        folderIDPath = []; 
+    } 
     return folderIDPath;
 }
 
@@ -46,7 +48,10 @@ export function newfolderIDPath(newfolderIDPath) {
             newfolderIDPathString = newfolderIDPathString.concat("&",newfolderIDPath[i]);
         } 
     }  
-    history.pushState(null, "", `/saved/videos${newfolderIDPathString}`);
+    // push folder path to history
+    if (`${window.location.pathname}${window.location.search}` !== `/saved/videos${newfolderIDPathString}`) {
+        history.pushState(null, "", `/saved/videos${newfolderIDPathString}`);
+    }
     // set newfolderIDPath as new folderIDPath
     folderIDPath = newfolderIDPath;
     return folderIDPath;
