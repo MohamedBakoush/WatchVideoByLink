@@ -214,7 +214,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   // fetch video settings
   const videoPlayerSettings = await getVideoPlayerSettings(); 
   // update info
-  document.title = "Watching Video By Provided Link"; 
+  document.title = "Watching Video By Provided Link - WatchVideoByLink"; 
   document.body.classList = "watching-video-body";
   basic.websiteContentContainer().classList = "watching-video-websiteContentContainer";
   let displayChromecast;
@@ -489,7 +489,7 @@ export function getVideoUrlAuto(url_link) {
     // change address bar
     history.pushState(null, "", `?auto=${url_link}`);
     // change document title
-    document.title = `Searching for video link: ${url_link} - Watch Video By Provided Link`;
+    document.title = `Searching for video link: ${url_link} - WatchVideoByLink`;
     // change css
     document.body.classList = "index-body";
     basic.websiteContentContainer().classList = "index-websiteContentContainer";
@@ -525,7 +525,7 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
         // get json data from response
         getVideoLinkFromUrl = await response.json();
         // change document title
-        document.title = "Watch Video By Provided Link";
+        document.title = "WatchVideoByLink";
         // if url_link provided failed to get required video data
         if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
           // invalid url alert msg
@@ -567,7 +567,7 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
         // remove searchingForVideoLinkMessageContainer
         searchingForVideoLinkMessageContainer.remove();
         // change document title
-        document.title = "Watch Video By Provided Link";
+        document.title = "WatchVideoByLink";
         // change addressbar
         history.pushState(null, "", "/");
         // add back header to document body
@@ -591,6 +591,7 @@ export function pageLoaded() {
   };
   // url herf and pathname
   const url_href = window.location.href;
+  const url_search = window.location.search;
   const url_pathname = window.location.pathname;
   // show website content depending on url_href/url_pathname
   if (url_href.includes("?t=") && url_href.includes("?v=")) { // play specified video
@@ -604,9 +605,13 @@ export function pageLoaded() {
     const url_link = basic.checkForPercentEncoding(url_link_from_auto);
     getVideoUrlAuto(url_link);
     return "Get Video URL Auto";
-  } else if (url_pathname === "/saved/videos") { // show saved video
+  } else if (url_pathname === "/saved/videos" && url_search == "") { // show saved video homepage
     navigationBar.loadNavigationBar("/saved/videos");
     showAvailableVideos.pageLoaded();
+    return "show saved video";
+  } else if (url_pathname === "/saved/videos" && url_search !== "") { // show saved video specified path 
+    navigationBar.loadNavigationBar("/saved/videos");
+    showAvailableVideos.pageLoaded((document.location.search.replaceAll("?=", "")).split("&"));
     return "show saved video";
   } else { // show homepage
     navigationBar.loadNavigationBar();

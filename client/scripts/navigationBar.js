@@ -11,7 +11,7 @@ export function loadNavigationBar(path) {
   const item = basic.createSection(nav, "li");
   let homeButton, savedVideosPage, currentDownloads;
   if (path == "/saved/videos") {
-    document.title = "saved videos - Watch Video By Provided Link";
+    document.title = "saved videos - WatchVideoByLink";
     document.body.classList = "saved-videos-body";
     basic.websiteContentContainer().classList = "saved-videos-websiteContentContainer";
     homeButton = basic.createLink(item, "/", undefined, "button category-link", "WatchVideoByLink");
@@ -31,7 +31,7 @@ export function loadNavigationBar(path) {
     };
     return "redirect to /saved/videos";
   } else {
-    document.title = "Watch Video By Provided Link";
+    document.title = "WatchVideoByLink";
     document.body.classList = "index-body";
     basic.websiteContentContainer().classList = "index-websiteContentContainer";
     homeButton = basic.createLink(item, "/", undefined, "button is-selected", "WatchVideoByLink");
@@ -61,8 +61,10 @@ export function onClickHomeButton(homeButton, savedVideosPage) {
   basic.websiteContentContainer().innerHTML = "";
   homeButton.classList = "button is-selected";
   savedVideosPage.classList = "button savedVideosPageButton category-link";
-  history.pushState(null, "", "/");
-  document.title = "Watch Video By Provided Link";
+  if (document.location.pathname !== "/") {
+    history.pushState(null, "", "/");
+    document.title = "WatchVideoByLink";
+  } 
   document.body.classList = "index-body";
   basic.websiteContentContainer().classList = "index-websiteContentContainer";
   index.showDetails();
@@ -76,9 +78,16 @@ export function onClickSavedVideosPage(homeButton, savedVideosPage) {
   }
   basic.websiteContentContainer().innerHTML = "";
   homeButton.classList = "button category-link";
-  savedVideosPage.classList = "button savedVideosPageButton is-selected";
-  history.pushState(null, "", "/saved/videos");
-  document.title = "saved videos - Watch Video By Provided Link";
+  savedVideosPage.classList = "button savedVideosPageButton is-selected"; 
+  if (document.location.pathname === "/saved/videos") {
+    if (document.location.search !== "") {
+      history.pushState(null, "", "/saved/videos");
+      document.title = "saved videos - WatchVideoByLink";
+    } 
+  } else {
+    history.pushState(null, "", "/saved/videos");
+    document.title = "saved videos - WatchVideoByLink";
+  }
   document.body.classList = "saved-videos-body";
   basic.websiteContentContainer().classList = "saved-videos-websiteContentContainer";
   showAvailableVideos.pageLoaded();
