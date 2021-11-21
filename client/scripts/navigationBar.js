@@ -11,7 +11,7 @@ export function loadNavigationBar(path) {
   const item = basic.createSection(nav, "li");
   let homeButton, savedVideosPage, currentDownloads;
   if (path == "/saved/videos") {
-    document.title = "saved videos - Watch Video By Provided Link";
+    document.title = "saved videos - WatchVideoByLink";
     document.body.classList = "saved-videos-body";
     basic.websiteContentContainer().classList = "saved-videos-websiteContentContainer";
     homeButton = basic.createLink(item, "/", undefined, "button category-link", "WatchVideoByLink");
@@ -31,7 +31,7 @@ export function loadNavigationBar(path) {
     };
     return "redirect to /saved/videos";
   } else {
-    document.title = "Watch Video By Provided Link";
+    document.title = "WatchVideoByLink";
     document.body.classList = "index-body";
     basic.websiteContentContainer().classList = "index-websiteContentContainer";
     homeButton = basic.createLink(item, "/", undefined, "button is-selected", "WatchVideoByLink");

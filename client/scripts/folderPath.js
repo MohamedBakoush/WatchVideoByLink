@@ -10,6 +10,7 @@ export function breakPath(pathContainer, id) {
 // display homepage folder path by ... 
 export function homepagePath(pathContainer) {
     const path = basic.createSection(pathContainer, "section", "path pathClick", "path-folder-main", "...");
+    document.title = "saved videos - WatchVideoByLink";
     path.onclick  = function(e){
         e.preventDefault();      
         path.classList.remove("pathClick");   
@@ -44,6 +45,7 @@ export function homepagePath(pathContainer) {
 export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerID, folderTitle) {
     breakPath(pathContainer, fodlerID);
     const path = basic.createSection(pathContainer, "section", "path pathClick", `path-${fodlerID}`, folderTitle);
+    document.title = `${folderTitle} - WatchVideoByLink`;
     path.onmouseenter = function(e){   
         e.preventDefault();    
         if (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] !== fodlerID) { 
@@ -77,6 +79,7 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
                 document.getElementById(`path-break-${dataToRemove[i]}`).remove();
                 document.getElementById(`path-${dataToRemove[i]}`).remove();  
             }  
+            document.title = `${folderTitle} - WatchVideoByLink`;
             if (folderIDPath === undefined || folderIDPath.length == 0) {    
                 console.log("availablevideoDetails");
             }else {  
