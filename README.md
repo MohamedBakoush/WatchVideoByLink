@@ -1,14 +1,7 @@
 <p align="center">
   <big><strong>WatchVideoByLink</strong></big>
 </p>
-
-<p align="center">
-  <img width="200" src="./client/images/favicon/favicon.png" alt="WatchVideoByLink"/>
-</p> 
-
 <hr/>
-
-## Overview
 
 WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types.
 
