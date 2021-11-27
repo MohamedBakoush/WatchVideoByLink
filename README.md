@@ -3,11 +3,11 @@
 </p>
 <hr/>
 
-WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types.
-
 <p align="center">
   <img src="./media/demo.gif" alt="WatchVideoByLink"/>
 </p> 
+
+WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types
 
 ## Table of Contents
 * [What is WatchVideoByLink](#what-is-watchvideobylink)
