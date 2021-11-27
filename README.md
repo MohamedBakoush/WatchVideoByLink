@@ -18,7 +18,6 @@ WatchVideoByLink takes a public video URL and display it in a video player which
 
 ## Table of Contents
 * [What is WatchVideoByLink](#what-is-watchvideobylink)
-* [Features](#features) 
 * [Installation](#installation)  
   * [Docker](#docker) 
   * [Requirements to run WatchVideoByLink](#requirements-to-run-watchvideobylink) 
@@ -41,79 +40,6 @@ After the downloaded/recorded video finishes downloading
 - (optional) VP9 video compression gets taken into action: video/mp4 -> video/webm
 
 once everything is done the video will be found available at /saved/videos with features to make it easy to look up, identify and organize each download video.
-
-## Features 
-- Shareable link gets provided in the address bar when video is viewable.
-- When a video finished recording/completes its downloaded 
-  - H.264 video/mp4 becomes playable at /video/:id 
-- (optional) When a video completes a VP9 compression
-  - VP9 video/webm becomes playable at /compressed/:id 
-- Using /?t=videoType?v=videoSrc can be used to play specified videoSrc if the videoType is supported
-- View current videos/video compressions/thumbnails downloads from homepage or /saved/videos
-  - If video download is unfinished 
-    - Option to Restore damaged video using untrunc and some luck.
-    - Option to Generate thumbnails
-    - Option to Generate video compression
-    - Option to Generate thumbnails & video compression
-- Upload a video to the system
-  - Max 1GB per video file
-- Video players
-  - Video Type: WebM/MP4 Supports:
-    - .mp4 / .webm files
-    - playbackRates
-    - seek-buttons
-    - (optional) chromecast
-    - download full video or by specified start and end times
-  - Video Type: HLS Supports:
-    - .m3u8 files
-    - record stream
-  - Video Type: MPEG-DASH Supports:
-    - .mpd files
-  - Video Type: Automatic:
-    - Takes a URL link and tries to find the videoSrc and videoType if successful it will be shown in the correct video player
-    - using /?auto=URL will also activate the search
-- /saved/videos 
-  - Video
-    - Displayed by Video Thumbnail, Video Title
-      - When a video thumbnail gets hovered over a series of images from the video will be displayed to show what the video is about
-      - When a video thumbnail gets clicked it will redirect the user to the specified video
-  - Folder
-    - Create Folder
-      - Choose Title
-    - Displayed by Folder Icon, selected Folder title
-      - When a folder gets clicked it will display folder content
-  - Menu: Video/Folder
-    - Get sharable link button (only for video)
-      - If clicked the video URL link will be copied for ease of shareability
-    - Edit button
-      - If clicked Edit mode will be shown with such features as 
-        - Change video title
-        - Deletes video or folder content when clicked plus all its data permanently from the system
-    - Change video title
-  - Drag Drop Folder/Video
-    - When a video/folder gets dragged over target Folder
-      - Table layout
-        - Top: The video/folder will be placed before the video
-        - Middle: The video/folder will be placed inside the folder
-        - Buttom: The video/folder will be placed after the video
-      - Grid layout
-        - Left: The video/folder will be placed before the folder
-        - Middle: The video/folder will be placed inside the folder
-        - Right: The video/folder will be placed after the folder
-    - When a video/folder gets dragged over target video
-      - Table layout
-        - Top: The video/folder will be placed before the video
-        - Buttom: The video/folder will be placed after the video
-      - Grid layout
-        - Left: The video/folder will be placed before the video
-        - Right: The video/folder will be placed after the video
-    - When a video/folder gets dragged over target folder path
-      - The folder/video gets placed inside the specified folder path
-  - Folder Path 
-    - Displays current folder path
-      - If a folder name is clicked the folder content will load and folder path gets update 
-  - Search
-    - Searches for available video/folders by their title (local to selected folder)
   
 ## Installation
  
