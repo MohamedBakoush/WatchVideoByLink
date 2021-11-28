@@ -1,7 +1,6 @@
-<p align="center">
+<h1 align="center">
   <big><strong>WatchVideoByLink</strong></big>
-</p>
-<hr/>
+</h1>
 
 <p align="center">
   <img src="./media/demo.gif" alt="WatchVideoByLink"/>
