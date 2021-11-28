@@ -8,17 +8,12 @@
 
 WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types
 
-## Table of Contents
-* [Installation](#installation)  
-  * [Docker](#docker) 
-  * [Requirements to run WatchVideoByLink](#requirements-to-run-watchvideobylink) 
-  * [Requirements to unlock additional features](#requirements-to-unlock-additional-features) 
-  * [Clone Repository](#clone-repository) 
-  * [Install Dependencies](#install-dependencies) 
-  * [Build necessary tasks](#build-necessary-tasks) 
-  * [Start Server](#start-server) 
-* [Contributing](#contributing)
-* [License](#license)
+## Why WatchVideoByLink?
+
+WatchVideoByLink provides:
+- Ex 1
+- Ex 2
+- Ex 3
 
 ## Installation
  
