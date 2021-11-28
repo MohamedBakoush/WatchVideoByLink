@@ -1,12 +1,18 @@
 <h1 align="center">
+  <img src="./client/images/favicon/favicon.png" alt="WatchVideoByLink logo left" width="30"/>
   <big><strong>WatchVideoByLink</strong></big>
 </h1>
 
-<p align="center">
-  <img src="./media/demo.gif" alt="WatchVideoByLink"/>
-</p> 
-
 WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types
+
+[**Why WatchVideoByLink?**](#why-watchvideobylink) |
+[**Installation**](#installation) |
+[**Contributing**](#contributing) |
+[**License**](#license)
+
+## Screenshots & Gifs
+**Demo Video**
+<kbd><img src="./media/demo.gif" title="Demo Video"/></kbd> 
 
 ## Why WatchVideoByLink?
 
