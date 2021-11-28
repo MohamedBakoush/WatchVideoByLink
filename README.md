@@ -17,6 +17,7 @@ WatchVideoByLink takes a public video URL and display it in a video player which
   * [Install Dependencies](#install-dependencies) 
   * [Build necessary tasks](#build-necessary-tasks) 
   * [Start Server](#start-server) 
+* [Contributing](#contributing)
 * [License](#license)
 
 ## Installation
@@ -74,6 +75,9 @@ npm start
 ```
 
 Then open `http://localhost:8080` in your preferred browser.
+
+## Contributing
+WatchVideoByLink is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features. Check out [CONTRIBUTING.md](CONTRIBUTING.md) to find resources around contributing.
 
 <hr/>
 
