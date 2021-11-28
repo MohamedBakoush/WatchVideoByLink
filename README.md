@@ -10,7 +10,6 @@
 WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types
 
 ## Table of Contents
-* [What is WatchVideoByLink](#what-is-watchvideobylink)
 * [Installation](#installation)  
   * [Docker](#docker) 
   * [Requirements to run WatchVideoByLink](#requirements-to-run-watchvideobylink) 
@@ -22,18 +21,6 @@ WatchVideoByLink takes a public video URL and display it in a video player which
 * [Contributing](#contributing)  
 * [License](#license)
 
-## What is WatchVideoByLink
-
-WatchVideoByLink takes a public video URL link and display the video in a custom video player depending on the video type, WatchVideoByLink currently supports video/mp4 (MP4), video/webm (WebM), application/x-mpegURL (HLS) or application/dash+xml (MPEG-DASH) URL Links, Automatic video type is also available but works a little bit differently as the system will try to get a video type and video link from the provided URL link.
-
-Inside each video player there are diffrent features which makes the watching experience an enjoyable process but what video/mp4 (MP4), video/webm (WebM) and application/x-mpegURL (HLS) have in common is the ability to download/record the provided video for as long of a video duration that the user wants provided by how long the original video is.
-
-After the downloaded/recorded video finishes downloading 
-- Thumbnail creation gets taken into action: 8 snapshots of the video gets taken
-- (optional) VP9 video compression gets taken into action: video/mp4 -> video/webm
-
-once everything is done the video will be found available at /saved/videos with features to make it easy to look up, identify and organize each download video.
-  
 ## Installation
  
 ### Docker
