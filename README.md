@@ -19,12 +19,12 @@ WatchVideoByLink takes a public video URL and display it in a video player which
 WatchVideoByLink provides:
 - Support for MP4/WebM/HLS/MPEG-DASH video types
 - Custom video players for consuming streams and videos
-- Automaticaly detect video files from [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html)
+- Automatically detect video files from [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html)
 - Download, Trim or Record streams and videos
 - Uploading videos max 1GB per file
 - Keeping downloaded videos organised with folder creation and file renaming 
 - Search functionality to find folders and videos by name (local to selected folder)
-- Restoreing failed video downloads using untrunc and some luck 
+- Restoring failed video downloads using untrunc and some luck 
 
 ## Installation
  
