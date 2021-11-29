@@ -59,7 +59,7 @@ The fastest way to try WatchVideoByLink locally is using Docker on Windows, Linu
 
 ### 2. Clone Github Repository
 
-Clone repo in your terminal with the following command:
+Clone repo in your terminal with the following commands:
 
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
