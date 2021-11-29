@@ -80,7 +80,9 @@ docker build -t watchvideobylink .
 docker run -p 8080:8080 watchvideobylink
 ```
 
-You should see a wall of logging output from the containers being launched on your machine. Once this output slows, you should have a running instance of Superset on your local machine!
+You should see a wall of logging output from the containers being launched on your machine. Once this output slows, you should have a running instance of WatchVideoByLink on your local machine! 
+
+Open `http://localhost:8080` in your preferred browser to access WatchVideoByLink.
 
 ## Installing from Scratch
 
