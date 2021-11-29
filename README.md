@@ -11,8 +11,28 @@ WatchVideoByLink takes a public video URL and display it in a video player which
 [**License**](#license)
 
 ## Screenshots & Gifs
-**Demo Video**
+
+**Demo**
+
 <kbd><img src="./media/demo.gif" title="Demo Video"/></kbd> 
+
+**Home**
+
+<kbd><img src="./media/home-screenshot.jpeg" title="Home Page"/></kbd>
+
+**/saved/videos**
+
+<kbd><img src="./media/folders-screenshot.jpeg" title="/saved/videos Page"/></kbd>
+
+<kbd><img src="./media/edit-mode-screenshot.jpeg" title="Edit mode"/></kbd>
+
+**Video Player**
+
+<kbd><img src="./media/mp4-video-player-screenshot.jpeg" title="MP4 Video Player"/></kbd>
+
+**Trim Video**
+
+<kbd><img src="./media/trim-video-screenshot.jpeg" title="Trim Video"/></kbd>
 
 ## Why WatchVideoByLink?
 
