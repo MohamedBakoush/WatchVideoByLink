@@ -6,7 +6,8 @@
 WatchVideoByLink takes a public video URL and display it in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize MP4/WebM/HLS/MPEG-DASH video types
 
 [**Why WatchVideoByLink?**](#why-watchvideobylink) |
-[**Installation**](#installation) |
+[**Installing Locally Using Docker**](#installing-locally-using-docker) |
+[**Installing from Scratch**](#installing-from-scratch) |
 [**Contributing**](#contributing) |
 [**License**](#license)
 
@@ -48,13 +49,40 @@ WatchVideoByLink provides:
 
 [For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki#features)
 
-## Installation
- 
-### Docker
-You can use the included Dockerfile to build and execute the package as a container.
+## Installing Locally Using Docker 
 
-	docker build -t watchvideobylink .
-	docker run -p 8080:8080 watchvideobylink
+The fastest way to try WatchVideoByLink locally is using Docker on Windows, Linux or Mac OSX computers.
+
+### 1. Install Docker
+
+[Install Docker](https://docs.docker.com/get-docker/) by following Docker’s instructions 
+
+### 2. Clone Github Repository
+
+Clone repo in your terminal with the following command:
+
+```
+git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
+```
+
+### 3. Launch Through Docker
+
+Navigate to the folder you created in step 2:
+
+```
+cd WatchVideoByLink
+```
+
+Then, run the following command:
+
+```
+docker build -t watchvideobylink .
+docker run -p 8080:8080 watchvideobylink
+```
+
+You should see a wall of logging output from the containers being launched on your machine. Once this output slows, you should have a running instance of Superset on your local machine!
+
+## Installing from Scratch
 
 ### Requirements to run WatchVideoByLink
   - [Node.js](https://nodejs.org/en/) - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
