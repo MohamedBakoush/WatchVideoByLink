@@ -104,7 +104,7 @@ You should see a wall of logging output from the containers being launched on yo
   - It may be due to missing MSVCR100.dll File.
     - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
 
-### Clone Repository
+### 1. Clone Github Repository
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
 cd WatchVideoByLink
@@ -112,19 +112,19 @@ cd WatchVideoByLink
 
 Alternatively you may download and unpack the [zip](https://github.com/MohamedBakoush/WatchVideoByLink/archive/master.zip)
 
-### Install Dependencies
+### 2. Install Dependencies
 
 ```
 npm install
 ```
 
-### Build necessary tasks
+### 3. Build necessary tasks
 
 ```
 npm run build
 ```
 
-### Start Server
+### 4. Start Server
 
 ```
 npm start
