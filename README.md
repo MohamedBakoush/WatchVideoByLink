@@ -25,6 +25,8 @@ WatchVideoByLink is a web-app that allows you to watch, download and organize pu
 
 <kbd><img src="./media/folders-screenshot.jpeg" title="/saved/videos Page"/></kbd>
 
+**Edit Mode**
+
 <kbd><img src="./media/edit-mode-screenshot.jpeg" title="Edit mode"/></kbd>
 
 **Video Player**
