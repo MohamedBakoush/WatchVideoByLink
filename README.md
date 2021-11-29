@@ -105,6 +105,9 @@ You should see a wall of logging output from the containers being launched on yo
     - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
 
 ### 1. Clone Github Repository
+
+Clone repo in your terminal with the following command:
+
 ```
 git clone https://github.com/MohamedBakoush/WatchVideoByLink.git
 cd WatchVideoByLink
