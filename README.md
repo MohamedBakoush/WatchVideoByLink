@@ -3,7 +3,7 @@
   <big><strong>WatchVideoByLink</strong></big>
 </h1>
 
-WatchVideoByLink is a web-app which takes public video URLs and displays them in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize supported video types.
+WatchVideoByLink is a web-app that takes public video URLs and displays them in a video player which has features that make the watching experience an enjoyable process with the ability to Download and Organize supported video types.
 
 [**Why WatchVideoByLink?**](#why-watchvideobylink) |
 [**Installing Locally Using Docker**](#installing-locally-using-docker) |
