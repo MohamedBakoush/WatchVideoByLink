@@ -1,23 +1,31 @@
 # Dependency directory
 node_modules/
 
+# Test directory
+__tests__/
+
 # Downloaded video files
 media/video/**
 media/working-video/**
 media/deleted-videos/** 
 
+# Readme Screenshots & Gifs
+media/demo.gif
+media/edit-mode-screenshot.jpeg
+media/folders-screenshot.jpeg
+media/home-screenshot.jpeg
+media/mp4-video-player-screenshot.jpeg
+media/trim-video-screenshot.jpeg
+
 # Json Files
 data/available-videos.json
-__tests__/data/available-videos.test.json
 data/current-download-videos.json
-__tests__/data/current-download-videos.test.json
 data/data-videos.json
-__tests__/data/data-videos.test.json
 data/user-settings.json
-__tests__/data/user-settings.test.json
 
 # file types
 *.mp4
 *.webm
 *.exe
 *.DLL
+*.md
