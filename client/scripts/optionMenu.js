@@ -35,7 +35,7 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
         option_menu_copy.title = "Get shareable link";
         option_menu_copy.onclick = function(e){
           e.preventDefault();
-          optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy);
+          optionVideoMenuCopyOnClick(videoSrc, videoType, option_menu_copy);
         };
         // check if video title is same as dispalyed by ${videoInfo_ID}-title id
         if (video_name !== document.getElementById(`${videoInfo_ID}-title`).textContent) { 
@@ -140,6 +140,13 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     }
     // option_menu_container
     const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
+    // copy folder link
+    const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
+    option_menu_copy.title = "Get shareable link";
+    option_menu_copy.onclick = function(e){
+      e.preventDefault();
+      optionFolderMenuCopyOnClick(folderURL, option_menu_copy);
+    };
     // check if video title is same as dispalyed by ${videoInfo_ID}-title id
     if (folder_name !== document.getElementById(`${folderInfo_ID}-title`).textContent) { 
       folder_name = document.getElementById(`${folderInfo_ID}-title`).textContent;
@@ -230,7 +237,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
 }
 
 // on click option menu copy video link
-export function optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy) { 
+export function optionVideoMenuCopyOnClick(videoSrc, videoType, option_menu_copy) { 
     try {
       if (typeof videoSrc !== "string") {
         basic.notify("error","Copied Video Link: Invalid videoSrc");
@@ -247,12 +254,30 @@ export function optionMenuCopyOnClick(videoSrc, videoType, option_menu_copy) {
         document.body.removeChild(tempCopyLink);
         option_menu_copy.textContent = "Copied";
         basic.notify("success","Copied Video Link");
-        return "optionMenuCopyOnClick";
+        return "optionVideoMenuCopyOnClick";
       }
     } catch (error) {
       basic.notify("error","Copied Video Link: Failed to execute function properly");
-      return "optionMenuCopyOnClick didnt work";
+      return "optionVideoMenuCopyOnClick didnt work";
     }
+}
+
+// on click option menu copy folder link
+function optionFolderMenuCopyOnClick(fodlerURL, option_menu_copy) {
+  try {
+    const tempCopyLink = document.createElement("textarea");
+    document.body.appendChild(tempCopyLink);
+    tempCopyLink.value = fodlerURL;
+    tempCopyLink.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempCopyLink);
+    option_menu_copy.textContent = "Copied";
+    basic.notify("success","Copied Folder Link");
+    return "optionFolderMenuCopyOnClick";
+  } catch (error) {
+    basic.notify("error","Copied Folder Link: Failed to execute function properly");
+    return "optionFolderMenuCopyOnClick didnt work";
+  }
 }
 
 // on click video option menu edit
@@ -289,7 +314,7 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
         option_menu.classList = "thumbnail-option-menu fa fa-bars";
         option_menu_container.remove();
         close_option_menu.remove();
-        document.body.style.overflow ="hidden";
+        document.body.style.overflow = "hidden";
         const video_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
         const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body");
         backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu, option_menu_container,close_option_menu);
