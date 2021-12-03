@@ -59,6 +59,10 @@
   overflow: hidden;
 }
 
+.folderContainer {
+  text-decoration: none;
+}
+
 .thumbnail-image-container{ 
   background: rgb(0,0,0);
   height: 204px;

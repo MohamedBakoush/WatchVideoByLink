@@ -127,10 +127,17 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
 // on click folder option menu
 export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderInfo_ID, folder_name, option_menu, folderContainerLink, folderContainer, folderTitleContainer, videoDetails) { 
     option_menu.title = ""; 
+    folderContainerLink.removeAttribute("href");
     option_menu.disabled = true;
     option_menu.classList = "thumbnail-option-menu";
     folderContainerLink.onclick = null;
-    folderContainerLink.draggable = false;
+    folderContainerLink.draggable = false; 
+    let folderURL;
+    if (document.location.search == "") { 
+      folderURL = `${window.location.origin}/saved/videos?=${folderInfo_ID}`;
+    } else {
+      folderURL = `${window.location.origin}/saved/videos${document.location.search}&${folderInfo_ID}`;
+    }
     // option_menu_container
     const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
     // check if video title is same as dispalyed by ${videoInfo_ID}-title id
@@ -140,6 +147,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     // update ${videoInfo_ID}-title id into input text box
     document.getElementById(`${folderInfo_ID}-title`).remove();
     const inputNewTitle = basic.createInput(document.getElementById(`${folderInfo_ID}-title-container`),"text", folder_name, `${folderInfo_ID}-title`, "inputNewTitle");
+    document.getElementById(`${folderInfo_ID}-title-container`).removeAttribute("href");
     inputNewTitle.onkeypress = function(e){ // on input new title key press
       if (!e) e = window.event;
       var keyCode = e.code || e.key;
@@ -164,7 +172,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     close_option_menu.title = "Close menu";
     close_option_menu.onclick = function(e){
       e.preventDefault();
-      closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle);
+      closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL);
     };
     // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
     const isHover = e => e.parentElement.querySelector(":hover") === e;
@@ -187,8 +195,10 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
                     if (document.getElementById(`${folderInfo_ID}-title`)) {  
                         document.getElementById(`${folderInfo_ID}-title`).remove();
                         basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfo_ID}-title`, folder_name);
+                        document.getElementById(`${folderInfo_ID}-title-container`).href = folderURL;
                     } 
                     option_menu.title = "menu";
+                    folderContainerLink.href = folderURL;
                     option_menu.classList = "thumbnail-option-menu fa fa-bars";
                     folderContainerLink.onclick = function(e){
                         e.preventDefault();  
@@ -208,24 +218,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
               };
             } else{
               if (hovered === false) { 
-                if (folder_name !== inputNewTitle.value) {
-                    folder_name = inputNewTitle.value;
-                    showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
-                }
-                if (document.getElementById(`${folderInfo_ID}-title`)) {  
-                    document.getElementById(`${folderInfo_ID}-title`).remove();
-                    basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfo_ID}-title`, folder_name);
-                } 
-                option_menu.title = "menu";
-                option_menu.classList = "thumbnail-option-menu fa fa-bars";
-                folderContainerLink.onclick = function(e){
-                    e.preventDefault();  
-                    showAvailableVideos.folderOnClick(savedVideosThumbnailContainer, videoDetails);
-                };
-                folderContainerLink.draggable = true;
-                option_menu.disabled = false;
-                option_menu_container.remove();
-                close_option_menu.remove(); 
+                closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL);
                 document.removeEventListener("mousemove", checkHoverFunction);
               } 
               clearInterval(checkIfInputActive);
@@ -486,18 +479,20 @@ export function closeVideoOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, v
 }
 
 // close folder edit menu button
-export function closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle) {
+export function closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL) {
     if (folder_name !== inputNewTitle.value) {
       folder_name = inputNewTitle.value;
       showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
     }
     if (document.getElementById(`${folderInfo_ID}-title`)) {  
         document.getElementById(`${folderInfo_ID}-title`).remove();
+        document.getElementById(`${folderInfo_ID}-title-container`).href = folderURL;
         basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfo_ID}-title`, folder_name);
     } 
     option_menu.title = "menu";
     option_menu.classList = "thumbnail-option-menu fa fa-bars";
     folderContainerLink.draggable = true;
+    folderContainerLink.href = folderURL;
     option_menu.disabled = false;
     option_menu_container.remove();
     close_option_menu.remove(); 

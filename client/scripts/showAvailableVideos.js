@@ -258,7 +258,14 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
   videoDetails["info"]["id"] = folderInfoID;
   basic.pushDataToSearchableVideoDataArray(videoDetails[folderInfoID]); 
   
-  const folderContainerLink = basic.createLink(savedVideosThumbnailContainer, undefined, folderInfoID, "folderContainer"); 
+  let folderURL;
+  if (document.location.search == "") { 
+    folderURL = `${window.location.origin}/saved/videos?=${folderInfoID}`;
+  } else {
+    folderURL = `${window.location.origin}/saved/videos${document.location.search}&${folderInfoID}`;
+  }
+
+  const folderContainerLink = basic.createLink(savedVideosThumbnailContainer, folderURL, folderInfoID, "folderContainer"); 
   folderContainerLink.draggable = true; 
   folderContainerLink.onclick = function(e){
     e.preventDefault();  
@@ -279,7 +286,7 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
 
   const folderContainer = basic.createSection(folderContainerLink, "section", undefined, `${folderInfoID}-container`);
   basic.createSection(folderContainer, "section", "folder-image-container fa fa-folder", `${folderInfoID}-image-container`);
-  const folderTitleContainer = basic.createLink(folderContainer, undefined, `${folderInfoID}-title-container`, "folderTitleContainer");
+  const folderTitleContainer = basic.createLink(folderContainer, folderURL, `${folderInfoID}-title-container`, "folderTitleContainer");
   basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfoID}-title`, folder_name);   
 
   // menu options
