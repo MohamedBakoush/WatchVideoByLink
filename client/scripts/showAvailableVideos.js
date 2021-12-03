@@ -78,6 +78,8 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
           // display video details
           displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);  
         } else {
+          history.replaceState(null, "", "/saved/videos");
+          basic.notify("error", "Invalid Folder Path"); 
           // display video details
           displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
         }
