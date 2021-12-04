@@ -9,3 +9,13 @@ If you have a suggestion that would make WatchVideoByLink better, please fork th
 5. Open a Pull Request
     
 [Github - Contributing to projects article](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) 
+
+An emoji can go a long way for commit messages.
+
+- 🐛 FIX - Fix a bug.
+- 📦 NEW - Add or update compiled files or packages.
+- 🔥 REMOVE - Remove code or files.
+- 🚀 RELEASE - Deploy stuff.
+- 📖 DOC - Add or update documentation.
+- 👌 IMPROVE - Improve structure / format of the code.
+- 💩 BAD - Bad code written that needs to be improved.
