@@ -205,10 +205,12 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
-          const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {    
+          deleteVideoButton.remove();
+          const confirmationButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          confirmationButton.onclick = function(e){
+            e.preventDefault();
             deleteVideoDataPermanently(video_ID);
-          }
+          };
         };
         return "video unfinished";
       } else if(videoProgressUnfinished == "working video for untrunc is unavailable") { 
@@ -228,11 +230,13 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         const deleteVideoButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
         // action on button click
         deleteVideoButton.onclick = function(e){
-          e.preventDefault();
-          const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {
+          e.preventDefault();   
+          deleteVideoButton.remove();
+          const confirmationButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          confirmationButton.onclick = function(e){
+            e.preventDefault();
             deleteVideoDataPermanently(video_ID);
-          }
+          };
         };
         return "thumbnail and compression unfinished";
       } else if(thumbnailProgressUnfinished && !compressionProgressUnfinished) { 
@@ -249,10 +253,12 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
-          const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {    
+          deleteVideoButton.remove();
+          const confirmationButton = basic.createSection(tumbnailOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          confirmationButton.onclick = function(e){
+            e.preventDefault();
             deleteVideoDataPermanently(video_ID);
-          }
+          };
         };
         return "thumbnail unfinished";
       } else if(!thumbnailProgressUnfinished && compressionProgressUnfinished) { 
@@ -269,8 +275,10 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
-          const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {    
+          deleteVideoButton.remove();
+          const confirmationButton = basic.createSection(compressionOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          confirmationButton.onclick = function(e){
+            e.preventDefault();
             deleteVideoDataPermanently(video_ID);
             if (savedVideosThumbnailContainer) {
               //remove video from /saved/videos
@@ -281,7 +289,7 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
               // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario if no availabe videos
               showAvailableVideos.noAvailableOrSearchableVideoMessage();
             }
-          }
+          };
         };
         return "compression unfinished";
       } else{

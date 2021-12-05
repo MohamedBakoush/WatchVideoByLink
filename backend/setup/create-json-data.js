@@ -36,6 +36,11 @@ function create_user_settings() {
                 "downloadVideo": false,
                 "trimVideo": false,
                 "downloadUploadedVideo": false
+            },
+            "confirmation": {
+              "downloadVideoStream": false,
+              "trimVideo": false,
+              "downloadVideo": false
             }
         }
     };

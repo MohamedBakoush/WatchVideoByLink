@@ -15,6 +15,55 @@ export function updateFileNameID(updateFileNameID) {
   }
 }
 
+// get download confirmation status
+export async function getDownloadConfirmation() {
+  const response = await fetch("../getDownloadConfirmation");
+  let userConfirmationSettings;
+  if (response.ok) {
+    userConfirmationSettings = await response.json(); 
+    if (userConfirmationSettings == "userConfirmationSettings unavailable") {
+      userConfirmationSettings = {
+        "downloadVideoStream": false,
+        "trimVideo": false,
+        "downloadVideo": false
+      }; 
+      return userConfirmationSettings;
+    } else {
+      return userConfirmationSettings;
+    }
+  } else {
+    userConfirmationSettings = {
+      "downloadVideoStream": false,
+      "trimVideo": false,
+      "downloadVideo": false
+    }; 
+    return userConfirmationSettings;
+  }
+}
+
+// update download confirmation by id & bool
+export async function updateDownloadConfirmation(id, bool) {
+  const payload = {  // data sending in fetch request
+    updateID : id,
+    updateBool : bool
+  };
+  const response = await fetch("../updateDownloadConfirmation",{ 
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }); 
+  if (response.ok) {  
+    const updateConfirmation = await response.json();  
+    if (updateConfirmation == "bool updated") { 
+      return "Updated confirmation";
+    } else {
+      return "Failed to update confirmation";
+    }
+  }else { 
+    return "Failed to update confirmation";
+  }
+}
+
 // controlBar at the top of the video player
 export function topPageControlBarContainer(player) {
   const topPageControlBarContainer =  document.createElement("div");
@@ -70,8 +119,25 @@ export function downloadVideoButton(container, videoSrc, videoType) {
     const downloadVideoButton = basic.createSection(container, "button", "vjs-menu-item downloadVideoMenuContentItem", "downloadVideoButton");
     downloadVideoButton.title = "Download Video";
     const downloadVideoButtonText = basic.createSection(downloadVideoButton, "span", "vjs-menu-item-text", undefined, "Download Video");
-    const downloadVideoConfirmation = function (){
-      const downloadConfirm = confirm("Press OK to Download Full Video");
+    const downloadVideoConfirmation = async function (){
+      const response = await getDownloadConfirmation();
+      const downloadConfirmationResponse = response.downloadVideo;
+      let downloadConfirm;
+      if (typeof downloadConfirmationResponse == "boolean") {
+        if (downloadConfirmationResponse === true) {
+          downloadConfirm = downloadConfirmationResponse;
+        } else {
+          downloadConfirm = confirm("Press OK to Download Full Video");
+          if (downloadConfirm) {
+            updateDownloadConfirmation("downloadVideo", true);
+          }
+        }
+      } else {
+        downloadConfirm = confirm("Press OK to Download Full Video");
+        if (downloadConfirm) {
+          updateDownloadConfirmation("downloadVideo", true);
+        }
+      }
       if (downloadConfirm) {
         basic.notify("success","Start Full Video Download");
         // if user confirms download full video then send videoSrc, videoType to the server as a post request by downloadVideo
@@ -351,39 +417,58 @@ export function RecStreamButton(player, Button, StopRecButton, videoSrc, videoTy
         id: "RecButton"
       });
     },
-    handleClick: function() {
-      /* do something on click */
-     downloadVideoStream(videoSrc, videoType).then( (returnValue) => {
-       if (returnValue == "failed record video file") {
-        console.log("failed record video file");
-        basic.notify("error","Error: Connection Refused.");
-      } else if (returnValue == "Cannot-find-ffmpeg-ffprobe") {
-        console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
-        basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe");
-      } else if (returnValue == "Cannot-find-ffmpeg") {
-        console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
-        basic.notify("error","Encoding Error: Cannot find ffmpeg");
-      } else if (returnValue == "Cannot-find-ffprobe") {
-        console.log("Encoding Error: Cannot find ffprobe");
-        basic.notify("error","Encoding Error: Cannot find ffprobe");
-      } else if (returnValue == "ffmpeg-failed") {
-        console.log("Encoding Error: ffmpeg failed");
-        basic.notify("error","Encoding Error: ffmpeg failed");
-      } else {
-        console.log("downloading");
-        // hide rec button when stop rec is avtive
-        player.getChild("controlBar").getChild("RecButton").hide();
-        // StopRecButton
-        if (document.getElementById("StopRecButton")) { // if StopRecButton exists then show
-          player.getChild("controlBar").getChild("StopRecButton").show();
-        } else { // create stop rec button
-          videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
-          player.getChild("controlBar").addChild("StopRecButton", {}, 1);
+    handleClick: async function() {
+      const response = await getDownloadConfirmation();
+      const downloadConfirmationResponse = response.downloadVideoStream;
+      let downloadConfirm;
+      if (typeof downloadConfirmationResponse == "boolean") {
+        if (downloadConfirmationResponse === true) {
+          downloadConfirm = downloadConfirmationResponse;
+        } else {
+          downloadConfirm = confirm("Press OK to Record Stream Video");
+          if (downloadConfirm) {
+            updateDownloadConfirmation("downloadVideoStream", true);
+          }
         }
-        recordingStreamCheck(player, RecButton);
-        addStopDownloadOnWindowClose();
+      } else {
+        downloadConfirm = confirm("Press OK to Record Stream Video");
+        if (downloadConfirm) {
+          updateDownloadConfirmation("downloadVideoStream", true);
+        }
       }
-     });
+      if (downloadConfirm) {
+        downloadVideoStream(videoSrc, videoType).then( (returnValue) => {
+          if (returnValue == "failed record video file") {
+           console.log("failed record video file");
+           basic.notify("error","Error: Connection Refused.");
+         } else if (returnValue == "Cannot-find-ffmpeg-ffprobe") {
+           console.log("Encoding Error: Cannot find ffmpeg and ffprobe in WatchVideoByLink directory");
+           basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe");
+         } else if (returnValue == "Cannot-find-ffmpeg") {
+           console.log("Encoding Error: Cannot find ffmpeg in WatchVideoByLink directory");
+           basic.notify("error","Encoding Error: Cannot find ffmpeg");
+         } else if (returnValue == "Cannot-find-ffprobe") {
+           console.log("Encoding Error: Cannot find ffprobe");
+           basic.notify("error","Encoding Error: Cannot find ffprobe");
+         } else if (returnValue == "ffmpeg-failed") {
+           console.log("Encoding Error: ffmpeg failed");
+           basic.notify("error","Encoding Error: ffmpeg failed");
+         } else {
+           console.log("downloading");
+           // hide rec button when stop rec is avtive
+           player.getChild("controlBar").getChild("RecButton").hide();
+           // StopRecButton
+           if (document.getElementById("StopRecButton")) { // if StopRecButton exists then show
+             player.getChild("controlBar").getChild("StopRecButton").show();
+           } else { // create stop rec button
+             videojs.registerComponent("StopRecButton", StopRecButton); // eslint-disable-line
+             player.getChild("controlBar").addChild("StopRecButton", {}, 1);
+           }
+           recordingStreamCheck(player, RecButton);
+           addStopDownloadOnWindowClose();
+         }
+        }); 
+      }
     }
   });
   return RecButton;
@@ -583,8 +668,25 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
           // trimVideoButton
           const trimVideoButton = basic.createInput(trimVideoButtonContainer, "submit", "Trim Video", undefined, "button trimVideoButton");
           trimVideoButton.title = "Trim Video";
-          trimVideoButton.onclick = function(){
-            const downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
+          trimVideoButton.onclick = async function(){
+            const response = await getDownloadConfirmation();
+            const downloadConfirmationResponse = response.trimVideo;
+            let downloadConfirm;
+            if (typeof downloadConfirmationResponse == "boolean") {
+              if (downloadConfirmationResponse === true) {
+                downloadConfirm = downloadConfirmationResponse;
+              } else {
+                downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
+                if (downloadConfirm) {
+                  updateDownloadConfirmation("trimVideo", true);
+                }
+              }
+            } else {
+              downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
+              if (downloadConfirm) {
+                updateDownloadConfirmation("trimVideo", true);
+              }
+            }
             if (downloadConfirm) {
               basic.notify("success",`Start Trimed Video Download: ${secondsToHms(inputLeft.value)} - ${secondsToHms(inputRight.value)}`);
              //Logic to download video
