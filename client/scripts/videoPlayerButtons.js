@@ -15,6 +15,55 @@ export function updateFileNameID(updateFileNameID) {
   }
 }
 
+// get download confirmation status
+export async function getDownloadConfirmation() {
+  const response = await fetch("../getDownloadConfirmation");
+  let userConfirmationSettings;
+  if (response.ok) {
+    userConfirmationSettings = await response.json(); 
+    if (userConfirmationSettings == "userConfirmationSettings unavailable") {
+      userConfirmationSettings = {
+        "downloadVideoStream": false,
+        "trimVideo": false,
+        "downloadVideo": false
+      }; 
+      return userConfirmationSettings;
+    } else {
+      return userConfirmationSettings;
+    }
+  } else {
+    userConfirmationSettings = {
+      "downloadVideoStream": false,
+      "trimVideo": false,
+      "downloadVideo": false
+    }; 
+    return userConfirmationSettings;
+  }
+}
+
+// update download confirmation by id & bool
+export async function updateDownloadConfirmation(id, bool) {
+  const payload = {  // data sending in fetch request
+    updateID : id,
+    updateBool : bool
+  };
+  const response = await fetch("../updateDownloadConfirmation",{ 
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }); 
+  if (response.ok) {  
+    const updateConfirmation = await response.json();  
+    if (updateConfirmation == "bool updated") { 
+      return "Updated confirmation";
+    } else {
+      return "Failed to update confirmation";
+    }
+  }else { 
+    return "Failed to update confirmation";
+  }
+}
+
 // controlBar at the top of the video player
 export function topPageControlBarContainer(player) {
   const topPageControlBarContainer =  document.createElement("div");

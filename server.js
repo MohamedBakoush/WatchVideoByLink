@@ -46,6 +46,33 @@ function getVideoPlayerSettings(req, res) {
   res.json(userSettings.getUserSettings(["videoPlayer"]));
 }
 
+// get download confirmation status
+app.get("/getDownloadConfirmation", getDownloadConfirmation);
+function getDownloadConfirmation(req, res) {
+  const userConfirmationSettings = userSettings.getUserSettings(["download", "confirmation"]);
+  if (userConfirmationSettings !== "invalid array path" && userConfirmationSettings !== undefined) { 
+    res.json(userConfirmationSettings);
+  } else {
+    res.json("userConfirmationSettings unavailable");
+  }
+}
+
+// update download confirmation by specified id & bool
+app.post("/updateDownloadConfirmation", express.json(), updateDownloadConfirmation);
+function updateDownloadConfirmation(req, res) {
+  if (typeof req.body.updateBool == "boolean") {
+    const checkIfValidID = userSettings.getUserSettings(["download", "confirmation", req.body.updateID]);
+    if (checkIfValidID !== "invalid array path" && checkIfValidID !== undefined) { 
+      userSettings.updateUserSettingsData(["download", "confirmation", req.body.updateID], req.body.updateBool);
+      res.json("updated bool");
+    } else {
+      res.json("invalid id");
+    }
+  } else {
+    res.json("invalid bool");
+  }
+}
+
 // get video thumbnail by video id and thumbnail number header
 app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
 function streamImageById(req, res){
