@@ -366,14 +366,16 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
         const deleteVideoButton = basic.createSection(deleteVideoButtonContainer, "button", "deleteVideoButton", undefined, "Delete this video");
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
-          const confirmVideoDelete = confirm("Press OK to permanently delete video");
-          if (confirmVideoDelete) {
+          deleteVideoButton.remove();
+          const confirmationButton = basic.createSection(deleteVideoButtonContainer, "button", "deleteVideoButton2", undefined, "Confirm Deletion");
+          confirmationButton.onclick = function(e){
+            e.preventDefault();
             // remove container
             document.body.style.removeProperty("overflow");
             video_edit_container.remove();
             //delete data permanently
             deleteVideoDataPermanently(videoInfo_ID);
-          }
+          };
         };
         return "optionVideoMenuEditOnClick";
       }
@@ -396,34 +398,34 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
     option_menu_container.remove();
     close_option_menu.remove();
     document.body.style.overflow ="hidden";
-    const video_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
-    const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body");
-    backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu, option_menu_container,close_option_menu);
-    const video_edit_article = basic.createSection(video_edit_body, "article", "video-edit-article");
-    const video_edit_form = basic.createSection(video_edit_article, "form");
+    const folder_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
+    const folder_edit_body = basic.createSection(folder_edit_container, "section", "video-edit-body");
+    backToViewAvailableVideoButton(folder_edit_body, folder_edit_container, option_menu, option_menu_container,close_option_menu);
+    const folder_edit_article = basic.createSection(folder_edit_body, "article", "video-edit-article");
+    const folder_edit_form = basic.createSection(folder_edit_article, "form");
 
-    const video_edit_form_title = basic.createSection(video_edit_form, "section");
-    basic.createSection(video_edit_form_title, "h2", "video-edit-form-title", undefined, "Edit mode");
+    const folder_edit_form_title = basic.createSection(folder_edit_form, "section");
+    basic.createSection(folder_edit_form_title, "h2", "video-edit-form-title", undefined, "Edit mode");
 
-    // Video title 
-    const video_title_edit_settings_container = basic.createSection(video_edit_form, "section");
-    const video_title_edit_settings_ul = basic.createSection(video_title_edit_settings_container, "ul");
-    const video_title_edit_settings_li = basic.createSection(video_title_edit_settings_ul, "li", "videoTitleEditContainer");
+    // Folder title 
+    const folder_title_edit_settings_container = basic.createSection(folder_edit_form, "section");
+    const folder_title_edit_settings_ul = basic.createSection(folder_title_edit_settings_container, "ul");
+    const folder_title_edit_settings_li = basic.createSection(folder_title_edit_settings_ul, "li", "videoTitleEditContainer");
 
-    const video_title_edit_content_container = basic.createSection(video_title_edit_settings_li, "section");
-    basic.createSection(video_title_edit_content_container, "strong", undefined, undefined, "Folder Title");
-    const video_title_edit_content_input = basic.inputType(video_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
-    video_title_edit_content_input.placeholder = folder_name;
-    video_title_edit_content_input.focus();
-    const video_title_edit_button_container = basic.createSection(video_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
-    const videoTitleEditButton = basic.createSection(video_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change folder title");
+    const folder_title_edit_content_container = basic.createSection(folder_title_edit_settings_li, "section");
+    basic.createSection(folder_title_edit_content_container, "strong", undefined, undefined, "Folder Title");
+    const folder_title_edit_content_input = basic.inputType(folder_title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
+    folder_title_edit_content_input.placeholder = folder_name;
+    folder_title_edit_content_input.focus();
+    const folder_title_edit_button_container = basic.createSection(folder_title_edit_settings_li, "section", "videoTitleEditButtonContainer");
+    const folderTitleEditButton = basic.createSection(folder_title_edit_button_container, "button", "videoTitleEditButton", undefined, "Change folder title");
 
-    videoTitleEditButton.onclick = function(e){
+    folderTitleEditButton.onclick = function(e){
         e.preventDefault();  
         document.body.style.removeProperty("overflow");
-        video_edit_container.remove();
+        folder_edit_container.remove();
         if (document.getElementById(`${folderInfo_ID}-title`)) { 
-        folder_name = video_title_edit_content_input.value;
+        folder_name = folder_title_edit_content_input.value;
         showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
         } else {
         basic.notify("error",`ID ${folderInfo_ID}-title is Missing`); 
@@ -431,30 +433,32 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
     };
 
     // Danger zone setting 
-    const dangerZone_title_container = basic.createSection(video_edit_form, "section");
+    const dangerZone_title_container = basic.createSection(folder_edit_form, "section");
     basic.createSection(dangerZone_title_container, "h2", "dangerZone-title", undefined, "Danger Zone");
 
-    const dangerZone_settingsContainer = basic.createSection(video_edit_form, "section", "dangerZone-settingsContainer");
+    const dangerZone_settingsContainer = basic.createSection(folder_edit_form, "section", "dangerZone-settingsContainer");
     const dangerZone_settings_ul = basic.createSection(dangerZone_settingsContainer, "ul");
     const dangerZone_settings_li = basic.createSection(dangerZone_settings_ul, "li", "deleteVideoContainer");
 
-    // Delete video 
-    const deleteVideoContentContainer = basic.createSection(dangerZone_settings_li, "section");
-    basic.createSection(deleteVideoContentContainer, "strong", undefined, undefined, "Delete this folder");
-    basic.createSection(deleteVideoContentContainer, "p", undefined, undefined, "Once you delete a folder, there is no going back. Please be certain.");
+    // Delete folder 
+    const deleteFolderContentContainer = basic.createSection(dangerZone_settings_li, "section");
+    basic.createSection(deleteFolderContentContainer, "strong", undefined, undefined, "Delete this folder");
+    basic.createSection(deleteFolderContentContainer, "p", undefined, undefined, "Once you delete a folder, there is no going back. Please be certain.");
 
-    const deleteVideoButtonContainer = basic.createSection(dangerZone_settings_li, "section", "deleteVideoButtonContainer");
-    const deleteVideoButton = basic.createSection(deleteVideoButtonContainer, "button", "deleteVideoButton", undefined, "Delete this folder");
-    deleteVideoButton.onclick = function(e){
+    const deleteFolderButtonContainer = basic.createSection(dangerZone_settings_li, "section", "deleteVideoButtonContainer");
+    const deleteFolderButton = basic.createSection(deleteFolderButtonContainer, "button", "deleteVideoButton", undefined, "Delete this folder");
+    deleteFolderButton.onclick = function(e){
+      e.preventDefault();
+      deleteFolderButton.remove();
+      const confirmationButton = basic.createSection(deleteFolderButtonContainer, "button", "deleteVideoButton2", undefined, "Confirm Deletion");
+      confirmationButton.onclick = function(e){
         e.preventDefault();
-        const confirmVideoDelete = confirm("Press OK to permanently delete video");
-        if (confirmVideoDelete) {
         // remove container
         document.body.style.removeProperty("overflow");
-        video_edit_container.remove();
+        folder_edit_container.remove();
         //delete data permanently
         deleteVideoDataPermanently(folderInfo_ID);
-        }
+      };
     };
 }
 
