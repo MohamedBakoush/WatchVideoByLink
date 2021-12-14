@@ -2,16 +2,19 @@
 const FileSystem = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
+const ffprobe_installer = require("@ffprobe-installer/ffprobe");
 let ffprobe_path, ffmpeg_path, untrunc_path, working_video_path;
 
 // get ffprobe path
 function get_ffprobe_path(){ 
     if (ffprobe_path !== undefined) {
         return ffprobe_path;
-    } else  {
-        if (FileSystem.existsSync("./ffprobe.exe")) { // user input
+    } else  {  
+        if (FileSystem.existsSync(ffprobe_installer.path)) {
+            return update_ffprobe_path(ffprobe_installer.path);
+        } else if (FileSystem.existsSync("./ffprobe.exe")) { 
             return update_ffprobe_path("./ffprobe.exe");
-        } else { //docker
+        } else {
             return update_ffprobe_path("ffprobe");
         } 
     } 
