@@ -1,5 +1,6 @@
 "use strict";
 const FileSystem = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
 let ffprobe_path, ffmpeg_path, untrunc_path, working_video_path;
 
 // get ffprobe path
@@ -19,6 +20,7 @@ function get_ffprobe_path(){
 function update_ffprobe_path(newPath){ 
     if (typeof newPath == "string") {
         ffprobe_path = newPath;
+        ffmpeg.setFfprobePath(newPath);
         return ffprobe_path;
     } else { 
         return undefined;
@@ -42,6 +44,7 @@ function get_ffmpeg_path(){
 function update_ffmpeg_path(newPath){ 
     if (typeof newPath == "string") {
         ffmpeg_path = newPath;
+        ffmpeg.setFfmpegPath(newPath);
         return ffmpeg_path;
     } else { 
         return undefined;
