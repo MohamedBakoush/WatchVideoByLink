@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/MohamedBakoush/WatchVideoByLink#readme",
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "fluent-ffmpeg": "^2.1.2",
