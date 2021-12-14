@@ -1,6 +1,7 @@
 "use strict";
 const FileSystem = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
+const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 let ffprobe_path, ffmpeg_path, untrunc_path, working_video_path;
 
 // get ffprobe path
@@ -32,9 +33,11 @@ function get_ffmpeg_path(){
     if (ffmpeg_path !== undefined) {
         return ffmpeg_path;
     } else  {
-        if (FileSystem.existsSync("./ffmpeg.exe")) { // user input
+        if (FileSystem.existsSync(ffmpeg_installer.path)) {
+            return update_ffmpeg_path(ffmpeg_installer.path);
+        } else if (FileSystem.existsSync("./ffmpeg.exe")) { 
             return update_ffmpeg_path("./ffmpeg.exe");
-        } else { //docker
+        } else {
             return update_ffmpeg_path("ffmpeg");
         } 
     }  
