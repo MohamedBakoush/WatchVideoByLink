@@ -58,12 +58,10 @@ function update_ffmpeg_path(newPath){
 function get_untrunc_path(){ 
     if (untrunc_path !== undefined) {
         return untrunc_path;
-    } else  {
-        if (FileSystem.existsSync("untrunc.exe")) { // user input
-            return update_untrunc_path("untrunc.exe");
-        } else { //docker
-            return update_untrunc_path("./untrunc-master/untrunc");
-        } 
+    } else if (FileSystem.existsSync("untrunc.exe")) { // user input
+        return update_untrunc_path("untrunc.exe");
+    } else { //docker
+        return update_untrunc_path("./untrunc-master/untrunc");
     }  
 }
 
