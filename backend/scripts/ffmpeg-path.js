@@ -15,7 +15,7 @@ function get_ffprobe_path(){
         } else if (FileSystem.existsSync("./ffprobe.exe")) { 
             return update_ffprobe_path("./ffprobe.exe");
         } else {
-            return update_ffprobe_path("ffprobe");
+            return undefined;
         } 
     } 
 }
@@ -41,7 +41,7 @@ function get_ffmpeg_path(){
         } else if (FileSystem.existsSync("./ffmpeg.exe")) { 
             return update_ffmpeg_path("./ffmpeg.exe");
         } else {
-            return update_ffmpeg_path("ffmpeg");
+            return undefined;
         } 
     }  
 }
