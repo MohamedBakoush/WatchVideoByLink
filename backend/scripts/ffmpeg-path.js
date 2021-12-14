@@ -33,14 +33,12 @@ function update_ffprobe_path(newPath){
 function get_ffmpeg_path(){ 
     if (ffmpeg_path !== undefined) {
         return ffmpeg_path;
-    } else  {
-        if (FileSystem.existsSync(ffmpeg_installer.path)) {
-            return update_ffmpeg_path(ffmpeg_installer.path);
-        } else if (FileSystem.existsSync("./ffmpeg.exe")) { 
-            return update_ffmpeg_path("./ffmpeg.exe");
-        } else {
-            return undefined;
-        } 
+    } else if (FileSystem.existsSync(ffmpeg_installer.path)) {
+        return update_ffmpeg_path(ffmpeg_installer.path);
+    } else if (FileSystem.existsSync("./ffmpeg.exe")) { 
+        return update_ffmpeg_path("./ffmpeg.exe");
+    } else {
+        return undefined;
     }  
 }
 
