@@ -9,15 +9,13 @@ let ffprobe_path, ffmpeg_path, untrunc_path, working_video_path;
 function get_ffprobe_path(){ 
     if (ffprobe_path !== undefined) {
         return ffprobe_path;
-    } else  {  
-        if (FileSystem.existsSync(ffprobe_installer.path)) {
-            return update_ffprobe_path(ffprobe_installer.path);
-        } else if (FileSystem.existsSync("./ffprobe.exe")) { 
-            return update_ffprobe_path("./ffprobe.exe");
-        } else {
-            return undefined;
-        } 
-    } 
+    } else if (FileSystem.existsSync(ffprobe_installer.path)) {
+        return update_ffprobe_path(ffprobe_installer.path);
+    } else if (FileSystem.existsSync("./ffprobe.exe")) { 
+        return update_ffprobe_path("./ffprobe.exe");
+    } else {
+        return undefined;
+    }  
 }
 
 // updated ffprobe path
