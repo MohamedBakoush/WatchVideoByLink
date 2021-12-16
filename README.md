@@ -95,14 +95,6 @@ Open `http://localhost:8080` in your preferred browser to access WatchVideoByLin
   - [Git](https://git-scm.com/) - Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
     1. [Download Git from https://git-scm.com/](https://git-scm.com/) 
     2. To check if Git has been downloaded open command prompt for windows or terminal for macOS/Linux and enter `git --version` this will tell you what version of Git has been installed.
-### Requirements to unlock additional features
-  - [FFmpeg](https://ffmpeg.org/) - A complete, cross-platform solution to record, convert and stream audio and video.
-    1. [Download FFmpeg from https://ffmpeg.org/download.html](https://ffmpeg.org/download.html) 
-    2. Once FFmpeg has been downloaded drop ffmpeg.exe and ffprobe.exe files (which could be found in ffmpeg\bin folder) in WatchVideoByLink folder.
-  - [Untrunc](https://github.com/anthwlock/untrunc) - Restore a damaged (truncated) mp4, m4v, mov, 3gp video. Provided you have a similar not broken video. And some luck.  
-    1. [Download Untrunc from https://github.com/anthwlock/untrunc](https://github.com/anthwlock/untrunc) 
-    2. Once Untrunc has been downloaded drop all Untrunc files in WatchVideoByLink folder. 
-  - **Warning using Untrunc may not achieve desired results**
 
 **For windows: If youtube-dl/Video Type: Automatic dosent work**
   - It may be due to missing MSVCR100.dll File.
@@ -124,6 +116,20 @@ Alternatively you may download and unpack the [zip](https://github.com/MohamedBa
 ```
 npm install
 ```
+
+**FFmpeg**
+
+- **macOS**: Run `brew install ffmpeg`
+- **Windows**: Installed via `npm install`
+- **Linux**: Installed via `npm install`
+
+(Optinal) **Untrunc** - Restore failed video downloads
+
+- **macOS**: Installed via [anthwlock/untrunc](https://github.com/anthwlock/untrunc)
+- **Windows**: Installed via [anthwlock/untrunc](https://github.com/anthwlock/untrunc/releases)
+- **Linux**: Installed via [anthwlock/untrunc](https://github.com/anthwlock/untrunc)
+    1. Once downloaded manualy drop all Untrunc files in WatchVideoByLink's directory. 
+- **Warning** using Untrunc may achieve undesired results
 
 ### 3. Build necessary tasks
 
