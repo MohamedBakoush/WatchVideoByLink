@@ -10,12 +10,6 @@ RUN apt-get update \
     && apt-get clean \
     && apt-get install -y --no-install-recommends libc6-dev libgdiplus wget software-properties-common
 
-# Get FFmpeg
-RUN add-apt-repository -y ppa:savoury1/ffmpeg4
-RUN apt install -y ffmpeg
-RUN cp /usr/bin/ffmpeg /watchvideobylink/ffmpeg 
-RUN cp /usr/bin/ffprobe /watchvideobylink/ffprobe
-
 # Get untrunc
 RUN apt-get install -y libavformat-dev libavcodec-dev libavutil-dev
 RUN wget https://github.com/anthwlock/untrunc/archive/master.zip
