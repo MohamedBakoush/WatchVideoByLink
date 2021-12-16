@@ -88,7 +88,7 @@ Open `http://localhost:8080` in your preferred browser to access WatchVideoByLin
 
 ## Installing from Scratch
 
-### Requirements to run WatchVideoByLink
+### Requirements
   - [Node.js](https://nodejs.org/en/) - Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
     1. [Download Node.js from https://nodejs.org/en/](https://nodejs.org/en/) 
     2. To check if node.js has been downloaded open command prompt for windows or terminal for macOS/Linux and enter `node -v` this will tell you what version of Node.js has been installed.
@@ -96,7 +96,7 @@ Open `http://localhost:8080` in your preferred browser to access WatchVideoByLin
     1. [Download Git from https://git-scm.com/](https://git-scm.com/) 
     2. To check if Git has been downloaded open command prompt for windows or terminal for macOS/Linux and enter `git --version` this will tell you what version of Git has been installed.
 
-**For windows: If youtube-dl/Video Type: Automatic dosent work**
+**Windows: If Video Type: Automatic dosent work**
   - It may be due to missing MSVCR100.dll File.
     - This can be solved by installing the [Microsoft Visual C++ 2010 Redistributable Package (x86)/(x64)](https://www.microsoft.com/en-us/download/details.aspx?id=26999) from Microsoft Website.
 
