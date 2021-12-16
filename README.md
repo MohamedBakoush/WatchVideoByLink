@@ -49,7 +49,7 @@ WatchVideoByLink provides:
 - Search functionality to find folders and videos by name (local to selected folder)
 - Restoring failed video downloads using untrunc and some luck 
 
-[For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki#features)
+[For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Features)
 
 ## Installing Locally Using Docker 
 
