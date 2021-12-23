@@ -10,6 +10,8 @@ We love your input! We want to make contributing to this project as easy and tra
 
 ## Our Development Process
 
+All changes happen through pull requests. Pull requests are the best way to propose changes. We actively welcome your pull requests and invite you to submit pull requests directly [here](https://github.com/MohamedBakoush/WatchVideoByLink/pulls), and after review, these can be merged into the project.
+
 ## Using the Project's Standard Commit Messages
 
 ## Pull Requests
