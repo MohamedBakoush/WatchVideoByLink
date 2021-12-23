@@ -1,13 +1,26 @@
 # Contributing to WatchVideoByLink
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
-
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 - Reporting an issue
 - Discussing the current state of the code
 - Submitting a fix
 - Proposing new features
 - Becoming a maintainer
+
+## Our Development Process
+
+## Using the Project's Standard Commit Messages
+
+## Pull Requests
+
+## Full Local Development
+
+## Issues
+
+## Feature Request
+
+## License
 
 If you have a suggestion that would make WatchVideoByLink better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 
