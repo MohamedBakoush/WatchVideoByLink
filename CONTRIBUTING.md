@@ -13,7 +13,7 @@ We love your input! We want to make contributing to this project as easy and tra
 All changes happen through pull requests. Pull requests are the best way to propose changes. We actively welcome your pull requests and invite you to submit pull requests directly [here](https://github.com/MohamedBakoush/WatchVideoByLink/pulls), and after review, these can be merged into the project.
 
 ## Standard Commit Messages
-WatchVideoByLink using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. Please follow these steps to ensure your commit messages are standardized:
+WatchVideoByLink uses the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. Please follow these steps to ensure your commit messages are standardized:
 
 ```
 <type>[optional scope]: <description>
