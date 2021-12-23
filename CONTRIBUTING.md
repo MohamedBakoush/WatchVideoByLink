@@ -13,6 +13,9 @@ We love your input! We want to make contributing to this project as easy and tra
 ## Using the Project's Standard Commit Messages
 
 ## Pull Requests
+1. Fork the repo and create your branch (usually named `patch-%the number of PRs you've already made%`) from `staging`.
+2. If you've added code that should be tested, add some test examples.
+3. Ensure to describe your pull request.
 
 ## Full Local Development
 [Extended documentation for WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink)
