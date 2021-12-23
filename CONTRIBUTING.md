@@ -29,7 +29,7 @@ WatchVideoByLink uses the [conventional commits](https://www.conventionalcommits
 3. Ensure to describe your pull request.
 
 ## Full Local Development
-[Extended documentation for WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink)
+[Extended documentation](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink)
 
 ## Issues
 We use GitHub issues to track public bugs. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. Report a bug by [opening a new issue](https://github.com/MohamedBakoush/WatchVideoByLink/issues); it's that easy!
