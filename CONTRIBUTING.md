@@ -15,6 +15,7 @@ We love your input! We want to make contributing to this project as easy and tra
 ## Pull Requests
 
 ## Full Local Development
+[Extended documentation for WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink)
 
 ## Issues
 
