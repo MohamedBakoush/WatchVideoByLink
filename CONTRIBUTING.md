@@ -22,6 +22,10 @@ We love your input! We want to make contributing to this project as easy and tra
 
 ## License
 
+By contributing to WatchVideoByLink, you agree that your contributions will be licensed under the [Apache-2.0 License](LICENSE).
+
+
+
 If you have a suggestion that would make WatchVideoByLink better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 
 1. Fork the Project
