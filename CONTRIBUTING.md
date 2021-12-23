@@ -1,21 +1,45 @@
+# Contributing to WatchVideoByLink
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
-If you have a suggestion that would make WatchVideoByLink better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
+- Reporting an issue
+- Discussing the current state of the code
+- Submitting a fix
+- Proposing new features
+- Becoming a maintainer
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b new-feature`)
-3. Commit your Changes (`git commit -m "a short description of the change"`)
-4. Push to the Branch (`git push origin new-feature`)
-5. Open a Pull Request
-    
-[Github - Contributing to projects article](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) 
+## Development Process
 
-An emoji can go a long way for commit messages.
+All changes happen through pull requests. Pull requests are the best way to propose changes. We actively welcome your pull requests and invite you to submit pull requests directly [here](https://github.com/MohamedBakoush/WatchVideoByLink/pulls), and after review, these can be merged into the project.
 
-- 🐛 FIX - Fix a bug.
-- 📦 NEW - Add or update compiled files or packages.
-- 🔥 REMOVE - Remove code or files.
-- 🚀 RELEASE - Deploy stuff.
-- 📖 DOC - Add or update documentation.
-- 👌 IMPROVE - Improve structure / format of the code.
-- 💩 BAD - Bad code written that needs to be improved.
+## Standard Commit Messages
+WatchVideoByLink uses the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. Please follow these steps to ensure your commit messages are standardized:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+## Pull Requests
+1. Fork the repo and create your branch (usually named `patch-%the number of PRs you've already made%`) from `staging`.
+2. If you've added code that should be tested, add some test examples.
+3. Ensure to describe your pull request.
+
+## Full Local Development
+[Extended documentation](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink)
+
+## Issues
+We use GitHub issues to track public bugs. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. Report a bug by [opening a new issue](https://github.com/MohamedBakoush/WatchVideoByLink/issues); it's that easy!
+
+## Feature Request
+Great Feature Requests tend to have:
+
+- A quick idea summary.
+- What & why you wanted to add the specific feature.
+- Additional context like images, links to resources to implement the feature etc, etc.
+
+## License
+By contributing to WatchVideoByLink, you agree that your contributions will be licensed under the [Apache-2.0 License](LICENSE).
