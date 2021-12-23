@@ -27,6 +27,11 @@ All changes happen through pull requests. Pull requests are the best way to prop
 We use GitHub issues to track public bugs. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue. Report a bug by [opening a new issue](https://github.com/MohamedBakoush/WatchVideoByLink/issues); it's that easy!
 
 ## Feature Request
+Great Feature Requests tend to have:
+
+- A quick idea summary.
+- What & why you wanted to add the specific feature.
+- Additional context like images, links to resources to implement the feature etc, etc.
 
 ## License
 
