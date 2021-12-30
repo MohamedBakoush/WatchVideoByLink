@@ -340,11 +340,13 @@ export function dragDropAvailableVideoDetails(section){
   if (section === undefined) {
     return "section undefined";
   } else { 
-    section.addEventListener("dragstart", function(e){      
+    section.addEventListener("dragstart", function(e){
+      e.stopPropagation();
       dragEl = e.target; 
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("Text", dragEl.textContent);
       dragDropContainers.forEach(container => {  
+        container.addEventListener("drop", _onDragDrop, false);  
         container.addEventListener("dragover", _onDragOver, false);  
         container.addEventListener("dragend", _onDragEnd, false);  
       });
@@ -353,8 +355,14 @@ export function dragDropAvailableVideoDetails(section){
     return "dragDropAvailableVideoDetails";
   }
   
+  function _onDragDrop(e) { 
+    e.preventDefault();  // Stops browsers from redirecting.
+    e.stopPropagation();
+  }
+  
   function _onDragOver(e){
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = "move";
     if (e.target.id.includes("-img")) { 
       target = document.getElementById(e.target.id.replace("-img",""));  
@@ -471,6 +479,7 @@ export function dragDropAvailableVideoDetails(section){
 
   function _onDragEnd(e){
     e.preventDefault();
+    e.stopPropagation();
     dragEl.classList.remove("dragging"); 
     target.classList.remove("dragging-target");
     target.classList.remove("dragging-target-left");
