@@ -21,3 +21,4 @@ __tests__/data/user-settings.test.json
 *.webm
 *.exe
 *.DLL
+.DS_Store
