@@ -23,7 +23,7 @@
   grid-gap: 1ch;
 }
 
-.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton{  
+.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton, .untruncUnavailableButton{  
   justify-content: center;
   text-decoration: none;
   /* padding: 0.25rem 0.75rem 0 0.75rem; */
@@ -37,7 +37,15 @@
   height: 2.1875rem;
 }
 
-.completeCompressionDownloadButton:hover, .completeTumbnailDownloadButton:hover, .completeTumbnailCompressionDownloadButton:hover, .completeVideoDownloadButton:hover{
+.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton{  
+  background: #000 !important;
+}
+
+.untruncUnavailableButton{  
+  background: #7c7777 !important;
+}
+
+.completeCompressionDownloadButton:hover, .completeTumbnailDownloadButton:hover, .completeTumbnailCompressionDownloadButton:hover, .completeVideoDownloadButton:hover, .untruncUnavailableButton:hover{
   color: #000 !important;
   background: #fff !important; 
 }
