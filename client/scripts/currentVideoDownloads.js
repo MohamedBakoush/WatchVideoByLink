@@ -84,8 +84,10 @@ export function forEachVideoDownloadDetails(container, videoDownloadDetails, vid
   let videoDownloadStatusContainer = document.getElementById(`${videoInfo_ID}-download-status-container`);    
   // if videoDownloadStatusContainer dosent exist    
   let compressionProgressUnfinished, thumbnailProgressUnfinished, videoProgressUnfinished;
-  try {
-    if (videoDownloadDetails[videoInfo_ID]["video"]["download-status"] == "unfinished download") {
+  try { 
+    if (videoDownloadDetails[videoInfo_ID]["video"]["download-status"] ==  "untrunc unavailable") {
+      videoProgressUnfinished = "untrunc unavailable";
+    } else if (videoDownloadDetails[videoInfo_ID]["video"]["download-status"] == "unfinished download") {
       videoProgressUnfinished = "unfinished download";
     } else if (videoDownloadDetails[videoInfo_ID]["video"]["download-status"] == "working video for untrunc is unavailable") {
       videoProgressUnfinished = "working video for untrunc is unavailable";
@@ -116,7 +118,8 @@ export function forEachVideoDownloadDetails(container, videoDownloadDetails, vid
   if(!videoDownloadStatusContainer){
     showDetailsIfDownloadDetailsAvailable(container, videoInfo_ID, videoDownloadDetails[videoInfo_ID]["video"], videoDownloadDetails[videoInfo_ID]["thumbnail"], videoDownloadDetails[videoInfo_ID]["compression"]);      
     return "show download details if avaiable";
-  } else if(videoProgressUnfinished !== "unfinished download" 
+  } else if(videoProgressUnfinished !== "untrunc unavailable" 
+        && videoProgressUnfinished !== "unfinished download" 
         && videoProgressUnfinished !== "working video for untrunc is unavailable" 
         && thumbnailProgressUnfinished !== true 
         && compressionProgressUnfinished !== true){ 
@@ -160,7 +163,9 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
       } 
       let compressionProgressUnfinished, thumbnailProgressUnfinished, videoProgressUnfinished;
       try {
-        if (videoProgress["download-status"] == "unfinished download") {
+        if (videoProgress["download-status"] == "untrunc unavailable") {
+          videoProgressUnfinished = "untrunc unavailable";
+        } else if (videoProgress["download-status"] == "unfinished download") {
           videoProgressUnfinished = "unfinished download";
         } else if (videoProgress["download-status"] == "working video for untrunc is unavailable") {
           videoProgressUnfinished = "working video for untrunc is unavailable";
@@ -192,7 +197,28 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
       const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
       //  title
       basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${video_ID}`); 
-      if(videoProgressUnfinished == "unfinished download") {
+      if (videoProgressUnfinished == "untrunc unavailable") {
+        const videoOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "videoOptionsContainer"); 
+        const untruncUnavailableButton = basic.createSection(videoOptionsContainer, "button", "button untruncUnavailableButton", `${video_ID}-untrunc-unavailable-button`, "Restore damaged video");
+        // action on button click
+        untruncUnavailableButton.onclick = (e) => {
+          e.preventDefault(); 
+          basic.notify("error", "Untrunc Unavailable");   
+        }; 
+        // delete video button
+        const deleteVideoButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+        // action on button click
+        deleteVideoButton.onclick = function(e){
+          e.preventDefault();
+          deleteVideoButton.remove();
+          const confirmationButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          confirmationButton.onclick = function(e){
+            e.preventDefault();
+            deleteVideoDataPermanently(video_ID);
+          };
+        };
+        return "untrunc unavailable";
+      } else if(videoProgressUnfinished == "unfinished download") {
         const videoOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "videoOptionsContainer"); 
         const completeVideoDownloadButton = basic.createSection(videoOptionsContainer, "button", "button completeVideoDownloadButton", `${video_ID}-complete-download-button`, "Restore damaged video");
         // action on button click

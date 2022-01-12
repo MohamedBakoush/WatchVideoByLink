@@ -23,12 +23,11 @@
   grid-gap: 1ch;
 }
 
-.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton{  
+.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton, .untruncUnavailableButton{  
   justify-content: center;
   text-decoration: none;
   /* padding: 0.25rem 0.75rem 0 0.75rem; */
   color: #fff !important;
-  background: #000 !important;
   border-radius: 6px; 
   border: 1px solid #000;
   transition: background-color .3s cubic-bezier(.3,0,.5,1);
@@ -37,7 +36,15 @@
   height: 2.1875rem;
 }
 
-.completeCompressionDownloadButton:hover, .completeTumbnailDownloadButton:hover, .completeTumbnailCompressionDownloadButton:hover, .completeVideoDownloadButton:hover{
+.completeCompressionDownloadButton, .completeTumbnailDownloadButton, .completeTumbnailCompressionDownloadButton, .completeVideoDownloadButton{  
+  background: #000 !important;
+}
+
+.untruncUnavailableButton{  
+  background: #7c7777 !important;
+}
+
+.completeCompressionDownloadButton:hover, .completeTumbnailDownloadButton:hover, .completeTumbnailCompressionDownloadButton:hover, .completeVideoDownloadButton:hover, .untruncUnavailableButton:hover{
   color: #000 !important;
   background: #fff !important; 
 }
