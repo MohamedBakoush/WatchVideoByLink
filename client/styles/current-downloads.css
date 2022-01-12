@@ -28,7 +28,6 @@
   text-decoration: none;
   /* padding: 0.25rem 0.75rem 0 0.75rem; */
   color: #fff !important;
-  background: #000 !important;
   border-radius: 6px; 
   border: 1px solid #000;
   transition: background-color .3s cubic-bezier(.3,0,.5,1);
