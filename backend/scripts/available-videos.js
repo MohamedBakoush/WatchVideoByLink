@@ -26,12 +26,15 @@ function update_json_path_validity(newPath) {
 
 // updated available videos path
 function update_available_videos_path(newPath){ 
-    if (update_json_path_validity(newPath) == "valid path") {
-        const available_videos  = FileSystem.readFileSync(newPath);
-        availableVideos = JSON.parse(available_videos);  
-        available_videos_path = newPath; 
-        return "availableVideos updated";
-    } 
+  const checkJsonValidity = update_json_path_validity(newPath);
+  if (checkJsonValidity == "valid path") {
+      const available_videos  = FileSystem.readFileSync(newPath);
+      availableVideos = JSON.parse(available_videos);  
+      available_videos_path = newPath; 
+      return "availableVideos updated";
+  } else {
+    return checkJsonValidity;
+  }
 } 
 
 // returns availableVideos data
