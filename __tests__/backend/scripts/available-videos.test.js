@@ -41,3 +41,12 @@ describe("update_available_videos_path", () =>  {
         expect(updated).toBe("availableVideos updated");  
     }); 
 }); 
+
+describe("resetAvailableVideos", () =>  {  
+    it("resetAvailableVideos", () =>  {
+        const reset = availableVideos.resetAvailableVideos();
+        expect(reset).toBe("resetAvailableVideos");  
+        const data = availableVideos.getAvailableVideos();
+        expect(data).toMatchObject({}); 
+    });
+}); 
