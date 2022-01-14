@@ -9,19 +9,19 @@ let availableVideos = JSON.parse(available_videos);
 
 // check validity of json path
 function update_json_path_validity(newPath) {
-    if (FileSystem.existsSync(newPath)) {
-      try {
-        if (path.extname(newPath) === ".json") { 
-          return "valid path";
-        } else {
-          return "input path not json"; 
-        }
-      } catch (error) {
-        return error;
+  if (FileSystem.existsSync(newPath)) {
+    try {
+      if (path.extname(newPath) === ".json") { 
+        return "valid path";
+      } else {
+        return "input path not json"; 
       }
-    } else {
-      return "invalid path";
+    } catch (error) {
+      return error;
     }
+  } else {
+    return "invalid path";
+  }
 }
 
 // updated available videos path
@@ -363,6 +363,7 @@ function deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName) {
 }
 
 module.exports = { // export modules 
+    update_json_path_validity,
     update_available_videos_path,
     getAvailableVideos,
     resetAvailableVideos,
