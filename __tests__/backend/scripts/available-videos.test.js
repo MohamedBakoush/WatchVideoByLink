@@ -1,7 +1,8 @@
 const availableVideos = require("../../../backend/scripts/available-videos");
+const availableVideos_json_path = "__tests__/data/available-videos.test.json";
 
 beforeAll(() => {    
-    availableVideos.update_available_videos_path("__tests__/data/available-videos.test.json"); 
+    availableVideos.update_available_videos_path(availableVideos_json_path); 
 });
 
 describe("update_json_path_validity", () =>  {  
@@ -11,19 +12,19 @@ describe("update_json_path_validity", () =>  {
     });
 
     it("input path not json", () =>  {
-        const updated = availableVideos.update_json_path_validity("__tests__/backend/streamVideo.test.js");
+        const updated = availableVideos.update_json_path_validity("__tests__/backend/scripts/available-videos.test.js");
         expect(updated).toBe("input path not json");  
     }); 
 
     it("valid path", () =>  {
-        const updated = availableVideos.update_json_path_validity("__tests__/data/available-videos.test.json");
+        const updated = availableVideos.update_json_path_validity(availableVideos_json_path);
         expect(updated).toBe("valid path");  
     }); 
 }); 
 
 describe("update_available_videos_path", () =>  {  
     afterAll(() => { 
-        availableVideos.update_available_videos_path("__tests__/data/available-videos.test.json");
+        availableVideos.update_available_videos_path(availableVideos_json_path);
     });
 
     it("invalid path", () =>  {
@@ -32,12 +33,12 @@ describe("update_available_videos_path", () =>  {
     });
 
     it("input path not json", () =>  {
-        const updated = availableVideos.update_available_videos_path("__tests__/backend/streamVideo.test.js");
+        const updated = availableVideos.update_available_videos_path("__tests__/backend/scripts/available-videos.test.js");
         expect(updated).toBe("input path not json");  
     }); 
 
     it("availableVideos updated", () =>  {
-        const updated = availableVideos.update_available_videos_path("__tests__/data/available-videos.test.json");
+        const updated = availableVideos.update_available_videos_path(availableVideos_json_path);
         expect(updated).toBe("availableVideos updated");  
     }); 
 }); 
