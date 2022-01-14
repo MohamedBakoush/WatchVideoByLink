@@ -143,32 +143,36 @@ async function changeTitle(videoID, newVideoTitle, folderIDPath) {
 
 // create Folder at availableVideos
 function createFolder(folderIDPath, folderTitle) { 
-  const newfolderID = `folder-${uuidv4()}`;  
-  if (folderIDPath === undefined || folderIDPath.length == 0) { 
-    availableVideos[newfolderID] = {
-      "info": {
-        "title": folderTitle, 
-        "inside-folder": "folder-main"
-      },
-      "content": {}
-    };    
-  }else { 
-    const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath);  
-    eval(availableVideosFolderIDPath)[newfolderID] = {
-      "info": {
-        "title": folderTitle, 
-        "inside-folder": folderIDPath[[folderIDPath.length - 1] ]
-      },
-      "content": {}
-    }; 
-  }  
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-  return {
-    "message": "folder-created",
-    "folderID": newfolderID,
-    "availableVideos": availableVideos
-  };
+  try {
+    const newfolderID = `folder-${uuidv4()}`;  
+    if (folderIDPath === undefined || folderIDPath.length == 0) { 
+      availableVideos[newfolderID] = {
+        "info": {
+          "title": folderTitle, 
+          "inside-folder": "folder-main"
+        },
+        "content": {}
+      };    
+    }else { 
+      const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath);  
+      eval(availableVideosFolderIDPath)[newfolderID] = {
+        "info": {
+          "title": folderTitle, 
+          "inside-folder": folderIDPath[[folderIDPath.length - 1] ]
+        },
+        "content": {}
+      }; 
+    }  
+    const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+    FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+    return {
+      "message": "folder-created",
+      "folderID": newfolderID,
+      "availableVideos": availableVideos
+    };  
+  } catch (error) {
+    return error;
+  }
 }
 
 // input selected element id out of folder element at availableVideos

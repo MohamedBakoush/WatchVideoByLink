@@ -5,6 +5,10 @@ beforeAll(() => {
     availableVideos.update_available_videos_path(availableVideos_json_path); 
 });
 
+afterEach(() => {    
+    availableVideos.resetAvailableVideos();
+}); 
+
 describe("update_json_path_validity", () =>  {  
     it("invalid path", () =>  {
         const updated = availableVideos.update_json_path_validity();
@@ -49,5 +53,43 @@ describe("resetAvailableVideos", () =>  {
         expect(reset).toBe("resetAvailableVideos");  
         const data = availableVideos.getAvailableVideos();
         expect(data).toMatchObject({}); 
+    });
+}); 
+
+describe("createFolder", () =>  {  
+    it("create Folder", () =>  { 
+        const create = availableVideos.createFolder(undefined, "folder_test");
+        expect(create.message).toBe("folder-created"); 
+        const get = availableVideos.getAvailableVideos([create.folderID]);
+        expect(get).toMatchObject({
+            "content": {}, 
+            "info": {
+                "inside-folder": "folder-main", 
+                "title": "folder_test"
+            }
+        });     
+    });
+
+    it("Create Folder Inside Folder", () =>  { 
+        const create_1 = availableVideos.createFolder(undefined, "folder_test_1");
+        expect(create_1.message).toBe("folder-created"); 
+        const get_1 = availableVideos.getAvailableVideos([create_1.folderID]);
+        expect(get_1).toMatchObject({
+            "content": {}, 
+            "info": {
+                "inside-folder": "folder-main", 
+                "title": "folder_test_1"
+            }
+        });   
+        const create_2 = availableVideos.createFolder([create_1.folderID], "folder_test_2");
+        expect(create_2.message).toBe("folder-created");
+        const get_2 = availableVideos.getAvailableVideos([create_1.folderID, "content", create_2.folderID]);
+        expect(get_2).toMatchObject({
+            "content": {}, 
+            "info": {
+                "inside-folder": `${create_1.folderID}`, 
+                "title": "folder_test_2"
+            }
+        });   
     });
 }); 
