@@ -59,10 +59,14 @@ function getAvailableVideos(path_array){
 
 // return available Videos to its inital state
 function resetAvailableVideos(){
+  try {
     availableVideos = {}; 
     const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
     FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
     return "resetAvailableVideos";
+  } catch (error) {
+    return error;
+  }
 }
 
 function updateAvailableVideoData(path_array, data) { 
