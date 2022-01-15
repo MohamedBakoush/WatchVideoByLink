@@ -114,11 +114,19 @@ function availableVideosfolderPath_String(folderIDPath) {
 
 // get available video details by folder path by array
 function availableVideosfolderPath_Array(folderIDPath) {
-  let folderPathString = [];
-  for (let i = 0; i < folderIDPath.length; i++) {  
-    folderPathString.push(folderIDPath[i], "content");
-  }  
-  return folderPathString;
+  if (Array.isArray(folderIDPath)) {
+    if (folderIDPath.length !== 0) {
+      let folderPathString = [];
+      for (let i = 0; i < folderIDPath.length; i++) {  
+        folderPathString.push(folderIDPath[i], "content");
+      }  
+      return folderPathString;
+    } else {
+      return "folderIDPath array input empty";
+    }
+  } else {
+    return "invalid folderIDPath";
+  }
 }
 
 // change title of video  
