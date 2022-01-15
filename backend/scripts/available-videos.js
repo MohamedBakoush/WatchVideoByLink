@@ -39,22 +39,22 @@ function update_available_videos_path(newPath){
 
 // returns availableVideos data
 function getAvailableVideos(path_array){
-    if (path_array !== undefined) {
-      if (path_array.length !== 0) {
-        let dataPath = "availableVideos";
-        for (let i = 0; i < path_array.length; i++) { 
-            if (i == path_array.length - 1) { 
-                return eval(dataPath)[path_array[i]];
-            } else  { 
-                dataPath += `[path_array[${i}]]`;
-            }
-        } 
-      } else {
-        return "invalid array path";
-      }
-    } else  { 
-      return availableVideos;
-    } 
+  if (Array.isArray(path_array)) {
+    if (path_array.length !== 0) {
+      let dataPath = "availableVideos";
+      for (let i = 0; i < path_array.length; i++) { 
+        if (i == path_array.length - 1) { 
+          return eval(dataPath)[path_array[i]];
+        } else  { 
+          dataPath += `[path_array[${i}]]`;
+        }
+      } 
+    } else {
+      return "invalid array path";
+    }
+  } else  { 
+    return availableVideos;
+  } 
 }
 
 // return available Videos to its inital state

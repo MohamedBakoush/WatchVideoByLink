@@ -49,6 +49,62 @@ describe("update_available_videos_path", () =>  {
     }); 
 }); 
 
+describe("getAvailableVideos", () =>  {   
+    it("No input - path array", () =>  {
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos).toMatchObject({}); 
+    }); 
+
+    it("Invalid path array", () =>  {
+        const getAvailableVideos = availableVideos.getAvailableVideos([]);
+        expect(getAvailableVideos).toBe("invalid array path"); 
+    }); 
+
+    it("Get Specified Video Data", () =>  { 
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+        const get_data = availableVideos.getAvailableVideos([fileName]);
+        expect(get_data).toMatchObject({
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });   
+    });
+}); 
+
 describe("resetAvailableVideos", () =>  {  
     it("resetAvailableVideos", () =>  {
         const reset = availableVideos.resetAvailableVideos();
