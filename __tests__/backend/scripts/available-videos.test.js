@@ -173,9 +173,6 @@ describe("updateAvailableVideoData", () =>  {
 }); 
 
 describe("availableVideosfolderPath_String", () =>  {   
-    availableVideos.createFolder(undefined, "folder_test_1");
-    availableVideos.createFolder(["folder_test_1"], "folder_test_2");
-
     it("invalid folderIDPath", () =>  { 
         const string = availableVideos.availableVideosfolderPath_String();
         expect(string).toBe("invalid folderIDPath");  
@@ -198,9 +195,6 @@ describe("availableVideosfolderPath_String", () =>  {
 }); 
 
 describe("availableVideosfolderPath_Array", () =>  {   
-    availableVideos.createFolder(undefined, "folder_test_1");
-    availableVideos.createFolder(["folder_test_1"], "folder_test_2");
-
     it("invalid folderIDPath", () =>  { 
         const string = availableVideos.availableVideosfolderPath_Array();
         expect(string).toBe("invalid folderIDPath");  
