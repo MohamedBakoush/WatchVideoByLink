@@ -93,15 +93,23 @@ function updateAvailableVideoData(path_array, data) {
 
 // get available video details by folder path by string
 function availableVideosfolderPath_String(folderIDPath) {
-  let folderPathString = "";
-  for (let i = 0; i < folderIDPath.length; i++) {  
-    if (i === 0) {
-      folderPathString = folderPathString.concat("availableVideos[\"",folderIDPath[i],"\"].content");
+  if (Array.isArray(folderIDPath)) {
+    if (folderIDPath.length !== 0) {
+      let folderPathString = "";
+      for (let i = 0; i < folderIDPath.length; i++) {  
+        if (i === 0) {
+          folderPathString = folderPathString.concat("availableVideos[\"",folderIDPath[i],"\"].content");
+        } else {
+          folderPathString = folderPathString.concat("[\"",folderIDPath[i],"\"].content");
+        } 
+      }  
+      return folderPathString;      
     } else {
-      folderPathString = folderPathString.concat("[\"",folderIDPath[i],"\"].content");
-    } 
-  }  
-  return folderPathString;
+      return "folderIDPath array input empty";
+    }
+  } else {
+    return "invalid folderIDPath";
+  }
 }
 
 // get available video details by folder path by array

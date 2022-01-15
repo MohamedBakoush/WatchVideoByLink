@@ -172,6 +172,31 @@ describe("updateAvailableVideoData", () =>  {
     });
 }); 
 
+describe("availableVideosfolderPath_String", () =>  {   
+    availableVideos.createFolder(undefined, "folder_test_1");
+    availableVideos.createFolder(["folder_test_1"], "folder_test_2");
+
+    it("invalid folderIDPath", () =>  { 
+        const string = availableVideos.availableVideosfolderPath_String();
+        expect(string).toBe("invalid folderIDPath");  
+    }); 
+
+    it("folderIDPath array input empty", () =>  { 
+        const string = availableVideos.availableVideosfolderPath_String([]);
+        expect(string).toBe("folderIDPath array input empty");  
+    }); 
+
+    it("folder content string path", () =>  { 
+        const string = availableVideos.availableVideosfolderPath_String(["folder_test"]);
+        expect(string).toBe("availableVideos[\"folder_test\"].content");  
+    }); 
+
+    it("folder in a folder string path", () =>  { 
+        const string = availableVideos.availableVideosfolderPath_String(["folder_test_1", "folder_test_2"]);
+        expect(string).toBe("availableVideos[\"folder_test_1\"].content[\"folder_test_2\"].content");  
+    }); 
+}); 
+
 describe("createFolder", () =>  {  
     it("create Folder", () =>  { 
         const create = availableVideos.createFolder(undefined, "folder_test");
