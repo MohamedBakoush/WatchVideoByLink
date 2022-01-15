@@ -70,18 +70,25 @@ function resetAvailableVideos(){
 }
 
 function updateAvailableVideoData(path_array, data) { 
-    if (path_array.length !== 0 || path_array !== undefined) { 
-        let dataPath = "availableVideos";
-        for (let i = 0; i < path_array.length; i++) { 
-            if (i == path_array.length - 1) { 
-                eval(dataPath)[path_array[i]] = data;
-            } else  { 
-                dataPath += `[path_array[${i}]]`;
-            }
-        } 
-        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-        FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-    }  
+  if (Array.isArray(path_array) && path_array.length !== 0) {
+    if (data !== undefined) {
+      let dataPath = "availableVideos";
+      for (let i = 0; i < path_array.length; i++) { 
+        if (i == path_array.length - 1) { 
+          eval(dataPath)[path_array[i]] = data;
+        } else  { 
+          dataPath += `[path_array[${i}]]`;
+        }
+      } 
+      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
+      return "updateAvailableVideoData";
+    } else {
+      return "invalid data";
+    }
+  } else {
+    return "invalid path_array";
+  }
 } 
 
 // get available video details by folder path by string

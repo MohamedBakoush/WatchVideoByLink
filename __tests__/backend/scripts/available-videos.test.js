@@ -1,8 +1,10 @@
 const availableVideos = require("../../../backend/scripts/available-videos");
 const availableVideos_json_path = "__tests__/data/available-videos.test.json";
+const { v4: uuidv4 } = require("uuid");
 
 beforeAll(() => {    
     availableVideos.update_available_videos_path(availableVideos_json_path); 
+    availableVideos.resetAvailableVideos();
 });
 
 afterEach(() => {    
@@ -53,6 +55,64 @@ describe("resetAvailableVideos", () =>  {
         expect(reset).toBe("resetAvailableVideos");  
         const data = availableVideos.getAvailableVideos();
         expect(data).toMatchObject({}); 
+    });
+}); 
+
+describe("updateAvailableVideoData", () =>  {  
+    it("invalid path_array", () =>  {
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData(fileName, {});
+        expect(updateAvailableVideos).toBe("invalid path_array");  
+    }); 
+
+    it("invalid data", () =>  {
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], undefined);
+        expect(updateAvailableVideos).toBe("invalid data");  
+    }); 
+
+    it("updateAvailableVideoData", () =>  { 
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+        const get_data = availableVideos.getAvailableVideos([fileName]);
+        expect(get_data).toMatchObject({
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });   
     });
 }); 
 
