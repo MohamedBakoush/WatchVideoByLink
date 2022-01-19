@@ -216,6 +216,149 @@ describe("availableVideosfolderPath_Array", () =>  {
     }); 
 }); 
 
+describe("changeTitle", () =>  {
+    it("Change Title: Video", async () =>  { 
+        const id = uuidv4();
+        availableVideos.updateAvailableVideoData([id], {
+            "info": {
+                "title": id,
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+
+        const changeTitle = await availableVideos.changeTitle(id, "Test: new video title");
+        expect(changeTitle.message).toBe("video-title-changed",);  
+        expect(changeTitle.availableVideos[id]["info"]["title"]).toBe("Test: new video title"); 
+    });
+
+    it("Change Title: Video inside Folder", async () =>  { 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+        
+        const id = uuidv4();
+        availableVideos.updateAvailableVideoData([id], {
+            "info": {
+                "title": id,
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+
+        availableVideos.inputSelectedIDIntoFolderID(id, createFolder.folderID,);
+
+        const changeTitle = await availableVideos.changeTitle(id, "Test: new video title", [createFolder.folderID]);
+        expect(changeTitle.message).toBe("video-title-changed",);  
+        expect(changeTitle.availableVideos[createFolder.folderID]["content"][id]["info"]["title"]).toBe("Test: new video title"); 
+    });
+
+    it("Change Title: Folder", async () =>  { 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");   
+        const changeTitle = await availableVideos.changeTitle(createFolder.folderID, "Test: new folder title");
+        expect(changeTitle.message).toBe("video-title-changed",);  
+        expect(changeTitle.availableVideos[createFolder.folderID]["info"]["title"]).toBe("Test: new folder title"); 
+    });
+
+    it("Change Title: Folder inside Folder", async () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]["info"]["title"]).toBe("title_folder_test_1");   
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test_2");
+        expect(createFolder2.message).toBe("folder-created");
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("title_folder_test_2");   
+        const changeTitle = await availableVideos.changeTitle(createFolder2.folderID, "Test: new folder title", [createFolder1.folderID]);
+        expect(changeTitle.message).toBe("video-title-changed",);  
+        expect(changeTitle.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("Test: new folder title"); 
+    });
+
+    it("Change Title: Invalid ID", async () =>  {  
+        const changeTitle = await availableVideos.changeTitle("invalid folderID", "Test: new title");
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: Invalid folder path", async () =>  {  
+        const changeTitle = await availableVideos.changeTitle("invalid folderID", "Test: new title", ["invalid folderID2"]);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: Invalid ID inside valid folder path", async () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");   
+        const changeTitle = await availableVideos.changeTitle("invalid folderID", "Test: new title", [createFolder.folderID]);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+   
+    it("Change Title: ID undefined, newVideoTitle undefined", async () =>  {  
+        const changeTitle = await availableVideos.changeTitle(undefined, undefined);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: ID defined, newVideoTitle undefined", async () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");   
+        const changeTitle = await availableVideos.changeTitle(createFolder.folderID, undefined);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: ID undefined, newVideoTitle defined", async () =>  {  
+        const changeTitle = await availableVideos.changeTitle(undefined, "title_folder_test");
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: Inside folder - ID undefined, newVideoTitle undefined", async () =>  {  
+        const changeTitle = await availableVideos.changeTitle(undefined, "title_folder_test", ["undefined"]);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: Inside folder - ID defined, newVideoTitle undefined", async () =>  {      
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]["info"]["title"]).toBe("title_folder_test");   
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("title_folder_test");        
+        const changeTitle = await availableVideos.changeTitle(createFolder2.folderID, undefined, [createFolder1.folderID]);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+
+    it("Change Title: Inside folder - ID undefined, newVideoTitle defined", async () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");   
+        const changeTitle = await availableVideos.changeTitle(undefined, "title_folder_test", [createFolder.folderID]);
+        expect(changeTitle.message).toBe("failed-to-change-video-title");   
+    });
+}); 
+
 describe("createFolder", () =>  {  
     it("create Folder", () =>  { 
         const create = availableVideos.createFolder(undefined, "folder_test");

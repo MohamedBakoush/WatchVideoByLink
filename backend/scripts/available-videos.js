@@ -130,41 +130,58 @@ function availableVideosfolderPath_Array(folderIDPath) {
 }
 
 // change title of video  
-async function changeTitle(videoID, newVideoTitle, folderIDPath) { 
+async function changeTitle(changeTitleID, newVideoTitle, folderIDPath) { 
   if (folderIDPath === undefined || folderIDPath.length === 0) { 
     // check if videoid is valid
-    const videoDetails = await getAvailableVideos([videoID]);
+    const videoDetails = await getAvailableVideos([changeTitleID]);
     // if video dosent exist redirect to home page
     if (videoDetails !== "invalid array path" && 
       newVideoTitle !== undefined &&
       typeof newVideoTitle == "string") { 
-      try { 
-        availableVideos[videoID]["info"]["title"] = newVideoTitle;  
-        const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-        FileSystem.writeFileSync(available_videos_path, newAvailableVideos);  
-        return {
-          "message": "video-title-changed",
-          "availableVideos": availableVideos
-        };
-      } catch (e) { 
-        return {
-          "message": "failed-to-change-video-title"
-        };  
-      }
+        try { 
+          availableVideos[changeTitleID]["info"]["title"] = newVideoTitle;  
+          const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideos);  
+          return {
+            "message": "video-title-changed",
+            "availableVideos": availableVideos
+          };
+        } catch (e) { 
+          return {
+            "message": "failed-to-change-video-title"
+          };  
+        }
     } else  { 
       return {
         "message": "failed-to-change-video-title"
       };  
     }
   } else {  
-    const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath);    
-    eval(availableVideosFolderIDPath)[videoID]["info"]["title"] = newVideoTitle;  
-    const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
-    FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
-    return {
-      "message": "video-title-changed",
-      "availableVideos": availableVideos
-    };
+    // Get folder path in string form
+    const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath);
+    // if folderIDPath or changeTitleID invalid, send error msg
+    if (availableVideosFolderIDPath !== "folderIDPath array input empty"  && 
+      availableVideosFolderIDPath !== "invalid folderIDPath"  && 
+      newVideoTitle !== undefined &&
+      typeof newVideoTitle == "string") {
+        try { 
+          eval(availableVideosFolderIDPath)[changeTitleID]["info"]["title"] = newVideoTitle;  
+          const newAvailableVideos = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideos);   
+          return {
+            "message": "video-title-changed",
+            "availableVideos": availableVideos
+          };
+        } catch (error) {
+          return {
+            "message": "failed-to-change-video-title"
+          };  
+        }
+    } else {
+      return {
+        "message": "failed-to-change-video-title"
+      };  
+    }
   } 
 }
 
