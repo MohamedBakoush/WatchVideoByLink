@@ -257,25 +257,55 @@ function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {
 // input selected element into folder element at availableVideos
 function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {   
   if (folderIDPath === undefined || folderIDPath.length == 0) { 
-    availableVideos[folderID].content[`${selectedID}`] = availableVideos[selectedID];
-    delete availableVideos[selectedID]; 
-    if (selectedID.includes("folder-")) {
-      availableVideos[folderID].content[`${selectedID}`].info["inside-folder"] = folderID;
-    }    
-  }else {  
+    if (availableVideos[selectedID] && availableVideos[folderID]) {
+      try {
+        availableVideos[folderID].content[`${selectedID}`] = availableVideos[selectedID];
+        delete availableVideos[selectedID]; 
+        if (selectedID.includes("folder-")) {
+          availableVideos[folderID].content[`${selectedID}`].info["inside-folder"] = folderID;
+        }    
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+        return {
+          "message": "successfully-inputed-selected-into-folder",
+          "availableVideos": availableVideos
+        };  
+      } catch (error) {
+        return {
+          "message": "failed-to-inputed-selected-into-folder"
+        };  
+      }
+    } else { 
+      return {
+        "message": "failed-to-inputed-selected-into-folder"
+      };  
+    }
+  } else {  
     const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath);
-    eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
-    delete eval(availableVideosFolderIDPath)[selectedID]; 
-    if (selectedID.includes("folder-")) {
-      eval(availableVideosFolderIDPath)[folderID].content[selectedID].info["inside-folder"] = folderID;
-    }    
+    if (eval(availableVideosFolderIDPath)[folderID] && eval(availableVideosFolderIDPath)[selectedID]) {
+      try {
+        eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
+        delete eval(availableVideosFolderIDPath)[selectedID]; 
+        if (selectedID.includes("folder-")) {
+          eval(availableVideosFolderIDPath)[folderID].content[selectedID].info["inside-folder"] = folderID;
+        }  
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+        return {
+          "message": "successfully-inputed-selected-into-folder",
+          "availableVideos": availableVideos
+        };   
+      } catch (error) {
+        return {
+          "message": "failed-to-inputed-selected-into-folder"
+        };  
+      }
+    } else {
+      return {
+        "message": "failed-to-inputed-selected-into-folder"
+      };  
+    }
   } 
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-  return {
-    "message": "successfully-inputed-selected-into-folder",
-    "availableVideos": availableVideos
-  };
 }
 
 // move selected id data to before target id data at available video details

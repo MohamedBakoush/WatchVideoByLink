@@ -396,3 +396,206 @@ describe("createFolder", () =>  {
         });   
     });
 }); 
+
+describe("inputSelectedIDIntoFolderID", () =>  {   
+    it("place undefined id undefined invalid folder", () =>  { 
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(undefined, undefined);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+    it("place undefined id inside invalid folder", () =>  { 
+        const folderID = uuidv4(); 
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(undefined, folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+    it("place invalid id inside undefined folder", () =>  { 
+        const selectedID = uuidv4(); 
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(selectedID, undefined);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+    
+    it("place invalid id inside invalid folder", () =>  { 
+        const folderID = uuidv4(); 
+        const selectedID = uuidv4(); 
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(selectedID, folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+    it("place invalid id inside invalid folder", () =>  { 
+        const folderID = uuidv4(); 
+        const selectedID = uuidv4(); 
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(selectedID, folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+    it("place invalid id inside folder", () =>  { 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+        const id = uuidv4(); 
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(id, createFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+
+    it("place id inside invalid folder", () =>  { 
+        const folderID = uuidv4(); 
+        const id = uuidv4(); 
+        availableVideos.updateAvailableVideoData([id], {
+            "info": {
+                "title": id,
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+        
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(id, folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+    it("place id inside folder inside invalid folder", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        
+        const createFolder2_ID = uuidv4(); 
+        const id = uuidv4(); 
+        availableVideos.updateAvailableVideoData([id], {
+            "info": {
+                "title": id,
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+
+        availableVideos.inputSelectedIDIntoFolderID(id, createFolder1.folderID);
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(id, createFolder2_ID, [createFolder1.folderID]);
+        expect(inputSelectedIDIntoFolderID.message).toBe("failed-to-inputed-selected-into-folder"); 
+    });
+
+    it("place video inside folder", () =>  { 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+        
+        const id = uuidv4();
+        availableVideos.updateAvailableVideoData([id], {
+            "info": {
+                "title": id,
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(id, createFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder"); 
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder.folderID]["content"][id]).toBeTruthy();
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder.folderID]["content"][id]["info"]["title"]).toBe(id);    
+    });
+
+    it("place folder inside folder", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        const createFolder2 = availableVideos.createFolder(undefined, "title_folder_test2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder2.folderID]).toBeTruthy();
+        
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(createFolder2.folderID, createFolder1.folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder"); 
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["info"]["inside-folder"]).toBe("folder-main"); 
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy(); 
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["inside-folder"]).toBe(createFolder1.folderID);    
+    });
+
+    it("place video inside folder inside Folder", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+        
+        const id = uuidv4();
+        availableVideos.updateAvailableVideoData([id], {
+            "info": {
+                "title": id,
+                "videoLink": {
+                    "src": `/video/${id}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${id}/1`,
+                    "2": `/thumbnail/${id}/2`,
+                    "3": `/thumbnail/${id}/3`,
+                    "4": `/thumbnail/${id}/4`,
+                    "5": `/thumbnail/${id}/5`,
+                    "6": `/thumbnail/${id}/6`,
+                    "7": `/thumbnail/${id}/7`,
+                    "8": `/thumbnail/${id}/8`
+                }
+            }
+        });
+        
+        availableVideos.inputSelectedIDIntoFolderID(id, createFolder1.folderID);
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(id, createFolder2.folderID, [createFolder1.folderID]);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder"); 
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][id]).toBeTruthy();
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][id]["info"]["title"]).toBe(id);    
+    });
+
+    it("place folder inside Folder inside Folder", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+        const createFolder3 = availableVideos.createFolder(undefined, "title_folder_test3");
+        expect(createFolder3.message).toBe("folder-created"); 
+        expect(createFolder3.availableVideos[createFolder3.folderID]).toBeTruthy();
+        
+        availableVideos.inputSelectedIDIntoFolderID(createFolder3.folderID, createFolder1.folderID);
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(createFolder3.folderID, createFolder2.folderID, [createFolder1.folderID]);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder"); 
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]).toBeTruthy();
+        expect(inputSelectedIDIntoFolderID.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]["info"]["title"]).toBe("title_folder_test3");    
+    });
+}); 
