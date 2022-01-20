@@ -563,21 +563,15 @@ async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, t
       });
       if (response.ok) { 
         requestResponse = await response.json();   
-        if (requestResponse.message === "availableVideos updated successfully"){
+        if (requestResponse.message === "successfully-moved-selected-before-target"){
           basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
           const availablevideoDetails = requestResponse.availableVideos; 
           basic.setNewAvailablevideoDetails(availablevideoDetails);
-          return "availableVideos updated successfully"; 
-        } else if (requestResponse.message === `${selectedID} unavailable at availableVideos`) {
-          basic.notify("error", `${selectedID} unavailable at availableVideos`); 
-          return `${selectedID} unavailable at availableVideos`; 
-        } else if (requestResponse.message === `${targetID} unavailable at availableVideos`) {
-          basic.notify("error", `${targetID} unavailable at availableVideos`); 
-          return `${targetID} unavailable at availableVideos`; 
-        } else {        
-          basic.notify("error",`${selectedID} && ${targetID} unavailable at availableVideos`); 
-          return `${selectedID} && ${targetID} unavailable at availableVideos`;
-        }
+          return "successfully-moved-selected-before-target"; 
+        } else{
+          basic.notify("error", `Failed Moved: ${selectedID} before ${targetID}`); 
+          return "failed-to-moved-selected-before-target"; 
+        } 
       } else {        
         basic.notify("error","Failed to update rearanged available video details"); 
         return "Failed to update rearanged available video details";
