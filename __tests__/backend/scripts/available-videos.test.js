@@ -947,7 +947,6 @@ describe("moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", () =>  {
         const moveSelectedIdBeforeTargetId = availableVideos.moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(undefined, createFolder.folderID, []);
         expect(moveSelectedIdBeforeTargetId.message).toBe(`${createFolder.folderID} unavailable at availableVideos`); 
     }); 
-    
 
     it("undefined valid targetID invalid folderIDPath", () =>  {  
         const createFolder = availableVideos.createFolder(undefined, "title_folder");
@@ -1199,13 +1198,11 @@ describe("moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", () =>  {
         expect(createMainFolder.message).toBe("folder-created"); 
         expect(createMainFolder.availableVideos[createMainFolder.folderID]).toBeTruthy();
 
-
         const createFolder = availableVideos.createFolder([createMainFolder.folderID], "title_folder_test1");
         expect(createFolder.message).toBe("folder-created"); 
         expect(createFolder.availableVideos[createMainFolder.folderID]["content"][createFolder.folderID]).toBeTruthy(); 
         expect(Object.keys(eval(createFolder.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder.folderID)).toBe(0); 
         
-   
         const fileName = uuidv4();
         availableVideos.updateAvailableVideoData([fileName], {
             "info": {
@@ -1307,5 +1304,428 @@ describe("moveSelectedIdBeforeTargetIdAtAvailableVideoDetails", () =>  {
         expect(Object.keys(eval(moveSelectedIdBeforeTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_1)).toBe(1); 
         expect(moveSelectedIdBeforeTargetId.availableVideos[createMainFolder.folderID]["content"][video_filename_2]).toBeTruthy();
         expect(Object.keys(eval(moveSelectedIdBeforeTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_2)).toBe(0);  
+    }); 
+}); 
+
+describe("moveSelectedIdAfterTargetIdAtAvailableVideoDetails", () =>  {   
+    it("undefined undefined undefined", () =>  {  
+        const moveSelectedIdBeforeTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(undefined, undefined, undefined);
+        expect(moveSelectedIdBeforeTargetId.message).toBe("undefined && undefined unavailable at availableVideos"); 
+    }); 
+
+    it("valid selectedID undefined undefined", () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder.folderID, undefined, undefined);
+        expect(moveSelectedIdAfterTargetId.message).toBe(`${createFolder.folderID} unavailable at availableVideos`); 
+    }); 
+
+    it("valid selectedID undefined empty folderIDPath", () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder.folderID, undefined, []);
+        expect(moveSelectedIdAfterTargetId.message).toBe(`${createFolder.folderID} unavailable at availableVideos`); 
+    }); 
+
+    it("valid selectedID undefined empty folderIDPath", () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder.folderID, undefined, [undefined]);
+        expect(moveSelectedIdAfterTargetId.message).toBe("failed-to-moved-selected-after-target"); 
+    }); 
+
+    it("valid selectedID undefined valid folderIDPath", () =>  {  
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder2.folderID, undefined, [createFolder1.folderID]);
+        expect(moveSelectedIdAfterTargetId.message).toBe(`${createFolder2.folderID} unavailable at availableVideos`); 
+    }); 
+
+    it("undefined valid targetID undefined", () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(undefined, createFolder.folderID, undefined);
+        expect(moveSelectedIdAfterTargetId.message).toBe(`${createFolder.folderID} unavailable at availableVideos`); 
+    }); 
+
+    it("undefined valid targetID empty folderIDPath", () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(undefined, createFolder.folderID, []);
+        expect(moveSelectedIdAfterTargetId.message).toBe(`${createFolder.folderID} unavailable at availableVideos`); 
+    }); 
+
+    it("undefined valid targetID invalid folderIDPath", () =>  {  
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(undefined, createFolder.folderID, [undefined]);
+        expect(moveSelectedIdAfterTargetId.message).toBe("failed-to-moved-selected-after-target"); 
+    }); 
+
+    it("undefined valid targetID valid folderIDPath", () =>  {  
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(undefined, createFolder2.folderID, [createFolder1.folderID]);
+        expect(moveSelectedIdAfterTargetId.message).toBe(`${createFolder2.folderID} unavailable at availableVideos`); 
+    }); 
+
+    it("place folder1 after folder2", () =>  { 
+        const createFolder2 = availableVideos.createFolder(undefined, "title_folder_test2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder2.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder2.availableVideos)).indexOf(createFolder2.folderID)).toBe(0);
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder1.availableVideos)).indexOf(createFolder1.folderID)).toBe(1); 
+        
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder1.folderID, createFolder2.folderID);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createFolder1.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(createFolder1.folderID)).toBe(0); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[createFolder2.folderID]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(createFolder2.folderID)).toBe(1);  
+    }); 
+
+    it("place video after folder", () =>  { 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder.availableVideos)).indexOf(createFolder.folderID)).toBe(0); 
+
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+         
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[fileName]).toBeTruthy();
+        expect(Object.keys(eval(getAvailableVideos)).indexOf(fileName)).toBe(1); 
+        
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(fileName, createFolder.folderID);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createFolder.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(createFolder.folderID)).toBe(1); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[fileName]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(fileName)).toBe(0);  
+    }); 
+
+    it("place folder after video", () =>  { 
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[fileName]).toBeTruthy();
+        expect(Object.keys(eval(getAvailableVideos)).indexOf(fileName)).toBe(0); 
+
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test1");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder.availableVideos)).indexOf(createFolder.folderID)).toBe(1); 
+
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder.folderID, fileName);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createFolder.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(createFolder.folderID)).toBe(0); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[fileName]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(fileName)).toBe(1);  
+    }); 
+
+    it("place video after video", () =>  { 
+        const video_filename_2 = uuidv4();
+        availableVideos.updateAvailableVideoData([video_filename_2], {
+            "info": {
+                "title": video_filename_2,
+                "videoLink": {
+                    "src": `/video/${video_filename_2}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${video_filename_2}/1`,
+                    "2": `/thumbnail/${video_filename_2}/2`,
+                    "3": `/thumbnail/${video_filename_2}/3`,
+                    "4": `/thumbnail/${video_filename_2}/4`,
+                    "5": `/thumbnail/${video_filename_2}/5`,
+                    "6": `/thumbnail/${video_filename_2}/6`,
+                    "7": `/thumbnail/${video_filename_2}/7`,
+                    "8": `/thumbnail/${video_filename_2}/8`
+                }
+            }
+        });
+
+        const getAvailableVideos2 = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos2[video_filename_2]).toBeTruthy();
+        expect(Object.keys(eval(getAvailableVideos2)).indexOf(video_filename_2)).toBe(0); 
+
+        const video_filename_1 = uuidv4();
+        availableVideos.updateAvailableVideoData([video_filename_1], {
+            "info": {
+                "title": video_filename_1,
+                "videoLink": {
+                    "src": `/video/${video_filename_1}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${video_filename_1}/1`,
+                    "2": `/thumbnail/${video_filename_1}/2`,
+                    "3": `/thumbnail/${video_filename_1}/3`,
+                    "4": `/thumbnail/${video_filename_1}/4`,
+                    "5": `/thumbnail/${video_filename_1}/5`,
+                    "6": `/thumbnail/${video_filename_1}/6`,
+                    "7": `/thumbnail/${video_filename_1}/7`,
+                    "8": `/thumbnail/${video_filename_1}/8`
+                }
+            }
+        });
+
+        const getAvailableVideos1 = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos1[video_filename_1]).toBeTruthy();
+        expect(Object.keys(eval(getAvailableVideos1)).indexOf(video_filename_1)).toBe(1); 
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(video_filename_1, video_filename_2);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[video_filename_1]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(video_filename_1)).toBe(0); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[video_filename_2]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos)).indexOf(video_filename_2)).toBe(1);  
+    }); 
+ 
+    it("INSIDE FOLDER: place folder1 after folder2", () =>  { 
+        const createMainFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createMainFolder.message).toBe("folder-created"); 
+        expect(createMainFolder.availableVideos[createMainFolder.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createMainFolder.folderID], "title_folder_test2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createMainFolder.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder2.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder2.folderID)).toBe(0);
+        const createFolder1 = availableVideos.createFolder([createMainFolder.folderID], "title_folder_test1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createMainFolder.folderID]["content"][createFolder1.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder1.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder1.folderID)).toBe(1); 
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder1.folderID, createFolder2.folderID, [createMainFolder.folderID]);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][createFolder1.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder1.folderID)).toBe(0); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder2.folderID)).toBe(1);  
+    }); 
+
+    it("INSIDE FOLDER: place video infront folder", () =>  { 
+        const createMainFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createMainFolder.message).toBe("folder-created"); 
+        expect(createMainFolder.availableVideos[createMainFolder.folderID]).toBeTruthy();
+            
+        const createFolder = availableVideos.createFolder([createMainFolder.folderID], "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createMainFolder.folderID]["content"][createFolder.folderID]).toBeTruthy();
+        expect(Object.keys(eval(createFolder.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder.folderID)).toBe(0); 
+
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+         
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[fileName]).toBeTruthy();
+
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(fileName, createMainFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.availableVideos[createMainFolder.folderID]["content"][fileName]).toBeTruthy();
+        expect(Object.keys(eval(inputSelectedIDIntoFolderID.availableVideos[createMainFolder.folderID]["content"])).indexOf(fileName)).toBe(1); 
+        
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(fileName, createFolder.folderID, [createMainFolder.folderID]);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][createFolder.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder.folderID)).toBe(1); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][fileName]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(fileName)).toBe(0);  
+    }); 
+
+    it("INSIDE FOLDER: place folder infront video", () =>  { 
+        const createMainFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createMainFolder.message).toBe("folder-created"); 
+        expect(createMainFolder.availableVideos[createMainFolder.folderID]).toBeTruthy();
+
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[fileName]).toBeTruthy();
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(fileName, createMainFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.availableVideos[createMainFolder.folderID]["content"][fileName]).toBeTruthy();
+        expect(Object.keys(eval(inputSelectedIDIntoFolderID.availableVideos[createMainFolder.folderID]["content"])).indexOf(fileName)).toBe(0); 
+ 
+        const createFolder = availableVideos.createFolder([createMainFolder.folderID], "title_folder_test1");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createMainFolder.folderID]["content"][createFolder.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(createFolder.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder.folderID)).toBe(1); 
+        
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(createFolder.folderID, fileName, [createMainFolder.folderID]);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][createFolder.folderID]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(createFolder.folderID)).toBe(0); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][fileName]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(fileName)).toBe(1);  
+    }); 
+
+    it("INSIDE FOLDER: place video infront video", () =>  { 
+        const createMainFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createMainFolder.message).toBe("folder-created"); 
+        expect(createMainFolder.availableVideos[createMainFolder.folderID]).toBeTruthy();
+
+        const video_filename_2 = uuidv4();
+        availableVideos.updateAvailableVideoData([video_filename_2], {
+            "info": {
+                "title": video_filename_2,
+                "videoLink": {
+                    "src": `/video/${video_filename_2}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${video_filename_2}/1`,
+                    "2": `/thumbnail/${video_filename_2}/2`,
+                    "3": `/thumbnail/${video_filename_2}/3`,
+                    "4": `/thumbnail/${video_filename_2}/4`,
+                    "5": `/thumbnail/${video_filename_2}/5`,
+                    "6": `/thumbnail/${video_filename_2}/6`,
+                    "7": `/thumbnail/${video_filename_2}/7`,
+                    "8": `/thumbnail/${video_filename_2}/8`
+                }
+            }
+        });
+ 
+        const getAvailableVideos2 = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos2[video_filename_2]).toBeTruthy();
+        const inputSelectedIDIntoFolderID2 = availableVideos.inputSelectedIDIntoFolderID(video_filename_2, createMainFolder.folderID);
+        expect(inputSelectedIDIntoFolderID2.availableVideos[createMainFolder.folderID]["content"][video_filename_2]).toBeTruthy();
+        expect(Object.keys(eval(inputSelectedIDIntoFolderID2.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_2)).toBe(0); 
+
+        const video_filename_1 = uuidv4();
+        availableVideos.updateAvailableVideoData([video_filename_1], {
+            "info": {
+                "title": video_filename_1,
+                "videoLink": {
+                    "src": `/video/${video_filename_1}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${video_filename_1}/1`,
+                    "2": `/thumbnail/${video_filename_1}/2`,
+                    "3": `/thumbnail/${video_filename_1}/3`,
+                    "4": `/thumbnail/${video_filename_1}/4`,
+                    "5": `/thumbnail/${video_filename_1}/5`,
+                    "6": `/thumbnail/${video_filename_1}/6`,
+                    "7": `/thumbnail/${video_filename_1}/7`,
+                    "8": `/thumbnail/${video_filename_1}/8`
+                }
+            }
+        });
+
+        const getAvailableVideos1 = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos1[video_filename_1]).toBeTruthy();
+        const inputSelectedIDIntoFolderID1 = availableVideos.inputSelectedIDIntoFolderID(video_filename_1, createMainFolder.folderID);
+        expect(inputSelectedIDIntoFolderID1.availableVideos[createMainFolder.folderID]["content"][video_filename_1]).toBeTruthy();
+        expect(Object.keys(eval(inputSelectedIDIntoFolderID1.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_1)).toBe(1); 
+
+        const moveSelectedIdAfterTargetId = availableVideos.moveSelectedIdAfterTargetIdAtAvailableVideoDetails(video_filename_1, video_filename_2, [createMainFolder.folderID]);
+        expect(moveSelectedIdAfterTargetId.message).toBe("successfully-moved-selected-after-target");
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][video_filename_1]).toBeTruthy(); 
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_1)).toBe(0); 
+        expect(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"][video_filename_2]).toBeTruthy();
+        expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_2)).toBe(1);  
     }); 
 }); 

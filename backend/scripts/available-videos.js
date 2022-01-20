@@ -402,7 +402,6 @@ function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetI
     const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath); 
     try {
       if (eval(availableVideosFolderIDPath)) {
-        console.log(availableVideosFolderIDPath);
         const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
         let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID); 
         if (selectedIDIndex >= 0 && targetIDIndex >= 0) {
@@ -452,41 +451,93 @@ function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetI
 // move selected id data to after target id data at available video details
 function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID, folderIDPath) {
   if (folderIDPath === undefined || folderIDPath.length == 0) {  
-    const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
-    let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);    
-    if (targetIDIndex > selectedIDIndex) { 
-      targetIDIndex = targetIDIndex - 1;
-    }
-    // turn availableVideos into an array
-    const availableVideosArray = Object.entries(availableVideos);    
-    // remove `selectedIDIndex` item and store it
-    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-    // insert stored item into position `targetIDIndex`
-    availableVideosArray.splice(targetIDIndex, 0, removedItem);
-    // turn availableVideosArray back into an object
-    availableVideos = Object.fromEntries(availableVideosArray);    
+    try {
+      const selectedIDIndex = Object.keys(availableVideos).indexOf(selectedID); 
+      let targetIDIndex = Object.keys(availableVideos).indexOf(targetID);    
+      if (selectedIDIndex >= 0 && targetIDIndex >= 0) {
+        if (targetIDIndex > selectedIDIndex) { 
+          targetIDIndex = targetIDIndex - 1;
+        }
+        // turn availableVideos into an array
+        const availableVideosArray = Object.entries(availableVideos);    
+        // remove `selectedIDIndex` item and store it
+        const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+        // insert stored item into position `targetIDIndex`
+        availableVideosArray.splice(targetIDIndex, 0, removedItem);
+        // turn availableVideosArray back into an object
+        availableVideos = Object.fromEntries(availableVideosArray);  
+        const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+        FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
+        return {
+          "message": "successfully-moved-selected-after-target",
+          "availableVideos": availableVideos
+        };  
+      } else if (selectedIDIndex >= 0 && targetIDIndex < 0){
+        return {
+          "message": `${selectedID} unavailable at availableVideos`
+        };
+      } else if (selectedIDIndex < 0 && targetIDIndex >= 0){
+        return {
+          "message": `${targetID} unavailable at availableVideos`
+        };
+      } else {
+        return {
+          "message": `${selectedID} && ${targetID} unavailable at availableVideos`
+        };
+      } 
+    } catch (error) {
+      return {
+        "message": "failed-to-moved-selected-after-target"
+      };
+    } 
   } else { 
     const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath); 
-    const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
-    let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
-    if (targetIDIndex > selectedIDIndex) { 
-      targetIDIndex = targetIDIndex - 1;
-    }
-    // turn availableVideos into an array
-    const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
-    // remove `selectedIDIndex` item and store it
-    const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
-    // insert stored item into position `targetIDIndex`
-    availableVideosArray.splice(targetIDIndex, 0, removedItem);
-    // turn availableVideosArray back into an object  
-    eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
+    try {
+      if (eval(availableVideosFolderIDPath)) {
+        const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
+        let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
+        if (selectedIDIndex >= 0 && targetIDIndex >= 0) {
+          if (targetIDIndex > selectedIDIndex) { 
+            targetIDIndex = targetIDIndex - 1;
+          }
+          // turn availableVideos into an array
+          const availableVideosArray = Object.entries(eval(availableVideosFolderIDPath));    
+          // remove `selectedIDIndex` item and store it
+          const removedItem = availableVideosArray.splice(selectedIDIndex, 1)[0];
+          // insert stored item into position `targetIDIndex`
+          availableVideosArray.splice(targetIDIndex, 0, removedItem);
+          // turn availableVideosArray back into an object  
+          eval(availableVideosFolderIDPath.slice(0, -8)).content = Object.fromEntries(availableVideosArray);  
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
+          return {
+            "message": "successfully-moved-selected-after-target",
+            "availableVideos": availableVideos
+          };
+        } else if (selectedIDIndex >= 0 && targetIDIndex < 0){
+          return {
+            "message": `${selectedID} unavailable at availableVideos`
+          };
+        } else if (selectedIDIndex < 0 && targetIDIndex >= 0){
+          return {
+            "message": `${targetID} unavailable at availableVideos`
+          };
+        } else {
+          return {
+            "message": `${selectedID} && ${targetID} unavailable at availableVideos`
+          };
+        }
+      } else {
+        return {
+          "message": "invalid folderIDPath"
+        };
+      } 
+    } catch (error) {
+      return {
+        "message": "failed-to-moved-selected-after-target"
+      };
+    } 
   }
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo);  
-  return {
-    "message": "availableVideos updated successfully",
-    "availableVideos": availableVideos
-  };
 }
 
 // delete availableVideos from server if exist  
