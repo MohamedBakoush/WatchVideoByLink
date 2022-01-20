@@ -582,7 +582,8 @@ function deleteSpecifiedAvailableVideosDataWithProvidedPath(fileName, path_array
 
 // delete availableVideos data by fileName from main directory
 function deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName) {
-  if (getAvailableVideos([fileName]) !== "invalid array path") {
+  const fileName_data = getAvailableVideos([fileName]);
+  if (fileName_data !== "invalid array path" && fileName_data) { 
     delete availableVideos[fileName]; 
     const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
     FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 

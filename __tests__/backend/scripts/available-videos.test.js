@@ -1729,3 +1729,78 @@ describe("moveSelectedIdAfterTargetIdAtAvailableVideoDetails", () =>  {
         expect(Object.keys(eval(moveSelectedIdAfterTargetId.availableVideos[createMainFolder.folderID]["content"])).indexOf(video_filename_2)).toBe(1);  
     }); 
 }); 
+
+describe("deleteSpecifiedAvailableVideosDataWithoutProvidedPath", () =>  {   
+    it("No Input", () =>  {  
+       const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath();
+       expect(deleteSpecifiedID).toBe("invalid array path"); 
+    }); 
+
+    it("undefined", () =>  {  
+        const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath(undefined);
+        expect(deleteSpecifiedID).toBe("invalid array path"); 
+    }); 
+
+    it("Invalid ID", () =>  {  
+        const fileName = uuidv4();
+        const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName);
+        expect(deleteSpecifiedID).toBe("invalid array path"); 
+    });
+
+    it("Empty Array", () =>  {  
+        const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath([]);
+        expect(deleteSpecifiedID).toBe("invalid array path"); 
+    });
+
+    it("Invalid Array", () =>  {  
+        const fileName = uuidv4();
+        const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath([fileName]);
+        expect(deleteSpecifiedID).toBe("invalid array path"); 
+    });
+
+    it("Delete folder Data", () =>  { 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]).toBeTruthy();
+
+       const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath(createFolder.folderID);
+       expect(deleteSpecifiedID).toBe(`${createFolder.folderID} deleted`); 
+
+       const getAvailableVideos = availableVideos.getAvailableVideos();
+       expect(getAvailableVideos[createFolder.folderID]).toBeFalsy();
+       expect(getAvailableVideos).toMatchObject({}); 
+    }); 
+
+    it("Delete Video Data", () =>  { 
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+         
+        const getAvailableVideos_1 = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos_1[fileName]).toBeTruthy(); 
+
+       const deleteSpecifiedID = availableVideos.deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName);
+       expect(deleteSpecifiedID).toBe(`${fileName} deleted`); 
+
+       const getAvailableVideos_2 = availableVideos.getAvailableVideos();
+       expect(getAvailableVideos_2[fileName]).toBeFalsy();
+       expect(getAvailableVideos_2).toMatchObject({}); 
+    }); 
+}); 
