@@ -221,37 +221,81 @@ function createFolder(folderIDPath, folderTitle) {
 
 // input selected element id out of folder element at availableVideos
 function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {  
-  const fromFolderID = [...folderIDPath];
-  const tooFolderID = [...folderIDPath];
-  if (folderID == "folder-main") {
-    tooFolderID.length = 0;
-  } else {
-    const fodlerIDIndex = tooFolderID.indexOf(folderID); 
-    tooFolderID.splice(fodlerIDIndex+1, 9e9);  
-    tooFolderID.length = fodlerIDIndex+1; 
-  }  
-  if (tooFolderID === undefined || tooFolderID.length == 0) {  
-    const availableVideosFromFolderIDPath = availableVideosfolderPath_String(fromFolderID);     
-    availableVideos[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
-    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
-    if (selectedID.includes("folder-")) { 
-      availableVideos[selectedID].info["inside-folder"] = folderID; 
-    }   
-  }else {     
-    const availableVideosFromFolderIDPath = availableVideosfolderPath_String(fromFolderID);  
-    const availableVideosTooFolderIDPath = availableVideosfolderPath_String(tooFolderID); 
-    eval(availableVideosTooFolderIDPath)[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
-    delete eval(availableVideosFromFolderIDPath)[selectedID]; 
-    if (selectedID.includes("folder-")) { 
-      eval(availableVideosTooFolderIDPath)[selectedID].info["inside-folder"] = folderID; 
+  if (Array.isArray(folderIDPath)) {
+    const fromFolderID = [...folderIDPath];
+    const tooFolderID = [...folderIDPath];
+    if (folderID == "folder-main") {
+      tooFolderID.length = 0;
+    } else {
+      const fodlerIDIndex = tooFolderID.indexOf(folderID); 
+      tooFolderID.splice(fodlerIDIndex+1, 9e9);  
+      tooFolderID.length = fodlerIDIndex+1; 
     }  
-  } 
-  const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-  FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-  return {
-    "message": "successfully-inputed-selected-out-of-folder",
-    "availableVideos": availableVideos
-  };
+    if (tooFolderID === undefined || tooFolderID.length == 0) {  
+      const availableVideosFromFolderIDPath = availableVideosfolderPath_String(fromFolderID); 
+      try {
+        if ( availableVideosFromFolderIDPath !== "folderIDPath array input empty"
+        && availableVideosFromFolderIDPath !== "invalid folderIDPath"  
+        && eval(availableVideosFromFolderIDPath)
+        && eval(availableVideosFromFolderIDPath)[selectedID]) {   
+          availableVideos[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
+          delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+          if (selectedID.includes("folder-")) { 
+            availableVideos[selectedID].info["inside-folder"] = folderID; 
+          }   
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+          return {
+            "message": "successfully-inputed-selected-out-of-folder",
+            "availableVideos": availableVideos
+          }; 
+        } else {
+          return {
+            "message": "failed-to-inputed-selected-out-of-folder"
+          }; 
+        } 
+      } catch (error) {
+        return {
+          "message": "failed-to-inputed-selected-out-of-folder"
+        }; 
+      }  
+    } else {     
+      const availableVideosFromFolderIDPath = availableVideosfolderPath_String(fromFolderID); 
+      const availableVideosTooFolderIDPath = availableVideosfolderPath_String(tooFolderID); 
+      try {
+        if ( availableVideosFromFolderIDPath !== "folderIDPath array input empty"
+        && availableVideosFromFolderIDPath !== "invalid folderIDPath"  
+        && availableVideosTooFolderIDPath !== "folderIDPath array input empty"
+        && availableVideosTooFolderIDPath !== "invalid folderIDPath" 
+        && eval(availableVideosFromFolderIDPath) 
+        && eval(availableVideosFromFolderIDPath)[selectedID]) { 
+          eval(availableVideosTooFolderIDPath)[selectedID] = eval(availableVideosFromFolderIDPath)[selectedID]; 
+          delete eval(availableVideosFromFolderIDPath)[selectedID]; 
+          if (selectedID.includes("folder-")) { 
+            eval(availableVideosTooFolderIDPath)[selectedID].info["inside-folder"] = folderID; 
+          } 
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+          return {
+            "message": "successfully-inputed-selected-out-of-folder",
+            "availableVideos": availableVideos
+          }; 
+        } else {
+          return {
+            "message": "failed-to-inputed-selected-out-of-folder"
+          }; 
+        }      
+      } catch (error) {
+        return {
+          "message": "failed-to-inputed-selected-out-of-folder"
+        }; 
+      }   
+    }
+  } else {
+    return {
+      "message": "failed-to-inputed-selected-out-of-folder"
+    }; 
+  }
 }
 
 // input selected element into folder element at availableVideos
@@ -282,8 +326,11 @@ function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {
     }
   } else {  
     const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath);
-    if (eval(availableVideosFolderIDPath)[folderID] && eval(availableVideosFolderIDPath)[selectedID]) {
-      try {
+    try {
+      if (availableVideosFolderIDPath !== "invalid folderIDPath"
+      && availableVideosFolderIDPath !== "folderIDPath array input empty"
+      && eval(availableVideosFolderIDPath)[folderID] 
+      && eval(availableVideosFolderIDPath)[selectedID]) {
         eval(availableVideosFolderIDPath)[folderID].content[selectedID] = eval(availableVideosFolderIDPath)[selectedID]; 
         delete eval(availableVideosFolderIDPath)[selectedID]; 
         if (selectedID.includes("folder-")) {
@@ -294,13 +341,13 @@ function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {
         return {
           "message": "successfully-inputed-selected-into-folder",
           "availableVideos": availableVideos
-        };   
-      } catch (error) {
+        };    
+      } else {
         return {
           "message": "failed-to-inputed-selected-into-folder"
         };  
       }
-    } else {
+    } catch (error) {
       return {
         "message": "failed-to-inputed-selected-into-folder"
       };  
