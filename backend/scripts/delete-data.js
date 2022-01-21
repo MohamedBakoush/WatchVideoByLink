@@ -68,7 +68,12 @@ function deleteAllVideoData(fileName, folderIDPath) {
       // delete videoData by id if exist 
       videoData.deleteSpecifiedVideoData(fileName); 
       // delete availableVideos by id if exist  
-      availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath);
+      const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
+      if (availableVideosFolderIDPath !== "folderIDPath array input empty" && availableVideosFolderIDPath !== "invalid folderIDPath") {
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
+      } else {
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
+      }
       // delete specified video by id if exist  
       deleteSpecifiedVideo(fileName); 
     }

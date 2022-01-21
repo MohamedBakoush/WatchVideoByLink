@@ -44,7 +44,15 @@ function getAvailableVideos(path_array){
       let dataPath = "availableVideos";
       for (let i = 0; i < path_array.length; i++) { 
         if (i == path_array.length - 1) { 
-          return eval(dataPath)[path_array[i]];
+          try {
+            if (eval(dataPath)[path_array[i]]) {
+              return eval(dataPath)[path_array[i]];
+            } else {
+              return "invalid array path";
+            }
+          } catch (error) {
+            return "invalid array path";
+          }
         } else  { 
           dataPath += `[path_array[${i}]]`;
         }
@@ -563,21 +571,34 @@ function deleteSpecifiedAvailableVideosData(fileName, path_array) {
 
 // delete availableVideos data by fileName from provided path 
 function deleteSpecifiedAvailableVideosDataWithProvidedPath(fileName, path_array) {
-  if (getAvailableVideos([...path_array, fileName]) !== "invalid array path") {
-    let dataPath = "availableVideos";
-    for (let i = 0; i < path_array.length; i++) { 
-        if (i == path_array.length - 1) { 
-          delete eval(dataPath)[path_array[i]][fileName];
-        } else  { 
-          dataPath += `[path_array[${i}]]`;
-        }
-    } 
-    const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-    FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
-    return `${fileName} deleted`;
+  if (Array.isArray(path_array)) { 
+    const fileName_array = getAvailableVideos([...path_array, fileName]);
+    if (fileName_array !== "invalid array path" && fileName_array) {
+      let dataPath = "availableVideos";
+      for (let i = 0; i < path_array.length; i++) { 
+          if (i == path_array.length - 1) { 
+            try {
+              if (eval(dataPath)[path_array[i]][fileName]) {
+                delete eval(dataPath)[path_array[i]][fileName];
+                const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+                FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 
+                return `${fileName} deleted`;
+              } else {
+                return "invalid array path";
+              }     
+            } catch (error) {
+              return "invalid array path";
+            }
+          } else  { 
+            dataPath += `[path_array[${i}]]`;
+          }
+      } 
+    } else {
+      return "invalid array path";
+    }  
   } else {
     return "invalid array path";
-  } 
+  }
 }
 
 // delete availableVideos data by fileName from main directory
