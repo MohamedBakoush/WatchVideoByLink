@@ -1730,6 +1730,346 @@ describe("moveSelectedIdAfterTargetIdAtAvailableVideoDetails", () =>  {
     }); 
 }); 
 
+describe("deleteSpecifiedAvailableVideosData", () =>  {    
+    it("undefined fileName undefined path_array", () =>  { 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(undefined, undefined);
+        expect(deleteSpecifiedIDWithPath).toBe("invalid fileName"); 
+    });  
+
+    it("undefined fileName empty path_array", () =>  { 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(undefined, []);
+        expect(deleteSpecifiedIDWithPath).toBe("invalid fileName"); 
+    }); 
+
+    it("undefined fileName invalid path_array", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(undefined, [fileName]);
+        expect(deleteSpecifiedIDWithPath).toBe("invalid fileName"); 
+    }); 
+
+    it("Invalid fileName undefined path_array", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(fileName, undefined);
+        expect(deleteSpecifiedIDWithPath).toBe("invalid array path"); 
+    });  
+
+    it("Invalid fileName empty path_array", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(fileName, []);
+        expect(deleteSpecifiedIDWithPath).toBe("invalid array path"); 
+    }); 
+
+    it("Invalid fileName invalid path_array", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(fileName, [fileName]);
+        expect(deleteSpecifiedIDWithPath).toBe("invalid array path"); 
+    }); 
+
+    it("Delete folder (main folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder1.folderID);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder1.folderID} deleted`); 
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]).toBeFalsy();
+        expect(getAvailableVideos).toMatchObject({}); 
+    }); 
+
+    it("Delete Video (main folder)", () =>  { 
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(fileName);
+        expect(deleteSpecifiedIDWithPath).toBe(`${fileName} deleted`); 
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[fileName]).toBeFalsy();
+        expect(getAvailableVideos).toMatchObject({}); 
+    }); 
+
+    it("Delete folder (inside folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const fileName_path_array = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID]);
+        expect(fileName_path_array).toEqual([createFolder1.folderID, "content"]); 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder2.folderID, fileName_path_array);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder2.folderID} deleted`);
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeFalsy();
+        expect(getAvailableVideos[createFolder1.folderID]["content"]).toMatchObject({}); 
+    }); 
+
+    it("Delete Video (inside folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID1 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder1.folderID);
+        expect(inputSelectedIDIntoFolderID1.availableVideos[createFolder1.folderID]["content"][fileName]).toBeTruthy();
+
+        const fileName_path_array = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID]);
+        expect(fileName_path_array).toEqual([createFolder1.folderID, "content"]); 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(fileName, fileName_path_array);
+        expect(deleteSpecifiedIDWithPath).toBe(`${fileName} deleted`); 
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][fileName]).toBeFalsy();
+        expect(getAvailableVideos[createFolder1.folderID]["content"]).toMatchObject({}); 
+    }); 
+
+    it("Delete folder (inside folder inside folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const createFolder3 = availableVideos.createFolder([createFolder1.folderID, createFolder2.folderID], "title_folder4");
+        expect(createFolder3.message).toBe("folder-created"); 
+        expect(createFolder3.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]).toBeTruthy();
+
+        const fileName_path_array = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID, createFolder2.folderID]);
+        expect(fileName_path_array).toEqual([createFolder1.folderID, "content", createFolder2.folderID, "content"]); 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder3.folderID, fileName_path_array);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder3.folderID} deleted`); 
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]).toBeFalsy();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"]).toMatchObject({}); 
+    }); 
+
+    it("Delete video (inside folder inside folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+        
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        const inputSelectedIDIntoFolderID1 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder1.folderID);
+        expect(inputSelectedIDIntoFolderID1.availableVideos[createFolder1.folderID]["content"][fileName]).toBeTruthy();
+
+        const inputSelectedIDIntoFolderID2 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder2.folderID, [createFolder1.folderID]);
+        expect(inputSelectedIDIntoFolderID2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][fileName]).toBeTruthy();
+
+        const fileName_path_array = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID, createFolder2.folderID]);
+        expect(fileName_path_array).toEqual([createFolder1.folderID, "content", createFolder2.folderID, "content"]); 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(fileName, fileName_path_array);
+        expect(deleteSpecifiedIDWithPath).toBe(`${fileName} deleted`); 
+
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][fileName]).toBeFalsy();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"]).toMatchObject({}); 
+    }); 
+
+    it("Delete folder containing folder data (main folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const createFolder3 = availableVideos.createFolder([createFolder1.folderID, createFolder2.folderID], "title_folder4");
+        expect(createFolder3.message).toBe("folder-created"); 
+        expect(createFolder3.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]).toBeTruthy();
+ 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder1.folderID);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder1.folderID} deleted`);
+        
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]).toBeFalsy();
+        expect(getAvailableVideos).toMatchObject({}); 
+    }); 
+
+    it("Delete folder containing video data (main folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID1 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder1.folderID);
+        expect(inputSelectedIDIntoFolderID1.availableVideos[createFolder1.folderID]["content"][fileName]).toBeTruthy();
+
+        const inputSelectedIDIntoFolderID2 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder2.folderID, [createFolder1.folderID]);
+        expect(inputSelectedIDIntoFolderID2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][fileName]).toBeTruthy();
+
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder1.folderID);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder1.folderID} deleted`); 
+                
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]).toBeFalsy();
+        expect(getAvailableVideos).toMatchObject({}); 
+    }); 
+
+    it("Delete folder containing folder data (inside folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const createFolder3 = availableVideos.createFolder([createFolder1.folderID, createFolder2.folderID], "title_folder4");
+        expect(createFolder3.message).toBe("folder-created"); 
+        expect(createFolder3.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]).toBeTruthy();
+
+        const fileName_path_array = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID]);
+        expect(fileName_path_array).toEqual([createFolder1.folderID, "content"]); 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder2.folderID, fileName_path_array);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder2.folderID} deleted`); 
+          
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeFalsy();
+        expect(getAvailableVideos[createFolder1.folderID]["content"]).toMatchObject({}); 
+    }); 
+
+    it("Delete folder containing video data (inside folder)", () =>  { 
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();
+        
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder2");
+        expect(createFolder2.message).toBe("folder-created"); 
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeTruthy();
+
+        const fileName = uuidv4();
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID1 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder1.folderID);
+        expect(inputSelectedIDIntoFolderID1.availableVideos[createFolder1.folderID]["content"][fileName]).toBeTruthy();
+
+        const inputSelectedIDIntoFolderID2 = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder2.folderID, [createFolder1.folderID]);
+        expect(inputSelectedIDIntoFolderID2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][fileName]).toBeTruthy();
+
+        const fileName_path_array = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID]);
+        expect(fileName_path_array).toEqual([createFolder1.folderID, "content"]); 
+        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosData(createFolder2.folderID, fileName_path_array);
+        expect(deleteSpecifiedIDWithPath).toBe(`${createFolder2.folderID} deleted`); 
+                        
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]).toBeFalsy();
+        expect(getAvailableVideos[createFolder1.folderID]["content"]).toMatchObject({}); 
+    }); 
+
+}); 
+
 describe("deleteSpecifiedAvailableVideosDataWithProvidedPath", () =>  {   
     it("No Input", () =>  {  
        const deleteSpecifiedIDWithPath = availableVideos.deleteSpecifiedAvailableVideosDataWithProvidedPath();
@@ -1857,7 +2197,7 @@ describe("deleteSpecifiedAvailableVideosDataWithProvidedPath", () =>  {
         expect(getAvailableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["content"][createFolder3.folderID]).toBeFalsy();
     }); 
 
-    it("Delete Video Data inside foldee", () =>  { 
+    it("Delete Video Data inside folder", () =>  { 
         const createFolder1 = availableVideos.createFolder(undefined, "title_folder1");
         expect(createFolder1.message).toBe("folder-created"); 
         expect(createFolder1.availableVideos[createFolder1.folderID]).toBeTruthy();

@@ -554,12 +554,12 @@ function deleteSpecifiedAvailableVideosData(fileName, path_array) {
     if (fileName !== undefined) {
       if (path_array instanceof Array) { 
         if (path_array.length !== 0) {
-          deleteSpecifiedAvailableVideosDataWithProvidedPath(fileName, path_array);
+          return deleteSpecifiedAvailableVideosDataWithProvidedPath(fileName, path_array);
         } else {
-          deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName);
+          return deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName);
         }
       } else {   
-        deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName);
+        return deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName);
       }   
     } else  {
       return "invalid fileName";
