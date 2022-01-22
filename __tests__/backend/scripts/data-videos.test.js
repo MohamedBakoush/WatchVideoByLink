@@ -75,3 +75,12 @@ describe("getVideoData", () =>  {
         expect(get_data).toMatchObject(dataVideos_data);   
     });
 }); 
+
+describe("resetVideoData", () =>  {  
+    it("resetVideoData", () =>  {
+        const reset = dataVideos.resetVideoData();
+        expect(reset).toBe("resetVideoData");  
+        const data = dataVideos.getVideoData();
+        expect(data).toMatchObject({}); 
+    });
+}); 
