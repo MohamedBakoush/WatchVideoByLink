@@ -31,17 +31,17 @@ function getAvailableVideos(path_array){
             if (eval(dataPath)[path_array[i]]) {
               return eval(dataPath)[path_array[i]];
             } else {
-              return "invalid array path";
+              return undefined;
             }
           } catch (error) {
-            return "invalid array path";
+            return undefined;
           }
         } else  { 
           dataPath += `[path_array[${i}]]`;
         }
       } 
     } else {
-      return "invalid array path";
+      return undefined;
     }
   } else  { 
     return availableVideos;
