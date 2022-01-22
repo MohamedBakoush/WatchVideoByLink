@@ -6,19 +6,18 @@ const FileSystem = require("fs");
 function update_json_path_validity(newPath) {
     if (FileSystem.existsSync(newPath)) {
         try {
-        if (path.extname(newPath) === ".json") { 
-            return "valid path";
-        } else {
-            return "input path not json"; 
-        }
+            if (path.extname(newPath) === ".json") { 
+                return "valid path";
+            } else {
+                return "input path not json"; 
+            }
         } catch (error) {
-        return error;
+            return error;
         }
     } else {
         return "invalid path";
     }
 }
-
 
 module.exports = { // export modules 
     update_json_path_validity
