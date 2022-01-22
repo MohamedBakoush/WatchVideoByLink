@@ -45,7 +45,7 @@ describe("update_data_videos_path", () =>  {
         expect(updated).toBe("input path not json");  
     }); 
 
-    it("currentDownloadVideos updated", () =>  {
+    it("videoData updated", () =>  {
         const updated = dataVideos.update_data_videos_path(dataVideos_json_path);
         expect(updated).toBe("videoData updated");  
     }); 
@@ -115,5 +115,53 @@ describe("findVideosByID", () =>  {
 
         const findVideosByID = dataVideos.findVideosByID(fileName);
         expect(findVideosByID).toMatchObject(dataVideos_data); 
+    });
+}); 
+
+describe("updateVideoData", () =>  {  
+    it("No Input", () =>  { 
+        const updateVideoData = dataVideos.updateVideoData();
+        expect(updateVideoData).toBe("invalid path_array");  
+    }); 
+
+    it("undefined path_array", () =>  {
+        const updateVideoData = dataVideos.updateVideoData(undefined);
+        expect(updateVideoData).toBe("invalid path_array");  
+    }); 
+
+    it("undefined path_array undefined data", () =>  {
+        const updateVideoData = dataVideos.updateVideoData(undefined, undefined);
+        expect(updateVideoData).toBe("invalid path_array");  
+    }); 
+
+    it("invalid path_array undefined data", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData(fileName, undefined);
+        expect(updateVideoData).toBe("invalid path_array");  
+    }); 
+
+    it("invalid path_array valid data", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData(fileName, {});
+        expect(updateVideoData).toBe("invalid path_array");  
+    }); 
+
+    it("empty path_array invalid data", () =>  {
+        const updateVideoData = dataVideos.updateVideoData([], undefined);
+        expect(updateVideoData).toBe("invalid path_array");  
+    });
+
+    it("valid path_array invalid data", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], undefined);
+        expect(updateVideoData).toBe("invalid data");  
+    });
+
+    it("Valid", () =>  { 
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
     });
 }); 
