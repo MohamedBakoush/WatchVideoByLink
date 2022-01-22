@@ -21,18 +21,26 @@ function update_data_videos_path(newPath){
 
 // returns current video downloads
 function getVideoData(path_array){ 
-    if (path_array !== undefined) { 
+    if (Array.isArray(path_array)) {
         if (path_array.length !== 0) { 
             let dataPath = "videoData";
             for (let i = 0; i < path_array.length; i++) { 
                 if (i == path_array.length - 1) { 
-                    return eval(dataPath)[path_array[i]];
+                    try {
+                        if (eval(dataPath)[path_array[i]]) {
+                            return eval(dataPath)[path_array[i]];
+                        } else {
+                            return undefined;
+                        }
+                    } catch (error) {
+                        return undefined;
+                    }
                 } else  { 
                     dataPath += `[path_array[${i}]]`;
                 }
             } 
         }  else  { 
-            return "invalid array path";
+            return undefined;
         } 
     } else {
         return videoData;
@@ -69,6 +77,7 @@ function updateVideoData(path_array, data) {
         } 
         const newVideoData = JSON.stringify(videoData, null, 2);
         FileSystem.writeFileSync(data_videos_path, newVideoData);
+        return "updateVideoData";
     }    
 }
 

@@ -1,5 +1,25 @@
 const dataVideos = require("../../../backend/scripts/data-videos");
 const dataVideos_json_path = "__tests__/data/data-videos.test.json";
+const { v4: uuidv4 } = require("uuid");
+
+const dataVideos_data = {
+    "video": {
+        "originalVideoSrc" : "videoSrc",
+        "originalVideoType" : "videoType",
+        "path": "videoFilePath",
+        "videoType" : "video/mp4",
+        "download" : "completed",
+      },
+      "compression" : {
+        "path": "compressionFilePath",
+        "videoType": "video/webm",
+        "download": "completed"
+      },
+      "thumbnail": {
+        "path": {},
+        "download": "completed"
+      }
+};
 
 beforeAll(() => {    
     dataVideos.update_data_videos_path(dataVideos_json_path); 
@@ -29,4 +49,29 @@ describe("update_data_videos_path", () =>  {
         const updated = dataVideos.update_data_videos_path(dataVideos_json_path);
         expect(updated).toBe("videoData updated");  
     }); 
+}); 
+
+describe("getVideoData", () =>  {   
+    it("No input - path array", () =>  {
+        const getVideoData = dataVideos.getVideoData();
+        expect(getVideoData).toMatchObject({}); 
+    }); 
+
+    it("Empty path array", () =>  {
+        const getVideoData = dataVideos.getVideoData([]);
+        expect(getVideoData).toBe(undefined); 
+    }); 
+
+    it("Invalid path array", () =>  {
+        const getVideoData = dataVideos.getVideoData([undefined]);
+        expect(getVideoData).toBe(undefined); 
+    }); 
+
+    it("Get Specified Video Data", () =>  { 
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+    });
 }); 
