@@ -8,28 +8,39 @@ let videoData = JSON.parse(data_videos);
   
 // updated data videos path
 function update_data_videos_path(newPath){  
-    if (checkPathValidity.update_json_path_validity(newPath) == "valid path") {
+    const checkJsonValidity = checkPathValidity.update_json_path_validity(newPath);
+    if (checkJsonValidity == "valid path") {
         const data_videos  = FileSystem.readFileSync(newPath);
         videoData = JSON.parse(data_videos);
         data_videos_path = newPath;
         return "videoData updated";
+    } else {
+        return checkJsonValidity;
     }
 }
 
 // returns current video downloads
 function getVideoData(path_array){ 
-    if (path_array !== undefined) { 
+    if (Array.isArray(path_array)) {
         if (path_array.length !== 0) { 
             let dataPath = "videoData";
             for (let i = 0; i < path_array.length; i++) { 
                 if (i == path_array.length - 1) { 
-                    return eval(dataPath)[path_array[i]];
+                    try {
+                        if (eval(dataPath)[path_array[i]]) {
+                            return eval(dataPath)[path_array[i]];
+                        } else {
+                            return undefined;
+                        }
+                    } catch (error) {
+                        return undefined;
+                    }
                 } else  { 
                     dataPath += `[path_array[${i}]]`;
                 }
             } 
         }  else  { 
-            return "invalid array path";
+            return undefined;
         } 
     } else {
         return videoData;
@@ -55,18 +66,25 @@ function findVideosByID(id){
 
 // update video data
 function updateVideoData(path_array, data) {
-    if (path_array.length !== 0 || path_array !== undefined) { 
-        let dataPath = "videoData";
-        for (let i = 0; i < path_array.length; i++) { 
-            if (i == path_array.length - 1) { 
-                eval(dataPath)[path_array[i]] = data;
-            } else  { 
-                dataPath += `[path_array[${i}]]`;
-            }
-        } 
-        const newVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync(data_videos_path, newVideoData);
-    }    
+    if (Array.isArray(path_array) && path_array.length !== 0) {
+        if (data !== undefined) {
+            let dataPath = "videoData";
+            for (let i = 0; i < path_array.length; i++) { 
+                if (i == path_array.length - 1) { 
+                    eval(dataPath)[path_array[i]] = data;
+                    const newVideoData = JSON.stringify(videoData, null, 2);
+                    FileSystem.writeFileSync(data_videos_path, newVideoData);
+                    return "updateVideoData";  
+                } else  { 
+                    dataPath += `[path_array[${i}]]`;
+                }
+            }     
+        } else {
+            return "invalid data";
+        }
+    } else {
+        return "invalid path_array";
+    }     
 }
 
 // delete videoData by id if exist
@@ -75,6 +93,7 @@ function deleteSpecifiedVideoData(fileName) {
         delete videoData[`${fileName}`]; 
         const deleteVideoData = JSON.stringify(videoData, null, 2);
         FileSystem.writeFileSync(data_videos_path, deleteVideoData);
+        return `${fileName} deleted`;
     } else {
         return `${fileName} Unavaiable`; 
     }  
