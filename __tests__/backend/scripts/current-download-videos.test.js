@@ -126,3 +126,65 @@ describe("findCurrentDownloadByID", () =>  {
         }); 
     });
 }); 
+
+describe("updateCurrentDownloadVideos", () =>  {  
+    it("No Input", () =>  { 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos();
+        expect(updateCurrentDownloadVideos).toBe("invalid path_array");  
+    }); 
+
+    it("undefined path_array", () =>  {
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos(undefined);
+        expect(updateCurrentDownloadVideos).toBe("invalid path_array");  
+    }); 
+
+    it("undefined path_array undefined data", () =>  {
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos(undefined, undefined);
+        expect(updateCurrentDownloadVideos).toBe("invalid path_array");  
+    }); 
+
+    it("invalid path_array undefined data", () =>  {
+        const fileName = uuidv4();
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos(fileName, undefined);
+        expect(updateCurrentDownloadVideos).toBe("invalid path_array");  
+    }); 
+
+    it("invalid path_array valid data", () =>  {
+        const fileName = uuidv4();
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos(fileName, {});
+        expect(updateCurrentDownloadVideos).toBe("invalid path_array");  
+    }); 
+
+    it("empty path_array invalid data", () =>  {
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([], undefined);
+        expect(updateCurrentDownloadVideos).toBe("invalid path_array");  
+    });
+
+    it("valid path_array invalid data", () =>  {
+        const fileName = uuidv4();
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], undefined);
+        expect(updateCurrentDownloadVideos).toBe("invalid data");  
+    });
+
+    it("Valid", () =>  { 
+        const fileName = uuidv4();
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const get_data = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_data).toMatchObject({
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        });   
+    });
+}); 
