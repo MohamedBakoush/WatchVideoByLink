@@ -40,12 +40,12 @@ describe("getCurrentDownloads", () =>  {
 
     it("Empty path array", () =>  {
         const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([]);
-        expect(getCurrentDownloads).toBe("invalid array path"); 
+        expect(getCurrentDownloads).toBe(undefined); 
     }); 
 
     it("Invalid path array", () =>  {
         const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([undefined]);
-        expect(getCurrentDownloads).toBe("invalid array path"); 
+        expect(getCurrentDownloads).toBe(undefined); 
     }); 
 
     it("Get Specified Video Data", () =>  { 

@@ -30,17 +30,17 @@ function getCurrentDownloads(path_array){
               if (eval(dataPath)[path_array[i]]) {
                 return eval(dataPath)[path_array[i]];
               } else {
-                return "invalid array path";
+                return undefined;
               }
             } catch (error) {
-              return "invalid array path";
+              return undefined;
             }
           } else  { 
               dataPath += `[path_array[${i}]]`;
           }
       } 
     } else {
-      return "invalid array path";
+      return undefined;
     }
   } else  { 
     return currentDownloadVideos;
@@ -66,21 +66,21 @@ function findCurrentDownloadByID(id){
 
 function updateCurrentDownloadVideos(path_array, data) {  
   if (Array.isArray(path_array) && path_array.length !== 0) { 
-      if (data !== undefined) {
-        let dataPath = "currentDownloadVideos";
-        for (let i = 0; i < path_array.length; i++) { 
-            if (i == path_array.length - 1) { 
-                eval(dataPath)[path_array[i]] = data;
-            } else  { 
-                dataPath += `[path_array[${i}]]`;
-            }
-        } 
-        const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-        FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
-        return "updateCurrentDownloadVideos"; 
-      } else {
-        return "invalid data";
-      }
+    if (data !== undefined) {
+      let dataPath = "currentDownloadVideos";
+      for (let i = 0; i < path_array.length; i++) { 
+        if (i == path_array.length - 1) { 
+          eval(dataPath)[path_array[i]] = data;
+          const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+          FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos); 
+          return "updateCurrentDownloadVideos"; 
+        } else  { 
+          dataPath += `[path_array[${i}]]`;
+        }
+      } 
+    } else {
+      return "invalid data";
+    }
   } else {
     return "invalid path_array";
   }   
