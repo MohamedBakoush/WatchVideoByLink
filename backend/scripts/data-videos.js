@@ -8,11 +8,14 @@ let videoData = JSON.parse(data_videos);
   
 // updated data videos path
 function update_data_videos_path(newPath){  
-    if (checkPathValidity.update_json_path_validity(newPath) == "valid path") {
+    const checkJsonValidity = checkPathValidity.update_json_path_validity(newPath);
+    if (checkJsonValidity == "valid path") {
         const data_videos  = FileSystem.readFileSync(newPath);
         videoData = JSON.parse(data_videos);
         data_videos_path = newPath;
         return "videoData updated";
+    } else {
+        return checkJsonValidity;
     }
 }
 
