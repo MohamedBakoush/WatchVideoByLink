@@ -93,6 +93,7 @@ function deleteSpecifiedVideoData(fileName) {
         delete videoData[`${fileName}`]; 
         const deleteVideoData = JSON.stringify(videoData, null, 2);
         FileSystem.writeFileSync(data_videos_path, deleteVideoData);
+        return `${fileName} deleted`;
     } else {
         return `${fileName} Unavaiable`; 
     }  

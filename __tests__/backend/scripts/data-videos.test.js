@@ -165,3 +165,31 @@ describe("updateVideoData", () =>  {
         expect(get_data).toMatchObject(dataVideos_data);   
     });
 }); 
+
+describe("deleteSpecifiedVideoData", () =>  {  
+    it("No input", () =>  { 
+        const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData();
+        expect(deleteSpecifiedVideoData).toBe("undefined Unavaiable");  
+    });
+
+    it("Invalid fileName", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData(fileName);
+        expect(deleteSpecifiedVideoData).toBe(`${fileName} Unavaiable`);  
+    });
+
+    it("Delete fileName", () =>  { 
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data); 
+        expect(updateVideoData).toBe("updateVideoData");  
+
+        const getVideoData_1 = dataVideos.getVideoData();
+        expect(getVideoData_1[fileName]).toMatchObject(dataVideos_data);    
+
+        const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData(fileName);
+        expect(deleteSpecifiedVideoData).toBe(`${fileName} deleted`); 
+
+        const getVideoData_2 = dataVideos.getVideoData();
+        expect(getVideoData_2).toMatchObject({}); 
+    }); 
+}); 
