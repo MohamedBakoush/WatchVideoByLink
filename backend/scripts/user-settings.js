@@ -1,31 +1,14 @@
 "use strict"; 
-const path = require("path");
 const FileSystem = require("fs"); 
+const checkPathValidity = require("./check-path-validity");
 
 let user_settings_path = "data/user-settings.json";
 const user_settings = FileSystem.readFileSync(user_settings_path);
 let userSettings = JSON.parse(user_settings); 
 
-// check validity of json path
-function update_json_path_validity(newPath) {
-    if (FileSystem.existsSync(newPath)) {
-      try {
-        if (path.extname(newPath) === ".json") { 
-          return "valid path";
-        } else {
-          return "input path not json"; 
-        }
-      } catch (error) {
-        return error;
-      }
-    } else {
-      return "invalid path";
-    }
-}
-
 // updated user settings path
 function update_user_settings_path(newPath){  
-    if (update_json_path_validity(newPath) == "valid path") {
+    if (checkPathValidity.update_json_path_validity(newPath) == "valid path") {
         const user_settings = FileSystem.readFileSync(newPath);  
         userSettings = JSON.parse(user_settings);
         user_settings_path = newPath;

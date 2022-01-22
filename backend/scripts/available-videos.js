@@ -1,32 +1,15 @@
-"use strict"; 
-const path = require("path");
+"use strict";
 const FileSystem = require("fs"); 
 const { v4: uuidv4 } = require("uuid");
+const checkPathValidity = require("./check-path-validity");
 
 let available_videos_path = "data/available-videos.json";
 const available_videos  = FileSystem.readFileSync(available_videos_path);
 let availableVideos = JSON.parse(available_videos);
 
-// check validity of json path
-function update_json_path_validity(newPath) {
-  if (FileSystem.existsSync(newPath)) {
-    try {
-      if (path.extname(newPath) === ".json") { 
-        return "valid path";
-      } else {
-        return "input path not json"; 
-      }
-    } catch (error) {
-      return error;
-    }
-  } else {
-    return "invalid path";
-  }
-}
-
 // updated available videos path
 function update_available_videos_path(newPath){ 
-  const checkJsonValidity = update_json_path_validity(newPath);
+  const checkJsonValidity = checkPathValidity.update_json_path_validity(newPath);
   if (checkJsonValidity == "valid path") {
       const available_videos  = FileSystem.readFileSync(newPath);
       availableVideos = JSON.parse(available_videos);  
@@ -615,7 +598,6 @@ function deleteSpecifiedAvailableVideosDataWithoutProvidedPath(fileName) {
 }
 
 module.exports = { // export modules 
-    update_json_path_validity,
     update_available_videos_path,
     getAvailableVideos,
     resetAvailableVideos,

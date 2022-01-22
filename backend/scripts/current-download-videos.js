@@ -1,31 +1,14 @@
 "use strict"; 
-const path = require("path");
 const FileSystem = require("fs"); 
+const checkPathValidity = require("./check-path-validity");
 
 let current_download_videos_path = "data/current-download-videos.json";
 const current_download_videos = FileSystem.readFileSync(current_download_videos_path);
 let currentDownloadVideos = JSON.parse(current_download_videos);
 
-// check validity of json path
-function update_json_path_validity(newPath) {
-  if (FileSystem.existsSync(newPath)) {
-    try {
-      if (path.extname(newPath) === ".json") { 
-        return "valid path";
-      } else {
-        return "input path not json"; 
-      }
-    } catch (error) {
-      return error;
-    }
-  } else {
-    return "invalid path";
-  }
-}
-
 // updated current download videos path
 function update_current_download_videos_path(newPath){ 
-    if (update_json_path_validity(newPath) == "valid path") {
+    if (checkPathValidity.update_json_path_validity(newPath) == "valid path") {
         const current_download_videos = FileSystem.readFileSync(newPath);
         currentDownloadVideos = JSON.parse(current_download_videos);
         current_download_videos_path = newPath;
