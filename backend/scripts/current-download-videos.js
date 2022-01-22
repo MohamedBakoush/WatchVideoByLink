@@ -92,6 +92,7 @@ function deleteSpecifiedCurrentDownloadVideosData(fileName) {
     delete currentDownloadVideos[`${fileName}`]; 
     const deleteCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
     FileSystem.writeFileSync(current_download_videos_path, deleteCurrentDownloadVideos);
+    return `${fileName} deleted`;
   } else {
     return `${fileName} Unavaiable`; 
   }

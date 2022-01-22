@@ -188,3 +188,45 @@ describe("updateCurrentDownloadVideos", () =>  {
         });   
     });
 }); 
+
+describe("deleteSpecifiedCurrentDownloadVideosData", () =>  {  
+    it("No input", () =>  { 
+        const deleteSpecifiedCurrentDownloadVideosData = currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData();
+        expect(deleteSpecifiedCurrentDownloadVideosData).toBe("undefined Unavaiable");  
+    });
+
+    it("Invalid fileName", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedCurrentDownloadVideosData = currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
+        expect(deleteSpecifiedCurrentDownloadVideosData).toBe(`${fileName} Unavaiable`);  
+    });
+
+    it("Delete fileName", () =>  { 
+        const fileName = uuidv4();
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        }); 
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+
+        const getCurrentDownloads_1 = currentDownloadVideos.getCurrentDownloads();
+        expect(getCurrentDownloads_1[fileName]).toMatchObject({
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        });    
+
+        const deleteSpecifiedCurrentDownloadVideosData = currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
+        expect(deleteSpecifiedCurrentDownloadVideosData).toBe(`${fileName} deleted`); 
+
+        const getCurrentDownloads_2 = currentDownloadVideos.getCurrentDownloads();
+        expect(getCurrentDownloads_2).toMatchObject({}); 
+    }); 
+}); 
