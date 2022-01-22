@@ -84,3 +84,36 @@ describe("resetVideoData", () =>  {
         expect(data).toMatchObject({}); 
     });
 }); 
+
+describe("findVideosByID", () =>  {  
+    it("No input", () =>  {
+        const findVideosByID = dataVideos.findVideosByID();
+        expect(findVideosByID).toBe(undefined);  
+    });
+
+    it("invalid id", () =>  {
+        const fileName = uuidv4();
+        const findVideosByID = dataVideos.findVideosByID(fileName);
+        expect(findVideosByID).toBe(undefined);  
+    });
+
+    it("input empty array", () =>  {
+        const findVideosByID = dataVideos.findVideosByID([]);
+        expect(findVideosByID).toBe(undefined);  
+    });
+
+    it("input array", () =>  {
+        const fileName = uuidv4();
+        const findVideosByID = dataVideos.findVideosByID([fileName]);
+        expect(findVideosByID).toBe(undefined);  
+    });
+
+    it("Valid id", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+
+        const findVideosByID = dataVideos.findVideosByID(fileName);
+        expect(findVideosByID).toMatchObject(dataVideos_data); 
+    });
+}); 
