@@ -49,20 +49,19 @@ function getCurrentDownloads(path_array){
 
 // return current video downloads to its inital state
 function resetCurrentDownloadVideos(){
-    currentDownloadVideos = {};
-    const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
-    return "resetCurrentDownloadVideos";
+  currentDownloadVideos = {};
+  const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+  FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
+  return "resetCurrentDownloadVideos";
 }
-
 
 // check if id provided is corresponding to video download
 function findCurrentDownloadByID(id){
-    if (currentDownloadVideos[id] === undefined) { // if id is invalid
-      return undefined;
-    } else { // if valid return videos[id]
-      return currentDownloadVideos[id];
-    }
+  if (currentDownloadVideos[id] === undefined) { // if id is invalid
+    return undefined;
+  } else { // if valid return videos[id]
+    return currentDownloadVideos[id];
+  }
 } 
 
 function updateCurrentDownloadVideos(path_array, data) {  
