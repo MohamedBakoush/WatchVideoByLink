@@ -8,12 +8,15 @@ let currentDownloadVideos = JSON.parse(current_download_videos);
 
 // updated current download videos path
 function update_current_download_videos_path(newPath){ 
-    if (checkPathValidity.update_json_path_validity(newPath) == "valid path") {
-        const current_download_videos = FileSystem.readFileSync(newPath);
-        currentDownloadVideos = JSON.parse(current_download_videos);
-        current_download_videos_path = newPath;
-        return "currentDownloadVideos updated";
-    }  
+  const checkJsonValidity = checkPathValidity.update_json_path_validity(newPath);
+  if (checkJsonValidity == "valid path") {
+    const current_download_videos = FileSystem.readFileSync(newPath);
+    currentDownloadVideos = JSON.parse(current_download_videos);
+    current_download_videos_path = newPath;
+    return "currentDownloadVideos updated";
+  } else {
+    return checkJsonValidity;
+  }
 }
 
 // returns current video downloads
