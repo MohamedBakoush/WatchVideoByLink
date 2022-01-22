@@ -38,8 +38,13 @@ describe("getAvailableVideos", () =>  {
         expect(getAvailableVideos).toMatchObject({}); 
     }); 
 
-    it("Invalid path array", () =>  {
+    it("Empty path array", () =>  {
         const getAvailableVideos = availableVideos.getAvailableVideos([]);
+        expect(getAvailableVideos).toBe("invalid array path"); 
+    }); 
+
+    it("Invalid path array", () =>  {
+        const getAvailableVideos = availableVideos.getAvailableVideos([undefined]);
         expect(getAvailableVideos).toBe("invalid array path"); 
     }); 
 
