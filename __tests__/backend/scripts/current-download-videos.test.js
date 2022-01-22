@@ -70,3 +70,12 @@ describe("getCurrentDownloads", () =>  {
         });   
     });
 }); 
+
+describe("resetCurrentDownloadVideos", () =>  {  
+    it("resetCurrentDownloadVideos", () =>  {
+        const reset = currentDownloadVideos.resetCurrentDownloadVideos();
+        expect(reset).toBe("resetCurrentDownloadVideos");  
+        const data = currentDownloadVideos.getCurrentDownloads();
+        expect(data).toMatchObject({}); 
+    });
+}); 
