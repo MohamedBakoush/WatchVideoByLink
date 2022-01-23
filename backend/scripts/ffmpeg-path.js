@@ -20,7 +20,7 @@ function get_ffprobe_path(){
 
 // updated ffprobe path
 function update_ffprobe_path(newPath){ 
-    if (typeof newPath == "string") {
+    if (FileSystem.existsSync(newPath)) {
         ffprobe_path = newPath;
         ffmpeg.setFfprobePath(newPath);
         return ffprobe_path;
