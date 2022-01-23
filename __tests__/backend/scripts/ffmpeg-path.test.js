@@ -58,6 +58,20 @@ describe("update_ffprobe_path", () =>  {
     }); 
 }); 
 
+describe("get_ffmpeg_path", () =>  {  
+    it("ffprobe_installer.path", () =>  {
+        const updated = ffmpegPath.update_ffmpeg_path(ffprobe_installer.path);
+        expect(updated).toBe(ffprobe_installer.path);  
+        const getFFmpegPath = ffmpegPath.get_ffmpeg_path();
+        expect(getFFmpegPath).toBe(ffprobe_installer.path); 
+    }); 
+
+    it("ffmpeg_installer.path", () =>  {
+        const getFFmpegPath = ffmpegPath.get_ffmpeg_path();
+        expect(getFFmpegPath).toBe(ffmpeg_installer.path);  
+    }); 
+}); 
+
 describe("update_ffmpeg_path", () =>  {  
     it("Invalid: undefind", () =>  {
         const updated = ffmpegPath.update_ffmpeg_path(undefined);
