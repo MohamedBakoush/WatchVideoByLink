@@ -11,8 +11,6 @@ function get_ffprobe_path(){
         return ffprobe_path;
     } else if (FileSystem.existsSync(ffprobe_installer.path)) {
         return update_ffprobe_path(ffprobe_installer.path);
-    } else if (FileSystem.existsSync("./ffprobe.exe")) { 
-        return update_ffprobe_path("./ffprobe.exe");
     } else {
         return undefined;
     }  
