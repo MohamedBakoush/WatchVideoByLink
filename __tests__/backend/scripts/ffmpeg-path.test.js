@@ -3,7 +3,6 @@ const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 const ffprobe_installer = require("@ffprobe-installer/ffprobe");
 const ffmpeg = require("fluent-ffmpeg");
 
-
 const ffprobe_path = ffprobe_installer.path;
 const ffmpeg_path = ffmpeg_installer.path;
 const untrunc_path = "__tests__/backend/scripts/ffmpeg-path.test.js";
@@ -244,5 +243,31 @@ describe("STOP", () =>  {
             expect(error).toBeInstanceOf(TypeError);
             expect(error).toHaveProperty("message", "Cannot read properties of undefined (reading 'stdin')");
         } 
+    }); 
+});
+
+describe("SIGKILL", () =>  {  
+    it("No Input", () =>  {
+        try {
+            ffmpegPath.SIGKILL();
+        } catch (error) {
+            expect(error).toBeInstanceOf(TypeError);
+            expect(error).toHaveProperty("message", "Cannot read properties of undefined (reading 'kill')");
+        } 
+    }); 
+
+    it("Invalid Input", () =>  {
+        try {
+            ffmpegPath.SIGKILL("kill");
+        } catch (error) {
+            expect(error).toBeInstanceOf(TypeError);
+            expect(error).toHaveProperty("message", "command.kill is not a function");
+        } 
+    }); 
+
+    it("SIGKILL", () =>  {
+        const command = new ffmpeg();
+        const SIGKILL = ffmpegPath.SIGKILL(command);
+        expect(SIGKILL).toBe(command);  
     }); 
 });
