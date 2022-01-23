@@ -44,7 +44,7 @@ function get_ffmpeg_path(){
 
 // updated ffmpeg path
 function update_ffmpeg_path(newPath){ 
-    if (typeof newPath == "string") {
+    if (FileSystem.existsSync(newPath)) {
         ffmpeg_path = newPath;
         ffmpeg.setFfmpegPath(newPath);
         return ffmpeg_path;
