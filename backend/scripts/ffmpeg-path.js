@@ -85,7 +85,7 @@ function get_working_video_path(){
 
 // updated working video path
 function update_working_video_path(newPath){ 
-    if (typeof newPath == "string") {
+    if (FileSystem.existsSync(newPath)) {
         working_video_path = newPath;
         return working_video_path;
     } else { 
