@@ -49,7 +49,6 @@ function update_ffmpeg_path(newPath){
     } 
 }
 
-
 // get untrun path
 function get_untrunc_path(){ 
     if (untrunc_path !== undefined) {
@@ -63,7 +62,7 @@ function get_untrunc_path(){
 
 // updated untrun path
 function update_untrunc_path(newPath){ 
-    if (typeof newPath == "string") {
+    if (FileSystem.existsSync(newPath)) {
         untrunc_path = newPath;
         return untrunc_path;
     } else { 
