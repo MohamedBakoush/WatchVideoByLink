@@ -1,6 +1,8 @@
 const ffmpegPath = require("../../../backend/scripts/ffmpeg-path");
 const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 const ffprobe_installer = require("@ffprobe-installer/ffprobe");
+const ffmpeg = require("fluent-ffmpeg");
+
 
 const ffprobe_path = ffprobe_installer.path;
 const ffmpeg_path = ffmpeg_installer.path;
@@ -224,3 +226,23 @@ describe("checkIfFFmpegFFprobeExits", () =>  {
         expect(checkIfFFmpegFFprobeExits).toBe("ffmpeg-ffprobe-exits");  
     }); 
 }); 
+
+describe("STOP", () =>  {  
+    it("No Input", () =>  {
+        try {
+            ffmpegPath.STOP();
+        } catch (error) {
+            expect(error).toBeInstanceOf(TypeError);
+            expect(error).toHaveProperty("message", "Cannot read properties of undefined (reading 'ffmpegProc')");
+        } 
+    }); 
+
+    it("Invalid Input", () =>  {
+        try {
+            ffmpegPath.STOP("stop");
+        } catch (error) {
+            expect(error).toBeInstanceOf(TypeError);
+            expect(error).toHaveProperty("message", "Cannot read properties of undefined (reading 'stdin')");
+        } 
+    }); 
+});
