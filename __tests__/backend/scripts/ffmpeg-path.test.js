@@ -2,22 +2,27 @@ const ffmpegPath = require("../../../backend/scripts/ffmpeg-path");
 const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 const ffprobe_installer = require("@ffprobe-installer/ffprobe");
 
+const ffprobe_path = ffprobe_installer.path;
+const ffmpeg_path = ffprobe_installer.path;
+const untrunc_path = "__tests__/backend/scripts/ffmpeg-path.test.js";
+
 afterEach(() => {    
-    ffmpegPath.update_ffprobe_path(ffprobe_installer.path);
-    ffmpegPath.update_ffmpeg_path(ffmpeg_installer.path);
+    ffmpegPath.update_ffprobe_path(ffprobe_path);
+    ffmpegPath.update_ffmpeg_path(ffmpeg_path);
+    ffmpegPath.update_untrunc_path(untrunc_path);
 }); 
 
 describe("get_ffprobe_path", () =>  {  
-    it("ffmpeg_installer.path", () =>  {
-        const updated = ffmpegPath.update_ffprobe_path(ffmpeg_installer.path);
-        expect(updated).toBe(ffmpeg_installer.path);  
+    it("update path", () =>  {
+        const updated = ffmpegPath.update_ffprobe_path(ffprobe_path);
+        expect(updated).toBe(ffprobe_path);  
         const getFFprobePath = ffmpegPath.get_ffprobe_path();
-        expect(getFFprobePath).toBe(ffmpeg_installer.path); 
+        expect(getFFprobePath).toBe(ffprobe_path); 
     }); 
 
-    it("ffprobe_installer.path", () =>  {
+    it("ffprobe_path", () =>  {
         const getFFprobePath = ffmpegPath.get_ffprobe_path();
-        expect(getFFprobePath).toBe(ffprobe_installer.path);  
+        expect(getFFprobePath).toBe(ffprobe_path);  
     }); 
 }); 
 
@@ -53,22 +58,22 @@ describe("update_ffprobe_path", () =>  {
     }); 
 
     it("Valid: Path", () =>  {
-        const updated = ffmpegPath.update_ffprobe_path(ffprobe_installer.path);
-        expect(updated).toBe(ffprobe_installer.path);  
+        const updated = ffmpegPath.update_ffprobe_path(ffprobe_path);
+        expect(updated).toBe(ffprobe_path);  
     }); 
 }); 
 
 describe("get_ffmpeg_path", () =>  {  
-    it("ffprobe_installer.path", () =>  {
-        const updated = ffmpegPath.update_ffmpeg_path(ffprobe_installer.path);
-        expect(updated).toBe(ffprobe_installer.path);  
+    it("update path", () =>  {
+        const updated = ffmpegPath.update_ffmpeg_path(ffmpeg_path);
+        expect(updated).toBe(ffmpeg_path);  
         const getFFmpegPath = ffmpegPath.get_ffmpeg_path();
-        expect(getFFmpegPath).toBe(ffprobe_installer.path); 
+        expect(getFFmpegPath).toBe(ffmpeg_path); 
     }); 
 
-    it("ffmpeg_installer.path", () =>  {
+    it("ffmpeg_path", () =>  {
         const getFFmpegPath = ffmpegPath.get_ffmpeg_path();
-        expect(getFFmpegPath).toBe(ffmpeg_installer.path);  
+        expect(getFFmpegPath).toBe(ffmpeg_path);  
     }); 
 }); 
 
@@ -104,8 +109,22 @@ describe("update_ffmpeg_path", () =>  {
     }); 
 
     it("Valid: Path", () =>  {
-        const updated = ffmpegPath.update_ffmpeg_path(ffmpeg_installer.path);
-        expect(updated).toBe(ffmpeg_installer.path);  
+        const updated = ffmpegPath.update_ffmpeg_path(ffmpeg_path);
+        expect(updated).toBe(ffmpeg_path);  
+    }); 
+}); 
+
+describe("get_untrunc_path", () =>  {  
+    it("Update Path", () =>  {
+        const updated = ffmpegPath.update_untrunc_path(ffmpeg_path);
+        expect(updated).toBe(ffmpeg_path);  
+        const getUntruncPath = ffmpegPath.get_untrunc_path();
+        expect(getUntruncPath).toBe(ffmpeg_path); 
+    }); 
+
+    it("untrunc_path", () =>  {
+        const getFFmpegPath = ffmpegPath.get_untrunc_path();
+        expect(getFFmpegPath).toBe(untrunc_path);  
     }); 
 }); 
 

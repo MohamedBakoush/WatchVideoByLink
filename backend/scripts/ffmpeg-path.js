@@ -55,9 +55,11 @@ function get_untrunc_path(){
         return untrunc_path;
     } else if (FileSystem.existsSync("untrunc.exe")) { // user input
         return update_untrunc_path("untrunc.exe");
-    } else { //docker
+    } else if (FileSystem.existsSync("./untrunc-master/untrunc")) { //docker
         return update_untrunc_path("./untrunc-master/untrunc");
-    }  
+    } else { //docker
+        return undefined;
+    }   
 }
 
 // updated untrun path
