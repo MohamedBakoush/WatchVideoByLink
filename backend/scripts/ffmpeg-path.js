@@ -76,8 +76,10 @@ function update_untrunc_path(newPath){
 function get_working_video_path(){ 
     if (working_video_path !== undefined) {
         return working_video_path;
-    } else  {
+    } if (FileSystem.existsSync("./media/working-video/video.mp4")) {
         return update_working_video_path("./media/working-video/video.mp4");
+    } else  {
+        return undefined;
     }  
 }
 

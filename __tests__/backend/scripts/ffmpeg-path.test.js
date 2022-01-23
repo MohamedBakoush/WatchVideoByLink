@@ -3,13 +3,15 @@ const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 const ffprobe_installer = require("@ffprobe-installer/ffprobe");
 
 const ffprobe_path = ffprobe_installer.path;
-const ffmpeg_path = ffprobe_installer.path;
+const ffmpeg_path = ffmpeg_installer.path;
 const untrunc_path = "__tests__/backend/scripts/ffmpeg-path.test.js";
+const working_video_path = "./media/working-video/video.mp4";
 
 afterEach(() => {    
     ffmpegPath.update_ffprobe_path(ffprobe_path);
     ffmpegPath.update_ffmpeg_path(ffmpeg_path);
     ffmpegPath.update_untrunc_path(untrunc_path);
+    ffmpegPath.update_working_video_path(working_video_path);
 }); 
 
 describe("get_ffprobe_path", () =>  {  
@@ -123,8 +125,8 @@ describe("get_untrunc_path", () =>  {
     }); 
 
     it("untrunc_path", () =>  {
-        const getFFmpegPath = ffmpegPath.get_untrunc_path();
-        expect(getFFmpegPath).toBe(untrunc_path);  
+        const getUntruncPath = ffmpegPath.get_untrunc_path();
+        expect(getUntruncPath).toBe(untrunc_path);  
     }); 
 }); 
 
@@ -162,5 +164,19 @@ describe("update_untrunc_path", () =>  {
     it("Valid: Path", () =>  {
         const updated = ffmpegPath.update_untrunc_path("__tests__/backend/scripts/ffmpeg-path.test.js");
         expect(updated).toBe("__tests__/backend/scripts/ffmpeg-path.test.js");  
+    }); 
+}); 
+
+describe("get_working_video_path", () =>  {  
+    it("Update Path", () =>  {
+        const updated = ffmpegPath.update_working_video_path(ffmpeg_path);
+        expect(updated).toBe(ffmpeg_path);  
+        const getWorkingVideoPath = ffmpegPath.get_working_video_path();
+        expect(getWorkingVideoPath).toBe(ffmpeg_path); 
+    }); 
+
+    it("working_video_path", () =>  {
+        const getWorkingVideoPath = ffmpegPath.get_working_video_path();
+        expect(getWorkingVideoPath).toBe(working_video_path);  
     }); 
 }); 
