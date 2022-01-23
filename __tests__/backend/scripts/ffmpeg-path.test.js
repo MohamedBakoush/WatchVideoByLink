@@ -217,3 +217,10 @@ describe("update_working_video_path", () =>  {
         expect(updated).toBe(working_video_path);  
     }); 
 }); 
+
+describe("checkIfFFmpegFFprobeExits", () =>  {  
+    it("ffmpeg-ffprobe-exits", () =>  {
+        const checkIfFFmpegFFprobeExits = ffmpegPath.checkIfFFmpegFFprobeExits();
+        expect(checkIfFFmpegFFprobeExits).toBe("ffmpeg-ffprobe-exits");  
+    }); 
+}); 
