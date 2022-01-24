@@ -28,6 +28,27 @@ function getDownloadResponse(path_array){
     } 
 }
 
+function updateDownloadResponse(path_array, data) {  
+    if (Array.isArray(path_array) && path_array.length !== 0) { 
+        if (data !== undefined) {
+        let dataPath = "downloadResponse";
+        for (let i = 0; i < path_array.length; i++) { 
+            if (i == path_array.length - 1) { 
+            eval(dataPath)[path_array[i]] = data; 
+            return "updateDownloadResponse"; 
+            } else  { 
+            dataPath += `[path_array[${i}]]`;
+            }
+        } 
+        } else {
+        return "invalid data";
+        }
+    } else {
+        return "invalid path_array";
+    }   
+}
+
 module.exports = { // export modules   
-    getDownloadResponse
+    getDownloadResponse,
+    updateDownloadResponse
 };
