@@ -177,3 +177,25 @@ describe("resetUserSettings", () =>  {
         }); 
     });
 }); 
+
+describe("updateVideoPlayerVolume", () =>  {
+    it("volume-muted-invaid", () =>  {   
+        const updateVolume = userSettings.updateVideoPlayerVolume(undefined, undefined);
+        expect(updateVolume).toBe("volume-muted-invaid");
+    }); 
+
+    it("volume-invaid", () =>  {   
+        const updateVolume = userSettings.updateVideoPlayerVolume(undefined, false);
+        expect(updateVolume).toBe("volume-invaid");
+    }); 
+
+    it("muted-invaid", () =>  {   
+        const updateVolume = userSettings.updateVideoPlayerVolume(0.1, undefined);
+        expect(updateVolume).toBe("muted-invaid");
+    }); 
+
+    it("updated-video-player-volume", () =>  {   
+        const updateVolume = userSettings.updateVideoPlayerVolume(0.1, true);
+        expect(updateVolume).toBe("updated-video-player-volume");
+    }); 
+}); 
