@@ -199,3 +199,66 @@ describe("updateVideoPlayerVolume", () =>  {
         expect(updateVolume).toBe("updated-video-player-volume");
     }); 
 }); 
+
+describe("checkIfVideoCompress", () =>  {
+    it("Invalid downloadType", () =>  {
+        const videoCompress = userSettings.checkIfVideoCompress(undefined);
+        expect(videoCompress).toBe(false);
+    });  
+
+    it("downloadVideoStream true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideoStream", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
+        const videoCompress = userSettings.checkIfVideoCompress("downloadVideoStream");
+        expect(videoCompress).toBe(true);
+    });  
+
+    it("downloadVideoStream false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideoStream", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
+        const videoCompress = userSettings.checkIfVideoCompress("downloadVideoStream");
+        expect(videoCompress).toBe(false);
+    });  
+
+    it("downloadVideo true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideo updated");
+        const videoCompress = userSettings.checkIfVideoCompress("downloadVideo");
+        expect(videoCompress).toBe(true);
+    });  
+    
+    it("downloadVideo false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideo updated");
+        const videoCompress = userSettings.checkIfVideoCompress("downloadVideo");
+        expect(videoCompress).toBe(false);
+    });  
+
+    it("trimVideo true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("trimVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");
+        const videoCompress = userSettings.checkIfVideoCompress("trimVideo");
+        expect(videoCompress).toBe(true);
+    });  
+    
+    it("trimVideo false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("trimVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");
+        const videoCompress = userSettings.checkIfVideoCompress("trimVideo");
+        expect(videoCompress).toBe(false);
+    });  
+
+    it("downloadUploadedVideo true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadUploadedVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
+        const videoCompress = userSettings.checkIfVideoCompress("downloadUploadedVideo");
+        expect(videoCompress).toBe(true);
+    });  
+    
+    it("downloadUploadedVideo false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadUploadedVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
+        const videoCompress = userSettings.checkIfVideoCompress("downloadUploadedVideo");
+        expect(videoCompress).toBe(false);
+    }); 
+}); 

@@ -101,7 +101,6 @@ function resetUserSettings(){
     }
 }
 
-  
 // update video player volume settings
 function updateVideoPlayerVolume(videoPlayerVolume, videoPlayerMuted) {
     if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted == "boolean") {
