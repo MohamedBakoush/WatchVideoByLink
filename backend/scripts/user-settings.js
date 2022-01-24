@@ -8,11 +8,14 @@ let userSettings = JSON.parse(user_settings);
 
 // updated user settings path
 function update_user_settings_path(newPath){  
-    if (checkPathValidity.update_json_path_validity(newPath) == "valid path") {
+    const checkJsonValidity = checkPathValidity.update_json_path_validity(newPath);
+    if (checkJsonValidity == "valid path") {
         const user_settings = FileSystem.readFileSync(newPath);  
         userSettings = JSON.parse(user_settings);
         user_settings_path = newPath;
         return "userSettings updated";
+    } else  { 
+        return checkJsonValidity;
     }
 }
 
