@@ -60,7 +60,7 @@ function deleteAllVideoData(fileName, folderIDPath) {
         deleteAllFolderData([fileName, "content"], fileName, fileName); 
       } else {  
         const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
-        deleteAllFolderData(availableVideosFolderIDPath, fileName, fileName);
+        deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, fileName);
       }    
     } else { 
       // delete currentDownloadVideos by id if exist 
