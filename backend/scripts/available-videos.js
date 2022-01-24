@@ -28,7 +28,7 @@ function getAvailableVideos(path_array){
       for (let i = 0; i < path_array.length; i++) { 
         if (i == path_array.length - 1) { 
           try {
-            if (eval(dataPath)[path_array[i]]) {
+            if (eval(dataPath)[path_array[i]] !== undefined) {
               return eval(dataPath)[path_array[i]];
             } else {
               return undefined;
@@ -392,7 +392,7 @@ function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetI
   } else { 
     const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath); 
     try {
-      if (eval(availableVideosFolderIDPath)) {
+      if (eval(availableVideosFolderIDPath) !== undefined) {
         const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
         let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID); 
         if (selectedIDIndex >= 0 && targetIDIndex >= 0) {
@@ -484,7 +484,7 @@ function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID
   } else { 
     const availableVideosFolderIDPath = availableVideosfolderPath_String(folderIDPath); 
     try {
-      if (eval(availableVideosFolderIDPath)) {
+      if (eval(availableVideosFolderIDPath) !== undefined) {
         const selectedIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(selectedID); 
         let targetIDIndex = Object.keys(eval(availableVideosFolderIDPath)).indexOf(targetID);  
         if (selectedIDIndex >= 0 && targetIDIndex >= 0) {
@@ -561,7 +561,7 @@ function deleteSpecifiedAvailableVideosDataWithProvidedPath(fileName, path_array
       for (let i = 0; i < path_array.length; i++) { 
           if (i == path_array.length - 1) { 
             try {
-              if (eval(dataPath)[path_array[i]][fileName]) {
+              if (eval(dataPath)[path_array[i]][fileName] !== undefined) {
                 delete eval(dataPath)[path_array[i]][fileName];
                 const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
                 FileSystem.writeFileSync(available_videos_path, newAvailableVideo); 

@@ -106,3 +106,46 @@ describe("updateUserSettingsData", () =>  {
         });   
     }); 
 }); 
+
+describe("getUserSettings", () =>  {   
+    it("No input - path array", () =>  {
+        const getUserSettings = userSettings.getUserSettings();
+        expect(getUserSettings).toMatchObject({}); 
+    }); 
+
+    it("Empty path array", () =>  {
+        const getUserSettings = userSettings.getUserSettings([]);
+        expect(getUserSettings).toBe(undefined); 
+    }); 
+
+    it("Invalid path array", () =>  {
+        const getUserSettings = userSettings.getUserSettings([undefined]);
+        expect(getUserSettings).toBe(undefined); 
+    }); 
+
+    it("Get videoPlayer", () =>  {  
+        const get_data = userSettings.getUserSettings(["videoPlayer"]); 
+        expect(get_data).toMatchObject({
+            "volume": 1,
+            "muted": false,
+            "chromecast": false
+        });   
+    });
+
+    it("Get download", () =>  {  
+        const get_data = userSettings.getUserSettings(["download"]); 
+        expect(get_data).toMatchObject({
+            "compression": {
+                "downloadVideoStream": false,
+                "downloadVideo": false,
+                "trimVideo": false,
+                "downloadUploadedVideo": false
+            },
+            "confirmation": {
+              "downloadVideoStream": false,
+              "trimVideo": false,
+              "downloadVideo": false
+            }
+        });   
+    });
+}); 

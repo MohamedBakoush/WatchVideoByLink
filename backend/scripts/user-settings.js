@@ -43,19 +43,27 @@ function updateUserSettingsData(path_array, data) {
 } 
 
 // get specified user setting
-function getUserSettings(path_array) {  
-    if (path_array !== undefined) { 
+function getUserSettings(path_array) { 
+    if (Array.isArray(path_array)) {
         if (path_array.length !== 0) { 
             let dataPath = "userSettings";
             for (let i = 0; i < path_array.length; i++) { 
                 if (i == path_array.length - 1) { 
-                    return eval(dataPath)[path_array[i]];
+                    try {
+                        if (eval(dataPath)[path_array[i]] !== undefined) {
+                            return eval(dataPath)[path_array[i]];
+                        } else {
+                            return undefined;
+                        }
+                    } catch (error) {
+                        return undefined;
+                    }
                 } else  { 
                     dataPath += `[path_array[${i}]]`;
                 }
             } 
         }  else  { 
-            return "invalid array path";
+            return undefined;
         } 
     } else {
         return userSettings;

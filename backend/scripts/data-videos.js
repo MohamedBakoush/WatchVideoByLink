@@ -27,7 +27,7 @@ function getVideoData(path_array){
             for (let i = 0; i < path_array.length; i++) { 
                 if (i == path_array.length - 1) { 
                     try {
-                        if (eval(dataPath)[path_array[i]]) {
+                        if (eval(dataPath)[path_array[i]] !== undefined) {
                             return eval(dataPath)[path_array[i]];
                         } else {
                             return undefined;
