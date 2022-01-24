@@ -113,3 +113,30 @@ describe("resetDownloadResponse", () =>  {
         expect(data).toMatchObject({}); 
     });
 }); 
+
+describe("deleteSpecifiedDownloadResponse", () =>  {  
+    it("Invalid fileName", () =>  {
+        const fileName = uuidv4(); 
+        const deleteSpecifiedDownloadResponse = ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(fileName);
+        expect(deleteSpecifiedDownloadResponse).toBe(`${fileName} Unavaiable`);  
+
+    });
+
+    it("Valid fileName", () =>  {
+        const fileName = uuidv4();
+        const updateDownloadResponse = ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+            "fileName": fileName,
+            "message": "waiting"
+        });
+        expect(updateDownloadResponse).toBe("updateDownloadResponse");  
+        const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([fileName]);
+        expect(getDownloadResponse).toMatchObject({
+            "fileName": fileName,
+            "message": "waiting"
+        });   
+        const deleteSpecifiedDownloadResponse = ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(fileName);
+        expect(deleteSpecifiedDownloadResponse).toBe(`${fileName} deleted`);  
+        const data = ffmpegDownloadResponse.getDownloadResponse();
+        expect(data).toMatchObject({}); 
+    });
+}); 
