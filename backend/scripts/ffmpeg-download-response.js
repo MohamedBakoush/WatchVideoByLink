@@ -53,8 +53,18 @@ function resetDownloadResponse() {
     return "reset downloadResponse";
 }
 
+function deleteSpecifiedDownloadResponse(fileName) {
+    if (getDownloadResponse([fileName]) !== undefined) {
+        delete downloadResponse[`${fileName}`]; 
+        return `${fileName} deleted`;
+    } else {
+        return `${fileName} Unavaiable`;
+    } 
+}
+
 module.exports = { // export modules   
     getDownloadResponse,
     updateDownloadResponse,
-    resetDownloadResponse
+    resetDownloadResponse,
+    deleteSpecifiedDownloadResponse
 };
