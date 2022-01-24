@@ -48,7 +48,13 @@ function updateDownloadResponse(path_array, data) {
     }   
 }
 
+function resetDownloadResponse() {
+    downloadResponse = {};
+    return "reset downloadResponse";
+}
+
 module.exports = { // export modules   
     getDownloadResponse,
-    updateDownloadResponse
+    updateDownloadResponse,
+    resetDownloadResponse
 };
