@@ -21,18 +21,25 @@ function update_user_settings_path(newPath){
 
 // update specified user settings
 function updateUserSettingsData(path_array, data) { 
-    if (path_array.length !== 0 || path_array !== undefined) { 
-        let dataPath = "userSettings";
-        for (let i = 0; i < path_array.length; i++) { 
-            if (i == path_array.length - 1) { 
-                eval(dataPath)[path_array[i]] = data;
-            } else  { 
-                dataPath += `[path_array[${i}]]`;
-            }
-        } 
-        const newUserSettings = JSON.stringify(userSettings, null, 2);
-        FileSystem.writeFileSync(user_settings_path, newUserSettings);
-    }  
+    if (Array.isArray(path_array) && path_array.length !== 0) {
+        if (data !== undefined) {
+            let dataPath = "userSettings";
+            for (let i = 0; i < path_array.length; i++) { 
+                if (i == path_array.length - 1) { 
+                    eval(dataPath)[path_array[i]] = data;
+                    const newUserSettings = JSON.stringify(userSettings, null, 2);
+                    FileSystem.writeFileSync(user_settings_path, newUserSettings);
+                    return "updateUserSettingsData";
+                } else  { 
+                    dataPath += `[path_array[${i}]]`;
+                }
+            } 
+        } else {
+            return "invalid data";
+        }
+    } else {
+        return "invalid path_array";
+    }
 } 
 
 // get specified user setting
@@ -55,6 +62,38 @@ function getUserSettings(path_array) {
     }
 }   
 
+// return user settings to its inital state
+function resetUserSettings(){
+    try {
+        userSettings = {
+            "videoPlayer": {
+                "volume": 1,
+                "muted": false,
+                "chromecast": false
+            },
+            "download": {
+                "compression": {
+                    "downloadVideoStream": false,
+                    "downloadVideo": false,
+                    "trimVideo": false,
+                    "downloadUploadedVideo": false
+                },
+                "confirmation": {
+                  "downloadVideoStream": false,
+                  "trimVideo": false,
+                  "downloadVideo": false
+                }
+            }
+        }; 
+        const newUserSettings = JSON.stringify(userSettings, null, 2);
+        FileSystem.writeFileSync(user_settings_path, newUserSettings);
+        return "resetUserSettings";
+    } catch (error) {
+      return error;
+    }
+  }
+
+  
 // update video player volume settings
 function updateVideoPlayerVolume(videoPlayerVolume, videoPlayerMuted) {
     if (!isNaN(videoPlayerVolume) && typeof videoPlayerMuted == "boolean") {
@@ -98,6 +137,7 @@ module.exports = { // export modules
     update_user_settings_path,
     updateUserSettingsData,
     getUserSettings,
+    resetUserSettings,
     updateVideoPlayerVolume,
     checkIfVideoCompress,
     updateCompressVideoDownload

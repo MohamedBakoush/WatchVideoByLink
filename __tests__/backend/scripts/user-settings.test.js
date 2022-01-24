@@ -5,6 +5,10 @@ beforeAll(() => {
     userSettings.update_user_settings_path(userSettings_json_path); 
 });
 
+afterEach(() => {    
+    userSettings.resetUserSettings();
+}); 
+
 describe("update_user_settings_path", () =>  {  
     afterAll(() => { 
         userSettings.update_user_settings_path(userSettings_json_path);
@@ -23,5 +27,82 @@ describe("update_user_settings_path", () =>  {
     it("availableVideos updated", () =>  {
         const updated = userSettings.update_user_settings_path(userSettings_json_path);
         expect(updated).toBe("userSettings updated");  
+    }); 
+}); 
+
+describe("updateUserSettingsData", () =>  {  
+    it("undefined undefined", () =>  {
+        const updateUserSettingsData = userSettings.updateUserSettingsData(undefined, undefined);
+        expect(updateUserSettingsData).toBe("invalid path_array");  
+    }); 
+
+    it("invalid path_array", () =>  {
+        const updateUserSettingsData = userSettings.updateUserSettingsData(undefined, {});
+        expect(updateUserSettingsData).toBe("invalid path_array");  
+    }); 
+
+    it("invalid data", () =>  { 
+        const updateUserSettingsData = userSettings.updateUserSettingsData([undefined], undefined);
+        expect(updateUserSettingsData).toBe("invalid data");  
+    }); 
+ 
+    it("Update download compression downloadVideo", () =>  { 
+        const get_download_compression_downloadVideo = userSettings.getUserSettings(["download", "compression", "downloadVideo"]); 
+        expect(get_download_compression_downloadVideo).toBe(false);   
+        const update = userSettings.updateUserSettingsData(["download", "compression", "downloadVideo"], true);
+        expect(update).toBe("updateUserSettingsData");  
+        const result = userSettings.getUserSettings(["download", "compression", "downloadVideo"]); 
+        expect(result).toBe(true);   
+    }); 
+
+    it("Update videoPlayer volume", () =>  { 
+        const get_videoPlayer_volume = userSettings.getUserSettings(["videoPlayer", "volume"]); 
+        expect(get_videoPlayer_volume).toBe(1);   
+        const update = userSettings.updateUserSettingsData(["videoPlayer", "volume"], 0.5);
+        expect(update).toBe("updateUserSettingsData");  
+        const result = userSettings.getUserSettings(["videoPlayer", "volume"]); 
+        expect(result).toBe(0.5);   
+    }); 
+
+    it("Update download confirmation", () =>  { 
+        const get_download_confirmation = userSettings.getUserSettings(["download", "confirmation"]); 
+        expect(get_download_confirmation).toMatchObject({
+            "downloadVideoStream": false,
+            "trimVideo": false,
+            "downloadVideo": false
+        });   
+        const update = userSettings.updateUserSettingsData(["download", "confirmation"], {
+            "downloadVideoStream": true,
+            "trimVideo": true,
+            "downloadVideo": true
+        });
+        expect(update).toBe("updateUserSettingsData");  
+        const result = userSettings.getUserSettings(["download", "confirmation"]); 
+        expect(result).toMatchObject({
+            "downloadVideoStream": true,
+            "trimVideo": true,
+            "downloadVideo": true
+        });   
+    }); 
+
+    it("Update videoPlayer", () =>  { 
+        const get_videoPlayer = userSettings.getUserSettings(["videoPlayer"]); 
+        expect(get_videoPlayer).toMatchObject({
+            "volume": 1,
+            "muted": false,
+            "chromecast": false
+        });   
+        const update = userSettings.updateUserSettingsData(["videoPlayer"], {
+            "volume": 0.5,
+            "muted": true,
+            "chromecast": true
+        });
+        expect(update).toBe("updateUserSettingsData");  
+        const result = userSettings.getUserSettings(["videoPlayer"]); 
+        expect(result).toMatchObject({
+            "volume": 0.5,
+            "muted": true,
+            "chromecast": true
+        });   
     }); 
 }); 

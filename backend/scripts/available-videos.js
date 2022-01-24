@@ -67,13 +67,13 @@ function updateAvailableVideoData(path_array, data) {
       for (let i = 0; i < path_array.length; i++) { 
         if (i == path_array.length - 1) { 
           eval(dataPath)[path_array[i]] = data;
+          const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
+          FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
+          return "updateAvailableVideoData";
         } else  { 
           dataPath += `[path_array[${i}]]`;
         }
       } 
-      const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
-      FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
-      return "updateAvailableVideoData";
     } else {
       return "invalid data";
     }
