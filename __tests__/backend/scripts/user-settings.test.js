@@ -3,6 +3,7 @@ const userSettings_json_path = "__tests__/data/user-settings.test.json";
 
 beforeAll(() => {    
     userSettings.update_user_settings_path(userSettings_json_path); 
+    userSettings.resetUserSettings();
 });
 
 afterEach(() => {    
@@ -260,5 +261,72 @@ describe("checkIfVideoCompress", () =>  {
         expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
         const videoCompress = userSettings.checkIfVideoCompress("downloadUploadedVideo");
         expect(videoCompress).toBe(false);
+    }); 
+}); 
+
+describe("updateCompressVideoDownload", () =>  {
+    it("No Input", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload();
+        expect(updateCompressVideoDownload).toBe("invalid bool");
+    });  
+
+    it("Invalid downloadType", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload(undefined);
+        expect(updateCompressVideoDownload).toBe("invalid bool");
+    });  
+
+    it("Invalid downloadType Invalid bool", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload(undefined, undefined);
+        expect(updateCompressVideoDownload).toBe("invalid bool");
+    });  
+
+    it("Valid downloadType Invalid bool", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideoStream", undefined);
+        expect(updateCompressVideoDownload).toBe("invalid bool");
+    });  
+
+    it("Invalid downloadType Valid bool", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload(undefined, true);
+        expect(updateCompressVideoDownload).toBe("invalid downloadType");
+    });  
+
+    it("downloadVideoStream true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideoStream", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
+    });  
+
+    it("downloadVideoStream false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideoStream", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideoStream updated");
+    });  
+
+    it("downloadVideo true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideo updated");
+    });  
+    
+    it("downloadVideo false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadVideo updated");
+    });  
+
+    it("trimVideo true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("trimVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");;
+    });  
+    
+    it("trimVideo false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("trimVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");
+    });  
+
+    it("downloadUploadedVideo true", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadUploadedVideo", true);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
+    });  
+    
+    it("downloadUploadedVideo false", () =>  {
+        const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("downloadUploadedVideo", false);
+        expect(updateCompressVideoDownload).toBe("compress video download downloadUploadedVideo updated");
     }); 
 }); 

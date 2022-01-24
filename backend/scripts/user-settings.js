@@ -132,9 +132,17 @@ function checkIfVideoCompress(downloadType) {
 
 // update compress Video Download
 function updateCompressVideoDownload(downloadType, bool) { 
-    if (typeof bool == "boolean") { 
-        updateUserSettingsData(["download", "compression", `${downloadType}`], bool); 
-        return `compress video download ${downloadType} updated`; 
+    if (typeof bool == "boolean") {  
+        try {
+            if (getUserSettings(["download", "compression", `${downloadType}`]) !== undefined) {
+                updateUserSettingsData(["download", "compression", `${downloadType}`], bool); 
+                return `compress video download ${downloadType} updated`; 
+            } else {
+                return "invalid downloadType";
+            }
+        } catch (error) {
+            return "invalid downloadType";
+        }
     } else {
         return "invalid bool";
     } 
