@@ -93,3 +93,23 @@ describe("updateVideoData", () =>  {
         });   
     });
 }); 
+
+describe("resetDownloadResponse", () =>  {  
+    it("resetDownloadResponse", () =>  {
+        const fileName = uuidv4();
+        const updateDownloadResponse = ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+            "fileName": fileName,
+            "message": "waiting"
+        });
+        expect(updateDownloadResponse).toBe("updateDownloadResponse");  
+        const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([fileName]);
+        expect(getDownloadResponse).toMatchObject({
+            "fileName": fileName,
+            "message": "waiting"
+        });   
+        const reset = ffmpegDownloadResponse.resetDownloadResponse();
+        expect(reset).toBe("resetDownloadResponse");  
+        const data = ffmpegDownloadResponse.getDownloadResponse();
+        expect(data).toMatchObject({}); 
+    });
+}); 
