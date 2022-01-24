@@ -87,9 +87,9 @@ function resetUserSettings(){
                     "downloadUploadedVideo": false
                 },
                 "confirmation": {
-                  "downloadVideoStream": false,
-                  "trimVideo": false,
-                  "downloadVideo": false
+                    "downloadVideoStream": false,
+                    "trimVideo": false,
+                    "downloadVideo": false
                 }
             }
         }; 
@@ -97,9 +97,9 @@ function resetUserSettings(){
         FileSystem.writeFileSync(user_settings_path, newUserSettings);
         return "resetUserSettings";
     } catch (error) {
-      return error;
+        return error;
     }
-  }
+}
 
   
 // update video player volume settings

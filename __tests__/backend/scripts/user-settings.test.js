@@ -149,3 +149,31 @@ describe("getUserSettings", () =>  {
         });   
     });
 }); 
+
+describe("resetUserSettings", () =>  {  
+    it("resetUserSettings", () =>  {
+        const reset = userSettings.resetUserSettings();
+        expect(reset).toBe("resetUserSettings");  
+        const data = userSettings.getUserSettings();
+        expect(data).toMatchObject({
+            "videoPlayer": {
+                "volume": 1,
+                "muted": false,
+                "chromecast": false
+            },
+            "download": {
+                "compression": {
+                    "downloadVideoStream": false,
+                    "downloadVideo": false,
+                    "trimVideo": false,
+                    "downloadUploadedVideo": false
+                },
+                "confirmation": {
+                  "downloadVideoStream": false,
+                  "trimVideo": false,
+                  "downloadVideo": false
+                }
+            }
+        }); 
+    });
+}); 
