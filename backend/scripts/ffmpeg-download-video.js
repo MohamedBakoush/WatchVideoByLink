@@ -83,19 +83,7 @@ async function downloadVideo(videoSrc, videoType) {
                     end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo);
                 })
                 .on("error", function(error) {
-                /// error handling
-                console.log(`Encoding Error: ${error.message}`);
-                if (error.message === "Cannot find ffmpeg") {
-                    FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
-                        if (err) throw err;
-                        console.log(`\n removed ${newFilePath} dir \n`);
-                    });
-                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
-                } else {
-                    // there could be diffrent types of errors that exists and some may contain content in the newly created path
-                    // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
-                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
-                }
+                    error_downloadVideo(error, fileName, newFilePath);
                 })
                 .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
                 .output(`${newFilePath}${fileName}${fileType}`)
@@ -220,6 +208,21 @@ function end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType,
         ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
     }
     ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
+}
+
+function error_downloadVideo(error, fileName, newFilePath) {
+    console.log(`Encoding Error: ${error.message}`);
+    if (error.message === "Cannot find ffmpeg") {
+        FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
+            if (err) throw err;
+            console.log(`\n removed ${newFilePath} dir \n`);
+        });
+        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+    } else {
+        // there could be diffrent types of errors that exists and some may contain content in the newly created path
+        // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
+        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+    }
 }
 
 // downlaod trimed video
