@@ -201,7 +201,7 @@ describe("start_downloadVideo", () =>  {
 }); 
 
 describe("progress_downloadVideo", () =>  {   
-    it("No Input", async () =>  {
+    it("No Input", () =>  {
         const progress = ffmpegDownloadVideo.progress_downloadVideo();
         expect(progress).toBe("fileName undefined");
     });   
@@ -273,7 +273,6 @@ describe("progress_downloadVideo", () =>  {
             }
         });
     });  
-
 
     it("valid fileName, valid data without start_downloadVideo", () =>  {
         const fileName = uuidv4();
