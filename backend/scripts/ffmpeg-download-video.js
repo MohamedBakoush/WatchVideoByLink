@@ -72,22 +72,12 @@ async function downloadVideo(videoSrc, videoType) {
                         ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
                     } else {
                         ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        // SIGKILL
+                        // Delete Data
                     }
                 })
                 .on("progress", function(data) {
-                console.log("progress", data);
-
-                videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
-
-                if(data.percent < 0){ 
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
-                }else{
-                    try {
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
-                    } catch (error) {
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
-                    }
-                } 
+                    progress_downloadVideo(fileName, data);
                 })
                 .on("end", function() {
                 /// encoding is complete, so callback or move on at this point
@@ -214,6 +204,19 @@ function start_downloadVideo(fileName, videoSrc, videoType, compressVideo) {
     }else {
         return "fileName undefined";
     }
+}
+
+function progress_downloadVideo(fileName, data) {
+    videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
+    if(data.percent < 0){ 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
+    }else{
+        try {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
+        } catch (error) {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+        }
+    } 
 }
 
 // downlaod trimed video
