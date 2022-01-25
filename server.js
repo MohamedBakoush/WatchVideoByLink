@@ -15,6 +15,7 @@ const currentDownloadVideos = require("./backend/scripts/current-download-videos
 const ffmpegUnfinishedVideo = require("./backend/scripts/ffmpeg-unfinished-videos");
 const youtubedlDownloadVideo = require("./backend/scripts/youtubedl-download-video");
 const ffmpegDownloadResponse = require("./backend/scripts/ffmpeg-download-response");
+const ffmpegDownloadtrimedVideo = require("./backend/scripts/ffmpeg-download-trimed-video");
 const app = express();
 app.use(upload({
   limits: { fileSize: 1024 * 1024 * 1024 },
@@ -178,7 +179,7 @@ async function downloadVideo(req, res){
 // download video from specified section header
 app.post("/trimVideo", express.json(), trimVideo);
 function trimVideo(req, res){
-  ffmpegDownloadVideo.trimVideo(req, res);
+  ffmpegDownloadtrimedVideo.trimVideo(req, res);
 }
 
 // stop downloading live video stream header
