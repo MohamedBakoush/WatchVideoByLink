@@ -92,35 +92,35 @@ describe("checkIfVideoSrcOriginalPathExits", () =>  {
 }); 
 
 describe("start_downloadVideo", () =>  {   
-    it("No Input", async () =>  {
+    it("No Input", () =>  {
         const start = ffmpegDownloadVideo.start_downloadVideo();
         expect(start).toBe("fileName undefined");
     });   
 
-    it("fileName undefined", async () =>  {
+    it("fileName undefined", () =>  {
         const start = ffmpegDownloadVideo.start_downloadVideo(undefined);
         expect(start).toBe("fileName undefined");
     });  
 
-    it("valid fileName, invalid videoSrc, invalid videoType", async () =>  {
+    it("valid fileName, invalid videoSrc, invalid videoType", () =>  {
         const fileName = uuidv4();
         const start = ffmpegDownloadVideo.start_downloadVideo(fileName);
         expect(start).toBe("videoSrc videoType not string");
     });  
 
-    it("valid fileName, valid videoSrc, invalid videoType", async () =>  {
+    it("valid fileName, valid videoSrc, invalid videoType", () =>  {
         const fileName = uuidv4();
         const start = ffmpegDownloadVideo.start_downloadVideo(fileName, "videoSrc");
         expect(start).toBe("videoType not string");
     });  
 
-    it("valid fileName, invalid videoSrc, valid videoType", async () =>  {
+    it("valid fileName, invalid videoSrc, valid videoType", () =>  {
         const fileName = uuidv4();
         const start = ffmpegDownloadVideo.start_downloadVideo(fileName, undefined, "videoType");
         expect(start).toBe("videoSrc not string");
     });  
 
-    it("valid fileName, valid videoSrc, valid videoType", async () =>  {
+    it("valid fileName, valid videoSrc, valid videoType", () =>  {
         const fileName = uuidv4();
         const videoSrc = "videoSrc";
         const videoType = "videoType";
@@ -146,7 +146,7 @@ describe("start_downloadVideo", () =>  {
         });
     });  
 
-    it("valid fileName, valid videoSrc, valid videoType, compressVideo false", async () =>  {
+    it("valid fileName, valid videoSrc, valid videoType, compressVideo false", () =>  {
         const fileName = uuidv4();
         const videoSrc = "videoSrc";
         const videoType = "videoType";
@@ -171,7 +171,7 @@ describe("start_downloadVideo", () =>  {
         });
     });  
 
-    it("valid fileName, valid videoSrc, valid videoType, compressVideo true", async () =>  {
+    it("valid fileName, valid videoSrc, valid videoType, compressVideo true", () =>  {
         const fileName = uuidv4();
         const videoSrc = "videoSrc";
         const videoType = "videoType";
