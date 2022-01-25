@@ -2,6 +2,7 @@
 const FileSystem = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
+const deleteData = require("./delete-data");
 const userSettings = require("./user-settings");
 const ffmpegImageDownload = require("./ffmpeg-download-image");
 const currentDownloadVideos = require("./current-download-videos");
@@ -72,8 +73,8 @@ async function downloadVideo(videoSrc, videoType) {
                         ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
                     } else {
                         ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
-                        // SIGKILL
-                        // Delete Data
+                        ffmpegPath.SIGKILL(command);
+                        deleteData.deleteAllVideoData(fileName);
                     }
                 })
                 .on("progress", function(data) {
@@ -378,5 +379,6 @@ async function trimVideo(req, res) {
 module.exports = { // export modules
     checkIfVideoSrcOriginalPathExits,
     downloadVideo,
+    start_downloadVideo,
     trimVideo
 };
