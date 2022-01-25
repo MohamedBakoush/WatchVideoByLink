@@ -82,6 +82,11 @@ async function downloadVideo(videoSrc, videoType) {
                 })
                 .on("end", function() {
                     end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo);
+                    const path = newFilePath+fileName+fileType;
+                    if (compressVideo) {
+                        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
+                    }
+                    ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);        
                 })
                 .on("error", function(error) {
                     error_downloadVideo(error, fileName, newFilePath);
@@ -195,51 +200,70 @@ function progress_downloadVideo(fileName, data, videoSrc, videoType, compressVid
 }
 
 function end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo) {
-    if (compressVideo) { // addition of compress video data
-        videoData.updateVideoData([`${fileName}`], {
-            video: {
-                originalVideoSrc : videoSrc,
-                originalVideoType : videoType,
-                path: newFilePath+fileName+fileType,
-                videoType : "video/mp4",
-                download : "completed",
-            },
-            compression : {
-                download: "starting"
-            },
-            thumbnail: {
-                path: {},
-                download: "starting"
-            }
-        });
+    if(fileName === undefined ) {
+        return "fileName undefined";
+    } else if(typeof newFilePath !== "string") {
+        return "newFilePath not string";
+    } else if(typeof fileType !== "string") {
+        return "fileType not string";
+    } else if(typeof videoSrc !== "string") {
+        return "videoSrc not string";
+    } else if(typeof videoType !== "string") {
+        return "videoType not string";
     } else {
-        videoData.updateVideoData([`${fileName}`], {
-            video: {
-                originalVideoSrc : videoSrc,
-                originalVideoType : videoType,
-                path: newFilePath+fileName+fileType,
-                videoType : "video/mp4",
-                download : "completed",
-            },
-            thumbnail: {
-                path: {},
-                download: "starting"
-            }
-        });
+        if (compressVideo) { // addition of compress video data
+            videoData.updateVideoData([`${fileName}`], {
+                video: {
+                    originalVideoSrc : videoSrc,
+                    originalVideoType : videoType,
+                    path: newFilePath+fileName+fileType,
+                    videoType : "video/mp4",
+                    download : "completed",
+                },
+                compression : {
+                    download: "starting"
+                },
+                thumbnail: {
+                    path: {},
+                    download: "starting"
+                }
+            });
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "completed"
+                },
+                compression : { 
+                    "download-status" : "starting video compression"
+                },
+                thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                } 
+            });
+        } else {
+            videoData.updateVideoData([`${fileName}`], {
+                video: {
+                    originalVideoSrc : videoSrc,
+                    originalVideoType : videoType,
+                    path: newFilePath+fileName+fileType,
+                    videoType : "video/mp4",
+                    download : "completed",
+                },
+                thumbnail: {
+                    path: {},
+                    download: "starting"
+                }
+            });
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "completed"
+                },
+                thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                } 
+            });
+        }
+        return "end download";
     }
-
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
-    if (compressVideo) { // addition of compress video data   
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "starting video compression");             
-    } 
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "starting thumbnail download");
-
-    console.log("Video Transcoding succeeded !");
-    const path = newFilePath+fileName+fileType;
-    if (compressVideo) { // compress video
-        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
-    }
-    ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
 }
 
 function error_downloadVideo(error, fileName, newFilePath) {
@@ -413,5 +437,6 @@ module.exports = { // export modules
     downloadVideo,
     start_downloadVideo,
     progress_downloadVideo,
+    end_downloadVideo,
     trimVideo
 };
