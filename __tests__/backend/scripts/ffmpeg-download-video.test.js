@@ -17,6 +17,34 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("downloadVideo", () =>  {   
+    it("No Input", async () =>  {
+        const downloadVideo = await ffmpegDownloadVideo.downloadVideo();
+        expect(downloadVideo).toBe("videoSrc videoType not string");
+    });   
+
+    it("Invaild videoSec, Invalid videoType", async ()=>  {  
+        const videoSrc = undefined;
+        const videoType = undefined;
+        const downloadVideo = await ffmpegDownloadVideo.downloadVideo(videoSrc, videoType);
+        expect(downloadVideo).toBe("videoSrc videoType not string");
+    });   
+
+    it("Valid videoSec, Invalid videoType", async ()=>  {  
+        const videoSrc = "http://localhost:8080/video.mp4";
+        const videoType = undefined;
+        const downloadVideo = await ffmpegDownloadVideo.downloadVideo(videoSrc, videoType);
+        expect(downloadVideo).toBe("videoType not string");
+    });   
+
+    it("Invalid videoSec, Valid videoType", async ()=>  {  
+        const videoSrc = undefined;
+        const videoType = "video/mp4";
+        const downloadVideo = await ffmpegDownloadVideo.downloadVideo(videoSrc, videoType);
+        expect(downloadVideo).toBe("videoSrc not string");
+    });   
+});
+
 describe("start_downloadVideo", () =>  {   
     it("No Input", () =>  {
         const start = ffmpegDownloadVideo.start_downloadVideo();

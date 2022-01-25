@@ -13,77 +13,85 @@ const ffmpegPath = require("./ffmpeg-path");
 
 // download full video
 async function downloadVideo(videoSrc, videoType) {
-    const command = new ffmpeg();
-    const videofile = await videoData.checkIfVideoSrcOriginalPathExits(videoSrc);
-    const compressVideo = userSettings.checkIfVideoCompress("downloadVideo");
-    const filepath = "media/video/";
-    const fileName = uuidv4();
-    const fileType = ".mp4";
-    const newFilePath = `${filepath}${fileName}/`;
-    const videoDetails = await videoData.findVideosByID(fileName);
-    const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
-    if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
-        if (videoDetails == undefined) {
-            if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
-                FileSystem.mkdirSync(`${filepath}${fileName}/`);
-            }
-            ffmpegDownloadResponse.updateDownloadResponse([fileName], {
-                "fileName": fileName,
-                "message": "initializing"
-            });
-            command.addInput(videofile)
-                .on("start", function() {
-                    const startDownload = start_downloadVideo(fileName, videoSrc, videoType, compressVideo);
-                    if (startDownload == "start download") {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+    if (typeof videoSrc === "string" && typeof videoType === "string" ) {
+        const command = new ffmpeg();
+        const videofile = await videoData.checkIfVideoSrcOriginalPathExits(videoSrc);
+        const compressVideo = userSettings.checkIfVideoCompress("downloadVideo");
+        const filepath = "media/video/";
+        const fileName = uuidv4();
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoDetails = await videoData.findVideosByID(fileName);
+        const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
+        if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
+            if (videoDetails == undefined) {
+                if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+                    FileSystem.mkdirSync(`${filepath}${fileName}/`);
+                }
+                ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+                    "fileName": fileName,
+                    "message": "initializing"
+                });
+                command.addInput(videofile)
+                    .on("start", function() {
+                        const startDownload = start_downloadVideo(fileName, videoSrc, videoType, compressVideo);
+                        if (startDownload == "start download") {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+                            }
+                        } else {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                            }
+                            ffmpegPath.SIGKILL(command);
+                            deleteData.deleteAllVideoData(fileName);
                         }
-                    } else {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                    })
+                    .on("progress", function(data) {
+                        progress_downloadVideo(fileName, data, videoSrc, videoType, compressVideo);
+                    })
+                    .on("end", function() {
+                        end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo);
+                        const path = newFilePath+fileName+fileType;
+                        if (compressVideo) {
+                            ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
                         }
-                        ffmpegPath.SIGKILL(command);
+                        ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);        
+                    })
+                    .on("error", function(error) {
+                        console.log(`Encoding Error: ${error.message}`);
+                        if (error.message === "Cannot find ffmpeg") {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+                            }
+                        } else {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                            }
+                        }
                         deleteData.deleteAllVideoData(fileName);
-                    }
-                })
-                .on("progress", function(data) {
-                    progress_downloadVideo(fileName, data, videoSrc, videoType, compressVideo);
-                })
-                .on("end", function() {
-                    end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo);
-                    const path = newFilePath+fileName+fileType;
-                    if (compressVideo) {
-                        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
-                    }
-                    ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);        
-                })
-                .on("error", function(error) {
-                    console.log(`Encoding Error: ${error.message}`);
-                    if (error.message === "Cannot find ffmpeg") {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
-                        }
-                    } else {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
-                        }
-                    }
-                    deleteData.deleteAllVideoData(fileName);
-                })
-                .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
-                .output(`${newFilePath}${fileName}${fileType}`)
-                .run();
+                    })
+                    .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
+                    .output(`${newFilePath}${fileName}${fileType}`)
+                    .run();
+                return {
+                    "fileName": fileName,
+                    "message": "initializing"
+                };
+            } else {
+                return await downloadVideo(videoSrc, videoType);
+            }
+        } else { 
             return {
-                "fileName": fileName,
-                "message": "initializing"
+                "message": ffmpegAvaiable
             };
-        } else {
-            return await downloadVideo(videoSrc, videoType);
         }
-    } else { 
-        return {
-            "message": ffmpegAvaiable
-        };
+    } else if (typeof videoSrc !== "string" && typeof videoType === "string" ) {
+        return "videoSrc not string";
+    } else if (typeof videoSrc === "string" && typeof videoType !== "string" ) {
+        return "videoType not string";
+    } else {
+        return "videoSrc videoType not string";
     }
 }
 
