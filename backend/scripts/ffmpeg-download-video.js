@@ -94,8 +94,7 @@ async function downloadVideo(videoSrc, videoType) {
                 "message": "initializing"
             };
         } else {
-            // TODO: create new fileName and try again
-            console.log("videoDetails already exists");
+            return await downloadVideo(videoSrc, videoType);
         }
     } else { 
         return {
