@@ -59,39 +59,20 @@ async function downloadVideo(videoSrc, videoType) {
             if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
                 FileSystem.mkdirSync(`${filepath}${fileName}/`);
             }
+
+            ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+                "fileName": fileName,
+                "message": "initializing"
+            });
+
             command.addInput(videofile)
                 .on("start", function() {
-                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
-                videoData.updateVideoData([`${fileName}`], {
-                    video : {
-                        originalVideoSrc : videoSrc,
-                        originalVideoType : videoType,
-                        download : "starting full video download"
+                    const startDownload = start_downloadVideo(fileName, videoSrc, videoType, compressVideo);
+                    if (startDownload == "start download") {
+                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+                    } else {
+                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
                     }
-                });
-
-                if (compressVideo) { // addition of compress video data
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                        video : { 
-                            "download-status" : "starting full video download"
-                        },
-                        compression : { 
-                            "download-status" : "waiting for video"
-                        },
-                        thumbnail : { 
-                            "download-status" : "waiting for video"
-                        } 
-                    }); 
-                } else {
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                        video : { 
-                            "download-status" : "starting full video download"
-                        },
-                        thumbnail : { 
-                            "download-status" : "waiting for video"
-                        } 
-                    });
-                }
                 })
                 .on("progress", function(data) {
                 console.log("progress", data);
@@ -175,11 +156,6 @@ async function downloadVideo(videoSrc, videoType) {
                 .output(`${newFilePath}${fileName}${fileType}`)
                 .run();
 
-            ffmpegDownloadResponse.updateDownloadResponse([fileName], {
-                "fileName": fileName,
-                "message": "initializing"
-            });
-
             return {
                 "fileName": fileName,
                 "message": "initializing"
@@ -192,6 +168,51 @@ async function downloadVideo(videoSrc, videoType) {
         return {
             "message": ffmpegAvaiable
         };
+    }
+}
+
+function start_downloadVideo(fileName, videoSrc, videoType, compressVideo) {
+    if (fileName !== undefined) {
+        if (typeof videoSrc === "string" && typeof videoType === "string" ) {
+            videoData.updateVideoData([`${fileName}`], {
+                video : {
+                    originalVideoSrc : videoSrc,
+                    originalVideoType : videoType,
+                    download : "starting full video download"
+                }
+            });
+            if (compressVideo) { // addition of compress video data
+                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                    video : { 
+                        "download-status" : "starting full video download"
+                    },
+                    compression : { 
+                        "download-status" : "waiting for video"
+                    },
+                    thumbnail : { 
+                        "download-status" : "waiting for video"
+                    } 
+                }); 
+            } else {
+                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                    video : { 
+                        "download-status" : "starting full video download"
+                    },
+                    thumbnail : { 
+                        "download-status" : "waiting for video"
+                    } 
+                });
+            }
+            return "start download";
+        } else if (typeof videoSrc !== "string" && typeof videoType === "string" ) {
+            return "videoSrc not string";
+        } else if (typeof videoSrc === "string" && typeof videoType !== "string" ) {
+            return "videoType not string";
+        } else {
+            return "videoSrc videoType not string";
+        }
+    }else {
+        return "fileName undefined";
     }
 }
 
