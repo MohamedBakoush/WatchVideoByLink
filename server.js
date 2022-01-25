@@ -159,11 +159,16 @@ async function downloadVideo(req, res){
   if (downloadVideo.message == "initializing") {
     const checkDownloadResponse = setInterval(function(){ 
       const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
-      if (getDownloadResponse.message !== "initializing") {
+      if (ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]) !== undefined) {
+        if (getDownloadResponse.message !== "initializing") {
+          clearInterval(checkDownloadResponse);
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+          res.json(getDownloadResponse.message);
+        }  
+      } else {
         clearInterval(checkDownloadResponse);
-        ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-        res.json(getDownloadResponse.message);
-      }  
+        res.json("response-not-found");
+      }
     }, 50); 
   } else {
     res.json(downloadVideo.message);
