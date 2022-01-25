@@ -70,9 +70,13 @@ async function downloadVideo(videoSrc, videoType) {
                 .on("start", function() {
                     const startDownload = start_downloadVideo(fileName, videoSrc, videoType, compressVideo);
                     if (startDownload == "start download") {
-                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+                        }
                     } else {
-                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        }
                         ffmpegPath.SIGKILL(command);
                         deleteData.deleteAllVideoData(fileName);
                     }
@@ -91,16 +95,19 @@ async function downloadVideo(videoSrc, videoType) {
                 .on("error", function(error) {
                     console.log(`Encoding Error: ${error.message}`);
                     if (error.message === "Cannot find ffmpeg") {
-                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+                        }
                     } else {
-                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        }
                     }
                     deleteData.deleteAllVideoData(fileName);
                 })
                 .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
                 .output(`${newFilePath}${fileName}${fileType}`)
                 .run();
-
             return {
                 "fileName": fileName,
                 "message": "initializing"
