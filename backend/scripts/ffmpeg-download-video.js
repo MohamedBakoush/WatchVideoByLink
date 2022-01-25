@@ -78,7 +78,7 @@ async function downloadVideo(videoSrc, videoType) {
                     }
                 })
                 .on("progress", function(data) {
-                    progress_downloadVideo(fileName, data);
+                    progress_downloadVideo(fileName, data, videoSrc, videoType, compressVideo);
                 })
                 .on("end", function() {
                     end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo);
@@ -149,17 +149,49 @@ function start_downloadVideo(fileName, videoSrc, videoType, compressVideo) {
     }
 }
 
-function progress_downloadVideo(fileName, data) {
-    videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
-    if(data.percent < 0){ 
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
-    }else{
-        try {
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
-        } catch (error) {
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+function progress_downloadVideo(fileName, data, videoSrc, videoType, compressVideo) {
+    if (fileName !== undefined) {
+        if (typeof data === "object") {
+            if (typeof data.percent === "number") {
+                if (videoData.getVideoData([`${fileName}`, "video", "download"]) !== undefined && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "video", "download-status"]) !== undefined) {
+                    videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
+                    if(data.percent < 0){ 
+                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
+                    } else{
+                        try {
+                            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
+                        } catch (error) {
+                            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+                        }
+                    } 
+                    return "update download progress";
+                } else{ 
+                    const start_response = start_downloadVideo(fileName, videoSrc, videoType, compressVideo);
+                    if (start_response == "start download") {
+                        videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
+                        if(data.percent < 0){ 
+                            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
+                        } else{
+                            try {
+                                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
+                            } catch (error) {
+                                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+                            }
+                        } 
+                        return "update download progress";
+                    } else {
+                        return start_response;
+                    }
+                }
+            } else {
+                return "invalid data.percent";
+            }
+        } else {
+            return "invalid data";
         }
-    } 
+    } else {
+        return "fileName undefined";
+    }
 }
 
 function end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, compressVideo) {
@@ -380,5 +412,6 @@ module.exports = { // export modules
     checkIfVideoSrcOriginalPathExits,
     downloadVideo,
     start_downloadVideo,
+    progress_downloadVideo,
     trimVideo
 };
