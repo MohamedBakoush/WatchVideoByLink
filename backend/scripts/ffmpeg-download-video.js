@@ -11,43 +11,10 @@ const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const ffmpegPath = require("./ffmpeg-path");
 
-// check if original video src path exits
-async function checkIfVideoSrcOriginalPathExits(videoSrc) {
-  try {
-    if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
-      const videoDetails = await videoData.findVideosByID(videoSrc.split("/video/")[1]);
-      if (videoDetails === undefined) { // videofile = inputted videos src
-        return videoSrc;
-      } else {
-        if (videoDetails.video.path) { // original video path 
-          return videoDetails.video.path;  
-        } else { // videofile = inputted videos src 
-          return videoSrc;
-        } 
-      }
-    } else if (videoSrc.includes("/compressed/")) {
-      const videoDetails = await videoData.findVideosByID(videoSrc.split("/compressed/")[1]);
-      if (videoDetails === undefined) { // videofile = inputted videos src
-        return videoSrc;
-      } else {
-        if (videoDetails.video.path) { // original video path 
-          return videoDetails.video.path;
-        } else { // videofile = inputted videos src 
-          return videoSrc;
-        } 
-      }
-    } else { // videofile = inputted videos src  
-      return videoSrc;
-    } 
-  } catch (error) { // videofile = inputted videos src 
-    return videoSrc;
-  } 
-}
-
 // download full video
 async function downloadVideo(videoSrc, videoType) {
     const command = new ffmpeg();
-    const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
+    const videofile = await videoData.checkIfVideoSrcOriginalPathExits(videoSrc);
     const compressVideo = userSettings.checkIfVideoCompress("downloadVideo");
     const filepath = "media/video/";
     const fileName = uuidv4();
@@ -281,7 +248,7 @@ function end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType,
 async function trimVideo(req, res) {
     const command = new ffmpeg();
     const videoSrc = req.body.videoSrc;
-    const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
+    const videofile = await videoData.checkIfVideoSrcOriginalPathExits(videoSrc);
     const compressTrimedVideo = userSettings.checkIfVideoCompress("trimVideo");
     const start = req.body.newStartTime;
     const end = req.body.newEndTime;
@@ -429,7 +396,6 @@ async function trimVideo(req, res) {
 }
 
 module.exports = { // export modules
-    checkIfVideoSrcOriginalPathExits,
     downloadVideo,
     start_downloadVideo,
     progress_downloadVideo,
