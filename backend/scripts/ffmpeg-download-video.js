@@ -60,12 +60,10 @@ async function downloadVideo(videoSrc, videoType) {
             if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
                 FileSystem.mkdirSync(`${filepath}${fileName}/`);
             }
-
             ffmpegDownloadResponse.updateDownloadResponse([fileName], {
                 "fileName": fileName,
                 "message": "initializing"
             });
-
             command.addInput(videofile)
                 .on("start", function() {
                     const startDownload = start_downloadVideo(fileName, videoSrc, videoType, compressVideo);
