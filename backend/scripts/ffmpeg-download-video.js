@@ -5,6 +5,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const userSettings = require("./user-settings");
 const ffmpegImageDownload = require("./ffmpeg-download-image");
 const currentDownloadVideos = require("./current-download-videos");
+const ffmpegDownloadResponse = require("./ffmpeg-download-response");
 const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const ffmpegPath = require("./ffmpeg-path");
@@ -43,9 +44,8 @@ async function checkIfVideoSrcOriginalPathExits(videoSrc) {
 }
 
 // download full video
-async function downloadVideo(req, res) {
+async function downloadVideo(videoSrc, videoType) {
     const command = new ffmpeg();
-    const videoSrc = req.body.videoSrc;
     const videofile = await checkIfVideoSrcOriginalPathExits(videoSrc);
     const compressVideo = userSettings.checkIfVideoCompress("downloadVideo");
     const filepath = "media/video/";
@@ -61,11 +61,11 @@ async function downloadVideo(req, res) {
             }
             command.addInput(videofile)
                 .on("start", function() {
-                res.json(fileName);
+                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
                 videoData.updateVideoData([`${fileName}`], {
                     video : {
-                        originalVideoSrc : req.body.videoSrc,
-                        originalVideoType : req.body.videoType,
+                        originalVideoSrc : videoSrc,
+                        originalVideoType : videoType,
                         download : "starting full video download"
                     }
                 });
@@ -113,8 +113,8 @@ async function downloadVideo(req, res) {
                 if (compressVideo) { // addition of compress video data
                     videoData.updateVideoData([`${fileName}`], {
                         video: {
-                            originalVideoSrc : req.body.videoSrc,
-                            originalVideoType : req.body.videoType,
+                            originalVideoSrc : videoSrc,
+                            originalVideoType : videoType,
                             path: newFilePath+fileName+fileType,
                             videoType : "video/mp4",
                             download : "completed",
@@ -130,8 +130,8 @@ async function downloadVideo(req, res) {
                 } else {
                     videoData.updateVideoData([`${fileName}`], {
                     video: {
-                        originalVideoSrc : req.body.videoSrc,
-                        originalVideoType : req.body.videoType,
+                        originalVideoSrc : videoSrc,
+                        originalVideoType : videoType,
                         path: newFilePath+fileName+fileType,
                         videoType : "video/mp4",
                         download : "completed",
@@ -164,22 +164,34 @@ async function downloadVideo(req, res) {
                         if (err) throw err;
                         console.log(`\n removed ${newFilePath} dir \n`);
                     });
-                    res.json("Cannot-find-ffmpeg");
+                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
                 } else {
                     // there could be diffrent types of errors that exists and some may contain content in the newly created path
                     // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
-                    res.json("ffmpeg-failed");
+                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
                 }
                 })
                 .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
                 .output(`${newFilePath}${fileName}${fileType}`)
                 .run();
+
+            ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+                "fileName": fileName,
+                "message": "initializing"
+            });
+
+            return {
+                "fileName": fileName,
+                "message": "initializing"
+            };
         } else {
             // TODO: create new fileName and try again
             console.log("videoDetails already exists");
         }
     } else { 
-        res.json(ffmpegAvaiable);
+        return {
+            "message": ffmpegAvaiable
+        };
     }
 }
 

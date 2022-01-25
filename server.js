@@ -14,6 +14,7 @@ const ffmpegDownloadStream = require("./backend/scripts/ffmpeg-download-stream")
 const currentDownloadVideos = require("./backend/scripts/current-download-videos");
 const ffmpegUnfinishedVideo = require("./backend/scripts/ffmpeg-unfinished-videos");
 const youtubedlDownloadVideo = require("./backend/scripts/youtubedl-download-video");
+const ffmpegDownloadResponse = require("./backend/scripts/ffmpeg-download-response");
 const app = express();
 app.use(upload({
   limits: { fileSize: 1024 * 1024 * 1024 },
@@ -153,8 +154,20 @@ function downloadVideoStream(req, res){
 
 // download video header
 app.post("/downloadVideo", express.json(), downloadVideo);
-function downloadVideo(req, res){
-  ffmpegDownloadVideo.downloadVideo(req, res);
+async function downloadVideo(req, res){
+  const downloadVideo = await ffmpegDownloadVideo.downloadVideo(req.body.videoSrc, req.body.videoType);
+  if (downloadVideo.message == "initializing") {
+    const checkDownloadResponse = setInterval(function(){ 
+      const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
+      if (getDownloadResponse.message !== "initializing") {
+        clearInterval(checkDownloadResponse);
+        ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+        res.json(getDownloadResponse.message);
+      }  
+    }, 50); 
+  } else {
+    res.json(downloadVideo.message);
+  }
 }
 
 // download video from specified section header
