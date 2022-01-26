@@ -50,50 +50,7 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
                     progress_trimVideo(fileName, data);
                 })
                 .on("end", function() {
-                    if (compressTrimedVideo) { // addition of compress video data
-                        videoData.updateVideoData([`${fileName}`], {
-                            video: {
-                                originalVideoSrc: videoSrc,
-                                originalVideoType: videoType,
-                                newVideoStartTime: newStartTime,
-                                newVideoEndTime: newEndTime,
-                                path: newFilePath+fileName+fileType,
-                                videoType: "video/mp4",
-                                download: "completed"
-                            },
-                            compression : {
-                                download: "starting"
-                            },
-                            thumbnail: {
-                                path: {},
-                                download: "starting"
-                            }
-                        });
-                    } else {
-                        videoData.updateVideoData([`${fileName}`], {
-                            video: {
-                                originalVideoSrc: videoSrc,
-                                originalVideoType: videoType,
-                                newVideoStartTime: newStartTime,
-                                newVideoEndTime: newEndTime,
-                                path: newFilePath+fileName+fileType,
-                                videoType: "video/mp4",
-                                download: "completed"
-                            },
-                            thumbnail: {
-                                path: {},
-                                download: "starting"
-                            }
-                        });
-                    }
-                
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
-                    if (compressTrimedVideo) { // addition of compress video data
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "starting video compression");
-                    }        
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "starting thumbnail download");
-
-                    console.log("Video Transcoding succeeded !");
+                    end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
                     const path = newFilePath+fileName+fileType;
                     if (compressTrimedVideo) { // compress video
                         ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
@@ -187,6 +144,53 @@ function progress_trimVideo(fileName, data) {
         }
     } 
 }
+
+function end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo) {
+    console.log("Video Transcoding succeeded !");
+    if (compressTrimedVideo) { // addition of compress video data
+        videoData.updateVideoData([`${fileName}`], {
+            video: {
+                originalVideoSrc: videoSrc,
+                originalVideoType: videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                path: newFilePath+fileName+fileType,
+                videoType: "video/mp4",
+                download: "completed"
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    } else {
+        videoData.updateVideoData([`${fileName}`], {
+            video: {
+                originalVideoSrc: videoSrc,
+                originalVideoType: videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                path: newFilePath+fileName+fileType,
+                videoType: "video/mp4",
+                download: "completed"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    }
+
+    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
+    if (compressTrimedVideo) { // addition of compress video data
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "starting video compression");
+    }        
+    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "starting thumbnail download");
+}
+
 module.exports = { // export modules
     trimVideo
 };
