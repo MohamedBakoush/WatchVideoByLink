@@ -1,0 +1,1 @@
+const ffmpegDownloadTrimedVideo = require("../../../backend/scripts/ffmpeg-download-trimed-video");
