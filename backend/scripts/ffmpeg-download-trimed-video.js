@@ -90,39 +90,51 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
 }
 
 function start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo) {
-    videoData.updateVideoData([`${fileName}`], {
-        video:{
-            originalVideoSrc : videoSrc,
-            originalVideoType : videoType,
-            newVideoStartTime: newStartTime,
-            newVideoEndTime: newEndTime,
-            download : "starting trim video download"
-        }
-    });
-    
-    if (compressTrimedVideo) { // addition of compress video data
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-            video : { 
-                "download-status" : "starting trim video download"
-            },
-            compression : { 
-                "download-status" : "waiting for video"
-            },
-            thumbnail : { 
-                "download-status" : "waiting for video"
-            } 
-        });
+    if (fileName === undefined) {
+        return "fileName undefined";
+    } else if (typeof videoSrc !== "string") {
+        return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+        return "videoType not string";
+    } else if (isNaN(newStartTime)) {
+        return "newStartTime not number";
+    } else if (isNaN(newEndTime)) {
+        return "newEndTime not number";
     } else {
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-            video : { 
-                "download-status" : "starting trim video download"
-            },
-            thumbnail : { 
-                "download-status" : "waiting for video"
-            } 
+        videoData.updateVideoData([`${fileName}`], {
+            video:{
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : "starting trim video download"
+            }
         });
+        
+        if (compressTrimedVideo) { // addition of compress video data
+                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "starting trim video download"
+                },
+                compression : { 
+                    "download-status" : "waiting for video"
+                },
+                thumbnail : { 
+                    "download-status" : "waiting for video"
+                } 
+            });
+        } else {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "starting trim video download"
+                },
+                thumbnail : { 
+                    "download-status" : "waiting for video"
+                } 
+            });
+        }
+        return "start download";
     }
-    return "start download";
 }
 
 function progress_trimVideo(fileName, data) {
@@ -186,5 +198,6 @@ function end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, new
 }
 
 module.exports = { // export modules
-    trimVideo
+    trimVideo,
+    start_trimVideo
 };
