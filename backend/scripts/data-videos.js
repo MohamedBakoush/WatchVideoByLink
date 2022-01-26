@@ -99,6 +99,39 @@ function deleteSpecifiedVideoData(fileName) {
     }  
 }
 
+// check if original video src path exits
+async function checkIfVideoSrcOriginalPathExits(videoSrc) {
+  try {
+    if (videoSrc.includes("/video/")) { // if videoSrc includes /video/, split src at /video/ and attempt to findVideosByID
+      const videoDetails = await findVideosByID(videoSrc.split("/video/")[1]);
+      if (videoDetails === undefined) { // videofile = inputted videos src
+        return videoSrc;
+      } else {
+        if (videoDetails.video.path) { // original video path 
+          return videoDetails.video.path;  
+        } else { // videofile = inputted videos src 
+          return videoSrc;
+        } 
+      }
+    } else if (videoSrc.includes("/compressed/")) {
+      const videoDetails = await findVideosByID(videoSrc.split("/compressed/")[1]);
+      if (videoDetails === undefined) { // videofile = inputted videos src
+        return videoSrc;
+      } else {
+        if (videoDetails.video.path) { // original video path 
+          return videoDetails.video.path;
+        } else { // videofile = inputted videos src 
+          return videoSrc;
+        } 
+      }
+    } else { // videofile = inputted videos src  
+      return videoSrc;
+    } 
+  } catch (error) { // videofile = inputted videos src 
+    return videoSrc;
+  } 
+}
+
 module.exports = { // export modules 
     update_data_videos_path,
     getVideoData,
@@ -106,4 +139,5 @@ module.exports = { // export modules
     findVideosByID, 
     updateVideoData,
     deleteSpecifiedVideoData,
+    checkIfVideoSrcOriginalPathExits
 };

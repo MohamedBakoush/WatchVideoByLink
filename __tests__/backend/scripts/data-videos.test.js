@@ -193,3 +193,58 @@ describe("deleteSpecifiedVideoData", () =>  {
         expect(getVideoData_2).toMatchObject({}); 
     }); 
 }); 
+
+describe("checkIfVideoSrcOriginalPathExits", () =>  {   
+    it("No Input", async () =>  {
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits();
+        expect(checkIfVideoSrcOriginalPathExits).toBe(undefined);
+    });  
+        
+    it("Input String", async () =>  {
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits("test");
+        expect(checkIfVideoSrcOriginalPathExits).toBe("test");
+    });  
+
+    it("Input URL", async () =>  {
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits("http://localhost:8080/test.mp4");
+        expect(checkIfVideoSrcOriginalPathExits).toBe("http://localhost:8080/test.mp4");
+    });  
+
+    it("/video/: Invalid fileName", async () =>  { 
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits("http://localhost:8080/video/invalid");
+        expect(checkIfVideoSrcOriginalPathExits).toBe("http://localhost:8080/video/invalid");
+    }); 
+
+    it("/compressed/: Invalid fileName", async () =>  { 
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits("http://localhost:8080/compressed/invalid");
+        expect(checkIfVideoSrcOriginalPathExits).toBe("http://localhost:8080/compressed/invalid");
+    }); 
+
+    it("/video/: Valid fileName, Invalid Data", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([fileName], undefined);
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/video/${fileName}`);
+        expect(checkIfVideoSrcOriginalPathExits).toBe(`http://localhost:8080/video/${fileName}`);
+    }); 
+
+    it("/compressed/: Valid fileName, Invalid Data", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([fileName], undefined);
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/compressed/${fileName}`);
+        expect(checkIfVideoSrcOriginalPathExits).toBe(`http://localhost:8080/compressed/${fileName}`);
+    }); 
+
+    it("/video/: Valid fileName, Valid Data", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([fileName], dataVideos_data);
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/video/${fileName}`);
+        expect(checkIfVideoSrcOriginalPathExits).toBe("videoFilePath");
+    }); 
+
+    it("/compressed/: Valid fileName, Valid Data", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([fileName], dataVideos_data);
+        const checkIfVideoSrcOriginalPathExits = await dataVideos.checkIfVideoSrcOriginalPathExits(`http://localhost:8080/compressed/${fileName}`);
+        expect(checkIfVideoSrcOriginalPathExits).toBe("videoFilePath");
+    }); 
+}); 
