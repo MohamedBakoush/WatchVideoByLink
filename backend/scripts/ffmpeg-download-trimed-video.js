@@ -58,23 +58,17 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
                     ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
                 })
                 .on("error", function(error) {
-                    /// error handling
                     console.log(`Encoding Error: ${error.message}`);
                     if (error.message === "Cannot find ffmpeg") {
-                        FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
-                        if (err) throw err;
-                        console.log(`\n removed ${newFilePath} dir \n`);
-                        });
                         if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
                             ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
                         }
                     } else {
-                        // there could be diffrent types of errors that exists and some may contain content in the newly created path
-                        // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
                         if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
                             ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
                         }
                     }
+                    deleteData.deleteAllVideoData(fileName);
                 })
                 // .addInputOption("-y")
                 .outputOptions([`-ss ${newStartTime}`, `-t ${(newEndTime-newStartTime)}`, "-vcodec copy", "-acodec copy"])
