@@ -2,6 +2,7 @@
 const FileSystem = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
+const deleteData = require("./delete-data");
 const userSettings = require("./user-settings");
 const ffmpegImageDownload = require("./ffmpeg-download-image");
 const currentDownloadVideos = require("./current-download-videos");
@@ -32,42 +33,18 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
             });
             command.addInput(videofile)
                 .on("start", function() {
-                    if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
-                    }
-                    videoData.updateVideoData([`${fileName}`], {
-                        video:{
-                            originalVideoSrc : videoSrc,
-                            originalVideoType : videoType,
-                            newVideoStartTime: newStartTime,
-                            newVideoEndTime: newEndTime,
-                            download : "starting trim video download"
+                    const startDownload = start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
+                    if (startDownload == "start download") {
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
                         }
-                    });
-                    
-                    if (compressTrimedVideo) { // addition of compress video data
-                            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                            video : { 
-                                "download-status" : "starting trim video download"
-                            },
-                            compression : { 
-                                "download-status" : "waiting for video"
-                            },
-                            thumbnail : { 
-                                "download-status" : "waiting for video"
-                            } 
-                        });
                     } else {
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                            video : { 
-                                "download-status" : "starting trim video download"
-                            },
-                            thumbnail : { 
-                                "download-status" : "waiting for video"
-                            } 
-                        });
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        }
+                        ffmpegPath.SIGKILL(command);
+                        deleteData.deleteAllVideoData(fileName);
                     }
-                    
                 })
                 .on("progress", function(data) {
                 console.log("progress", data);
@@ -172,6 +149,42 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
             "message": ffmpegAvaiable
         };
     } 
+}
+
+function start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo) {
+    videoData.updateVideoData([`${fileName}`], {
+        video:{
+            originalVideoSrc : videoSrc,
+            originalVideoType : videoType,
+            newVideoStartTime: newStartTime,
+            newVideoEndTime: newEndTime,
+            download : "starting trim video download"
+        }
+    });
+    
+    if (compressTrimedVideo) { // addition of compress video data
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "starting trim video download"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+    } else {
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "starting trim video download"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+    }
+    return "start download";
 }
 
 module.exports = { // export modules
