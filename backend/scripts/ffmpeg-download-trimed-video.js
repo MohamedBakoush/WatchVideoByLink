@@ -47,20 +47,7 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
                     }
                 })
                 .on("progress", function(data) {
-                console.log("progress", data);
-
-                videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
-
-                if(data.percent < 0){ 
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
-                } else{
-                    try {
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);  
-                    } catch (error) {
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
-                    }
-                } 
-
+                    progress_trimVideo(fileName, data);
                 })
                 .on("end", function() {
                     if (compressTrimedVideo) { // addition of compress video data
@@ -187,6 +174,19 @@ function start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime
     return "start download";
 }
 
+function progress_trimVideo(fileName, data) {
+    console.log("progress", data);
+    videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
+    if(data.percent < 0){ 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
+    } else{
+        try {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);  
+        } catch (error) {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+        }
+    } 
+}
 module.exports = { // export modules
     trimVideo
 };
