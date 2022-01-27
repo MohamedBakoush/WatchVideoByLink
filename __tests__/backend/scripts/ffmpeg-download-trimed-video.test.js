@@ -105,6 +105,9 @@ describe("start_trimVideo", () =>  {
             video : { 
                 "download-status" : "starting trim video download"
             },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
             thumbnail : { 
                 "download-status" : "waiting for video"
             } 
@@ -121,4 +124,242 @@ describe("start_trimVideo", () =>  {
             }
         });
     });   
+}); 
+
+
+describe("progress_trimVideo", () =>  {   
+    it("No Input", () =>  {
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo();
+        expect(progress).toBe("fileName undefined");
+    });    
+
+    it("invalid fileName", () =>  {
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(undefined);
+        expect(progress).toBe("fileName undefined");
+    });   
+
+    it("valid fileName, invalid data", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName);
+        expect(progress).toBe("invalid data");
+    });   
+
+    it("valid fileName, empty object", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {});
+        expect(progress).toBe("invalid data.percent");
+    });
+
+    it("valid fileName, valid object, valid videoSrc, with start_trimVideo compressTrimedVideo false", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const newEndTime = 100.20;
+        const start = ffmpegDownloadTrimedVideo.start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, false);
+        expect(start).toBe("start download"); 
+        const getCurrentDownloads1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads1).toMatchObject({
+            video : { 
+                "download-status" : "starting trim video download"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData1 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData1).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : "starting trim video download"
+            }
+        });
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        });
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "20.27%"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : 20.27
+            }
+        });
+    });   
+
+    it("valid fileName, valid object, valid videoSrc, with start_trimVideo compressTrimedVideo true", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const newEndTime = 100.20;
+        const start = ffmpegDownloadTrimedVideo.start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, true);
+        expect(start).toBe("start download"); 
+        const getCurrentDownloads1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads1).toMatchObject({
+            video : { 
+                "download-status" : "starting trim video download"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData1 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData1).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : "starting trim video download"
+            }
+        });
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        });
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "20.27%"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : 20.27
+            }
+        });
+    });   
+
+    it("valid fileName, valid object", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        });
+        expect(progress).toBe("videoSrc not string");
+    });  
+
+    it("valid fileName, valid object, valid videoSrc", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        }, videoSrc);
+        expect(progress).toBe("videoType not string");
+    });  
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        }, videoSrc, videoType);
+        expect(progress).toBe("newStartTime not number");
+    });   
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType, valid newStartTime", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        }, videoSrc, videoType, newStartTime);
+        expect(progress).toBe("newEndTime not number");
+    });    
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType, valid newStartTime, valid newEndTime, compressTrimedVideo false", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const newEndTime = 100.20;
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        }, videoSrc, videoType, newStartTime, newEndTime);
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "20.27%"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : 20.27
+            }
+        });
+    });    
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType, valid newStartTime, valid newEndTime, compressTrimedVideo true", () =>  {
+        const fileName = uuidv4();
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const newEndTime = 100.20;
+        const progress = ffmpegDownloadTrimedVideo.progress_trimVideo(fileName, {
+            percent: 20.27
+        }, videoSrc, videoType, newStartTime, newEndTime, true);
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "20.27%"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
+                download : 20.27
+            }
+        });
+    });    
 }); 
