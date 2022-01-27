@@ -79,8 +79,7 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
                 "message": "initializing"
             };
         } else {
-            // TODO: create new fileName and try again
-            console.log("videoDetails already exists");
+            return await trimVideo(videoSrc, videoType, newStartTime, newEndTime);
         }
     } else { 
         return {
