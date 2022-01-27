@@ -203,7 +203,6 @@ function end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, new
     } else if (isNaN(newEndTime)) {
         return "newEndTime not number";
     } else {
-        console.log("Video Transcoding succeeded !");
         if (compressTrimedVideo) { // addition of compress video data
             videoData.updateVideoData([`${fileName}`], {
                 video: {
