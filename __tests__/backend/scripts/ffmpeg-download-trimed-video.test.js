@@ -126,7 +126,6 @@ describe("start_trimVideo", () =>  {
     });   
 }); 
 
-
 describe("progress_trimVideo", () =>  {   
     it("No Input", () =>  {
         const progress = ffmpegDownloadTrimedVideo.progress_trimVideo();
@@ -362,4 +361,150 @@ describe("progress_trimVideo", () =>  {
             }
         });
     });    
+}); 
+
+describe("end_trimVideo", () =>  {   
+    it("No Input", () =>  {
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo();
+        expect(end).toBe("fileName undefined");
+    });   
+
+    it("fileName undefined", () =>  {
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(undefined);
+        expect(end).toBe("fileName undefined");
+    });  
+    
+    it("valid fileName", () =>  {
+        const fileName = uuidv4();
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName);
+        expect(end).toBe("newFilePath not string");
+    });  
+
+    it("valid fileName, valid newFilePath", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath);
+        expect(end).toBe("fileType not string");
+    });  
+
+    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath, fileType);
+        expect(end).toBe("videoSrc not string");
+    });
+
+    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const videoSrc = "videoSrc";
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath, fileType, videoSrc);
+        expect(end).toBe("videoType not string");
+    });
+
+    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType);
+        expect(end).toBe("newStartTime not number");
+    });
+
+    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime);
+        expect(end).toBe("newEndTime not number");
+    });
+
+    it("valid fileName, valid newFilePath, valid fileType, compressVideo false", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const newEndTime = 100.20;
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime);
+        expect(end).toBe("end download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video: {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    });
+
+    it("valid fileName, valid newFilePath, valid fileType, compressVideo true", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const newStartTime = 20.20;
+        const newEndTime = 100.20;
+        const end = ffmpegDownloadTrimedVideo.end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, true);
+        expect(end).toBe("end download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video: {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    });
 }); 

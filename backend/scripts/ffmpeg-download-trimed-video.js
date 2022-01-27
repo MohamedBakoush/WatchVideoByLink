@@ -179,53 +179,84 @@ function progress_trimVideo(fileName, data, videoSrc, videoType, newStartTime, n
 }
 
 function end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo) {
-    console.log("Video Transcoding succeeded !");
-    if (compressTrimedVideo) { // addition of compress video data
-        videoData.updateVideoData([`${fileName}`], {
-            video: {
-                originalVideoSrc: videoSrc,
-                originalVideoType: videoType,
-                newVideoStartTime: newStartTime,
-                newVideoEndTime: newEndTime,
-                path: newFilePath+fileName+fileType,
-                videoType: "video/mp4",
-                download: "completed"
-            },
-            compression : {
-                download: "starting"
-            },
-            thumbnail: {
-                path: {},
-                download: "starting"
-            }
-        });
+    if (fileName === undefined) {
+        return "fileName undefined";
+    } else if(typeof newFilePath !== "string") {
+        return "newFilePath not string";
+    } else if(typeof fileType !== "string") {
+        return "fileType not string";
+    } else if (typeof videoSrc !== "string") {
+        return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+        return "videoType not string";
+    } else if (isNaN(newStartTime)) {
+        return "newStartTime not number";
+    } else if (isNaN(newEndTime)) {
+        return "newEndTime not number";
     } else {
-        videoData.updateVideoData([`${fileName}`], {
-            video: {
-                originalVideoSrc: videoSrc,
-                originalVideoType: videoType,
-                newVideoStartTime: newStartTime,
-                newVideoEndTime: newEndTime,
-                path: newFilePath+fileName+fileType,
-                videoType: "video/mp4",
-                download: "completed"
-            },
-            thumbnail: {
-                path: {},
-                download: "starting"
-            }
-        });
+        console.log("Video Transcoding succeeded !");
+        if (compressTrimedVideo) { // addition of compress video data
+            videoData.updateVideoData([`${fileName}`], {
+                video: {
+                    originalVideoSrc: videoSrc,
+                    originalVideoType: videoType,
+                    newVideoStartTime: newStartTime,
+                    newVideoEndTime: newEndTime,
+                    path: newFilePath+fileName+fileType,
+                    videoType: "video/mp4",
+                    download: "completed"
+                },
+                compression : {
+                    download: "starting"
+                },
+                thumbnail: {
+                    path: {},
+                    download: "starting"
+                }
+            });
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "completed"
+                },
+                compression : { 
+                    "download-status" : "starting video compression"
+                },
+                thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                } 
+            });
+        } else {
+            videoData.updateVideoData([`${fileName}`], {
+                video: {
+                    originalVideoSrc: videoSrc,
+                    originalVideoType: videoType,
+                    newVideoStartTime: newStartTime,
+                    newVideoEndTime: newEndTime,
+                    path: newFilePath+fileName+fileType,
+                    videoType: "video/mp4",
+                    download: "completed"
+                },
+                thumbnail: {
+                    path: {},
+                    download: "starting"
+                }
+            });
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "completed"
+                },
+                thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                } 
+            });
+        }
+        return "end download";
     }
-
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
-    if (compressTrimedVideo) { // addition of compress video data
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "starting video compression");
-    }        
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "starting thumbnail download");
 }
 
 module.exports = { // export modules
     trimVideo,
     start_trimVideo,
-    progress_trimVideo
+    progress_trimVideo,
+    end_trimVideo
 };
