@@ -178,8 +178,25 @@ async function downloadVideo(req, res){
 
 // download video from specified section header
 app.post("/trimVideo", express.json(), trimVideo);
-function trimVideo(req, res){
-  ffmpegDownloadtrimedVideo.trimVideo(req, res);
+async function trimVideo(req, res){
+  const downloadVideo = await ffmpegDownloadtrimedVideo.trimVideo(req.body.videoSrc, req.body.videoType, req.body.newStartTime, req.body.newEndTime);
+  if (downloadVideo.message == "initializing") {
+    const checkDownloadResponse = setInterval(function(){ 
+      const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
+      if (ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]) !== undefined) {
+        if (getDownloadResponse.message !== "initializing") {
+          clearInterval(checkDownloadResponse);
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+          res.json(getDownloadResponse.message);
+        }  
+      } else {
+        clearInterval(checkDownloadResponse);
+        res.json("response-not-found");
+      }
+    }, 50); 
+  } else {
+    res.json(downloadVideo.message);
+  }
 }
 
 // stop downloading live video stream header
