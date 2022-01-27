@@ -13,79 +13,89 @@ const ffmpegPath = require("./ffmpeg-path");
 
 // downlaod trimed video
 async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
-    const command = new ffmpeg();
-    const videofile = await videoData.checkIfVideoSrcOriginalPathExits(videoSrc);
-    const compressTrimedVideo = userSettings.checkIfVideoCompress("trimVideo");
-    const filepath = "media/video/";
-    const fileName = uuidv4();
-    const fileType = ".mp4";
-    const newFilePath = `${filepath}${fileName}/`;
-    const videoDetails = await videoData.findVideosByID(fileName);
-    const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
-    if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
-        if (videoDetails == undefined) {
-            if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
-                FileSystem.mkdirSync(`${filepath}${fileName}/`);
-            }
-            ffmpegDownloadResponse.updateDownloadResponse([fileName], {
-                "fileName": fileName,
-                "message": "initializing"
-            });
-            command.addInput(videofile)
-                .on("start", function() {
-                    const startDownload = start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
-                    if (startDownload == "start download") {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+    if (typeof videoSrc !== "string") {
+        return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+        return "videoType not string";
+    } else if (isNaN(newStartTime)) {
+        return "newStartTime not number";
+    } else if (isNaN(newEndTime)) {
+        return "newEndTime not number";
+    } else {
+        const command = new ffmpeg();
+        const videofile = await videoData.checkIfVideoSrcOriginalPathExits(videoSrc);
+        const compressTrimedVideo = userSettings.checkIfVideoCompress("trimVideo");
+        const filepath = "media/video/";
+        const fileName = uuidv4();
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoDetails = await videoData.findVideosByID(fileName);
+        const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
+        if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
+            if (videoDetails == undefined) {
+                if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+                    FileSystem.mkdirSync(`${filepath}${fileName}/`);
+                }
+                ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+                    "fileName": fileName,
+                    "message": "initializing"
+                });
+                command.addInput(videofile)
+                    .on("start", function() {
+                        const startDownload = start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
+                        if (startDownload == "start download") {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+                            }
+                        } else {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                            }
+                            ffmpegPath.SIGKILL(command);
+                            deleteData.deleteAllVideoData(fileName);
                         }
-                    } else {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                    })
+                    .on("progress", function(data) {
+                        progress_trimVideo(fileName, data, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
+                    })
+                    .on("end", function() {
+                        end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
+                        const path = newFilePath+fileName+fileType;
+                        if (compressTrimedVideo) { // compress video
+                            ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
                         }
-                        ffmpegPath.SIGKILL(command);
+                        ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
+                    })
+                    .on("error", function(error) {
+                        console.log(`Encoding Error: ${error.message}`);
+                        if (error.message === "Cannot find ffmpeg") {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+                            }
+                        } else {
+                            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                            }
+                        }
                         deleteData.deleteAllVideoData(fileName);
-                    }
-                })
-                .on("progress", function(data) {
-                    progress_trimVideo(fileName, data, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
-                })
-                .on("end", function() {
-                    end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
-                    const path = newFilePath+fileName+fileType;
-                    if (compressTrimedVideo) { // compress video
-                        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
-                    }
-                    ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
-                })
-                .on("error", function(error) {
-                    console.log(`Encoding Error: ${error.message}`);
-                    if (error.message === "Cannot find ffmpeg") {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
-                        }
-                    } else {
-                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
-                        }
-                    }
-                    deleteData.deleteAllVideoData(fileName);
-                })
-                // .addInputOption("-y")
-                .outputOptions([`-ss ${newStartTime}`, `-t ${(newEndTime-newStartTime)}`, "-vcodec copy", "-acodec copy"])
-                .output(`${newFilePath}${fileName}${fileType}`)
-                .run();
+                    })
+                    // .addInputOption("-y")
+                    .outputOptions([`-ss ${newStartTime}`, `-t ${(newEndTime-newStartTime)}`, "-vcodec copy", "-acodec copy"])
+                    .output(`${newFilePath}${fileName}${fileType}`)
+                    .run();
+                return {
+                    "fileName": fileName,
+                    "message": "initializing"
+                };
+            } else {
+                return await trimVideo(videoSrc, videoType, newStartTime, newEndTime);
+            }
+        } else { 
             return {
-                "fileName": fileName,
-                "message": "initializing"
+                "message": ffmpegAvaiable
             };
-        } else {
-            return await trimVideo(videoSrc, videoType, newStartTime, newEndTime);
-        }
-    } else { 
-        return {
-            "message": ffmpegAvaiable
-        };
-    } 
+        } 
+    }
 }
 
 function start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo) {

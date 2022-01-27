@@ -17,6 +17,34 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("trimVideo", () =>  {   
+    it("No Input", async () =>  {
+        const trimVideo = await ffmpegDownloadTrimedVideo.trimVideo();
+        expect(trimVideo).toBe("videoSrc not string");
+    });   
+
+    it("valid videoSec", async ()=>  {  
+        const videoSrc = "http://localhost:8080/video.mp4";
+        const trimVideo = await ffmpegDownloadTrimedVideo.trimVideo(videoSrc);
+        expect(trimVideo).toBe("videoType not string");
+    });   
+
+    it("valid videoSec, valid videoType", async ()=>  {  
+        const videoSrc = "http://localhost:8080/video.mp4";
+        const videoType = "video/mp4";
+        const trimVideo = await ffmpegDownloadTrimedVideo.trimVideo(videoSrc, videoType);
+        expect(trimVideo).toBe("newStartTime not number");
+    });   
+
+    it("valid videoSec, valid videoType, valid newStartTime", async ()=>  {  
+        const videoSrc = "http://localhost:8080/video.mp4";
+        const videoType = "video/mp4";
+        const newStartTime = 20.20;
+        const trimVideo = await ffmpegDownloadTrimedVideo.trimVideo(videoSrc, videoType, newStartTime);
+        expect(trimVideo).toBe("newEndTime not number");
+    });  
+});
+
 describe("start_trimVideo", () =>  {   
     it("No Input", () =>  {
         const start = ffmpegDownloadTrimedVideo.start_trimVideo();
