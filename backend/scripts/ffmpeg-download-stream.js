@@ -57,7 +57,8 @@ async function stopDownloadVideoStream(fileNameID) {
 // downloads live video stream
 async function downloadVideoStream(req, res) {
     const command = new ffmpeg();
-    const videofile = req.body.videoSrc;
+    const videoSrc = req.body.videoSrc;
+    const videoType = req.body.videoType;
     const compressVideoStream = userSettings.checkIfVideoCompress("downloadVideoStream");
     const filepath = "media/video/";
     const fileName = uuidv4();
@@ -70,10 +71,10 @@ async function downloadVideoStream(req, res) {
             if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
                 FileSystem.mkdirSync(`${filepath}${fileName}/`);
             }
-            command.addInput(videofile)
+            command.addInput(videoSrc)
                 .on("start", function() {
                     res.json(fileName);
-                    start_downloadVideoStream(fileName, req.body.videoSrc, req.body.videoType, compressVideoStream);
+                    start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoStream);
                 })
                 .on("progress", function(data) {
                     console.log("progress", data);
@@ -102,8 +103,8 @@ async function downloadVideoStream(req, res) {
                     if (compressVideoStream) { // addition of compress video data
                         videoData.updateVideoData([`${fileName}`], {
                         video : {
-                            originalVideoSrc : req.body.videoSrc,
-                            originalVideoType : req.body.videoType,
+                            originalVideoSrc : videoSrc,
+                            originalVideoType : videoType,
                             path: newFilePath+fileName+fileType,
                             videoType : "video/mp4",
                             download : "completed",
@@ -119,8 +120,8 @@ async function downloadVideoStream(req, res) {
                     } else {
                         videoData.updateVideoData([`${fileName}`], {
                         video : {
-                            originalVideoSrc : req.body.videoSrc,
-                            originalVideoType : req.body.videoType,
+                            originalVideoSrc : videoSrc,
+                            originalVideoType : videoType,
                             path: newFilePath+fileName+fileType,
                             videoType : "video/mp4",
                             download : "completed",
