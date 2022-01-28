@@ -80,47 +80,7 @@ async function downloadVideoStream(req, res) {
                     progress_downloadVideoStream(fileName, data, command);
                 })
                 .on("end", function() { // encoding is complete
-                    console.log("Video Transcoding succeeded !");
-                    
-                    if (compressVideoStream) { // addition of compress video data
-                        videoData.updateVideoData([`${fileName}`], {
-                        video : {
-                            originalVideoSrc : videoSrc,
-                            originalVideoType : videoType,
-                            path: newFilePath+fileName+fileType,
-                            videoType : "video/mp4",
-                            download : "completed",
-                        },
-                        compression : {
-                            download: "starting"
-                        },
-                        thumbnail: {
-                            path: {},
-                            download: "starting"
-                        }
-                        });
-                    } else {
-                        videoData.updateVideoData([`${fileName}`], {
-                        video : {
-                            originalVideoSrc : videoSrc,
-                            originalVideoType : videoType,
-                            path: newFilePath+fileName+fileType,
-                            videoType : "video/mp4",
-                            download : "completed",
-                        },
-                        thumbnail: {
-                            path: {},
-                            download: "starting"
-                        }
-                        });
-                    }
-
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
-                    if (compressVideoStream) { // addition of compress video data 
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"],  "starting video compression"); 
-                    }
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"],  "starting thumbnail download"); 
-
+                    end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream);
                     const path = newFilePath+fileName+fileType;
                     if (compressVideoStream) { // compress video
                         ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
@@ -197,7 +157,7 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
 
 function progress_downloadVideoStream(fileName, data, command) {
     console.log("progress", data);
-    
+
     if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
         videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
         videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
@@ -217,6 +177,48 @@ function progress_downloadVideoStream(fileName, data, command) {
     }
 }
 
+function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {
+    console.log("Video Transcoding succeeded !");
+                    
+    if (compressVideoStream) { // addition of compress video data
+        videoData.updateVideoData([`${fileName}`], {
+        video : {
+            originalVideoSrc : videoSrc,
+            originalVideoType : videoType,
+            path: newFilePath+fileName+fileType,
+            videoType : "video/mp4",
+            download : "completed",
+        },
+        compression : {
+            download: "starting"
+        },
+        thumbnail: {
+            path: {},
+            download: "starting"
+        }
+        });
+    } else {
+        videoData.updateVideoData([`${fileName}`], {
+        video : {
+            originalVideoSrc : videoSrc,
+            originalVideoType : videoType,
+            path: newFilePath+fileName+fileType,
+            videoType : "video/mp4",
+            download : "completed",
+        },
+        thumbnail: {
+            path: {},
+            download: "starting"
+        }
+        });
+    }
+
+    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
+    if (compressVideoStream) { // addition of compress video data 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"],  "starting video compression"); 
+    }
+    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"],  "starting thumbnail download"); 
+}
 module.exports = { // export modules
     get_download_stream_fileNameID,
     update_download_stream_fileNameID,
