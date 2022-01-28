@@ -17,6 +17,20 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("get_download_stream_fileNameID", () =>  {    
+    it("fileNameID Exits", () =>  {
+        const getStreamID = ffmpegDownloadStream.get_download_stream_fileNameID();
+        expect(getStreamID).toBe(undefined);
+    });     
+
+    it("fileNameID Exits", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID("test_id");
+        expect(updateStreamID).toBe("test_id");
+        const getStreamID = ffmpegDownloadStream.get_download_stream_fileNameID();
+        expect(getStreamID).toBe("test_id");
+    });     
+});
+
 describe("downloadVideoStream", () =>  {    
     it("No Input", async () =>  {
         const downloadVideo = await ffmpegDownloadStream.downloadVideoStream();
