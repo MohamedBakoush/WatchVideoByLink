@@ -211,34 +211,34 @@ function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, vide
     } else {
         if (compressVideoStream) { // addition of compress video data
             videoData.updateVideoData([`${fileName}`], {
-            video : {
-                originalVideoSrc : videoSrc,
-                originalVideoType : videoType,
-                path: newFilePath+fileName+fileType,
-                videoType : "video/mp4",
-                download : "completed",
-            },
-            compression : {
-                download: "starting"
-            },
-            thumbnail: {
-                path: {},
-                download: "starting"
-            }
+                video : {
+                    originalVideoSrc : videoSrc,
+                    originalVideoType : videoType,
+                    path: newFilePath+fileName+fileType,
+                    videoType : "video/mp4",
+                    download : "completed",
+                },
+                compression : {
+                    download: "starting"
+                },
+                thumbnail: {
+                    path: {},
+                    download: "starting"
+                }
             });
         } else {
             videoData.updateVideoData([`${fileName}`], {
-            video : {
-                originalVideoSrc : videoSrc,
-                originalVideoType : videoType,
-                path: newFilePath+fileName+fileType,
-                videoType : "video/mp4",
-                download : "completed",
-            },
-            thumbnail: {
-                path: {},
-                download: "starting"
-            }
+                video : {
+                    originalVideoSrc : videoSrc,
+                    originalVideoType : videoType,
+                    path: newFilePath+fileName+fileType,
+                    videoType : "video/mp4",
+                    download : "completed",
+                },
+                thumbnail: {
+                    path: {},
+                    download: "starting"
+                }
             });
         }
         currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
