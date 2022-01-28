@@ -18,12 +18,12 @@ afterEach(() => {
 }); 
 
 describe("get_download_stream_fileNameID", () =>  {    
-    it("fileNameID Exits", () =>  {
+    it("No Defined: fileNameID", () =>  {
         const getStreamID = ffmpegDownloadStream.get_download_stream_fileNameID();
         expect(getStreamID).toBe(undefined);
     });     
 
-    it("fileNameID Exits", () =>  {
+    it("Defined: fileNameID", () =>  {
         const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID("test_id");
         expect(updateStreamID).toBe("test_id");
         const getStreamID = ffmpegDownloadStream.get_download_stream_fileNameID();
@@ -31,7 +31,7 @@ describe("get_download_stream_fileNameID", () =>  {
     });     
 });
 
-describe("get_download_stream_fileNameID", () =>  {    
+describe("update_download_stream_fileNameID", () =>  {    
     it("No Input", () =>  {
         const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID();
         expect(updateStreamID).toBe("fileNameID not string");
@@ -55,6 +55,20 @@ describe("get_download_stream_fileNameID", () =>  {
     it("String Input", () =>  {
         const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID("test_id");
         expect(updateStreamID).toBe("test_id");
+    });     
+});
+
+describe("get_stop_stream_download_bool", () =>  {    
+    it("No Defined: stop_stream_download_bool", () =>  {
+        const getStopDownloadBoll = ffmpegDownloadStream.get_stop_stream_download_bool();
+        expect(getStopDownloadBoll).toBe(undefined);
+    });     
+
+    it("Defined: stop_stream_download_bool", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_stop_stream_download_bool(true);
+        expect(updateStreamID).toBe(true);
+        const getStopDownloadBoll = ffmpegDownloadStream.get_stop_stream_download_bool();
+        expect(getStopDownloadBoll).toBe(true);
     });     
 });
 
