@@ -181,14 +181,22 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
 }
 
 function progress_downloadVideoStream(fileName, data) {
-    if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
-        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
-        videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
+    if (fileName === undefined) {
+        return "fileName undefined";
+    } else if (typeof data !== "object") {
+        return "invalid data";
+    } else  if (typeof data.timemark !== "string") { 
+        return "invalid data.timemark";
     } else {
-        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
-    } 
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
-    return "update download progress";
+        if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
+            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+            videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
+        } else {
+            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+        } 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
+        return "update download progress";   
+    }
 }
 
 function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {   
