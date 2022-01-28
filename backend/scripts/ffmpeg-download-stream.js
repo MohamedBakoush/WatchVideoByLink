@@ -191,46 +191,57 @@ function progress_downloadVideoStream(fileName, data) {
     return "update download progress";
 }
 
-function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {         
-    if (compressVideoStream) { // addition of compress video data
-        videoData.updateVideoData([`${fileName}`], {
-        video : {
-            originalVideoSrc : videoSrc,
-            originalVideoType : videoType,
-            path: newFilePath+fileName+fileType,
-            videoType : "video/mp4",
-            download : "completed",
-        },
-        compression : {
-            download: "starting"
-        },
-        thumbnail: {
-            path: {},
-            download: "starting"
-        }
-        });
+function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {   
+    if(fileName === undefined ) {
+        return "fileName undefined";
+    } else if(typeof newFilePath !== "string") {
+        return "newFilePath not string";
+    } else if(typeof fileType !== "string") {
+        return "fileType not string";
+    } else if(typeof videoSrc !== "string") {
+        return "videoSrc not string";
+    } else if(typeof videoType !== "string") {
+        return "videoType not string";
     } else {
-        videoData.updateVideoData([`${fileName}`], {
-        video : {
-            originalVideoSrc : videoSrc,
-            originalVideoType : videoType,
-            path: newFilePath+fileName+fileType,
-            videoType : "video/mp4",
-            download : "completed",
-        },
-        thumbnail: {
-            path: {},
-            download: "starting"
+        if (compressVideoStream) { // addition of compress video data
+            videoData.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+            });
+        } else {
+            videoData.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+            });
         }
-        });
-    }
-
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
-    if (compressVideoStream) { // addition of compress video data 
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"],  "starting video compression"); 
-    }
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"],  "starting thumbnail download"); 
-    return "end download";
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
+        if (compressVideoStream) { // addition of compress video data 
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"],  "starting video compression"); 
+        }
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"],  "starting thumbnail download"); 
+        return "end download";  
+    }      
 }
 module.exports = { // export modules
     get_download_stream_fileNameID,
