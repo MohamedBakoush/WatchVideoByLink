@@ -31,6 +31,33 @@ describe("get_download_stream_fileNameID", () =>  {
     });     
 });
 
+describe("get_download_stream_fileNameID", () =>  {    
+    it("No Input", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID();
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("Number Input", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID(12);
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("Array Input", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID([]);
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("Object Input", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID({});
+        expect(updateStreamID).toBe("fileNameID not string");
+    }); 
+
+    it("String Input", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID("test_id");
+        expect(updateStreamID).toBe("test_id");
+    });     
+});
+
 describe("downloadVideoStream", () =>  {    
     it("No Input", async () =>  {
         const downloadVideo = await ffmpegDownloadStream.downloadVideoStream();

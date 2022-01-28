@@ -23,8 +23,12 @@ function get_download_stream_fileNameID(){
 
 // update download stream fileNameID
 function update_download_stream_fileNameID(new_fileNameID){ 
-    stream_download_fileNameID = new_fileNameID;
-    return stream_download_fileNameID;
+    if (typeof new_fileNameID !== "string") {
+        return "fileNameID not string";
+    } else {
+        stream_download_fileNameID = new_fileNameID;
+        return stream_download_fileNameID;
+    }
 }
 
 // get stop download stream bool
