@@ -313,3 +313,133 @@ describe("progress_trimVideo", () =>  {
         });
     });  
 }); 
+
+describe("end_downloadVideo", () =>  {   
+    it("No Input", () =>  {
+        const end = ffmpegDownloadStream.end_downloadVideoStream();
+        expect(end).toBe("fileName undefined");
+    });   
+
+    it("fileName undefined", () =>  {
+        const end = ffmpegDownloadStream.end_downloadVideoStream(undefined);
+        expect(end).toBe("fileName undefined");
+    });  
+
+    it("valid fileName", () =>  {
+        const fileName = uuidv4();
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName);
+        expect(end).toBe("newFilePath not string");
+    });  
+
+    it("valid fileName, valid newFilePath", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName, newFilePath);
+        expect(end).toBe("fileType not string");
+    });  
+
+    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName, newFilePath, fileType);
+        expect(end).toBe("videoSrc not string");
+    });  
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoSrc = "videoSrc";
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc);
+        expect(end).toBe("videoType not string");
+    });  
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType);
+        expect(end).toBe("end download");
+    });  
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType, compressVideoStream false", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, false);
+        expect(end).toBe("end download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video: {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    });  
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType, compressVideoStream true", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const end = ffmpegDownloadStream.end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, true);
+        expect(end).toBe("end download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video: {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    });  
+}); 

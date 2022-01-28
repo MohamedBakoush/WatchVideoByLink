@@ -241,6 +241,17 @@ function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, vide
                     download: "starting"
                 }
             });
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "completed"
+                },
+                compression : { 
+                    "download-status" : "starting video compression"
+                },
+                thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                } 
+            });
         } else {
             videoData.updateVideoData([`${fileName}`], {
                 video : {
@@ -255,12 +266,15 @@ function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, vide
                     download: "starting"
                 }
             });
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "completed"
+                },
+                thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                } 
+            });
         }
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  "completed");
-        if (compressVideoStream) { // addition of compress video data 
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"],  "starting video compression"); 
-        }
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"],  "starting thumbnail download"); 
         return "end download";  
     }      
 }
@@ -272,6 +286,7 @@ module.exports = { // export modules
     stopDownloadVideoStream,
     downloadVideoStream,
     start_downloadVideoStream,
-    progress_downloadVideoStream
+    progress_downloadVideoStream,
+    end_downloadVideoStream
 };
   
