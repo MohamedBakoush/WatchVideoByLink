@@ -483,6 +483,8 @@ describe("end_trimVideo", () =>  {
             video: {
                 originalVideoSrc : videoSrc,
                 originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
                 path: newFilePath+fileName+fileType,
                 videoType : "video/mp4",
                 download : "completed",
@@ -522,6 +524,8 @@ describe("end_trimVideo", () =>  {
             video: {
                 originalVideoSrc : videoSrc,
                 originalVideoType : videoType,
+                newVideoStartTime: newStartTime,
+                newVideoEndTime: newEndTime,
                 path: newFilePath+fileName+fileType,
                 videoType : "video/mp4",
                 download : "completed",

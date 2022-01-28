@@ -258,6 +258,11 @@ export async function stopDownloadVideoStream() {
     let stopVideoDownloadResponse;
     if (response.ok) {
       stopVideoDownloadResponse = await response.json();
+      if (stopVideoDownloadResponse === "stream download stoped") {
+        basic.notify("success","Stoped Video Recording");
+      } else {
+        basic.notify("error","Failed: Stop Video Recording");
+      }
       return stopVideoDownloadResponse;
     } else {
       return "stop video stream download failed";
