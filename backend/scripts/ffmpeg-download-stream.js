@@ -73,36 +73,7 @@ async function downloadVideoStream(req, res) {
             command.addInput(videofile)
                 .on("start", function() {
                     res.json(fileName);
-                    videoData.updateVideoData([`${fileName}`], {
-                        video : {
-                        originalVideoSrc : req.body.videoSrc,
-                        originalVideoType : req.body.videoType,
-                        download : "starting stream download"
-                        }
-                    });
-                    
-                    if (compressVideoStream) { // addition of compress video data
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                        video : { 
-                            "download-status" : "starting stream download"
-                        },
-                        compression : { 
-                            "download-status" : "waiting for video"
-                        },
-                        thumbnail : { 
-                            "download-status" : "waiting for video"
-                        } 
-                        });
-                    } else {
-                        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                            video : { 
-                                "download-status" : "starting stream download"
-                            },
-                            thumbnail : { 
-                                "download-status" : "waiting for video"
-                            } 
-                        });
-                    }
+                    start_downloadVideoStream(fileName, req.body.videoSrc, req.body.videoType, compressVideoStream);
                 })
                 .on("progress", function(data) {
                     console.log("progress", data);
@@ -198,6 +169,47 @@ async function downloadVideoStream(req, res) {
     } else { 
         res.json(ffmpegAvaiable);
     } 
+}
+
+function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoStream) {
+    if (fileName === undefined) {
+        return "fileName undefined";
+    } else if (typeof videoSrc !== "string") {
+        return "videoSrc not string";
+    } else if (typeof videoType !== "string") {
+        return "videoType not string";
+    } else {
+        videoData.updateVideoData([`${fileName}`], {
+            video : {
+            originalVideoSrc : videoSrc,
+            originalVideoType : videoType,
+            download : "starting stream download"
+            }
+        });
+        if (compressVideoStream) { // addition of compress video data
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "starting stream download"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+            });
+        } else {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                video : { 
+                    "download-status" : "starting stream download"
+                },
+                thumbnail : { 
+                    "download-status" : "waiting for video"
+                } 
+            });
+        }   
+        return "start download"; 
+    }
 }
 
 module.exports = { // export modules
