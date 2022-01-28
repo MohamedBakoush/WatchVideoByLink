@@ -166,7 +166,11 @@ async function downloadVideoStream(req, res){
       }
     }, 50);  
   } else {
-    res.json(downloadVideoStream.message);
+    if (downloadVideoStream.message !== undefined) {
+      res.json(downloadVideoStream.message);
+    } else {
+      res.json(downloadVideoStream);
+    }
   }
 }
 
@@ -189,7 +193,11 @@ async function downloadVideo(req, res){
       }
     }, 50); 
   } else {
-    res.json(downloadVideo.message);
+    if (downloadVideo.message !== undefined) {
+      res.json(downloadVideo.message);
+    } else {
+      res.json(downloadVideo);
+    }
   }
 }
 
@@ -212,7 +220,11 @@ async function trimVideo(req, res){
       }
     }, 50); 
   } else {
-    res.json(downloadVideo.message);
+    if (downloadVideo.message !== undefined) {
+      res.json(downloadVideo.message);
+    } else {
+      res.json(downloadVideo);
+    }
   }
 }
 
