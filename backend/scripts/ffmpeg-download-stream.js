@@ -77,25 +77,7 @@ async function downloadVideoStream(req, res) {
                     start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoStream);
                 })
                 .on("progress", function(data) {
-                    console.log("progress", data);
-
-                    if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
-                        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
-                        videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
-                    } else {
-                        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
-                    } 
-
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
-
-                    if (get_stop_stream_download_bool() === true  && get_download_stream_fileNameID() == fileName) {
-                        try {
-                            ffmpegPath.STOP(command);
-                            update_stop_stream_download_bool(false);
-                        } catch (e) {
-                            update_stop_stream_download_bool(false);
-                        }
-                    }
+                    progress_downloadVideoStream(fileName, data, command);
                 })
                 .on("end", function() { // encoding is complete
                     console.log("Video Transcoding succeeded !");
@@ -210,6 +192,28 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
             });
         }   
         return "start download"; 
+    }
+}
+
+function progress_downloadVideoStream(fileName, data, command) {
+    console.log("progress", data);
+    
+    if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
+        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+        videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
+    } else {
+        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+    } 
+
+    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
+
+    if (get_stop_stream_download_bool() === true  && get_download_stream_fileNameID() == fileName) {
+        try {
+            ffmpegPath.STOP(command);
+            update_stop_stream_download_bool(false);
+        } catch (e) {
+            update_stop_stream_download_bool(false);
+        }
     }
 }
 
