@@ -149,8 +149,25 @@ function getAllAvailableVideos(req, res){
 
 // download live video stream header
 app.post("/downloadVideoStream", express.json(), downloadVideoStream);
-function downloadVideoStream(req, res){
-  ffmpegDownloadStream.downloadVideoStream(req, res);
+async function downloadVideoStream(req, res){
+  const downloadVideoStream = await ffmpegDownloadStream.downloadVideoStream(req.body.videoSrc, req.body.videoType);
+  if (downloadVideoStream.message == "initializing") {
+    const checkDownloadResponse = setInterval(function(){ 
+      const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideoStream.fileName]);
+      if (ffmpegDownloadResponse.getDownloadResponse([downloadVideoStream.fileName]) !== undefined) {
+        if (getDownloadResponse.message !== "initializing") {
+          clearInterval(checkDownloadResponse);
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+          res.json(getDownloadResponse.message);
+        }  
+      } else {
+        clearInterval(checkDownloadResponse);
+        res.json("response-not-found");
+      }
+    }, 50);  
+  } else {
+    res.json(downloadVideoStream.message);
+  }
 }
 
 // download video header

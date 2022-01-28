@@ -2,9 +2,11 @@
 const FileSystem = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
+const deleteData = require("./delete-data");
 const userSettings = require("./user-settings");
 const ffmpegImageDownload = require("./ffmpeg-download-image");
 const currentDownloadVideos = require("./current-download-videos");
+const ffmpegDownloadResponse = require("./ffmpeg-download-response");
 const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const ffmpegPath = require("./ffmpeg-path");
@@ -55,10 +57,8 @@ async function stopDownloadVideoStream(fileNameID) {
 }
 
 // downloads live video stream
-async function downloadVideoStream(req, res) {
+async function downloadVideoStream(videoSrc, videoType) {
     const command = new ffmpeg();
-    const videoSrc = req.body.videoSrc;
-    const videoType = req.body.videoType;
     const compressVideoStream = userSettings.checkIfVideoCompress("downloadVideoStream");
     const filepath = "media/video/";
     const fileName = uuidv4();
@@ -71,10 +71,24 @@ async function downloadVideoStream(req, res) {
             if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
                 FileSystem.mkdirSync(`${filepath}${fileName}/`);
             }
+            ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+                "fileName": fileName,
+                "message": "initializing"
+            });
             command.addInput(videoSrc)
                 .on("start", function() {
-                    res.json(fileName);
-                    start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoStream);
+                    const startDownload = start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoStream);
+                    if (startDownload == "start download") {
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], fileName);
+                        }
+                    } else {
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        }
+                        ffmpegPath.SIGKILL(command);
+                        deleteData.deleteAllVideoData(fileName);
+                    }
                 })
                 .on("progress", function(data) {
                     progress_downloadVideoStream(fileName, data, command);
@@ -88,29 +102,32 @@ async function downloadVideoStream(req, res) {
                     ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
                 })
                 .on("error", function(error) {
-                    /// error handling
                     console.log(`Encoding Error: ${error.message}`);
                     if (error.message === "Cannot find ffmpeg") {
-                        FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
-                            if (err) throw err;
-                            console.log(`\n removed ${newFilePath} dir \n`);
-                        });
-                        res.json("Cannot-find-ffmpeg");
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+                        }
                     } else {
-                        // there could be diffrent types of errors that exists and some may contain content in the newly created path
-                        // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
-                        res.json("ffmpeg-failed");
+                        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                            ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                        }
                     }
+                    deleteData.deleteAllVideoData(fileName);
                 })
                 .outputOptions(["-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
                 .output(`${newFilePath}${fileName}${fileType}`)
                 .run();
+            return {
+                "fileName": fileName,
+                "message": "initializing"
+            };
         } else {
-            // TODO: create new fileName and try again
-            console.log("videoDetails already exists");
+            return await downloadVideoStream(videoSrc, videoType);
         }
     } else { 
-        res.json(ffmpegAvaiable);
+        return {
+            "message": ffmpegAvaiable
+        };
     } 
 }
 
@@ -175,6 +192,7 @@ function progress_downloadVideoStream(fileName, data, command) {
             update_stop_stream_download_bool(false);
         }
     }
+    return "update download progress";
 }
 
 function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {
@@ -218,6 +236,7 @@ function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, vide
         currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"],  "starting video compression"); 
     }
     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"],  "starting thumbnail download"); 
+    return "end download";
 }
 module.exports = { // export modules
     get_download_stream_fileNameID,
