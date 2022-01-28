@@ -173,8 +173,6 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
 }
 
 function progress_downloadVideoStream(fileName, data, command) {
-    console.log("progress", data);
-
     if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
         videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
         videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
@@ -195,9 +193,7 @@ function progress_downloadVideoStream(fileName, data, command) {
     return "update download progress";
 }
 
-function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {
-    console.log("Video Transcoding succeeded !");
-                    
+function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream) {         
     if (compressVideoStream) { // addition of compress video data
         videoData.updateVideoData([`${fileName}`], {
         video : {
