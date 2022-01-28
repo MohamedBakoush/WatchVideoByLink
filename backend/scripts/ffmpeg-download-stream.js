@@ -149,22 +149,22 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
     } else {
         videoData.updateVideoData([`${fileName}`], {
             video : {
-            originalVideoSrc : videoSrc,
-            originalVideoType : videoType,
-            download : "starting stream download"
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "starting stream download"
             }
         });
         if (compressVideoStream) { // addition of compress video data
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-            video : { 
-                "download-status" : "starting stream download"
-            },
-            compression : { 
-                "download-status" : "waiting for video"
-            },
-            thumbnail : { 
-                "download-status" : "waiting for video"
-            } 
+                video : { 
+                    "download-status" : "starting stream download"
+                },
+                compression : { 
+                    "download-status" : "waiting for video"
+                },
+                thumbnail : { 
+                    "download-status" : "waiting for video"
+                } 
             });
         } else {
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
@@ -189,11 +189,9 @@ function progress_downloadVideoStream(fileName, data) {
         return "invalid data.timemark";
     } else {
         if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
-            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
             videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
-        } else {
-            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
-        } 
+        }
+        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
         currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
         return "update download progress";   
     }
