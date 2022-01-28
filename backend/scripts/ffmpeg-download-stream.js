@@ -52,14 +52,18 @@ function update_stop_stream_download_bool(bool){
 
 // stop video stream download
 async function stopDownloadVideoStream(fileNameID) {
-    const videoDetails = await videoData.findVideosByID(fileNameID);
-    if (videoDetails !== undefined) {
-        update_stop_stream_download_bool(true);
-        update_download_stream_fileNameID(fileNameID);
-        return "stoped video stream download";
+    if (typeof fileNameID !== "string") {
+        return "fileNameID not string";
     } else {
-        return "videoDetails dosnet exists";
-    } 
+        const videoDetails = await videoData.findVideosByID(fileNameID);
+        if (videoDetails === undefined) {
+            return "videoDetails no exists";
+        } else {
+            update_stop_stream_download_bool(true);
+            update_download_stream_fileNameID(fileNameID);
+            return "stream download stoped";
+        }
+    }
 }
 
 // downloads live video stream

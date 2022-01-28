@@ -114,6 +114,37 @@ describe("update_stop_stream_download_bool", () =>  {
     });    
 });
 
+describe("stopDownloadVideoStream", () =>  {    
+    it("No input", async () =>  {
+        const stopDownloadVideoStream = await ffmpegDownloadStream.stopDownloadVideoStream();
+        expect(stopDownloadVideoStream).toBe("fileNameID not string");
+    });         
+
+    it("Invalid fileNameID", async () =>  {
+        const fileName = uuidv4();
+        const stopDownloadVideoStream = await ffmpegDownloadStream.stopDownloadVideoStream(fileName);
+        expect(stopDownloadVideoStream).toBe("videoDetails no exists");
+    }); 
+
+    it("Valid fileNameID", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                download : "downloading",
+                timemark: "00:01:23"
+            }
+        });
+        const stopDownloadVideoStream = await ffmpegDownloadStream.stopDownloadVideoStream(fileName);
+        expect(stopDownloadVideoStream).toBe("stream download stoped");
+        const getStopDownloadBoll = ffmpegDownloadStream.get_stop_stream_download_bool();
+        expect(getStopDownloadBoll).toBe(true);
+        const getStreamID = ffmpegDownloadStream.get_download_stream_fileNameID();
+        expect(getStreamID).toBe(fileName);
+    });            
+});
+
 describe("downloadVideoStream", () =>  {    
     it("No Input", async () =>  {
         const downloadVideo = await ffmpegDownloadStream.downloadVideoStream();
