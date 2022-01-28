@@ -91,7 +91,15 @@ async function downloadVideoStream(videoSrc, videoType) {
                     }
                 })
                 .on("progress", function(data) {
-                    progress_downloadVideoStream(fileName, data, command);
+                    progress_downloadVideoStream(fileName, data);
+                    if (get_stop_stream_download_bool() === true  && get_download_stream_fileNameID() == fileName) {
+                        try {
+                            ffmpegPath.STOP(command);
+                            update_stop_stream_download_bool(false);
+                        } catch (e) {
+                            update_stop_stream_download_bool(false);
+                        }
+                    }
                 })
                 .on("end", function() { // encoding is complete
                     end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream);
@@ -172,24 +180,14 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
     }
 }
 
-function progress_downloadVideoStream(fileName, data, command) {
+function progress_downloadVideoStream(fileName, data) {
     if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
         videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
         videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
     } else {
         videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
     } 
-
     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
-
-    if (get_stop_stream_download_bool() === true  && get_download_stream_fileNameID() == fileName) {
-        try {
-            ffmpegPath.STOP(command);
-            update_stop_stream_download_bool(false);
-        } catch (e) {
-            update_stop_stream_download_bool(false);
-        }
-    }
     return "update download progress";
 }
 
