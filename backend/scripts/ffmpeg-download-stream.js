@@ -255,6 +255,7 @@ module.exports = { // export modules
     get_stop_stream_download_bool,
     update_stop_stream_download_bool,
     stopDownloadVideoStream,
-    downloadVideoStream
+    downloadVideoStream,
+    start_downloadVideoStream
 };
   
