@@ -103,3 +103,213 @@ describe("start_downloadVideoStream", () =>  {
         });
     });  
 }); 
+
+describe("progress_trimVideo", () =>  {   
+    it("No Input", () =>  {
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream();
+        expect(progress).toBe("fileName undefined");
+    });    
+
+    it("invalid fileName", () =>  {
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(undefined);
+        expect(progress).toBe("fileName undefined");
+    });   
+
+    it("valid fileName, invalid data", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName);
+        expect(progress).toBe("invalid data");
+    });   
+
+    it("valid fileName, empty object", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {});
+        expect(progress).toBe("invalid data.timemark");
+    });
+
+    it("valid fileName, valid object", () =>  {
+        const fileName = uuidv4(); 
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        });
+        expect(progress).toBe("videoSrc not string"); 
+    });   
+ 
+    it("valid fileName, valid object with start_downloadVideoStream - compressVideoStream false", () =>  {
+        const fileName = uuidv4(); 
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const start = ffmpegDownloadStream.start_downloadVideoStream(fileName, videoSrc, videoType, false);
+        expect(start).toBe("start download"); 
+        const getCurrentDownloads1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads1).toMatchObject({
+            video : { 
+                "download-status" : "starting stream download"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData1 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData1).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "starting stream download"
+            }
+        });
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        });
+        expect(progress).toBe("update download progress"); 
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "20.27"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "downloading",
+                timemark: "20.27"
+            }
+        });
+    });   
+ 
+    it("valid fileName, valid object with start_downloadVideoStream - compressVideoStream true", () =>  {
+        const fileName = uuidv4(); 
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const start = ffmpegDownloadStream.start_downloadVideoStream(fileName, videoSrc, videoType, true);
+        expect(start).toBe("start download"); 
+        const getCurrentDownloads1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads1).toMatchObject({
+            video : { 
+                "download-status" : "starting stream download"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            }  
+        });
+        const getVideoData1 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData1).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "starting stream download"
+            }
+        });
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        });
+        expect(progress).toBe("update download progress"); 
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "20.27"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "downloading",
+                timemark: "20.27"
+            }
+        });
+    }); 
+
+    it("valid fileName, valid object, valid videoSrc", () =>  {
+        const fileName = uuidv4(); 
+        const videoSrc = "videoSrc";
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        }, videoSrc);
+        expect(progress).toBe("videoType not string"); 
+    });   
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType", () =>  {
+        const fileName = uuidv4(); 
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        }, videoSrc, videoType);
+        expect(progress).toBe("update download progress"); 
+    });   
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType, compressVideoStream false", () =>  {
+        const fileName = uuidv4(); 
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        }, videoSrc, videoType, false);
+        expect(progress).toBe("update download progress"); 
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "20.27"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "downloading",
+                timemark: "20.27"
+            }
+        });
+    });  
+
+    it("valid fileName, valid object, valid videoSrc, valid videoType, compressVideoStream true", () =>  {
+        const fileName = uuidv4(); 
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const progress = ffmpegDownloadStream.progress_downloadVideoStream(fileName, {
+            timemark: "20.27"
+        }, videoSrc, videoType, true);
+        expect(progress).toBe("update download progress"); 
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "20.27"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : videoSrc,
+                originalVideoType : videoType,
+                download : "downloading",
+                timemark: "20.27"
+            }
+        });
+    });  
+}); 

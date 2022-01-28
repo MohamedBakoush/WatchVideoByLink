@@ -91,7 +91,7 @@ async function downloadVideoStream(videoSrc, videoType) {
                     }
                 })
                 .on("progress", function(data) {
-                    progress_downloadVideoStream(fileName, data);
+                    progress_downloadVideoStream(fileName, data, videoSrc, videoType, compressVideoStream);
                     if (get_stop_stream_download_bool() === true  && get_download_stream_fileNameID() == fileName) {
                         try {
                             ffmpegPath.STOP(command);
@@ -180,7 +180,7 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
     }
 }
 
-function progress_downloadVideoStream(fileName, data) {
+function progress_downloadVideoStream(fileName, data, videoSrc, videoType, compressVideoStream) {
     if (fileName === undefined) {
         return "fileName undefined";
     } else if (typeof data !== "object") {
@@ -188,12 +188,27 @@ function progress_downloadVideoStream(fileName, data) {
     } else  if (typeof data.timemark !== "string") { 
         return "invalid data.timemark";
     } else {
-        if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
-            videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
+        if (videoData.getVideoData([`${fileName}`, "video", "download"]) !== undefined 
+        && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "video", "download-status"]) !== undefined) {
+            if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
+                videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
+            }
+            videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
+            return "update download progress";    
+        } else {
+            const start_response = start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoStream);
+            if (start_response == "start download") {
+                if(videoData.getVideoData([`${fileName}`, "video", "download"]) !== "downloading"){
+                    videoData.updateVideoData([`${fileName}`, "video", "download"], "downloading");
+                }
+                videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
+                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark); 
+                return "update download progress";    
+            } else {
+                return start_response;
+            }
         }
-        videoData.updateVideoData([`${fileName}`, "video", "timemark"], data.timemark);
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"],  data.timemark);
-        return "update download progress";   
     }
 }
 
@@ -256,6 +271,7 @@ module.exports = { // export modules
     update_stop_stream_download_bool,
     stopDownloadVideoStream,
     downloadVideoStream,
-    start_downloadVideoStream
+    start_downloadVideoStream,
+    progress_downloadVideoStream
 };
   
