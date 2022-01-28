@@ -42,7 +42,9 @@ function get_stop_stream_download_bool(){
 
 // update stop download stream bool
 function update_stop_stream_download_bool(bool){ 
-    if (typeof bool == "boolean") {
+    if (typeof bool !== "boolean") {
+        return "input not boolean";
+    } else {
         stop_stream_download_bool = bool;
         return stop_stream_download_bool;
     }

@@ -52,6 +52,11 @@ describe("update_download_stream_fileNameID", () =>  {
         expect(updateStreamID).toBe("fileNameID not string");
     }); 
 
+    it("Boolean Input", () =>  {
+        const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID(true);
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
     it("String Input", () =>  {
         const updateStreamID = ffmpegDownloadStream.update_download_stream_fileNameID("test_id");
         expect(updateStreamID).toBe("test_id");
@@ -70,6 +75,43 @@ describe("get_stop_stream_download_bool", () =>  {
         const getStopDownloadBoll = ffmpegDownloadStream.get_stop_stream_download_bool();
         expect(getStopDownloadBoll).toBe(true);
     });     
+});
+
+describe("update_stop_stream_download_bool", () =>  {    
+    it("No Input", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool();
+        expect(updateStreamDownloadBool).toBe("input not boolean");
+    });     
+
+    it("Number Input", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool(12);
+        expect(updateStreamDownloadBool).toBe("input not boolean");
+    });     
+
+    it("Array Input", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool([]);
+        expect(updateStreamDownloadBool).toBe("input not boolean");
+    });     
+
+    it("Object Input", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool({});
+        expect(updateStreamDownloadBool).toBe("input not boolean");
+    }); 
+
+    it("String Input", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool("test");
+        expect(updateStreamDownloadBool).toBe("input not boolean");
+    });     
+
+    it("Boolen Input - true", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool(true);
+        expect(updateStreamDownloadBool).toBe(true);
+    }); 
+
+    it("Boolen Input - false", () =>  {
+        const updateStreamDownloadBool = ffmpegDownloadStream.update_stop_stream_download_bool(false);
+        expect(updateStreamDownloadBool).toBe(false);
+    });    
 });
 
 describe("downloadVideoStream", () =>  {    
