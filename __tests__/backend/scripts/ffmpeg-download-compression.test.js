@@ -121,6 +121,60 @@ describe("update_stop_compression_download_bool", () =>  {
     });    
 });
 
+describe("compression_VP9", () =>  {   
+    it("No Input", async () =>  {
+        const compression_VP9 = await ffmpegDownloadCompression.compression_VP9();
+        expect(compression_VP9).toBe("videofile not string");
+    });    
+
+    it("Valid videofile", async () =>  {
+        const videofile = "./path/video.mp4";
+        const compression_VP9 = await ffmpegDownloadCompression.compression_VP9(videofile);
+        expect(compression_VP9).toBe("newFilePath not string");
+    });  
+
+    it("Valid newFilePath, valid newFilePath", async () =>  {
+        const videofile = "./path/video.mp4";
+        const newFilePath = "media/video/";
+        const compression_VP9 = await ffmpegDownloadCompression.compression_VP9(videofile, newFilePath);
+        expect(compression_VP9).toBe("fileName undefined");
+    });    
+
+    it("Valid newFilePath, valid newFilePath, invalid fileName", async () =>  {
+        const fileName = uuidv4();
+        const videofile = "./path/video.mp4";
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const compression_VP9 = await ffmpegDownloadCompression.compression_VP9(videofile, newFilePath, fileName);
+        expect(compression_VP9).toBe("videoDetails dosnet exists");
+    });  
+
+    it("Valid newFilePath, valid newFilePath, Valid fileName", async () =>  {
+        const fileName = uuidv4();
+        const videofile = "./path/video.mp4";
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const compression_VP9 = await ffmpegDownloadCompression.compression_VP9(videofile, newFilePath, fileName);
+        expect(compression_VP9).toBe("start compression");
+    });  
+}); 
+
 describe("start_compression_VP9", () =>  {   
     it("return: start download", () =>  {
         const start = ffmpegDownloadCompression.start_compression_VP9();

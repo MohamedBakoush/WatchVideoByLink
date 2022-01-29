@@ -172,6 +172,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
             deleteData.deleteAllVideoData(fileName);
           }
         }); 
+        return "start compression";
       } else {  
         return "videoDetails dosnet exists";
       } 
