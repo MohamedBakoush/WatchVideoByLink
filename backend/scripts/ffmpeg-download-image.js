@@ -8,66 +8,61 @@ const deleteData = require("./delete-data");
 
 // creates images from provided video
 async function createThumbnail(videofile, newFilePath, fileName) {
-  const imageFileName = "thumbnail";
-  const fileType = ".jpg";
-  const numberOfImages = 8;
-  let duration = 0;
-  let numberOfCreatedScreenshots = 0;
-  const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
-  if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") { 
-    if (videoDetails !== undefined) {
-      ffmpeg.ffprobe(videofile, (error, metadata) => {
-        try { // get video duration 
-          duration = metadata.format.duration;
-        } catch (error) { // duration = 0
-          duration = 0;
-        } 
-        console.log(`${fileName} duration: ${duration}`);
-        // if video duration greater then 0
-        if (duration > 0) {
-          const command = new ffmpeg();
-            command.addInput(videofile)
-              .on("start", () => {
-                console.log("start createThumbnail");
-                start_createThumbnail();
-              })
-              .on("progress", (data) => {
-                console.log("progress", data);
-                // update numberOfCreatedScreenshots
-                numberOfCreatedScreenshots = data.frames; 
-                progress_createThumbnail(fileName, data);
-              })
-              .on("end", () => {
-                end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
-              })
-              .on("error", (error) => {
-                  /// error handling
-                  console.log(`Encoding Error: ${error.message}`);
-              })
-              .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
-              .output(`${newFilePath}${fileName}-${imageFileName}%03d${fileType}`)
-              .run();
-        } else { // duration less or equal to 0
-          try { // delete data
-            if (videoData.getVideoData([`${fileName}`]) || currentDownloadVideos.getCurrentDownloads()[`${fileName}`]) { // if videodata and currentDownloadVideos is avaiable 
-              // delete all data
-              deleteData.deleteAllVideoData(fileName);
-            } 
-          } catch (error) { // an error has occurred
-            console.log(error);
+  if(typeof videofile !== "string") {
+    return "videofile not string";
+  } else if(typeof newFilePath !== "string") {
+    return "newFilePath not string";
+  } else if(fileName === undefined) {
+    return "fileName undefined";
+  } else {
+    const imageFileName = "thumbnail";
+    const fileType = ".jpg";
+    const numberOfImages = 8;
+    let duration = 0;
+    let numberOfCreatedScreenshots = 0;
+    const videoDetails = await videoData.findVideosByID(fileName);
+    const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
+    if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") { 
+      if (videoDetails !== undefined) {
+        ffmpeg.ffprobe(videofile, (error, metadata) => {
+          try { // get video duration 
+            duration = metadata.format.duration;
+          } catch (error) { // duration = 0
+            duration = 0;
           } 
-        }
-      }); 
-    } else { 
-      return "videoDetails dosnet exists";
-    }
-  } else if(ffmpegAvaiable == "Cannot-find-ffmpeg-ffprobe"){
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg and ffprobe unavailable");
-  } else if(ffmpegAvaiable == "Cannot-find-ffmpeg"){ 
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg unavailable");
-  } else if(ffmpegAvaiable == "Cannot-find-ffprobe"){ 
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffprobe unavailable");
+          if (duration > 0) {
+            const command = new ffmpeg();
+              command.addInput(videofile)
+                .on("start", () => {
+                  start_createThumbnail();
+                })
+                .on("progress", (data) => {
+                  numberOfCreatedScreenshots = data.frames; 
+                  progress_createThumbnail(fileName, data);
+                })
+                .on("end", () => {
+                  end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+                })
+                .on("error", (error) => {
+                    console.log(`Encoding Error: ${error.message}`);
+                })
+                .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
+                .output(`${newFilePath}${fileName}-${imageFileName}%03d${fileType}`)
+                .run();
+          } else { // duration less or equal to 0
+            deleteData.deleteAllVideoData(fileName);
+          }
+        }); 
+      } else { 
+        return "videoDetails dosnet exists";
+      }
+    } else if(ffmpegAvaiable == "Cannot-find-ffmpeg-ffprobe"){
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg and ffprobe unavailable");
+    } else if(ffmpegAvaiable == "Cannot-find-ffmpeg"){ 
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg unavailable");
+    } else if(ffmpegAvaiable == "Cannot-find-ffprobe"){ 
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffprobe unavailable");
+    } 
   }
 }
 
