@@ -277,5 +277,8 @@ module.exports = { // export modules
     get_stop_compression_download_bool,
     update_stop_compression_download_bool,
     stopCommpressedVideoDownload,
-    compression_VP9
+    compression_VP9,
+    start_compression_VP9,
+    progress_compression_VP9,
+    end_compression_VP9
 };
