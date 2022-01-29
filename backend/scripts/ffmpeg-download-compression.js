@@ -140,50 +140,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
               }
             })
             .on("end", function() {
-              /// encoding is complete
-              console.log(`${fileName} compression-download-status: complete`); 
-              try {
-                if (availableVideos.getAvailableVideos([`${fileName}`,"info"])) {
-                  availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
-                  availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressedType"], "video/webm");
-                } else{
-                  availableVideos.updateAvailableVideoData([`${fileName}`], {
-                    info:{
-                      title: fileName,
-                      videoLink: {
-                        src : `/video/${fileName}`,
-                        type : "video/mp4",
-                        compressdSrc : `/compressed/${fileName}`,
-                        compressedType : "video/webm"
-                      }
-                    }
-                  });
-                }              
-              } catch (error) {
-                availableVideos.updateAvailableVideoData([`${fileName}`], {
-                  info:{
-                    title: fileName,
-                    videoLink: {
-                      src : `/video/${fileName}`,
-                      type : "video/mp4",
-                      compressdSrc : `/compressed/${fileName}`,
-                      compressedType : "video/webm"
-                    }
-                  }
-                });
-              } 
-          
-              videoData.updateVideoData([`${fileName}`, "compression"], { 
-                path: newFilePath+fileName+fileType,
-                videoType: "video/webm",
-                download: "completed"
-              });
-
-              if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) === "completed") { 
-                currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
-              } else  {  
-                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "completed");
-              }            
+              end_compression_VP9(fileName, newFilePath, fileType);       
             })
             .on("error", function(error) {
               /// error handling
@@ -270,6 +227,51 @@ function progress_compression_VP9(fileName, data) {
     }
   }
 }
+
+function end_compression_VP9(fileName, newFilePath, fileType) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if(typeof newFilePath !== "string") {
+      return "newFilePath not string";
+  } else if(typeof fileType !== "string") {
+      return "fileType not string";
+  } else {
+    
+    if (availableVideos.getAvailableVideos([`${fileName}`,"info"]) !== undefined) {
+      availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
+      availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressedType"], "video/webm");
+    } else{
+      availableVideos.updateAvailableVideoData([`${fileName}`], {
+        info:{
+          title: fileName,
+          videoLink: {
+            src : `/video/${fileName}`,
+            type : "video/mp4",
+            compressdSrc : `/compressed/${fileName}`,
+            compressedType : "video/webm"
+          }
+        }
+      });
+    } 
+  
+    if (videoData.getVideoData([`${fileName}`]) !== undefined) {
+      videoData.updateVideoData([`${fileName}`, "compression"], { 
+        path: newFilePath+fileName+fileType,
+        videoType: "video/webm",
+        download: "completed"
+      });
+    }
+  
+    if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) === "completed") { 
+      currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
+    } else if (currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) !== undefined) {
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "completed");
+    } 
+
+    return "end download";
+  }  
+}
+
 module.exports = { // export modules
     get_download_compression_fileNameID,
     update_download_compression_fileNameID,
