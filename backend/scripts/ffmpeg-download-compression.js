@@ -37,10 +37,12 @@ function get_stop_compression_download_bool(){
 
 // update stop download compression bool
 function update_stop_compression_download_bool(bool){ 
-    if (typeof bool == "boolean") {
-        stop_compression_download_bool = bool;
-        return stop_compression_download_bool;
-    }
+  if (typeof bool !== "boolean") {
+    return "input not boolean";
+  } else {
+    stop_compression_download_bool = bool;
+    return stop_compression_download_bool;
+  }
 }
 
 // check if video compression is downloading

@@ -83,3 +83,40 @@ describe("get_stop_compression_download_bool", () =>  {
         expect(getStopCompressionBool).toBe(true);
     });     
 });
+
+describe("update_stop_compression_download_bool", () =>  {    
+    it("No Input", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool();
+        expect(updateCompressionBool).toBe("input not boolean");
+    });     
+
+    it("Number Input", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool(12);
+        expect(updateCompressionBool).toBe("input not boolean");
+    });     
+
+    it("Array Input", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool([]);
+        expect(updateCompressionBool).toBe("input not boolean");
+    });     
+
+    it("Object Input", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool({});
+        expect(updateCompressionBool).toBe("input not boolean");
+    }); 
+
+    it("String Input", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool("test");
+        expect(updateCompressionBool).toBe("input not boolean");
+    });     
+
+    it("Boolen Input - true", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool(true);
+        expect(updateCompressionBool).toBe(true);
+    }); 
+
+    it("Boolen Input - false", () =>  {
+        const updateCompressionBool = ffmpegDownloadCompression.update_stop_compression_download_bool(false);
+        expect(updateCompressionBool).toBe(false);
+    });    
+});
