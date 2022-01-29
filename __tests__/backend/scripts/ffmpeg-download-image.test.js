@@ -199,3 +199,418 @@ describe("progress_createThumbnail", () =>  {
         expect(progress).toBe("update download progress");
     });  
 }); 
+
+describe("end_createThumbnail", () =>  {   
+    it("No Input", () =>  {
+        const end = ffmpegDownloadImage.end_createThumbnail();
+        expect(end).toBe("fileName undefined");
+    });   
+
+    it("Valid fileName", () =>  {
+        const fileName = uuidv4();
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName);
+        expect(end).toBe("newFilePath not string");
+    });   
+
+    it("Valid fileName, valid newFilePath", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath);
+        expect(end).toBe("imageFileName not string");
+    });  
+
+    it("valid fileName, valid newFilePath, valid imageFileName", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName);
+        expect(end).toBe("fileType not string");
+    });   
+
+    it("valid fileName, valid newFilePath, valid imageFileName, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType);
+        expect(end).toBe("numberOfCreatedScreenshots not number");
+    }); 
+
+    it("valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots not integer", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 2.2;
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("numberOfCreatedScreenshots value not integer");
+    });   
+
+    it("valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots less then 0", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = -2;
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("numberOfCreatedScreenshots less then 0");
+    });   
+
+    it("No Previous VideoData CurrentDownloads: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 2;
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    });   
+
+    it("No Previous VideoData without compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8;
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "99.9%"
+            } 
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    });   
+
+    it("No Previous VideoData with compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "20.0%"
+            },
+            thumbnail : { 
+                "download-status" : "99.9%"
+            } 
+        }); 
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        }); 
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "20.0%"
+            },
+            thumbnail : { 
+                "download-status" : "completed"
+            } 
+        });
+    }); 
+
+    it("No Previous CurrentDownloads without compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "completed"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    });   
+
+    it("No Previous CurrentDownloads with compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "20.0%"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "completed"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    }); 
+
+    it("Previous CurrentDownloads VideoData without compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "99.9%"
+            } 
+        });
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "completed"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    }); 
+
+    it("Previous CurrentDownloads VideoData with compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "20.0%"
+            },
+            thumbnail : { 
+                "download-status" : "99.9%"
+            } 
+        });
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "20.0%"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "completed"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "20.0%"
+            },
+            thumbnail : { 
+                "download-status" : "completed"
+            } 
+        });
+    }); 
+}); 
