@@ -22,6 +22,57 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("createThumbnail", () =>  {   
+    it("No Input", async() =>  {
+        const createThumbnail = await ffmpegDownloadImage.createThumbnail();
+        expect(createThumbnail).toBe("videofile not string");
+    });   
+
+    it("Valid videofile", async () =>  {
+        const videofile = "./path/video.mp4";
+        const createThumbnail = await ffmpegDownloadImage.createThumbnail(videofile);
+        expect(createThumbnail).toBe("newFilePath not string");
+    });  
+
+    it("Valid newFilePath, valid newFilePath", async () =>  {
+        const videofile = "./path/video.mp4";
+        const newFilePath = "media/video/";
+        const createThumbnail = await ffmpegDownloadImage.createThumbnail(videofile, newFilePath);
+        expect(createThumbnail).toBe("fileName undefined");
+    });    
+
+    it("Valid newFilePath, valid newFilePath, invalid fileName", async () =>  {
+        const fileName = uuidv4();
+        const videofile = "./path/video.mp4";
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const createThumbnail = await ffmpegDownloadImage.createThumbnail(videofile, newFilePath, fileName);
+        expect(createThumbnail).toBe("videoDetails dosnet exists");
+    });  
+
+    it("Valid newFilePath, valid newFilePath, Valid fileName", async () =>  {
+        const fileName = uuidv4();
+        const videofile = "./path/video.mp4";
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const createThumbnail = await ffmpegDownloadImage.createThumbnail(videofile, newFilePath, fileName);
+        expect(createThumbnail).toBe("start create thumbnail");
+    });  
+}); 
+
 describe("start_createThumbnail", () =>  {   
     it("return: start download", () =>  {
         const start = ffmpegDownloadImage.start_createThumbnail();

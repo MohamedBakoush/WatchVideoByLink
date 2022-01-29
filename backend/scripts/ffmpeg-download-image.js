@@ -53,6 +53,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
             deleteData.deleteAllVideoData(fileName);
           }
         }); 
+        return "start create thumbnail";
       } else { 
         return "videoDetails dosnet exists";
       }
