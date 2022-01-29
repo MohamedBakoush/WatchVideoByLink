@@ -74,6 +74,22 @@ describe("progress_createThumbnail", () =>  {
             percent: 0
         });
         expect(progress).toBe(`${fileName} CurrentDownloads missing`);
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: 0
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
     });   
 
     it("compression true: valid fileName, valid data - CurrentDownloads missing", () =>  {
@@ -98,6 +114,25 @@ describe("progress_createThumbnail", () =>  {
             percent: 0
         });
         expect(progress).toBe(`${fileName} CurrentDownloads missing`);
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: 0
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
     });  
     
     it("valid fileName, valid data - VideoData missing", () =>  {
@@ -114,6 +149,17 @@ describe("progress_createThumbnail", () =>  {
             percent: 0
         });
         expect(progress).toBe(`${fileName} VideoData missing`);
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "0.00%"
+            } 
+        });
     });  
 
     it("compression true: valid fileName, valid data - VideoData missing", () =>  {
@@ -133,6 +179,20 @@ describe("progress_createThumbnail", () =>  {
             percent: 0
         });
         expect(progress).toBe(`${fileName} VideoData missing`);
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "0.00%"
+            } 
+        });
     });  
 
     it("valid fileName, valid data", () =>  {
@@ -162,6 +222,29 @@ describe("progress_createThumbnail", () =>  {
             percent: 0
         });
         expect(progress).toBe("update download progress");
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: 0
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "0.00%"
+            } 
+        });
     });  
 
     it("compression true: alid fileName, valid data", () =>  {
@@ -197,6 +280,35 @@ describe("progress_createThumbnail", () =>  {
             percent: 0
         });
         expect(progress).toBe("update download progress");
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: 0
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "0.00%"
+            } 
+        });
     });  
 }); 
 

@@ -82,7 +82,7 @@ function progress_createThumbnail(fileName, data) {
       return "invalid data.percent";
   } else {
     if (videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) !== undefined 
-    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) !== undefined)  {
+      && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) !== undefined)  {
       if (data.percent < 0){ // if data.percent is less then 0 then show 0.00%
         videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
         currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
@@ -96,11 +96,25 @@ function progress_createThumbnail(fileName, data) {
       }
       return "update download progress";  
     } else if (videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) === undefined 
-    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) !== undefined)  {
-     return `${fileName} VideoData missing`;
+      && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) !== undefined)  {
+      if (data.percent < 0){
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
+      } else {
+        try { 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent.toFixed(2)}%`);
+        } catch (error) { 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent}%`);
+        }
+      }
+      return `${fileName} VideoData missing`;
     } else if (videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) !== undefined 
-    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) === undefined)  { 
-     return `${fileName} CurrentDownloads missing`;
+      && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) === undefined)  { 
+      if (data.percent < 0){
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
+      } else {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
+      }
+      return `${fileName} CurrentDownloads missing`;
     } else {
       return `${fileName} VideoData & CurrentDownloads missing`;
     }
