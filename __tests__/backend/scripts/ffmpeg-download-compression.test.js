@@ -294,3 +294,237 @@ describe("progress_compression_VP9", () =>  {
         });
     });  
 }); 
+
+describe("end_compression_VP9", () =>  {   
+    it("No Input", () =>  {
+        const end = ffmpegDownloadCompression.end_compression_VP9();
+        expect(end).toBe("fileName undefined");
+    });   
+
+    it("Valid fileName", () =>  {
+        const fileName = uuidv4();
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName);
+        expect(end).toBe("newFilePath not string");
+    });   
+
+    it("Valid fileName, valid newFilePath", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath);
+        expect(end).toBe("fileType not string");
+    });  
+
+    it("Valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".webm";
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath, fileType);
+        expect(end).toBe("end download");
+    });  
+
+    it("No VideoData CurrentDownloads: Valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".webm";
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath, fileType);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+                title: fileName,
+                videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4",
+                    compressdSrc : `/compressed/${fileName}`,
+                    compressedType : "video/webm"
+                }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    });  
+
+    it("No VideoData: Valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".webm";
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "99.9%"
+            },
+            thumbnail : { 
+                "download-status" : "20.0%"
+            } 
+        }); 
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath, fileType);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+                title: fileName,
+                videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4",
+                    compressdSrc : `/compressed/${fileName}`,
+                    compressedType : "video/webm"
+                }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "20.0%"
+            } 
+        });
+    });  
+
+    it("No CurrentDownloads: Valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".webm";
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "20.0%"
+            }
+        });
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath, fileType);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+                title: fileName,
+                videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4",
+                    compressdSrc : `/compressed/${fileName}`,
+                    compressedType : "video/webm"
+                }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "completed"
+            },
+            thumbnail: {
+                path: {},
+                download: "20.0%"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    });  
+
+    it("With CurrentDownloads VideoData: Valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".webm";
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "20.0%"
+            }
+        });
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "99.9%"
+            },
+            thumbnail : { 
+                "download-status" : "20.0%"
+            } 
+        }); 
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath, fileType);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([`${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+                title: fileName,
+                videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4",
+                    compressdSrc : `/compressed/${fileName}`,
+                    compressedType : "video/webm"
+                }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "completed"
+            },
+            thumbnail: {
+                path: {},
+                download: "20.0%"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "20.0%"
+            } 
+        });
+    });  
+}); 
