@@ -37,20 +37,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 console.log("progress", data);
                 // update numberOfCreatedScreenshots
                 numberOfCreatedScreenshots = data.frames; 
-    
-                if(data.percent < 0){ // if data.percent is less then 0 then show 0.00%
-                  videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
-                  currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
-                }else{ //update data with with data.percent
-                  try {
-                    videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent.toFixed(2)}%`);
-                  } catch (error) {
-                    videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent}%`);
-                  }
-                }
-    
+                progress_createThumbnail(fileName, data);
               })
               .on("end", () => {
                 // encoding is complete
@@ -141,6 +128,29 @@ function start_createThumbnail() {
   return "start download";
 }
 
+function progress_createThumbnail(fileName, data) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if (typeof data !== "object") {
+      return "invalid data";
+  } else  if (typeof data.percent !== "number") { 
+      return "invalid data.percent";
+  } else {
+    if (data.percent < 0){ // if data.percent is less then 0 then show 0.00%
+      videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
+    } else { //update data with with data.percent
+      try {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent.toFixed(2)}%`);
+      } catch (error) {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent}%`);
+      }
+    }
+    return "update download progress";
+  }
+}
 module.exports = { // export modules
   createThumbnail
 };
