@@ -49,61 +49,61 @@ function update_stop_compression_download_bool(bool){
 // if true then update stopCompressedVideoFileBool and fileNameID_Compression variable and return true
 // else return false
 function stopCommpressedVideoDownload(fileName) { 
-    try {
-        let videoDataCompressionProgress, currentDownloadCompressionProgress; 
+  try {
+    let videoDataCompressionProgress, currentDownloadCompressionProgress; 
 
-        const videoDataDownloadStatus = videoData.getVideoData([`${fileName}`,"compression", "download"]) ;
-        if (videoDataDownloadStatus !== undefined) {
-          videoDataCompressionProgress = videoDataDownloadStatus;
-        } else {
-          videoDataCompressionProgress = false;
-        }
-
-        const currentDownloadsDownloadStatus = currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]); 
-        if (currentDownloadsDownloadStatus !== undefined) {
-          currentDownloadCompressionProgress = currentDownloadsDownloadStatus;
-        } else {
-          currentDownloadCompressionProgress = false;
-        } 
-
-        if (videoDataCompressionProgress) {
-            if (videoDataCompressionProgress == "completed") {   
-                return false; 
-            } else if (currentDownloadCompressionProgress) {
-                if (currentDownloadCompressionProgress == "completed"
-                || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
-                || currentDownloadCompressionProgress == "ffmpeg unavailable"
-                || currentDownloadCompressionProgress == "ffprobe unavailable"
-                || currentDownloadCompressionProgress == "unfinished download") {
-                    return false;
-                } else {
-                    update_stop_compression_download_bool(true);
-                    update_download_compression_fileNameID(fileName);
-                    return true;
-                }
-            } else {
-                update_stop_compression_download_bool(true);
-                update_download_compression_fileNameID(fileName);
-                return true;
-            }
-        } else if (currentDownloadCompressionProgress) {
-            if (currentDownloadCompressionProgress == "completed"
-            || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
-            || currentDownloadCompressionProgress == "ffmpeg unavailable"
-            || currentDownloadCompressionProgress == "ffprobe unavailable"
-            || currentDownloadCompressionProgress == "unfinished download") {
-                return false;
-            } else {
-                update_stop_compression_download_bool(true);
-                update_download_compression_fileNameID(fileName);
-                return true;
-            }
-        } else {
-            return false;
-        } 
-    } catch (error) {
-        return false;
+    const videoDataDownloadStatus = videoData.getVideoData([`${fileName}`,"compression", "download"]) ;
+    if (videoDataDownloadStatus !== undefined) {
+      videoDataCompressionProgress = videoDataDownloadStatus;
+    } else {
+      videoDataCompressionProgress = false;
     }
+
+    const currentDownloadsDownloadStatus = currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]); 
+    if (currentDownloadsDownloadStatus !== undefined) {
+      currentDownloadCompressionProgress = currentDownloadsDownloadStatus;
+    } else {
+      currentDownloadCompressionProgress = false;
+    } 
+
+    if (videoDataCompressionProgress) {
+      if (videoDataCompressionProgress == "completed") {   
+        return false; 
+      } else if (currentDownloadCompressionProgress) {
+        if (currentDownloadCompressionProgress == "completed"
+        || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
+        || currentDownloadCompressionProgress == "ffmpeg unavailable"
+        || currentDownloadCompressionProgress == "ffprobe unavailable"
+        || currentDownloadCompressionProgress == "unfinished download") {
+          return false;
+        } else {
+          update_stop_compression_download_bool(true);
+          update_download_compression_fileNameID(fileName);
+          return true;
+        }
+      } else {
+        update_stop_compression_download_bool(true);
+        update_download_compression_fileNameID(fileName);
+        return true;
+      }
+    } else if (currentDownloadCompressionProgress) {
+      if (currentDownloadCompressionProgress == "completed"
+      || currentDownloadCompressionProgress == "ffmpeg and ffprobe unavailable"
+      || currentDownloadCompressionProgress == "ffmpeg unavailable"
+      || currentDownloadCompressionProgress == "ffprobe unavailable"
+      || currentDownloadCompressionProgress == "unfinished download") {
+        return false;
+      } else {
+        update_stop_compression_download_bool(true);
+        update_download_compression_fileNameID(fileName);
+        return true;
+      }
+    } else {
+      return false;
+    } 
+  } catch (error) {
+    return false;
+  }
 }
 
 // VP9 video compression - make video size smaller
