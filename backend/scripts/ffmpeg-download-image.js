@@ -81,19 +81,29 @@ function progress_createThumbnail(fileName, data) {
   } else  if (typeof data.percent !== "number") { 
       return "invalid data.percent";
   } else {
-    if (data.percent < 0){ // if data.percent is less then 0 then show 0.00%
-      videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
-      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
-    } else { //update data with with data.percent
-      try {
+    if (videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) !== undefined 
+    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) !== undefined)  {
+      if (data.percent < 0){ // if data.percent is less then 0 then show 0.00%
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], 0.00);
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "0.00%");
+      } else { //update data with with data.percent
         videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent.toFixed(2)}%`);
-      } catch (error) {
-        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], data.percent);
-        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent}%`);
+        try { 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent.toFixed(2)}%`);
+        } catch (error) { 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], `${data.percent}%`);
+        }
       }
+      return "update download progress";  
+    } else if (videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) === undefined 
+    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) !== undefined)  {
+     return `${fileName} VideoData missing`;
+    } else if (videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) !== undefined 
+    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "thumbnail", "download-status"]) === undefined)  { 
+     return `${fileName} CurrentDownloads missing`;
+    } else {
+      return `${fileName} VideoData & CurrentDownloads missing`;
     }
-    return "update download progress";
   }
 }
 
