@@ -32,7 +32,6 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 console.log("start createThumbnail");
                 start_createThumbnail();
               })
-    
               .on("progress", (data) => {
                 console.log("progress", data);
                 // update numberOfCreatedScreenshots
@@ -40,59 +39,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                 progress_createThumbnail(fileName, data);
               })
               .on("end", () => {
-                // encoding is complete
-                for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
-                  if (i == 0){
-                    try {
-                      if (availableVideos.getAvailableVideos([`${fileName}`, "info"])) {
-                        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
-                      } else {            
-                        availableVideos.updateAvailableVideoData([`${fileName}`], {
-                          info:{
-                            title: fileName,
-                            videoLink: {
-                              src : `/video/${fileName}`,
-                              type : "video/mp4"
-                            },
-                            thumbnailLink: {
-                            }
-                          }
-                        });
-                      }
-                    } catch (error) {
-                      availableVideos.updateAvailableVideoData([`${fileName}`], {
-                        info:{
-                          title: fileName,
-                          videoLink: {
-                            src : `/video/${fileName}`,
-                            type : "video/mp4"
-                          },
-                          thumbnailLink: {
-                          }
-                        }
-                      });
-                    }
-                  } else if (i < 10) {
-                    videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);
-                    availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
-                  } else if (i < 100) {
-                    videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`);
-                    availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
-                  } else {
-                    videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`);
-                    availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
-                  }
-                  if (i == numberOfCreatedScreenshots) {
-                    videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
-                  }
-                }
-                
-                if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) === "completed") { 
-                  currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
-                } else  {  
-                  currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "completed");
-                } 
-        
+                end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
               })
               .on("error", (error) => {
                   /// error handling
@@ -151,6 +98,74 @@ function progress_createThumbnail(fileName, data) {
     return "update download progress";
   }
 }
+
+function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if(typeof newFilePath !== "string") {
+      return "newFilePath not string";
+  } else if(typeof imageFileName !== "string") {
+    return "imageFileName not string";
+  } else if(typeof fileType !== "string") {
+      return "fileType not string";
+  } else if (isNaN(numberOfCreatedScreenshots)) {
+      return "numberOfCreatedScreenshots not number";
+  } else {
+    for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
+      if (i == 0){
+        try {
+          if (availableVideos.getAvailableVideos([`${fileName}`, "info"])) {
+            availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
+          } else {            
+            availableVideos.updateAvailableVideoData([`${fileName}`], {
+              info:{
+                title: fileName,
+                videoLink: {
+                  src : `/video/${fileName}`,
+                  type : "video/mp4"
+                },
+                thumbnailLink: {
+                }
+              }
+            });
+          }
+        } catch (error) {
+          availableVideos.updateAvailableVideoData([`${fileName}`], {
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+          });
+        }
+      } else if (i < 10) {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);
+        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+      } else if (i < 100) {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`);
+        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+      } else {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`);
+        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+      }
+      if (i == numberOfCreatedScreenshots) {
+        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
+      }
+    }
+    
+    if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) === "completed") { 
+      currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
+    } else  {  
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "completed");
+    } 
+    return "end download";
+  }
+}
+
 module.exports = { // export modules
   createThumbnail
 };
