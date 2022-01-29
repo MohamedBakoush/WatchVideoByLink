@@ -21,8 +21,8 @@ async function createThumbnail(videofile, newFilePath, fileName) {
     let duration = 0;
     let numberOfCreatedScreenshots = 0;
     const videoDetails = await videoData.findVideosByID(fileName);
-    const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
-    if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") { 
+    const ffmpegAvailable = ffmpegPath.checkIfFFmpegFFprobeExits();
+    if (ffmpegAvailable == "ffmpeg-ffprobe-exits") { 
       if (videoDetails !== undefined) {
         ffmpeg.ffprobe(videofile, (error, metadata) => {
           try { // get video duration 
@@ -56,13 +56,16 @@ async function createThumbnail(videofile, newFilePath, fileName) {
       } else { 
         return "videoDetails dosnet exists";
       }
-    } else if(ffmpegAvaiable == "Cannot-find-ffmpeg-ffprobe"){
-      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg and ffprobe unavailable");
-    } else if(ffmpegAvaiable == "Cannot-find-ffmpeg"){ 
-      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg unavailable");
-    } else if(ffmpegAvaiable == "Cannot-find-ffprobe"){ 
-      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffprobe unavailable");
-    } 
+    } else {
+      if(ffmpegAvailable == "Cannot-find-ffmpeg"){ 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg unavailable");
+      } else if(ffmpegAvailable == "Cannot-find-ffprobe"){ 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffprobe unavailable");
+      } else { 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffmpeg and ffprobe unavailable");
+      } 
+      return ffmpegAvailable;
+    }
   }
 }
 
