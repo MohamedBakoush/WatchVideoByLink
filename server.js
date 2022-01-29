@@ -31,8 +31,30 @@ function uploadVideoFile(req, res){
 
 // converts url link to video link
 app.post("/getVideoLinkFromUrl", express.json(), videoLinkFromUrl);
-function videoLinkFromUrl(req, res){
-  youtubedlDownloadVideo.getVideoLinkFromUrl(req, res);
+async function videoLinkFromUrl(req, res){
+  const getVideoLinkFromUrl = await youtubedlDownloadVideo.getVideoLinkFromUrl(req.body.url);
+  if (getVideoLinkFromUrl.message == "initializing") {
+    const checkDownloadResponse = setInterval(function(){ 
+      const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([getVideoLinkFromUrl.fileName]);
+      if (ffmpegDownloadResponse.getDownloadResponse([getVideoLinkFromUrl.fileName]) !== undefined) {
+        if (getDownloadResponse.message !== "initializing") {
+          clearInterval(checkDownloadResponse);
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+          console.log(getDownloadResponse.message);
+          res.json(getDownloadResponse.message);
+        }  
+      } else {
+        clearInterval(checkDownloadResponse);
+        res.json("failed-get-video-url-from-provided-url");
+      }
+    }, 50);  
+  } else {
+    if (getVideoLinkFromUrl.message !== undefined) {
+      res.json(getVideoLinkFromUrl.message);
+    } else {
+      res.json(getVideoLinkFromUrl);
+    }
+  }
 }
 
 // update video player volume settings
