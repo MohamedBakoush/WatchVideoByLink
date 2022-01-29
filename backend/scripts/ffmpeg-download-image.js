@@ -119,12 +119,30 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
   } else if (isNaN(numberOfCreatedScreenshots)) {
       return "numberOfCreatedScreenshots not number";
   } else {
-    for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
-      if (i == 0){
-        try {
-          if (availableVideos.getAvailableVideos([`${fileName}`, "info"])) {
-            availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
-          } else {            
+    if (!Number.isInteger(numberOfCreatedScreenshots)) {
+      return "numberOfCreatedScreenshots value not integer";
+    } else if (numberOfCreatedScreenshots < 0) {
+      return "numberOfCreatedScreenshots less then 0";
+    } else  {  
+      for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
+        if (i == 0){
+          try {
+            if (availableVideos.getAvailableVideos([`${fileName}`, "info"])) {
+              availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
+            } else {            
+              availableVideos.updateAvailableVideoData([`${fileName}`], {
+                info:{
+                  title: fileName,
+                  videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4"
+                  },
+                  thumbnailLink: {
+                  }
+                }
+              });
+            }
+          } catch (error) {
             availableVideos.updateAvailableVideoData([`${fileName}`], {
               info:{
                 title: fileName,
@@ -137,40 +155,28 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
               }
             });
           }
-        } catch (error) {
-          availableVideos.updateAvailableVideoData([`${fileName}`], {
-            info:{
-              title: fileName,
-              videoLink: {
-                src : `/video/${fileName}`,
-                type : "video/mp4"
-              },
-              thumbnailLink: {
-              }
-            }
-          });
+        } else if (i < 10) {
+          videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);
+          availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+        } else if (i < 100) {
+          videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`);
+          availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+        } else {
+          videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`);
+          availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
         }
-      } else if (i < 10) {
-        videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);
-        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
-      } else if (i < 100) {
-        videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}0${i}${fileType}`);
-        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
-      } else {
-        videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}${i}${fileType}`);
-        availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+        if (i == numberOfCreatedScreenshots) {
+          videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
+        }
       }
-      if (i == numberOfCreatedScreenshots) {
-        videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
-      }
-    }
-    
-    if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) === "completed") { 
-      currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
-    } else  {  
-      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "completed");
+      
+      if(currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"]) === undefined || currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) === "completed") { 
+        currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
+      } else  {  
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "completed");
+      } 
+      return "end download";
     } 
-    return "end download";
   }
 }
 
