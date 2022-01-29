@@ -18,8 +18,12 @@ function get_download_compression_fileNameID() {
 
 // update download compression fileNameID
 function update_download_compression_fileNameID(new_fileNameID){ 
+  if (typeof new_fileNameID !== "string") {
+    return "fileNameID not string";
+  } else {
     compression_download_fileNameID = new_fileNameID;
     return compression_download_fileNameID;
+  }
 }
 
 // get stop download compression bool

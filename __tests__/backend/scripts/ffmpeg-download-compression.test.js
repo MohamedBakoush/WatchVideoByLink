@@ -36,3 +36,36 @@ describe("get_download_compression_fileNameID", () =>  {
         expect(getStreamID).toBe(fileName);
     });     
 });
+
+describe("update_download_compression_fileNameID", () =>  {    
+    it("No Input", () =>  {
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID();
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("Number Input", () =>  {
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID(12);
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("Array Input", () =>  {
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID([]);
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("Object Input", () =>  {
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID({});
+        expect(updateStreamID).toBe("fileNameID not string");
+    }); 
+
+    it("Boolean Input", () =>  {
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID(true);
+        expect(updateStreamID).toBe("fileNameID not string");
+    });     
+
+    it("String Input", () =>  {
+        const fileName = uuidv4();
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID(fileName);
+        expect(updateStreamID).toBe(fileName);
+    });     
+});
