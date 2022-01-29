@@ -129,25 +129,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
               start_compression_VP9();
             })
             .on("progress", function(data) { 
-              videoData.updateVideoData([`${fileName}`, "compression", "download"], data.percent);
-
-              if(data.percent < 0){
-                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "0.00%");
-                console.log(`${fileName} compression-download-status: 0.00%`);
-              } else if(data.percent == "undefined"){
-                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent}%`);  
-                console.log(`${fileName} compression-download-status: ${data.percent}%`);
-              } else{
-                try { 
-                  currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent.toFixed(2)}%`);
-                  console.log(`${fileName} compression-download-status: ${data.percent.toFixed(2)}%`);
-                } catch (error) {
-                  currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent}%`);
-                  console.log(`${fileName} compression-download-status: ${data.percent}%`);
-                }
-              }  
-
-              // stop video compression
+              progress_compression_VP9(fileName, data);
               if (get_stop_compression_download_bool() === true  && get_download_compression_fileNameID() == fileName) {
                 try {
                   ffmpegPath.SIGKILL(command);
@@ -241,6 +223,53 @@ function start_compression_VP9() {
   return "start download";
 }
 
+function progress_compression_VP9(fileName, data) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if (typeof data !== "object") {
+      return "invalid data";
+  } else  if (typeof data.percent !== "number") { 
+      return "invalid data.percent";
+  }else {
+    if (videoData.getVideoData([`${fileName}`, "compression", "download"]) !== undefined 
+      && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) !== undefined)  {
+      if(data.percent < 0){
+        videoData.updateVideoData([`${fileName}`, "compression", "download"], 0.00);
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "0.00%");
+      } else{ 
+        videoData.updateVideoData([`${fileName}`, "compression", "download"], data.percent);
+        try { 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent.toFixed(2)}%`);
+        } catch (error) {
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent}%`);
+        }
+      }  
+      return "update download progress";  
+    } else if (videoData.getVideoData([`${fileName}`, "compression", "download"]) === undefined 
+      && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) !== undefined)  {
+      if(data.percent < 0){
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "0.00%");
+      } else{ 
+        try { 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent.toFixed(2)}%`);
+        } catch (error) {
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], `${data.percent}%`);
+        }
+      } 
+      return `${fileName} VideoData missing`;
+    } else if (videoData.getVideoData([`${fileName}`, "compression", "download"]) !== undefined 
+      && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]) === undefined)  { 
+      if(data.percent < 0){
+        videoData.updateVideoData([`${fileName}`, "compression", "download"], 0.00);
+      } else{ 
+        videoData.updateVideoData([`${fileName}`, "compression", "download"], data.percent);
+      } 
+     return `${fileName} CurrentDownloads missing`;
+    } else {
+      return `${fileName} VideoData & CurrentDownloads missing`;
+    }
+  }
+}
 module.exports = { // export modules
     get_download_compression_fileNameID,
     update_download_compression_fileNameID,
