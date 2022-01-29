@@ -24,16 +24,16 @@ afterEach(() => {
 
 describe("get_download_compression_fileNameID", () =>  {    
     it("No Defined: fileNameID", () =>  {
-        const getStreamID = ffmpegDownloadCompression.get_download_compression_fileNameID();
-        expect(getStreamID).toBe(undefined);
+        const getStopCompressionBool = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(getStopCompressionBool).toBe(undefined);
     });     
 
     it("Defined: fileNameID", () =>  {
         const fileName = uuidv4();
-        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID(fileName);
-        expect(updateStreamID).toBe(fileName);
-        const getStreamID = ffmpegDownloadCompression.get_download_compression_fileNameID();
-        expect(getStreamID).toBe(fileName);
+        const updateCompressionID = ffmpegDownloadCompression.update_download_compression_fileNameID(fileName);
+        expect(updateCompressionID).toBe(fileName);
+        const getStopCompressionBool = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(getStopCompressionBool).toBe(fileName);
     });     
 });
 
