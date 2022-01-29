@@ -30,6 +30,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
             command.addInput(videofile)
               .on("start", () => {
                 console.log("start createThumbnail");
+                start_createThumbnail();
               })
     
               .on("progress", (data) => {
@@ -134,6 +135,10 @@ async function createThumbnail(videofile, newFilePath, fileName) {
   } else if(ffmpegAvaiable == "Cannot-find-ffprobe"){ 
     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "ffprobe unavailable");
   }
+}
+
+function start_createThumbnail() {
+  return "start download";
 }
 
 module.exports = { // export modules
