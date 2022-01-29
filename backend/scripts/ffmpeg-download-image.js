@@ -165,6 +165,9 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
 }
 
 module.exports = { // export modules
-  createThumbnail
+  createThumbnail,
+  start_createThumbnail,
+  progress_createThumbnail,
+  end_createThumbnail
 };
   
