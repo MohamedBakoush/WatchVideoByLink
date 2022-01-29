@@ -48,29 +48,23 @@ function update_stop_compression_download_bool(bool){
 // check if video compression is downloading
 // if true then update stopCompressedVideoFileBool and fileNameID_Compression variable and return true
 // else return false
-async function stopCommpressedVideoDownload(fileNameID) { 
+function stopCommpressedVideoDownload(fileName) { 
     try {
-        const videoDetails = await videoData.findVideosByID(fileNameID);
-        const currentDownloads = await currentDownloadVideos.findCurrentDownloadByID(fileNameID); 
         let videoDataCompressionProgress, currentDownloadCompressionProgress; 
-        try {
-            if (videoDetails["compression"]) {
-                videoDataCompressionProgress = videoDetails["compression"]["download"];  
-            } else {
-                videoDataCompressionProgress = false;
-            } 
-        } catch (error) {
-            videoDataCompressionProgress = false;
+
+        const videoDataDownloadStatus = videoData.getVideoData([`${fileName}`,"compression", "download"]) ;
+        if (videoDataDownloadStatus !== undefined) {
+          videoDataCompressionProgress = videoDataDownloadStatus;
+        } else {
+          videoDataCompressionProgress = false;
         }
-        try {
-            if (currentDownloads["compression"]) {
-                currentDownloadCompressionProgress = currentDownloads["compression"]["download-status"];  
-            } else {
-                currentDownloadCompressionProgress = false;
-            } 
-        } catch (error) {
-            currentDownloadCompressionProgress = false;
-        }
+
+        const currentDownloadsDownloadStatus = currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression", "download-status"]); 
+        if (currentDownloadsDownloadStatus !== undefined) {
+          currentDownloadCompressionProgress = currentDownloadsDownloadStatus;
+        } else {
+          currentDownloadCompressionProgress = false;
+        } 
 
         if (videoDataCompressionProgress) {
             if (videoDataCompressionProgress == "completed") {   
@@ -84,12 +78,12 @@ async function stopCommpressedVideoDownload(fileNameID) {
                     return false;
                 } else {
                     update_stop_compression_download_bool(true);
-                    update_download_compression_fileNameID(fileNameID);
+                    update_download_compression_fileNameID(fileName);
                     return true;
                 }
             } else {
                 update_stop_compression_download_bool(true);
-                update_download_compression_fileNameID(fileNameID);
+                update_download_compression_fileNameID(fileName);
                 return true;
             }
         } else if (currentDownloadCompressionProgress) {
@@ -101,7 +95,7 @@ async function stopCommpressedVideoDownload(fileNameID) {
                 return false;
             } else {
                 update_stop_compression_download_bool(true);
-                update_download_compression_fileNameID(fileNameID);
+                update_download_compression_fileNameID(fileName);
                 return true;
             }
         } else {
