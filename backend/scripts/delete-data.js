@@ -15,7 +15,7 @@ function sleep(ms) {
 // check if video compression is downloading before data deletion 
 async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
   // stop video compression
-  const stopCommpressedVideoDownloadBool = await ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
+  const stopCommpressedVideoDownloadBool = ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
   if (stopCommpressedVideoDownloadBool) { 
     await checkCompressedVideoDownloadStatus(videoID);
     return deleteAllVideoData(videoID, folderIDPath); 
