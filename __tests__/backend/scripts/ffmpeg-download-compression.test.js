@@ -21,3 +21,18 @@ afterEach(() => {
     availableVideos.resetAvailableVideos();
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
+
+describe("get_download_compression_fileNameID", () =>  {    
+    it("No Defined: fileNameID", () =>  {
+        const getStreamID = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(getStreamID).toBe(undefined);
+    });     
+
+    it("Defined: fileNameID", () =>  {
+        const fileName = uuidv4();
+        const updateStreamID = ffmpegDownloadCompression.update_download_compression_fileNameID(fileName);
+        expect(updateStreamID).toBe(fileName);
+        const getStreamID = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(getStreamID).toBe(fileName);
+    });     
+});
