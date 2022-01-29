@@ -126,7 +126,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
         if (duration > 0) {
           command.addInput(videofile)
             .on("start", function() {
-              console.log(`${fileName} compression-download-status: starting`);
+              start_compression_VP9();
             })
             .on("progress", function(data) { 
               videoData.updateVideoData([`${fileName}`, "compression", "download"], data.percent);
@@ -235,6 +235,10 @@ async function compression_VP9(videofile, newFilePath, fileName) {
   } else { 
     console.log(ffmpegAvaiable);
   }
+}
+
+function start_compression_VP9() {
+  return "start download";
 }
 
 module.exports = { // export modules
