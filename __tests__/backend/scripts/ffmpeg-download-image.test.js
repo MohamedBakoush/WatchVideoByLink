@@ -20,3 +20,10 @@ afterEach(() => {
     availableVideos.resetAvailableVideos();
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
+
+describe("start_createThumbnail", () =>  {   
+    it("return: start download", () =>  {
+        const start = ffmpegDownloadImage.start_createThumbnail();
+        expect(start).toBe("start download");
+    });   
+}); 
