@@ -120,3 +120,10 @@ describe("update_stop_compression_download_bool", () =>  {
         expect(updateCompressionBool).toBe(false);
     });    
 });
+
+describe("start_compression_VP9", () =>  {   
+    it("return: start download", () =>  {
+        const start = ffmpegDownloadCompression.start_compression_VP9();
+        expect(start).toBe("start download");
+    });   
+}); 
