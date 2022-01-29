@@ -127,3 +127,170 @@ describe("start_compression_VP9", () =>  {
         expect(start).toBe("start download");
     });   
 }); 
+
+describe("progress_compression_VP9", () =>  {   
+    it("No Input", () =>  {
+        const progress = ffmpegDownloadCompression.progress_compression_VP9();
+        expect(progress).toBe("fileName undefined");
+    });   
+
+    it("Valid fileName", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadCompression.progress_compression_VP9(fileName);
+        expect(progress).toBe("invalid data");
+    });   
+
+    it("valid fileName, empty object", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadCompression.progress_compression_VP9(fileName, {});
+        expect(progress).toBe("invalid data.percent");
+    });  
+
+    it("valid fileName, valid data - VideoData & CurrentDownloads missing", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegDownloadCompression.progress_compression_VP9(fileName, {
+            percent: 0
+        });
+        expect(progress).toBe(`${fileName} VideoData & CurrentDownloads missing`);
+    }); 
+    
+    it("valid fileName, valid data - CurrentDownloads missing", () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const progress = ffmpegDownloadCompression.progress_compression_VP9(fileName, {
+            percent: 0
+        });
+        expect(progress).toBe(`${fileName} CurrentDownloads missing`);
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: 0
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    });  
+    
+    it("valid fileName, valid data - VideoData missing", () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const progress = ffmpegDownloadCompression.progress_compression_VP9(fileName, {
+            percent: 0
+        });
+        expect(progress).toBe(`${fileName} VideoData missing`);
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toBe(undefined);
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "0.00%"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+    });  
+
+    it("valid fileName, valid data", () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const progress = ffmpegDownloadCompression.progress_compression_VP9(fileName, {
+            percent: 0
+        });
+        expect(progress).toBe("update download progress");
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: 0
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "0.00%"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+    });  
+}); 
