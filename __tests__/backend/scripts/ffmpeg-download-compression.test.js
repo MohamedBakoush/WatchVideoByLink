@@ -69,3 +69,17 @@ describe("update_download_compression_fileNameID", () =>  {
         expect(updateStreamID).toBe(fileName);
     });     
 });
+
+describe("get_stop_compression_download_bool", () =>  {    
+    it("No Defined: stop_stream_download_bool", () =>  {
+        const getStopCompressionBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(getStopCompressionBool).toBe(undefined);
+    });     
+
+    it("Defined: stop_stream_download_bool", () =>  {
+        const updateCompressionID = ffmpegDownloadCompression.update_stop_compression_download_bool(true);
+        expect(updateCompressionID).toBe(true);
+        const getStopCompressionBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(getStopCompressionBool).toBe(true);
+    });     
+});
