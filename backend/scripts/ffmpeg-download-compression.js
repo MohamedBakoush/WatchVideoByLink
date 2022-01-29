@@ -108,71 +108,70 @@ async function stopCommpressedVideoDownload(fileNameID) {
 
 // VP9 video compression - make video size smaller
 async function compression_VP9(videofile, newFilePath, fileName) {
-  const command = new ffmpeg();
-  const fileType = ".webm";
-  let duration = 0;
-  const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
-  if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {
-    if (videoDetails !== undefined) {
-      ffmpeg.ffprobe(videofile, (error, metadata) => {
-        try { // get video duration 
-          duration = metadata.format.duration;
-        } catch (error) { // duration = 0
-          duration = 0;
-        } 
-        console.log(`${fileName} duration: ${duration}`);
-        // if video duration greater then 0
-        if (duration > 0) {
-          command.addInput(videofile)
-            .on("start", function() {
-              start_compression_VP9();
-            })
-            .on("progress", function(data) { 
-              progress_compression_VP9(fileName, data);
-              if (get_stop_compression_download_bool() === true  && get_download_compression_fileNameID() == fileName) {
-                try {
-                  ffmpegPath.SIGKILL(command);
-                  update_stop_compression_download_bool(false);
-                } catch (e) {
-                  update_stop_compression_download_bool(false);
-                }
-              }
-            })
-            .on("end", function() {
-              end_compression_VP9(fileName, newFilePath, fileType);       
-            })
-            .on("error", function(error) {
-              /// error handling
-              if (error.message === "ffmpeg was killed with signal SIGKILL") {
-                if (videoData.getVideoData([`${fileName}`,"compression"])) {       
-                  videoData.updateVideoData([`${fileName}`, "compression", "download"], "ffmpeg was killed with signal SIGKILL");
-                }  
-                if (currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"])) {      
-                  currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "ffmpeg was killed with signal SIGKILL");   
-                } 
-              }
-            })
-            // https://developers.google.com/media/vp9/settings/vod/
-            .outputOptions(["-c:v libvpx-vp9", "-crf 32", "-b:v 2000k"])
-            .output(`${newFilePath}${fileName}${fileType}`)
-            .run(); 
-        } else { 
-          try { // duration less or equal to 0
-            if (videoData.getVideoData([`${fileName}`]) || currentDownloadVideos.getCurrentDownloads([`${fileName}`])) { // if videodata and currentDownloadVideos is avaiable 
-              // delete all data
-              deleteData.deleteAllVideoData(fileName);
-            } 
-          } catch (error) { // an error has occurred
-            console.log(error); 
+  if(typeof videofile !== "string") {
+    return "videofile not string";
+  } else if(typeof newFilePath !== "string") {
+    return "newFilePath not string";
+  } else if(fileName === undefined) {
+    return "fileName undefined";
+  } else {
+    const command = new ffmpeg();
+    const fileType = ".webm";
+    let duration = 0;
+    const videoDetails = await videoData.findVideosByID(fileName);
+    const ffmpegAvailable = ffmpegPath.checkIfFFmpegFFprobeExits();
+    if (ffmpegAvailable == "ffmpeg-ffprobe-exits") {
+      if (videoDetails !== undefined) {
+        ffmpeg.ffprobe(videofile, (error, metadata) => {
+          try { // get video duration 
+            duration = metadata.format.duration;
+          } catch (error) { // duration = 0
+            duration = 0;
           } 
-        }
-      }); 
-    } else {  
-      return "videoDetails dosnet exists";
-    } 
-  } else { 
-    console.log(ffmpegAvaiable);
+          if (duration > 0) {
+            command.addInput(videofile)
+              .on("start", function() {
+                start_compression_VP9();
+              })
+              .on("progress", function(data) { 
+                progress_compression_VP9(fileName, data);
+                if (get_stop_compression_download_bool() === true  && get_download_compression_fileNameID() == fileName) {
+                  try {
+                    ffmpegPath.SIGKILL(command);
+                    update_stop_compression_download_bool(false);
+                  } catch (e) {
+                    update_stop_compression_download_bool(false);
+                  }
+                }
+              })
+              .on("end", function() {
+                end_compression_VP9(fileName, newFilePath, fileType);       
+              })
+              .on("error", function(error) {
+                console.log(`Encoding Error: ${error.message}`);
+                if (error.message === "ffmpeg was killed with signal SIGKILL") {
+                  if (videoData.getVideoData([`${fileName}`,"compression"])) {       
+                    videoData.updateVideoData([`${fileName}`, "compression", "download"], "ffmpeg was killed with signal SIGKILL");
+                  }  
+                  if (currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"])) {      
+                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "ffmpeg was killed with signal SIGKILL");   
+                  } 
+                }
+              })
+              // https://developers.google.com/media/vp9/settings/vod/
+              .outputOptions(["-c:v libvpx-vp9", "-crf 32", "-b:v 2000k"])
+              .output(`${newFilePath}${fileName}${fileType}`)
+              .run(); 
+          } else { 
+            deleteData.deleteAllVideoData(fileName);
+          }
+        }); 
+      } else {  
+        return "videoDetails dosnet exists";
+      } 
+    } else { 
+      return ffmpegAvailable;
+    }
   }
 }
 
