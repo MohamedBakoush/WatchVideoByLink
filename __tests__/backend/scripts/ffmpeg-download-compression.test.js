@@ -121,6 +121,301 @@ describe("update_stop_compression_download_bool", () =>  {
     });    
 });
 
+describe("stopCommpressedVideoDownload", () =>  {   
+    it("No Input", () =>  {
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload();
+        expect(stopCompression).toBe(false);
+    });   
+    
+    it("Invalid fileName", () =>  {
+        const fileName = uuidv4();
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    });   
+        
+    it("Valid fileName: videoData empty object", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {}); 
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+        
+    it("Valid fileName: CurrentDownloadVideos empty object", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {});
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    });  
+
+    it("Valid fileName: videoData empty object, CurrentDownloadVideos empty object", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {}); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {});
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: videoData downloading", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(true);
+        const stopBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(stopBool).toBe(true);
+        const stopFileName = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(stopFileName).toBe(fileName);
+    });
+        
+    it("Valid fileName: CurrentDownloadVideos downloading", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(true);
+        const stopBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(stopBool).toBe(true);
+        const stopFileName = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(stopFileName).toBe(fileName);
+    }); 
+        
+    it("Valid fileName: CurrentDownloadVideos - ffmpeg and ffprobe unavailable", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "ffmpeg and ffprobe unavailable"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: CurrentDownloadVideos - ffmpeg unavailable", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "ffmpeg unavailable"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+        
+    it("Valid fileName: CurrentDownloadVideos - ffprobe unavailable", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "ffprobe unavailable"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+  
+    it("Valid fileName: CurrentDownloadVideos - unfinished download", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "unfinished download"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: valid videoData, CurrentDownloadVideos - ffmpeg and ffprobe unavailable", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "ffmpeg and ffprobe unavailable"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: valid videoData, CurrentDownloadVideos - ffmpeg unavailable", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "ffmpeg unavailable"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: valid videoData, CurrentDownloadVideos - ffprobe unavailable", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "ffprobe unavailable"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: valid videoData, CurrentDownloadVideos - unfinished download", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "unfinished download"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: videoData downloading, CurrentDownloadVideos empty object", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+              "download": 20.00
+            }
+        }); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {});
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(true);
+        const stopBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(stopBool).toBe(true);
+        const stopFileName = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(stopFileName).toBe(fileName);
+    }); 
+        
+    it("Valid fileName: videoData empty object, CurrentDownloadVideos downloading", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {}); 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(true);
+        const stopBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(stopBool).toBe(true);
+        const stopFileName = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(stopFileName).toBe(fileName);
+    }); 
+            
+    it("Valid fileName: videoData downloading, CurrentDownloadVideos downloading", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+                "download": "20.00%"
+            }
+        });
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(true);
+        const stopBool = ffmpegDownloadCompression.get_stop_compression_download_bool();
+        expect(stopBool).toBe(true);
+        const stopFileName = ffmpegDownloadCompression.get_download_compression_fileNameID();
+        expect(stopFileName).toBe(fileName);
+    }); 
+
+    it("Valid fileName: videoData completed", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+                "download": "completed"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: CurrentDownloadVideos completed", async () =>  {
+        const fileName = uuidv4();
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "completed"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: videoData completed, CurrentDownloadVideos downloading", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+                "download": "completed"
+            }
+        });
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "20.00%"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    });      
+
+    it("Valid fileName: videoData downloding, CurrentDownloadVideos completed", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+                "download": "20.00%"
+            }
+        });
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "completed"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+
+    it("Valid fileName: videoData completed, CurrentDownloadVideos completed", async () =>  {
+        const fileName = uuidv4();
+        dataVideos.updateVideoData([`${fileName}`], {
+            "compression" : {
+                "download": "completed"
+            }
+        });
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            "compression" : {
+                "download-status": "completed"
+            }
+        });
+        const stopCompression = ffmpegDownloadCompression.stopCommpressedVideoDownload(fileName);
+        expect(stopCompression).toBe(false);
+    }); 
+}); 
+
 describe("compression_VP9", () =>  {   
     it("No Input", async () =>  {
         const compression_VP9 = await ffmpegDownloadCompression.compression_VP9();
