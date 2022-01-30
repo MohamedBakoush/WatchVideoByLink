@@ -138,22 +138,18 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
 // delete specified video from server if exist  
 function deleteSpecifiedVideo(fileName) {  
   if(check_if_file_exits(`./media/video/${fileName}`)){ 
-    FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
-      if (err) throw err;
+    read_dir(`./media/video/${fileName}`, (files) => { 
       if (!files.length) {
         remove_dir(`./media/video/${fileName}`);
-      } else {
-        // folder not empty
-        FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
-          if (err) throw err;
+      } else { // folder not empty
+        read_dir(`./media/video/${fileName}`, (files) => {
           let completedCount = 0;
           for (const file of files) {
             completedCount += 1;
             rename_file(`./media/video/${fileName}/${file}`, "media/deleted-videos", `deleted-${file}`, () => {
               unlink_file(`media/deleted-videos/deleted-${file}`, () => {
                 if (files.length == completedCount) {
-                  // reset completedCount
-                  completedCount = 0;
+                  completedCount = 0; // reset completedCount
                   remove_dir(`./media/video/${fileName}`);
                 }
               });
@@ -254,6 +250,24 @@ function remove_dir(filePath, callback) {
   } 
 }
 
+function read_dir(filePath, callback) {
+  if (typeof filePath !== "string") {
+    return "filePath no string";
+  } else {
+    if (check_if_file_exits(filePath)) {
+      FileSystem.readdir(filePath, (err, files) => {
+        if (err) throw err;  
+        if (typeof callback === "function") {
+          callback(files);
+        }
+      });
+      return "read directory";
+    } else {
+      return "invalid filepath";
+    }
+  } 
+}
+
 module.exports = { // export modules
     sleep,
     checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
@@ -265,5 +279,6 @@ module.exports = { // export modules
     check_if_file_exits,
     rename_file,
     unlink_file,
-    remove_dir
+    remove_dir,
+    read_dir
 };
