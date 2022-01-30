@@ -219,9 +219,9 @@ function rename_file(filePath, newPath, newFileName) {
     if (check_if_file_exits(filePath)) {
       if (check_if_file_exits(newPath)) {
         FileSystem.rename(filePath, `${newPath}/${newFileName}`,  (err) => {
-          if (err) throw err;  
-          console.log("file renamed"); 
+          if (err) throw err;
         });
+        return "file renamed";
       } else {
         return "invalid newPath";
       }
@@ -238,8 +238,8 @@ function unlink_file(filePath) {
     if (check_if_file_exits(filePath)) {
       FileSystem.unlink(filePath, (err) => {
         if (err) throw err;
-        console.log("file deleted");
       }); 
+      return "file deleted";
     } else {
       return "invalid filepath";
     }
