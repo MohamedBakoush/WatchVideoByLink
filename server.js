@@ -49,6 +49,7 @@ async function videoLinkFromUrl(req, res){
       }
     }, 50);  
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getVideoLinkFromUrl.fileName);
     if (getVideoLinkFromUrl.message !== undefined) {
       res.json(getVideoLinkFromUrl.message);
     } else {
@@ -188,6 +189,7 @@ async function downloadVideoStream(req, res){
       }
     }, 50);  
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideoStream.fileName);
     if (downloadVideoStream.message !== undefined) {
       res.json(downloadVideoStream.message);
     } else {
@@ -215,6 +217,7 @@ async function downloadVideo(req, res){
       }
     }, 50); 
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
     if (downloadVideo.message !== undefined) {
       res.json(downloadVideo.message);
     } else {
@@ -242,6 +245,7 @@ async function trimVideo(req, res){
       }
     }, 50); 
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
     if (downloadVideo.message !== undefined) {
       res.json(downloadVideo.message);
     } else {
