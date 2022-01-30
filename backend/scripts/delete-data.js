@@ -181,19 +181,15 @@ function deleteSpecifiedVideo(fileName) {
 
 // delete video file with provided video path
 function delete_video_with_provided_path(videofile, fileName) {
-  if (FileSystem.existsSync(videofile)) { 
-      // move video file to deleted-videos folder
-      // if video is active it will make the video not viewable if someone wants to view it
-      FileSystem.rename(videofile, `media/deleted-videos/deleted-${fileName}.mp4`,  (err) => {
-          if (err) throw err;  
-          console.log("moved video thats going to be deleted");
-          //  delete the video
-          FileSystem.unlink(`media/deleted-videos/deleted-${fileName}.mp4`, (err) => {
-              if (err) throw err;
-              console.log("deleted video");
-          });  
-      });
-  } 
+  if (typeof videofile !== "string") {
+    return "videofile no string";
+  } else if (typeof fileName !== "string") {
+    return "fileName no string";
+  } else {
+    rename_file(videofile, "media/deleted-videos", `deleted-${fileName}.mp4`, () => {
+      unlink_file(`media/deleted-videos/deleted-${fileName}.mp4`);
+    });   
+  }
 }
 
 function check_if_file_exits(filePath) {
@@ -210,9 +206,9 @@ function check_if_file_exits(filePath) {
 
 function rename_file(filePath, newPath, newFileName, callback) {
   if (typeof filePath !== "string") {
-    return "videofile no string";
+    return "filePath no string";
   } else if (typeof newPath !== "string") {
-    return "renamedPath no string";
+    return "newPath no string";
   } else if (typeof newFileName !== "string") {
     return "newFileName no string";
   } else {
@@ -236,7 +232,7 @@ function rename_file(filePath, newPath, newFileName, callback) {
 
 function unlink_file(filePath, callback) {
   if (typeof filePath !== "string") {
-    return "path no string";
+    return "filePath no string";
   } else {
     if (check_if_file_exits(filePath)) {
       FileSystem.unlink(filePath, (err) => {
