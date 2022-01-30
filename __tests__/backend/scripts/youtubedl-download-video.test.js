@@ -44,18 +44,18 @@ describe("getVideoLinkFromUrl", () =>  {
 }); 
 
 describe("youtubedl_get_Info", () =>  {  
-    it("No Input", async () =>  {
+    it("No Input", () =>  {
         const getInfo = youtubedl.youtubedl_get_Info();
         expect(getInfo).toBe("info not object");  
     });
 
-    it("Info Object", async () =>  {
+    it("Info Object", () =>  {
         const info = {};
         const getInfo = youtubedl.youtubedl_get_Info(info);
         expect(getInfo).toBe("info.protocol not string");  
     });
 
-    it("Info.Protocol String", async () =>  {
+    it("Info.Protocol String", () =>  {
         const info = {
             protocol : "https" 
         };
@@ -63,7 +63,7 @@ describe("youtubedl_get_Info", () =>  {
         expect(getInfo).toBe("info.url not string");  
     });
 
-    it("Info.url String", async () =>  {
+    it("Info.url String", () =>  {
         const info = {
             protocol : "https" ,
             url : "http://localhost:8080/video.mp4" 
@@ -71,8 +71,8 @@ describe("youtubedl_get_Info", () =>  {
         const getInfo = youtubedl.youtubedl_get_Info(info);
         expect(getInfo).toBe("url not string");  
     });
-    
-    it("Protocol: Not Supported", async () =>  {
+
+    it("Protocol: Not Supported", () =>  {
         const info = {
             protocol : "Invalid" ,
             url : "http://localhost:8080/video1" 
@@ -82,7 +82,7 @@ describe("youtubedl_get_Info", () =>  {
         expect(getInfo).toBe("failed-get-video-url-from-provided-url");  
     });
 
-    it("Protocol: https", async () =>  {
+    it("Protocol: https", () =>  {
         const info = {
             protocol : "https" ,
             url : "http://localhost:8080/video1.mp4" 
@@ -96,7 +96,7 @@ describe("youtubedl_get_Info", () =>  {
           });  
     });
 
-    it("Protocol: http", async () =>  {
+    it("Protocol: http", () =>  {
         const info = {
             protocol : "http" ,
             url : "http://localhost:8080/video1.mp4" 
@@ -110,7 +110,7 @@ describe("youtubedl_get_Info", () =>  {
           });  
     });
 
-    it("Protocol: m3u8", async () =>  {
+    it("Protocol: m3u8", () =>  {
         const info = {
             protocol : "m3u8" ,
             url : "http://localhost:8080/video1.m3u8" 
@@ -124,7 +124,7 @@ describe("youtubedl_get_Info", () =>  {
           });  
     });
 
-    it("Protocol: http_dash_segments", async () =>  {
+    it("Protocol: http_dash_segments", () =>  {
         const info = {
             protocol : "http_dash_segments" ,
             url : "http://localhost:8080/video1.mpd" 
