@@ -137,8 +137,7 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
  
 // delete specified video from server if exist  
 function deleteSpecifiedVideo(fileName) {  
-  // check if folder exists
-  if(FileSystem.existsSync(`./media/video/${fileName}`)){ 
+  if(check_if_file_exits(`./media/video/${fileName}`)){ 
     FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
       if (err) throw err;
       if (!files.length) {
