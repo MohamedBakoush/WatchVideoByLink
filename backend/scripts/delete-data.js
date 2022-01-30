@@ -208,7 +208,7 @@ function check_if_file_exits(filePath) {
   }
 }
 
-function rename_file(filePath, newPath, newFileName) {
+function rename_file(filePath, newPath, newFileName, callback) {
   if (typeof filePath !== "string") {
     return "videofile no string";
   } else if (typeof newPath !== "string") {
@@ -220,6 +220,9 @@ function rename_file(filePath, newPath, newFileName) {
       if (check_if_file_exits(newPath)) {
         FileSystem.rename(filePath, `${newPath}/${newFileName}`,  (err) => {
           if (err) throw err;
+          if (typeof callback === "function") {
+            callback();
+          }
         });
         return "file renamed";
       } else {
@@ -231,13 +234,16 @@ function rename_file(filePath, newPath, newFileName) {
   }
 }
 
-function unlink_file(filePath) {
+function unlink_file(filePath, callback) {
   if (typeof filePath !== "string") {
     return "path no string";
   } else {
     if (check_if_file_exits(filePath)) {
       FileSystem.unlink(filePath, (err) => {
         if (err) throw err;
+        if (typeof callback === "function") {
+          callback();
+        }
       }); 
       return "file deleted";
     } else {
