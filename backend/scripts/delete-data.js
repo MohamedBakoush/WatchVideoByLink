@@ -220,7 +220,7 @@ function rename_file(filePath, newPath, newFileName, callback) {
             callback();
           }
         });
-        return "file renamed";
+        return "renamed file";
       } else {
         return "invalid newPath";
       }
@@ -241,7 +241,25 @@ function unlink_file(filePath, callback) {
           callback();
         }
       }); 
-      return "file deleted";
+      return "deleting file";
+    } else {
+      return "invalid filepath";
+    }
+  } 
+}
+
+function remove_dir(filePath, callback) {
+  if (typeof filePath !== "string") {
+    return "filePath no string";
+  } else {
+    if (check_if_file_exits(filePath)) {
+      FileSystem.rmdir(filePath, (err) => {
+        if (err) throw err;  
+        if (typeof callback === "function") {
+          callback();
+        }
+      });
+      return "removeing folder";
     } else {
       return "invalid filepath";
     }
@@ -258,5 +276,6 @@ module.exports = { // export modules
     delete_video_with_provided_path,
     check_if_file_exits,
     rename_file,
-    unlink_file
+    unlink_file,
+    remove_dir
 };
