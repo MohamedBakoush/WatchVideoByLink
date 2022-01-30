@@ -31,8 +31,38 @@ function uploadVideoFile(req, res){
 
 // converts url link to video link
 app.post("/getVideoLinkFromUrl", express.json(), videoLinkFromUrl);
-function videoLinkFromUrl(req, res){
-  youtubedlDownloadVideo.getVideoLinkFromUrl(req, res);
+async function videoLinkFromUrl(req, res){
+  const getVideoLinkFromUrl = await youtubedlDownloadVideo.getVideoLinkFromUrl(req.body.url);
+  if (getVideoLinkFromUrl.message == "initializing") {
+    const checkDownloadResponse = setInterval(function(){ 
+      const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([getVideoLinkFromUrl.fileName]);
+      if (ffmpegDownloadResponse.getDownloadResponse([getVideoLinkFromUrl.fileName]) !== undefined) {
+        if (getDownloadResponse.message !== "initializing") {
+          clearInterval(checkDownloadResponse);
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+          if (typeof getDownloadResponse["message"]["video_url"] === "string" && typeof getDownloadResponse["message"]["video_file_format"] === "string") {
+            res.json(getDownloadResponse.message);
+          } else {
+            res.json("failed-get-video-url-from-provided-url");
+          }
+        }  
+      } else {
+        clearInterval(checkDownloadResponse);
+        res.json("failed-get-video-url-from-provided-url");
+      }
+    }, 50);  
+  } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getVideoLinkFromUrl.fileName);
+    if (getVideoLinkFromUrl.message !== undefined) { 
+      if (typeof getVideoLinkFromUrl["message"]["video_url"] === "string" && typeof getVideoLinkFromUrl["message"]["video_file_format"] === "string") {
+        res.json(getVideoLinkFromUrl.message);
+      } else {
+        res.json("failed-get-video-url-from-provided-url");
+      }
+    } else {
+      res.json("failed-get-video-url-from-provided-url");
+    }
+  }
 }
 
 // update video player volume settings
@@ -166,6 +196,7 @@ async function downloadVideoStream(req, res){
       }
     }, 50);  
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideoStream.fileName);
     if (downloadVideoStream.message !== undefined) {
       res.json(downloadVideoStream.message);
     } else {
@@ -193,6 +224,7 @@ async function downloadVideo(req, res){
       }
     }, 50); 
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
     if (downloadVideo.message !== undefined) {
       res.json(downloadVideo.message);
     } else {
@@ -220,6 +252,7 @@ async function trimVideo(req, res){
       }
     }, 50); 
   } else {
+    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
     if (downloadVideo.message !== undefined) {
       res.json(downloadVideo.message);
     } else {
