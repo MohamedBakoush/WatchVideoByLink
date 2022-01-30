@@ -40,8 +40,11 @@ async function videoLinkFromUrl(req, res){
         if (getDownloadResponse.message !== "initializing") {
           clearInterval(checkDownloadResponse);
           ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-          console.log(getDownloadResponse.message);
-          res.json(getDownloadResponse.message);
+          if (typeof getDownloadResponse["message"]["video_url"] === "string" && typeof getDownloadResponse["message"]["video_file_format"] === "string") {
+            res.json(getDownloadResponse.message);
+          } else {
+            res.json("failed-get-video-url-from-provided-url");
+          }
         }  
       } else {
         clearInterval(checkDownloadResponse);
@@ -50,10 +53,14 @@ async function videoLinkFromUrl(req, res){
     }, 50);  
   } else {
     ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getVideoLinkFromUrl.fileName);
-    if (getVideoLinkFromUrl.message !== undefined) {
-      res.json(getVideoLinkFromUrl.message);
+    if (getVideoLinkFromUrl.message !== undefined) { 
+      if (typeof getVideoLinkFromUrl["message"]["video_url"] === "string" && typeof getVideoLinkFromUrl["message"]["video_file_format"] === "string") {
+        res.json(getVideoLinkFromUrl.message);
+      } else {
+        res.json("failed-get-video-url-from-provided-url");
+      }
     } else {
-      res.json(getVideoLinkFromUrl);
+      res.json("failed-get-video-url-from-provided-url");
     }
   }
 }
