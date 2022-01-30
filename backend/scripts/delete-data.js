@@ -196,6 +196,56 @@ function delete_video_with_provided_path(videofile, fileName) {
   } 
 }
 
+function check_if_file_exits(filePath) {
+  if (typeof filePath !== "string") {
+    return "filePath no string";
+  } else {
+    if (FileSystem.existsSync(filePath)) {   
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+function rename_file(filePath, newPath, newFileName) {
+  if (typeof filePath !== "string") {
+    return "videofile no string";
+  } else if (typeof newPath !== "string") {
+    return "renamedPath no string";
+  } else if (typeof newFileName !== "string") {
+    return "newFileName no string";
+  } else {
+    if (check_if_file_exits(filePath)) {
+      if (check_if_file_exits(newPath)) {
+        FileSystem.rename(filePath, `${newPath}/${newFileName}`,  (err) => {
+          if (err) throw err;  
+          console.log("file renamed"); 
+        });
+      } else {
+        return "invalid newPath";
+      }
+    } else {
+      return "invalid filepath";
+    }
+  }
+}
+
+function unlink_file(filePath) {
+  if (typeof filePath !== "string") {
+    return "path no string";
+  } else {
+    if (check_if_file_exits(filePath)) {
+      FileSystem.unlink(filePath, (err) => {
+        if (err) throw err;
+        console.log("file deleted");
+      }); 
+    } else {
+      return "invalid filepath";
+    }
+  } 
+}
+
 module.exports = { // export modules
     sleep,
     checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
@@ -203,5 +253,8 @@ module.exports = { // export modules
     deleteAllVideoData,
     deleteAllFolderData,
     deleteSpecifiedVideo,
-    delete_video_with_provided_path
+    delete_video_with_provided_path,
+    check_if_file_exits,
+    rename_file,
+    unlink_file
 };
