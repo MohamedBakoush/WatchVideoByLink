@@ -142,11 +142,7 @@ function deleteSpecifiedVideo(fileName) {
     FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
       if (err) throw err;
       if (!files.length) {
-        // directory empty, delete folder
-        FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-          if (err) throw err; 
-          return `video-id-${fileName}-data-permanently-deleted`;
-        });
+        remove_dir(`./media/video/${fileName}`);
       } else {
         // folder not empty
         FileSystem.readdir(`./media/video/${fileName}`, (err, files) => {
@@ -154,19 +150,12 @@ function deleteSpecifiedVideo(fileName) {
           let completedCount = 0;
           for (const file of files) {
             completedCount += 1;
-            FileSystem.rename(`./media/video/${fileName}/${file}`, `media/deleted-videos/deleted-${file}`, (err) => {
-              if (err) throw err;
-              // delete the video
-              FileSystem.unlink(`media/deleted-videos/deleted-${file}`, (err) => {
-                if (err) throw err;
-                if (files.length == completedCount) { // if file length is same as completedCount then delete folder
+            rename_file(`./media/video/${fileName}/${file}`, "media/deleted-videos", `deleted-${file}`, () => {
+              unlink_file(`media/deleted-videos/deleted-${file}`, () => {
+                if (files.length == completedCount) {
                   // reset completedCount
                   completedCount = 0;
-                  // delete folder
-                  FileSystem.rmdir(`./media/video/${fileName}`, (err) => {
-                    if (err) throw err;  
-                    return `video-id-${fileName}-data-permanently-deleted`;
-                  });
+                  remove_dir(`./media/video/${fileName}`);
                 }
               });
             });
