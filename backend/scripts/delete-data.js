@@ -136,31 +136,35 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
 }
  
 // delete specified video from server if exist  
-function deleteSpecifiedVideo(fileName) {  
-  if(check_if_file_exits(`./media/video/${fileName}`)){ 
-    read_dir(`./media/video/${fileName}`, (files) => { 
-      if (!files.length) {
-        remove_dir(`./media/video/${fileName}`);
-      } else { // folder not empty
-        read_dir(`./media/video/${fileName}`, (files) => {
-          let completedCount = 0;
-          for (const file of files) {
-            completedCount += 1;
-            rename_file(`./media/video/${fileName}/${file}`, "media/deleted-videos", `deleted-${file}`, () => {
-              unlink_file(`media/deleted-videos/deleted-${file}`, () => {
-                if (files.length == completedCount) {
-                  completedCount = 0; // reset completedCount
-                  remove_dir(`./media/video/${fileName}`);
-                }
+function deleteSpecifiedVideo(fileName) { 
+  if (typeof fileName !== "string") {
+    return "fileName not string";
+  } else {
+    if(check_if_file_exits(`./media/video/${fileName}`)){ 
+      read_dir(`./media/video/${fileName}`, (files) => { 
+        if (!files.length) {
+          remove_dir(`./media/video/${fileName}`);
+        } else { // folder not empty
+          read_dir(`./media/video/${fileName}`, (files) => {
+            let completedCount = 0;
+            for (const file of files) {
+              completedCount += 1;
+              rename_file(`./media/video/${fileName}/${file}`, "media/deleted-videos", `deleted-${file}`, () => {
+                unlink_file(`media/deleted-videos/deleted-${file}`, () => {
+                  if (files.length == completedCount) {
+                    completedCount = 0; // reset completedCount
+                    remove_dir(`./media/video/${fileName}`);
+                  }
+                });
               });
-            });
-          }
-        });
-      }
-    });
-  } else{ // folder dosent exit 
-    return `video-id-${fileName}-data-permanently-deleted`;
-  }
+            }
+          });
+        }
+      });
+    } else{ // folder dosent exit 
+      return `video-id-${fileName}-data-permanently-deleted`;
+    }
+  } 
 }
 
 // delete video file with provided video path
