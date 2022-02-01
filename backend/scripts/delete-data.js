@@ -96,26 +96,36 @@ function deleteAllVideoData(fileName, folderIDPath) {
 // 2. if folder is empty delete folder and go up one folder, if folder contained folders repeat 1 
 // 3. stop when current folder id reached starting folder id
 function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, startingFolderID) { 
-  if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {
-    deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
+  if (!Array.isArray(availableVideosFolderIDPath)) {
+    return "availableVideosFolderIDPath not array";
+  } else if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) === undefined) {
+    return "invalid availableVideosFolderIDPath";
+  } else if (typeof currentFolderID !== "string") {
+    return "currentFolderID not string";
+  } else if (typeof startingFolderID !== "string") {
+    return "startingFolderID not string";
   } else {
-    Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).forEach(function(fileName, i, array) {
-      if (fileName.includes("folder-")) {
-        deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, startingFolderID); 
-      } else { 
-        // delete specified video by id from availableVideos
-        availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath);
-        // delete currentDownloadVideos by id if exist 
-        currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
-        // delete videoData by id if exist 
-        videoData.deleteSpecifiedVideoData(fileName); 
-        // delete specified video by id if exist  
-        deleteSpecifiedVideo(fileName); 
-      }
-      if (i == array.length - 1) {
-        deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
-      }
-    });
+    if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {
+      deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
+    } else {
+      Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).forEach(function(fileName, i, array) {
+        if (fileName.includes("folder-")) {
+          deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, startingFolderID); 
+        } else { 
+          // delete specified video by id from availableVideos
+          availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath);
+          // delete currentDownloadVideos by id if exist 
+          currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
+          // delete videoData by id if exist 
+          videoData.deleteSpecifiedVideoData(fileName); 
+          // delete specified video by id if exist  
+          deleteSpecifiedVideo(fileName); 
+        }
+        if (i == array.length - 1) {
+          deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
+        }
+      });
+    }
   }
 }
 
