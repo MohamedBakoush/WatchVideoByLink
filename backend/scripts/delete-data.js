@@ -7,13 +7,6 @@ const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const availableVideos = require("./available-videos");
 
-// set timeout for a set amount of time in ms
-function sleep(ms) {
-  return new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
-}
-
 // check if video compression is downloading before data deletion 
 async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
   const id = uuidv4();
@@ -284,7 +277,6 @@ function read_dir(filePath, callback) {
 }
 
 module.exports = { // export modules
-    sleep,
     checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion,
     checkCompressedVideoDownloadStatus,
     deleteAllVideoData,
