@@ -36,16 +36,22 @@ async function videoLinkFromUrl(req, res){
   if (getVideoLinkFromUrl.message == "initializing") {
     const checkDownloadResponse = setInterval(function(){ 
       const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([getVideoLinkFromUrl.fileName]);
-      if (ffmpegDownloadResponse.getDownloadResponse([getVideoLinkFromUrl.fileName]) !== undefined) {
-        if (getDownloadResponse.message !== "initializing") {
+      if (getDownloadResponse !== undefined) {
+        if (getDownloadResponse.message !== undefined) {
+          if (getDownloadResponse.message !== "initializing") {
+            clearInterval(checkDownloadResponse);
+            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+            if (typeof getDownloadResponse["message"]["video_url"] === "string" && typeof getDownloadResponse["message"]["video_file_format"] === "string") {
+              res.json(getDownloadResponse.message);
+            } else {
+              res.json("failed-get-video-url-from-provided-url");
+            }
+          }       
+        } else {
           clearInterval(checkDownloadResponse);
           ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-          if (typeof getDownloadResponse["message"]["video_url"] === "string" && typeof getDownloadResponse["message"]["video_file_format"] === "string") {
-            res.json(getDownloadResponse.message);
-          } else {
-            res.json("failed-get-video-url-from-provided-url");
-          }
-        }  
+          res.json("failed-get-video-url-from-provided-url");
+        }
       } else {
         clearInterval(checkDownloadResponse);
         res.json("failed-get-video-url-from-provided-url");
@@ -211,12 +217,18 @@ async function downloadVideoStream(req, res){
   if (downloadVideoStream.message == "initializing") {
     const checkDownloadResponse = setInterval(function(){ 
       const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideoStream.fileName]);
-      if (ffmpegDownloadResponse.getDownloadResponse([downloadVideoStream.fileName]) !== undefined) {
-        if (getDownloadResponse.message !== "initializing") {
+      if (getDownloadResponse !== undefined) {
+        if (getDownloadResponse.message !== undefined) {
+          if (getDownloadResponse.message !== "initializing") {
+            clearInterval(checkDownloadResponse);
+            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+            res.json(getDownloadResponse.message);
+          }  
+        } else {
           clearInterval(checkDownloadResponse);
           ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-          res.json(getDownloadResponse.message);
-        }  
+          res.json("response-not-found");
+        }
       } else {
         clearInterval(checkDownloadResponse);
         res.json("response-not-found");
@@ -239,12 +251,18 @@ async function downloadVideo(req, res){
   if (downloadVideo.message == "initializing") {
     const checkDownloadResponse = setInterval(function(){ 
       const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
-      if (ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]) !== undefined) {
-        if (getDownloadResponse.message !== "initializing") {
+      if (getDownloadResponse !== undefined) {
+        if (getDownloadResponse.message !== undefined) {
+          if (getDownloadResponse.message !== "initializing") {
+            clearInterval(checkDownloadResponse);
+            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+            res.json(getDownloadResponse.message);
+          }  
+        } else {
           clearInterval(checkDownloadResponse);
           ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-          res.json(getDownloadResponse.message);
-        }  
+          res.json("response-not-found");
+        }
       } else {
         clearInterval(checkDownloadResponse);
         res.json("response-not-found");
@@ -267,12 +285,18 @@ async function trimVideo(req, res){
   if (downloadVideo.message == "initializing") {
     const checkDownloadResponse = setInterval(function(){ 
       const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
-      if (ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]) !== undefined) {
-        if (getDownloadResponse.message !== "initializing") {
+      if (getDownloadResponse !== undefined) {
+        if (getDownloadResponse.message !== undefined) {
+          if (getDownloadResponse.message !== "initializing") {
+            clearInterval(checkDownloadResponse);
+            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+            res.json(getDownloadResponse.message);
+          }     
+        } else {
           clearInterval(checkDownloadResponse);
           ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-          res.json(getDownloadResponse.message);
-        }  
+          res.json("response-not-found");
+        }
       } else {
         clearInterval(checkDownloadResponse);
         res.json("response-not-found");
