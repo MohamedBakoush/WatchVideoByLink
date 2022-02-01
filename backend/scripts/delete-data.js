@@ -97,14 +97,7 @@ function deleteAllVideoData(fileName, folderIDPath) {
 // 3. stop when current folder id reached starting folder id
 function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, startingFolderID) { 
   if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {
-    const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
-    newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
-    const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
-    const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
-    availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath);
-    if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" && Object.keys(availableVideos.getAvailableVideos(newAvailableVideosFolderPath)).length == 0) {
-      deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
-    } 
+    deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
   } else {
     Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).forEach(function(fileName, i, array) {
       if (fileName.includes("folder-")) {
@@ -120,25 +113,46 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
         deleteSpecifiedVideo(fileName); 
       }
       if (i == array.length - 1) {
-        try { 
-          if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {   
-            const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
-            newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
-            const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
-            const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
-            availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath);
-            if (currentFolderID !== startingFolderID && insideFolderID !== "folder-main" &&  Object.keys(availableVideos.getAvailableVideos(availableVideosFolderIDPath)).length == 0) { 
-              deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
-            } 
-          } 
-        } catch (error) {
-          return error;
-        }
+        deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
       }
     });
   }
 }
- 
+
+function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID) {
+  if (!Array.isArray(availableVideosFolderIDPath)) {
+    return "availableVideosFolderIDPath not array";
+  } else if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) === undefined) {
+    return "invalid availableVideosFolderIDPath";
+  } else if (typeof currentFolderID !== "string") {
+    return "currentFolderID not string";
+  } else if (typeof startingFolderID !== "string") {
+    return "startingFolderID not string";
+  } else {
+    if (Object.keys(availableVideos.getAvailableVideos(availableVideosFolderIDPath)).length == 0) {   
+      const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
+      newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
+      const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
+      const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
+      availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath); 
+      const getFolderContents = availableVideos.getAvailableVideos(availableVideosFolderIDPath);
+      if (currentFolderID === startingFolderID) {
+        return "starting and current folderID same";
+      } else if (insideFolderID === "folder-main") { 
+        return "insideFolderID = folder-main";
+      } else if (getFolderContents === undefined) {
+        return "folder path undefined";
+      } else if (Object.keys(getFolderContents).length !== 0) {
+        return "folder path not empty";
+      } else {
+        return deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
+      }
+    } else {
+      return "folder path not empty";
+    }
+  }
+}
+
 // delete specified video from server if exist  
 function deleteSpecifiedVideo(fileName) { 
   if (typeof fileName !== "string") {
