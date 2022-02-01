@@ -1,6 +1,8 @@
 "use strict";
 const FileSystem = require("fs");
+const { v4: uuidv4 } = require("uuid");
 const currentDownloadVideos = require("./current-download-videos");
+const ffmpegDownloadResponse = require("./ffmpeg-download-response");
 const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const availableVideos = require("./available-videos");
@@ -14,42 +16,51 @@ function sleep(ms) {
 
 // check if video compression is downloading before data deletion 
 async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
-  // stop video compression
+  const id = uuidv4();
   const stopCommpressedVideoDownloadBool = ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
-  if (stopCommpressedVideoDownloadBool) { 
-    await checkCompressedVideoDownloadStatus(videoID);
-    return deleteAllVideoData(videoID, folderIDPath); 
+  if (stopCommpressedVideoDownloadBool) {  
+    ffmpegDownloadResponse.updateDownloadResponse([id], {
+      "id": id,
+      "message": "initializing"
+    });
+    const checkDownloadResponse = setInterval(function(){ 
+      const downloadStatus = checkCompressedVideoDownloadStatus(videoID);
+      if (downloadStatus === "start deletion") {
+        clearInterval(checkDownloadResponse);
+        const deleteAllVideoDataResponse = deleteAllVideoData(videoID, folderIDPath); 
+        if (ffmpegDownloadResponse.getDownloadResponse([id, "message"]) !== undefined) {
+            ffmpegDownloadResponse.updateDownloadResponse([id, "message"], deleteAllVideoDataResponse);
+        }
+      }
+    }, 50);  
+    return {
+      "id": id,
+      "message": "initializing"
+    };
   } else { // compressed video isn't downloading 
     return deleteAllVideoData(videoID, folderIDPath); 
   }
 }
 
 // try untill compressed video gets killed with signal SIGKILL or finnishes download 
-async function checkCompressedVideoDownloadStatus(videoID) {
-    try {
-        if (videoData.getVideoData([`${videoID}`, "compression"])) {
-            if (videoData.getVideoData([`${videoID}`, "compression", "download"]) == "completed" ||
-                videoData.getVideoData([`${videoID}`, "compression", "download"]) == "ffmpeg was killed with signal SIGKILL") {  
-                return "start deletion"; 
-            } else if(currentDownloadVideos.getCurrentDownloads([videoID, "compression"])){
-                if (currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "completed" || 
-                    currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "ffmpeg was killed with signal SIGKILL") {  
-                    return "start deletion";    
-                } else {  
-                    await sleep(200);
-                    return checkCompressedVideoDownloadStatus(videoID); 
-                }
-            } else {  
-                await sleep(200);
-                return checkCompressedVideoDownloadStatus(videoID); 
-            }
-        } else { // stop interval and start data deletion
-            return "start deletion"; 
+function checkCompressedVideoDownloadStatus(videoID) {
+  if (videoData.getVideoData([`${videoID}`, "compression"])) {
+    if (videoData.getVideoData([`${videoID}`, "compression", "download"]) == "completed" ||
+      videoData.getVideoData([`${videoID}`, "compression", "download"]) == "ffmpeg was killed with signal SIGKILL") {  
+      return "start deletion"; 
+    } else if(currentDownloadVideos.getCurrentDownloads([videoID, "compression"])){
+        if (currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "completed" || 
+            currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "ffmpeg was killed with signal SIGKILL") {  
+            return "start deletion";    
+        } else {   
+          return "still downloading";
         }
-    } catch (error) { 
-        await sleep(200);
-        return checkCompressedVideoDownloadStatus(videoID); 
-    } 
+    } else {  
+      return "still downloading";
+    }
+  } else { // stop interval and start data deletion
+      return "start deletion"; 
+  }
 }
 
 // deletes all video id data

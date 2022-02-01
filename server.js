@@ -113,8 +113,35 @@ function streamImageById(req, res){
 
 // delete video permently by video id header
 app.post("/delete-video-data-permanently", express.json(), deleteAllVideoData);
-async function deleteAllVideoData(req, res){  
-  res.json(await deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath));
+async function deleteAllVideoData(req, res){   
+  const checkBeforeDataDeletion = await deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath);
+  if (checkBeforeDataDeletion.message == "initializing") {
+    const checkDownloadResponse = setInterval(function(){ 
+      const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([checkBeforeDataDeletion.id]);
+      if (getDownloadResponse !== undefined) {
+        if (getDownloadResponse.message !== undefined) {
+          if (getDownloadResponse.message !== "initializing") {
+            clearInterval(checkDownloadResponse);
+            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.id);
+            res.json(getDownloadResponse.message);
+          }  
+        } else {
+          clearInterval(checkDownloadResponse);
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.id);
+          res.json("response-not-found");
+        }
+      } else {
+        clearInterval(checkDownloadResponse);
+        res.json("response-not-found");
+      }
+    }, 50);  
+  } else {
+    if (checkBeforeDataDeletion.message !== undefined) { 
+      res.json(checkBeforeDataDeletion.message);
+    } else {
+      res.json(checkBeforeDataDeletion);
+    }
+  }
 }
 
 // stream original video by video id header
