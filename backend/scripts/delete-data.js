@@ -64,8 +64,10 @@ function checkCompressedVideoDownloadStatus(videoID) {
 function deleteAllVideoData(fileName, folderIDPath) {
   if (typeof fileName !== "string") {
     return "fileName not string";
-  } else if (!Array.isArray(folderIDPath)) {
-    return "folderIDPath not array";
+  } else if (!Array.isArray(folderIDPath))  {
+    return deleteSpecifiedVideoData(fileName); 
+  } else if (availableVideos.getAvailableVideos(folderIDPath) === undefined && folderIDPath.length !== 0) {
+    return "invalid folderIDPath";
   } else {
     if (fileName.includes("folder-")) {
       const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath); 
@@ -128,10 +130,8 @@ function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFol
       const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
       availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath); 
       const getFolderContents = availableVideos.getAvailableVideos(availableVideosFolderIDPath);
-      if (currentFolderID === startingFolderID) {
-        return "starting and current folderID same";
-      } else if (insideFolderID === "folder-main") { 
-        return "insideFolderID = folder-main";
+      if (currentFolderID === startingFolderID || insideFolderID === "folder-main") { 
+        return `deleted-${startingFolderID}-permanently`;
       } else if (getFolderContents === undefined) {
         return "folder path undefined";
       } else if (Object.keys(getFolderContents).length !== 0) {

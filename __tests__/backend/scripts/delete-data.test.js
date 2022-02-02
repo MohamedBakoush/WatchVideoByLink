@@ -23,6 +23,45 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("deleteAllVideoData", () =>  {    
+    it("No Input", () =>  {
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData();
+        expect(deleteSpecifiedVideo).toBe("fileName not string");
+    });    
+
+    it("Valid fileName", () =>  {
+        const fileName = uuidv4();
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
+    });   
+
+    it("Valid fileName, empty folderIDPath", () =>  {
+        const fileName = uuidv4();
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName, []);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
+    });   
+    
+    it("Valid fileName, Invalid folderIDPath", () =>  {
+        const fileName = uuidv4();
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName, [undefined]);
+        expect(deleteSpecifiedVideo).toBe("invalid folderIDPath");
+    });   
+    
+    it("Valid fileName, Valid folderIDPath", () =>  {
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]["info"]["title"]).toBe("title_folder_test_1");   
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test_2");
+        expect(createFolder2.message).toBe("folder-created");
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("title_folder_test_2");   
+
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(createFolder2.folderID, [createFolder1.folderID]);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${createFolder2.folderID}-permanently`);
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"]).toMatchObject({});
+    });   
+});
+
 describe("deleteSpecifiedVideoData", () =>  {    
     it("No Input", () =>  {
         const deleteSpecifiedVideoData = deleteData.deleteSpecifiedVideoData();
