@@ -27,6 +27,11 @@ function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, fol
           if (ffmpegDownloadResponse.getDownloadResponse([id, "message"]) !== undefined) {
               ffmpegDownloadResponse.updateDownloadResponse([id, "message"], deleteAllVideoDataResponse);
           }
+        } else if (downloadStatus !== "still downloading") {
+          clearInterval(checkDownloadResponse);
+          if (ffmpegDownloadResponse.getDownloadResponse([id, "message"]) !== undefined) {
+              ffmpegDownloadResponse.updateDownloadResponse([id, "message"], downloadStatus);
+          }
         }
       }, 50);  
       return {
@@ -41,22 +46,21 @@ function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, fol
 
 // try untill compressed video gets killed with signal SIGKILL or finnishes download 
 function checkCompressedVideoDownloadStatus(videoID) {
-  if (videoData.getVideoData([`${videoID}`, "compression"])) {
-    if (videoData.getVideoData([`${videoID}`, "compression", "download"]) == "completed" ||
-      videoData.getVideoData([`${videoID}`, "compression", "download"]) == "ffmpeg was killed with signal SIGKILL") {  
-      return "start deletion"; 
-    } else if(currentDownloadVideos.getCurrentDownloads([videoID, "compression"])){
-        if (currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "completed" || 
-            currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "ffmpeg was killed with signal SIGKILL") {  
-            return "start deletion";    
-        } else {   
-          return "still downloading";
-        }
-    } else {  
+  if (typeof videoID !== "string") {
+    return "videoID not string";
+  } else if (videoData.getVideoData([`${videoID}`, "compression"]) === undefined) {
+    return "invalid videoID trough videoData";
+  } else if (currentDownloadVideos.getCurrentDownloads([videoID, "compression"])  === undefined) {
+    return "invalid videoID trough CurrentDownloads";
+  } else {
+    if (videoData.getVideoData([`${videoID}`, "compression", "download"]) == "completed"
+      || videoData.getVideoData([`${videoID}`, "compression", "download"]) == "ffmpeg was killed with signal SIGKILL"
+      || currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "completed" 
+      || currentDownloadVideos.getCurrentDownloads([videoID, "compression", "download-status"]) == "ffmpeg was killed with signal SIGKILL") {  
+      return "start deletion";    
+    } else {   
       return "still downloading";
-    }
-  } else { // stop interval and start data deletion
-      return "start deletion"; 
+    } 
   }
 }
 

@@ -23,6 +23,159 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("checkCompressedVideoDownloadStatus", () =>  {    
+    it("No Input", () =>  {
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus();
+        expect(checkCompressedVideoDownloadStatus).toBe("videoID not string");
+    });    
+    
+    it("Invalid videoID: videoData", () =>  {
+        const fileName = uuidv4();
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("invalid videoID trough videoData");
+    });  
+
+    it("Invalid videoID: CurrentDownloads", () =>  {
+        const fileName = uuidv4();
+        const dataVideos_data = {
+            compression : {
+                download: "starting"
+            }
+        };
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData"); 
+
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("invalid videoID trough CurrentDownloads");
+    });  
+
+    it("Valid videoID: still downloading", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "20.27%"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "20.27"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("still downloading");
+    });  
+
+    it("Valid videoID: videoData - completed", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "completed"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "20.27"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("start deletion");
+    });  
+
+    it("Valid videoID: videoData - ffmpeg was killed with signal SIGKILL", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "ffmpeg was killed with signal SIGKILL"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "20.27"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("start deletion");
+    });  
+
+    it("Valid videoID: CurrentDownloads - completed", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "20.27%"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "completed"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("start deletion");
+    });  
+
+    it("Valid videoID: CurrentDownloads - ffmpeg was killed with signal SIGKILL", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "20.27%"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "ffmpeg was killed with signal SIGKILL"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("start deletion");
+    });  
+
+    it("Valid videoID: videoData, CurrentDownloads - completed", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "completed"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "completed"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("start deletion");
+    });  
+
+    it("Valid videoID: videoData, CurrentDownloads - ffmpeg was killed with signal SIGKILL", () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([`${fileName}`], {
+            compression : {
+                download: "ffmpeg was killed with signal SIGKILL"
+            }
+        });
+        expect(updateVideoData).toBe("updateVideoData"); 
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], {
+            compression : { 
+                "download-status" : "ffmpeg was killed with signal SIGKILL"
+            }
+        });
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus(fileName);
+        expect(checkCompressedVideoDownloadStatus).toBe("start deletion");
+    }); 
+});
+
 describe("deleteAllVideoData", () =>  {    
     it("No Input", () =>  {
         const deleteSpecifiedVideo = deleteData.deleteAllVideoData();
@@ -195,7 +348,7 @@ describe("deleteAllFolderData_emptyFolder", () =>  {
         const deleteAllFolderData = deleteData.deleteAllFolderData(availableVideosFolderIDPath, uuidv4());
         expect(deleteAllFolderData).toBe("startingFolderID not string");
     });  
-    
+
     it("Valid availableVideosFolderIDPath, Invalid currentFolderID, Invalid startingFolderID", () =>  {
         const fileName = uuidv4();
         const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
