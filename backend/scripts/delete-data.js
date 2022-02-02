@@ -8,7 +8,7 @@ const videoData = require("./data-videos");
 const availableVideos = require("./available-videos");
 
 // check if video compression is downloading before data deletion 
-async function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
+function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
   const id = uuidv4();
   const stopCommpressedVideoDownloadBool = ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
   if (stopCommpressedVideoDownloadBool) {  
@@ -149,7 +149,7 @@ function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFol
 function deleteSpecifiedVideoData(fileName, folderIDPath) {
   if (typeof fileName !== "string") {
     return "fileName not string";
-  } else if (folderIDPath !== undefined && !Array.isArray(folderIDPath)) {
+  } else if (folderIDPath !== undefined && availableVideos.getAvailableVideos(folderIDPath) !== undefined && Array.isArray(folderIDPath)) {
     // delete currentDownloadVideos by id if exist 
     currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
     // delete videoData by id if exist 
@@ -157,7 +157,11 @@ function deleteSpecifiedVideoData(fileName, folderIDPath) {
     // delete availableVideos by id if exist  
     const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
     if (availableVideosFolderIDPath !== "folderIDPath array input empty" && availableVideosFolderIDPath !== "invalid folderIDPath") {
-      availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
+      if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) !== undefined) {
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
+      } else {
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
+      }
     } else {
       availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
     } 

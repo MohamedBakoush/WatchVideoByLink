@@ -119,8 +119,8 @@ function streamImageById(req, res){
 
 // delete video permently by video id header
 app.post("/delete-video-data-permanently", express.json(), deleteAllVideoData);
-async function deleteAllVideoData(req, res){   
-  const checkBeforeDataDeletion = await deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath);
+function deleteAllVideoData(req, res){   
+  const checkBeforeDataDeletion = deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(req.body.id, req.body.folderIDPath);
   if (checkBeforeDataDeletion.message == "initializing") {
     const checkDownloadResponse = setInterval(function(){ 
       const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([checkBeforeDataDeletion.id]);
