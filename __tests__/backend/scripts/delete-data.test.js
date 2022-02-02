@@ -85,6 +85,18 @@ describe("deleteAllFolderData", () =>  {
         expect(deleteAllFolderData).toBe("currentFolderID not string");
     });    
 
+    it("Valid availableVideosFolderIDPath, Invalid currentFolderID", () =>  {   
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]["info"]["title"]).toBe("title_folder_test_1");   
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test_2");
+        expect(createFolder2.message).toBe("folder-created");
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("title_folder_test_2");   
+        const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID, createFolder2.folderID]); 
+        const deleteAllFolderData = deleteData.deleteAllFolderData(availableVideosFolderIDPath, uuidv4());
+        expect(deleteAllFolderData).toBe("startingFolderID not string");
+    });    
+
     it("Valid availableVideosFolderIDPath, Invalid currentFolderID, Invalid startingFolderID", () =>  {
         const fileName = uuidv4();
         const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
@@ -172,6 +184,18 @@ describe("deleteAllFolderData_emptyFolder", () =>  {
         expect(deleteAllFolderData_emptyFolder).toBe("currentFolderID not string");
     });    
 
+    it("Valid availableVideosFolderIDPath, Invalid currentFolderID", () =>  {   
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]["info"]["title"]).toBe("title_folder_test_1");   
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test_2");
+        expect(createFolder2.message).toBe("folder-created");
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("title_folder_test_2");   
+        const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array([createFolder1.folderID, createFolder2.folderID]); 
+        const deleteAllFolderData = deleteData.deleteAllFolderData(availableVideosFolderIDPath, uuidv4());
+        expect(deleteAllFolderData).toBe("startingFolderID not string");
+    });  
+    
     it("Valid availableVideosFolderIDPath, Invalid currentFolderID, Invalid startingFolderID", () =>  {
         const fileName = uuidv4();
         const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
