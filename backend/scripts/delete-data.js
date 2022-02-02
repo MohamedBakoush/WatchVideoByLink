@@ -122,25 +122,22 @@ function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFol
     return "currentFolderID not string";
   } else if (typeof startingFolderID !== "string") {
     return "startingFolderID not string";
+  } else if (Object.keys(availableVideos.getAvailableVideos(availableVideosFolderIDPath)).length !== 0) {   
+    return "folder path not empty";
+  } else if (availableVideosFolderIDPath.indexOf(currentFolderID) == -1) {
+    return "invalid currentFolderID";
   } else {
-    if (Object.keys(availableVideos.getAvailableVideos(availableVideosFolderIDPath)).length == 0) {   
-      const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
-      newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
-      const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
-      const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
-      availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath); 
-      const getFolderContents = availableVideos.getAvailableVideos(availableVideosFolderIDPath);
-      if (currentFolderID === startingFolderID || insideFolderID === "folder-main") { 
-        return `deleted-${startingFolderID}-permanently`;
-      } else if (getFolderContents === undefined) {
-        return "folder path undefined";
-      } else if (Object.keys(getFolderContents).length !== 0) {
-        return "folder path not empty";
-      } else {
-        return deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
-      }
+    const newAvailableVideosFolderPath = [...availableVideosFolderIDPath];
+    newAvailableVideosFolderPath.length = newAvailableVideosFolderPath.indexOf(currentFolderID);  
+    const insideFolderIDPath = [...newAvailableVideosFolderPath, currentFolderID, "info", "inside-folder"];
+    const insideFolderID = availableVideos.getAvailableVideos(insideFolderIDPath);  
+    const deleteData = availableVideos.deleteSpecifiedAvailableVideosData(currentFolderID, newAvailableVideosFolderPath); 
+    if (deleteData === `${currentFolderID} deleted` && (currentFolderID === startingFolderID || insideFolderID === "folder-main")) { 
+      return `deleted-${currentFolderID}-permanently`;
+    } else if (availableVideos.getAvailableVideos(newAvailableVideosFolderPath) === undefined) {
+      return "newAvailableVideosFolderPath undefined";
     } else {
-      return "folder path not empty";
+      return deleteAllFolderData(newAvailableVideosFolderPath, insideFolderID, startingFolderID); 
     }
   }
 }
