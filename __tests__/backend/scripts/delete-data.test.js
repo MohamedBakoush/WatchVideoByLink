@@ -68,6 +68,11 @@ describe("deleteAllFolderData", () =>  {
         expect(deleteAllFolderData).toBe("availableVideosFolderIDPath not array");
     });      
 
+    it("Invalid availableVideosFolderIDPath", () =>  {
+        const deleteAllFolderData = deleteData.deleteAllFolderData([uuidv4(), uuidv4()]);
+        expect(deleteAllFolderData).toBe("invalid availableVideosFolderIDPath");
+    });  
+
     it("Valid availableVideosFolderIDPath", () =>  {
         const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
         expect(createFolder1.message).toBe("folder-created"); 
