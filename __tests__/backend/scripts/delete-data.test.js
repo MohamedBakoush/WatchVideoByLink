@@ -41,22 +41,52 @@ describe("deleteSpecifiedVideo", () =>  {
         FileSystem.mkdirSync(`${filepath}${fileName}/`);
         FileSystem.writeFile(`${filepath}${fileName}/video.mp4`, "data", (err) => {
             if (err) throw err;  
+            FileSystem.writeFile(`${filepath}${fileName}/thumbnail_1.jpg`, "data", (err) => {
+                if (err) throw err;  
+                FileSystem.writeFile(`${filepath}${fileName}/thumbnail_2.jpg`, "data", (err) => {
+                    if (err) throw err;  
+                    FileSystem.writeFile(`${filepath}${fileName}/thumbnail_3.jpg`, "data", (err) => {
+                        if (err) throw err;  
+                        FileSystem.writeFile(`${filepath}${fileName}/thumbnail_4.jpg`, "data", (err) => {
+                            if (err) throw err;  
+                            const deleteSpecifiedVideo = deleteData.deleteSpecifiedVideo(fileName);
+                            expect(deleteSpecifiedVideo).toBe(`deleting-video-${fileName}-permanently`);
+                        });
+                    });
+                });
+            });
         });
-        FileSystem.writeFile(`${filepath}${fileName}/thumbnail_1.jpg`, "data", (err) => {
-            if (err) throw err;  
-        });
-        FileSystem.writeFile(`${filepath}${fileName}/thumbnail_2.jpg`, "data", (err) => {
-            if (err) throw err;  
-        });
-        FileSystem.writeFile(`${filepath}${fileName}/thumbnail_3.jpg`, "data", (err) => {
-            if (err) throw err;  
-        });
-        FileSystem.writeFile(`${filepath}${fileName}/thumbnail_4.jpg`, "data", (err) => {
-            if (err) throw err;  
-        });
-        const deleteSpecifiedVideo = deleteData.deleteSpecifiedVideo(fileName);
-        expect(deleteSpecifiedVideo).toBe(`deleting-video-${fileName}-permanently`);
     });     
+});
+
+describe("delete_video_with_provided_path", () =>  {    
+    it("No Input", () =>  {
+        const delete_video_with_provided_path = deleteData.delete_video_with_provided_path();
+        expect(delete_video_with_provided_path).toBe("videofile no string");
+    });  
+
+    it("InValid videofile", () =>  {
+        const videofile = uuidv4();
+        const delete_video_with_provided_path = deleteData.delete_video_with_provided_path(videofile);
+        expect(delete_video_with_provided_path).toBe("fileName no string");
+    });   
+
+    it("Invalid videofile, Valid fileName", () =>  {
+        const videofile = uuidv4();
+        const fileName = uuidv4();
+        const delete_video_with_provided_path = deleteData.delete_video_with_provided_path(videofile, fileName);
+        expect(delete_video_with_provided_path).toBe("invalid videofile");
+    });      
+
+    it("Valid videofile, Valid fileName", () =>  { 
+        const fileName = uuidv4(); 
+        const filepath = "media/video/";
+        FileSystem.writeFile(`${filepath}/${fileName}.mp4`, "data", (err) => {
+            if (err) throw err;  
+            const delete_video_with_provided_path = deleteData.delete_video_with_provided_path(`${filepath}/${fileName}.mp4`, fileName);
+            expect(delete_video_with_provided_path).toBe("delete video");
+        });
+    });           
 });
 
 describe("read_dir", () =>  {    

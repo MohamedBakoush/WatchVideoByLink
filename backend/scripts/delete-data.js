@@ -215,9 +215,14 @@ function delete_video_with_provided_path(videofile, fileName) {
   } else if (typeof fileName !== "string") {
     return "fileName no string";
   } else {
-    rename_file(videofile, "media/deleted-videos", `deleted-${fileName}.mp4`, () => {
-      unlink_file(`media/deleted-videos/deleted-${fileName}.mp4`);
-    });   
+    if (check_if_file_exits(videofile)) {
+      rename_file(videofile, "media/deleted-videos", `deleted-${fileName}.mp4`, () => {
+        unlink_file(`media/deleted-videos/deleted-${fileName}.mp4`);
+      });  
+      return "delete video";
+    } else {
+      return "invalid videofile";
+    }
   }
 }
 
