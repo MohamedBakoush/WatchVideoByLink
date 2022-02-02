@@ -201,8 +201,9 @@ function deleteSpecifiedVideo(fileName) {
           });
         }
       });
+      return `deleting-video-${fileName}-permanently`;
     } else{ // folder dosent exit 
-      return `video-id-${fileName}-data-permanently-deleted`;
+      return `folder-${fileName}-dosent-exit`;
     }
   } 
 }
