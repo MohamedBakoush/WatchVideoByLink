@@ -9,29 +9,33 @@ const availableVideos = require("./available-videos");
 
 // check if video compression is downloading before data deletion 
 function checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(videoID, folderIDPath) {
-  const id = uuidv4();
-  const stopCommpressedVideoDownloadBool = ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
-  if (stopCommpressedVideoDownloadBool) {  
-    ffmpegDownloadResponse.updateDownloadResponse([id], {
-      "id": id,
-      "message": "initializing"
-    });
-    const checkDownloadResponse = setInterval(function(){ 
-      const downloadStatus = checkCompressedVideoDownloadStatus(videoID);
-      if (downloadStatus === "start deletion") {
-        clearInterval(checkDownloadResponse);
-        const deleteAllVideoDataResponse = deleteAllVideoData(videoID, folderIDPath); 
-        if (ffmpegDownloadResponse.getDownloadResponse([id, "message"]) !== undefined) {
-            ffmpegDownloadResponse.updateDownloadResponse([id, "message"], deleteAllVideoDataResponse);
+  if (typeof videoID !== "string") {
+    return "videoID not string";
+  } else {
+    const stopCommpressedVideoDownloadBool = ffmpegCompressionDownload.stopCommpressedVideoDownload(videoID); 
+    if (stopCommpressedVideoDownloadBool) {  
+      const id = uuidv4();
+      ffmpegDownloadResponse.updateDownloadResponse([id], {
+        "id": id,
+        "message": "initializing"
+      });
+      const checkDownloadResponse = setInterval(function(){ 
+        const downloadStatus = checkCompressedVideoDownloadStatus(videoID);
+        if (downloadStatus === "start deletion") {
+          clearInterval(checkDownloadResponse);
+          const deleteAllVideoDataResponse = deleteAllVideoData(videoID, folderIDPath); 
+          if (ffmpegDownloadResponse.getDownloadResponse([id, "message"]) !== undefined) {
+              ffmpegDownloadResponse.updateDownloadResponse([id, "message"], deleteAllVideoDataResponse);
+          }
         }
-      }
-    }, 50);  
-    return {
-      "id": id,
-      "message": "initializing"
-    };
-  } else { // compressed video isn't downloading 
-    return deleteAllVideoData(videoID, folderIDPath); 
+      }, 50);  
+      return {
+        "id": id,
+        "message": "initializing"
+      };
+    } else { // compressed video isn't downloading 
+      return deleteAllVideoData(videoID, folderIDPath); 
+    }
   }
 }
 
@@ -63,21 +67,17 @@ function deleteAllVideoData(fileName, folderIDPath) {
   } else if (!Array.isArray(folderIDPath)) {
     return "folderIDPath not array";
   } else {
-    try {   
-      if (fileName.includes("folder-")) {  
-        if ((folderIDPath === undefined || folderIDPath.length === 0) && availableVideos.getAvailableVideos([fileName]) !== "invalid array path"){ 
-          deleteAllFolderData([fileName, "content"], fileName, fileName); 
-        } else {  
-          const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
-          deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, fileName);
-        }    
-      } else { 
-        deleteSpecifiedVideoData(fileName, folderIDPath); 
-      }
-      return `deleted-${fileName}-permanently`;
-    } catch (error) {
-      return `failed-to-delete-${fileName}-permanently`;
+    if (fileName.includes("folder-")) {
+      const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath); 
+      if (!Array.isArray(availableVideosFolderIDPath)){ 
+        deleteAllFolderData([fileName, "content"], fileName, fileName); 
+      } else {  
+        deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, fileName);
+      }    
+    } else { 
+      deleteSpecifiedVideoData(fileName, folderIDPath); 
     }
+    return `deleted-${fileName}-permanently`;
   }
 }
 
@@ -149,32 +149,26 @@ function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFol
 function deleteSpecifiedVideoData(fileName, folderIDPath) {
   if (typeof fileName !== "string") {
     return "fileName not string";
-  } else if (folderIDPath !== undefined && availableVideos.getAvailableVideos(folderIDPath) !== undefined && Array.isArray(folderIDPath)) {
-    // delete currentDownloadVideos by id if exist 
-    currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
-    // delete videoData by id if exist 
-    videoData.deleteSpecifiedVideoData(fileName); 
+  } else {
     // delete availableVideos by id if exist  
-    const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
-    if (availableVideosFolderIDPath !== "folderIDPath array input empty" && availableVideosFolderIDPath !== "invalid folderIDPath") {
-      if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) !== undefined) {
-        availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
+    if (availableVideos.getAvailableVideos(folderIDPath) !== undefined && Array.isArray(folderIDPath)) {
+      const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
+      if (availableVideosFolderIDPath !== "folderIDPath array input empty" && availableVideosFolderIDPath !== "invalid folderIDPath") {
+        if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) !== undefined) {
+          availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
+        } else {
+          availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
+        }
       } else {
         availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
-      }
+      } 
     } else {
-      availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
-    } 
-    // delete specified video by id if exist  
-    deleteSpecifiedVideo(fileName); 
-    return `deleted-${fileName}-permanently`;
-  } else {
+      availableVideos.deleteSpecifiedAvailableVideosData(fileName); 
+    }
     // delete currentDownloadVideos by id if exist 
     currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);
     // delete videoData by id if exist 
     videoData.deleteSpecifiedVideoData(fileName); 
-    // delete availableVideos by id if exist  
-    availableVideos.deleteSpecifiedAvailableVideosData(fileName); 
     // delete specified video by id if exist  
     deleteSpecifiedVideo(fileName);  
     return `deleted-${fileName}-permanently`;
