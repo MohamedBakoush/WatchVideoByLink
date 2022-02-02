@@ -323,6 +323,7 @@ module.exports = { // export modules
     checkCompressedVideoDownloadStatus,
     deleteAllVideoData,
     deleteAllFolderData,
+    deleteSpecifiedVideoData,
     deleteSpecifiedVideo,
     delete_video_with_provided_path,
     check_if_file_exits,

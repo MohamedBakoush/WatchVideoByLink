@@ -23,6 +23,253 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("deleteSpecifiedVideoData", () =>  {    
+    it("No Input", () =>  {
+        const deleteSpecifiedVideoData = deleteData.deleteSpecifiedVideoData();
+        expect(deleteSpecifiedVideoData).toBe("fileName not string");
+    });         
+
+    it("1: Valid fileName", () =>  {
+        const fileName = uuidv4();
+
+        const updateAvailableVideos_data = {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        };
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], updateAvailableVideos_data);
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+        const get_available_video_data_1 = availableVideos.getAvailableVideos([fileName]);
+        expect(get_available_video_data_1).toMatchObject(updateAvailableVideos_data);   
+
+        const currentDownloadVideos_data = {
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        };
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], currentDownloadVideos_data);
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const get_current_download_data_1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_current_download_data_1).toMatchObject(currentDownloadVideos_data);  
+
+        const dataVideos_data = {
+            "video": {
+                "originalVideoSrc" : "videoSrc",
+                "originalVideoType" : "videoType",
+                "path": "videoFilePath",
+                "videoType" : "video/mp4",
+                "download" : "completed",
+              },
+              "compression" : {
+                "path": "compressionFilePath",
+                "videoType": "video/webm",
+                "download": "completed"
+              },
+              "thumbnail": {
+                "path": {},
+                "download": "completed"
+              }
+        };
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_video_data_1 = dataVideos.getVideoData([fileName]);
+        expect(get_video_data_1).toMatchObject(dataVideos_data);   
+
+        const deleteSpecifiedVideoData = deleteData.deleteSpecifiedVideoData(fileName);
+        expect(deleteSpecifiedVideoData).toBe(`deleted-${fileName}-permanently`);
+
+        const get_current_download_data_2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_current_download_data_2).toBe(undefined); 
+        const get_available_video_data_2 = availableVideos.getAvailableVideos([fileName]);
+        expect(get_available_video_data_2).toBe(undefined);   
+        const get_video_data_2 = dataVideos.getVideoData([fileName]);
+        expect(get_video_data_2).toBe(undefined); 
+    });    
+    
+    it("2: Valid fileName, Valid folderIDPath", () =>  {
+        const fileName = uuidv4();
+
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+        
+        const updateAvailableVideos_data = {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        };
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], updateAvailableVideos_data);
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+        const get_available_video_data_1 = availableVideos.getAvailableVideos([fileName]);
+        expect(get_available_video_data_1).toMatchObject(updateAvailableVideos_data);   
+
+        availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder.folderID);
+
+        const currentDownloadVideos_data = {
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        };
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], currentDownloadVideos_data);
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const get_current_download_data_1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_current_download_data_1).toMatchObject(currentDownloadVideos_data);  
+
+        const dataVideos_data = {
+            "video": {
+                "originalVideoSrc" : "videoSrc",
+                "originalVideoType" : "videoType",
+                "path": "videoFilePath",
+                "videoType" : "video/mp4",
+                "download" : "completed",
+              },
+              "compression" : {
+                "path": "compressionFilePath",
+                "videoType": "video/webm",
+                "download": "completed"
+              },
+              "thumbnail": {
+                "path": {},
+                "download": "completed"
+              }
+        };
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_video_data_1 = dataVideos.getVideoData([fileName]);
+        expect(get_video_data_1).toMatchObject(dataVideos_data);   
+
+        const deleteSpecifiedVideoData = deleteData.deleteSpecifiedVideoData(fileName, [createFolder.folderID]);
+        expect(deleteSpecifiedVideoData).toBe(`deleted-${fileName}-permanently`);
+
+        const get_current_download_data_2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_current_download_data_2).toBe(undefined); 
+        const get_available_video_data_2 = availableVideos.getAvailableVideos([createFolder.folderID, "content", fileName]);
+        expect(get_available_video_data_2).toBe(undefined);   
+        const get_available_video_data_3 = availableVideos.getAvailableVideos([createFolder.folderID]);
+        expect(get_available_video_data_3).toMatchObject({"content": {}, "info": {"inside-folder": "folder-main", "title": "title_folder_test"}});   
+        const get_video_data_2 = dataVideos.getVideoData([fileName]);
+        expect(get_video_data_2).toBe(undefined); 
+    }); 
+    
+    it("3: Valid fileName, Valid folderIDPath", () =>  {
+        const fileName = uuidv4();
+
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+        
+        const updateAvailableVideos_data = {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        };
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], updateAvailableVideos_data);
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+        const get_available_video_data_1 = availableVideos.getAvailableVideos([fileName]);
+        expect(get_available_video_data_1).toMatchObject(updateAvailableVideos_data);   
+
+        availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder.folderID);
+
+        const currentDownloadVideos_data = {
+            "video": {
+                "download-status": "completed"
+            },
+            "thumbnail": {
+                "download-status": "20.00%"
+            }
+        };
+        const updateCurrentDownloadVideos = currentDownloadVideos.updateCurrentDownloadVideos([fileName], currentDownloadVideos_data);
+        expect(updateCurrentDownloadVideos).toBe("updateCurrentDownloadVideos");  
+        const get_current_download_data_1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_current_download_data_1).toMatchObject(currentDownloadVideos_data);  
+
+        const dataVideos_data = {
+            "video": {
+                "originalVideoSrc" : "videoSrc",
+                "originalVideoType" : "videoType",
+                "path": "videoFilePath",
+                "videoType" : "video/mp4",
+                "download" : "completed",
+              },
+              "compression" : {
+                "path": "compressionFilePath",
+                "videoType": "video/webm",
+                "download": "completed"
+              },
+              "thumbnail": {
+                "path": {},
+                "download": "completed"
+              }
+        };
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_video_data_1 = dataVideos.getVideoData([fileName]);
+        expect(get_video_data_1).toMatchObject(dataVideos_data);   
+
+        const deleteSpecifiedVideoData = deleteData.deleteSpecifiedVideoData(fileName, [createFolder.folderID, "content"]);
+        expect(deleteSpecifiedVideoData).toBe(`deleted-${fileName}-permanently`);
+
+        const get_current_download_data_2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(get_current_download_data_2).toBe(undefined); 
+        const get_available_video_data_2 = availableVideos.getAvailableVideos([createFolder.folderID, "content", fileName]);
+        expect(get_available_video_data_2).toBe(undefined);   
+        const get_available_video_data_3 = availableVideos.getAvailableVideos([createFolder.folderID]);
+        expect(get_available_video_data_3).toMatchObject({"content": {}, "info": {"inside-folder": "folder-main", "title": "title_folder_test"}});   
+        const get_video_data_2 = dataVideos.getVideoData([fileName]);
+        expect(get_video_data_2).toBe(undefined); 
+ 
+        expect(deleteData.check_if_file_exits(`./media/video/${fileName}`)).toBe(false); 
+    }); 
+});
+
 describe("deleteSpecifiedVideo", () =>  {    
     it("No Input", () =>  {
         const deleteSpecifiedVideo = deleteData.deleteSpecifiedVideo();
