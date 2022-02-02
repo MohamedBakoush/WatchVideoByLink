@@ -70,14 +70,13 @@ function deleteAllVideoData(fileName, folderIDPath) {
     if (fileName.includes("folder-")) {
       const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath); 
       if (!Array.isArray(availableVideosFolderIDPath)){ 
-        deleteAllFolderData([fileName, "content"], fileName, fileName); 
+        return deleteAllFolderData([fileName, "content"], fileName, fileName); 
       } else {  
-        deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, fileName);
+        return deleteAllFolderData([...availableVideosFolderIDPath, fileName, "content"], fileName, fileName);
       }    
     } else { 
-      deleteSpecifiedVideoData(fileName, folderIDPath); 
+      return deleteSpecifiedVideoData(fileName, folderIDPath); 
     }
-    return `deleted-${fileName}-permanently`;
   }
 }
 
@@ -96,7 +95,7 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
     return "startingFolderID not string";
   } else {
     if (Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).length == 0) {
-      deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
+      return deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
     } else {
       Object.keys(availableVideos.getAvailableVideos([...availableVideosFolderIDPath])).forEach(function(fileName, i, array) {
         if (fileName.includes("folder-")) {
@@ -105,7 +104,7 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
           deleteSpecifiedVideoData(fileName, availableVideosFolderIDPath);
         }
         if (i == array.length - 1) {
-          deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
+          return deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
         }
       });
     }
