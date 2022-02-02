@@ -21,3 +21,30 @@ afterEach(() => {
     availableVideos.resetAvailableVideos();
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
+
+describe("read_dir", () =>  {    
+    it("No Input", () =>  {
+        const dir = deleteData.read_dir();
+        expect(dir).toBe("filePath no string");
+    });  
+
+    it("Invalid filePath", () =>  {
+        const dir = deleteData.read_dir("invalid_path");
+        expect(dir).toBe("invalid filepath");
+    });  
+
+    it("Valid filePath", () =>  {
+        const dir = deleteData.read_dir("__tests__/backend/scripts");
+        expect(dir).toBe("valid filepath");
+    }); 
+    
+    it("Valid filePath, callback", () =>  {
+        let i = 0;
+        expect(i).toBe(0);
+        const dir = deleteData.read_dir("__tests__/backend/scripts", () => {
+            i = i + 1;
+            expect(i).toBe(1);
+        });
+        expect(dir).toBe("valid filepath");
+    });   
+});

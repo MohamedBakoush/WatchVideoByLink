@@ -305,7 +305,7 @@ function read_dir(filePath, callback) {
           callback(files);
         }
       });
-      return "read directory";
+      return "valid filepath";
     } else {
       return "invalid filepath";
     }
