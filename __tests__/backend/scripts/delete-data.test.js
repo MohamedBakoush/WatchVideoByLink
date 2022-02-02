@@ -89,6 +89,23 @@ describe("delete_video_with_provided_path", () =>  {
     });           
 });
 
+describe("check_if_file_exits", () =>  {    
+    it("No Input", () =>  {
+        const check_if_file_exits = deleteData.check_if_file_exits();
+        expect(check_if_file_exits).toBe("filePath no string");
+    });   
+
+    it("Invalid filePath", () =>  {
+        const check_if_file_exits = deleteData.check_if_file_exits("test");
+        expect(check_if_file_exits).toBe(false);
+    });   
+
+    it("Valid filePath", () =>  {
+        const check_if_file_exits = deleteData.check_if_file_exits("__tests__/backend/scripts/delete-data.test.js");
+        expect(check_if_file_exits).toBe(true);
+    });   
+});
+
 describe("read_dir", () =>  {    
     it("No Input", () =>  {
         const dir = deleteData.read_dir();
