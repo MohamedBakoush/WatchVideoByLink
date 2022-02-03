@@ -110,9 +110,10 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
           deleteSpecifiedVideoData(fileName, availableVideosFolderIDPath);
         }
         if (i == array.length - 1) {
-          return deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
+          deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID);
         }
       });
+      return `deleted-${currentFolderID}-permanently`;
     }
   }
 }
