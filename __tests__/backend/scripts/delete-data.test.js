@@ -644,13 +644,13 @@ describe("deleteAllVideoData", () =>  {
     });    
 
     it("Invalid videoID", () =>  {
-        const fileName = uuidv4();
+        const fileName = `test-${uuidv4()}`;
         const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName);
         expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
     });   
 
     it("Valid fileName", () =>  {
-        const fileName = uuidv4();
+        const fileName = `test-${uuidv4()}`;
         const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
             "info": {
                 "title": fileName,
@@ -677,7 +677,7 @@ describe("deleteAllVideoData", () =>  {
     });   
 
     it("Valid fileName, empty folderIDPath", () =>  {
-        const fileName = uuidv4();
+        const fileName = `test-${uuidv4()}`;
         const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
             "info": {
                 "title": fileName,
@@ -704,7 +704,7 @@ describe("deleteAllVideoData", () =>  {
     });   
     
     it("Valid fileName, Invalid folderIDPath", () =>  {
-        const fileName = uuidv4();
+        const fileName = `test-${uuidv4()}`;
         const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
             "info": {
                 "title": fileName,
@@ -1197,13 +1197,13 @@ describe("deleteSpecifiedVideo", () =>  {
     });        
 
     it("Invalid fileName", () =>  {
-        const fileName = uuidv4();
+        const fileName = `test-${uuidv4()}`;
         const deleteSpecifiedVideo = deleteData.deleteSpecifiedVideo(fileName);
         expect(deleteSpecifiedVideo).toBe(`folder-${fileName}-dosent-exit`);
     });     
 
     it("Valid fileName", () =>  {
-        const fileName = uuidv4();
+        const fileName = `test-${uuidv4()}`;
         const filepath = "media/video/";
         FileSystem.mkdirSync(`${filepath}${fileName}/`);
         FileSystem.writeFile(`${filepath}${fileName}/video.mp4`, "data", (err) => {
@@ -1233,20 +1233,20 @@ describe("delete_video_with_provided_path", () =>  {
     });  
 
     it("InValid videofile", () =>  {
-        const videofile = uuidv4();
+        const videofile = `test-${uuidv4()}`;
         const delete_video_with_provided_path = deleteData.delete_video_with_provided_path(videofile);
         expect(delete_video_with_provided_path).toBe("fileName no string");
     });   
 
     it("Invalid videofile, Valid fileName", () =>  {
-        const videofile = uuidv4();
-        const fileName = uuidv4();
+        const videofile = `test-${uuidv4()}`;
+        const fileName = `test-${uuidv4()}`;
         const delete_video_with_provided_path = deleteData.delete_video_with_provided_path(videofile, fileName);
         expect(delete_video_with_provided_path).toBe("invalid videofile");
     });      
 
     it("Valid videofile, Valid fileName", () =>  { 
-        const fileName = uuidv4(); 
+        const fileName = `test-${uuidv4()}`;
         const filepath = "media/video/";
         FileSystem.writeFile(`${filepath}/${fileName}.mp4`, "data", (err) => {
             if (err) throw err;  
@@ -1271,6 +1271,58 @@ describe("check_if_file_exits", () =>  {
         const check_if_file_exits = deleteData.check_if_file_exits("__tests__/backend/scripts/delete-data.test.js");
         expect(check_if_file_exits).toBe(true);
     });   
+});
+
+describe("rename_file", () =>  {    
+    it("filePath no string", () =>  {
+        const rename_file = deleteData.rename_file();
+        expect(rename_file).toBe("filePath no string");
+    });  
+
+    it("newPath no string", () =>  {
+        const filePath = "invalid_filePath";
+        const rename_file = deleteData.rename_file(filePath);
+        expect(rename_file).toBe("newPath no string");
+    });  
+
+    it("Invalid filepath", () =>  {
+        const filePath = "invalid_filePath";
+        const newPath = "invalid_newPath";
+        const newFileName = "invalid_newFileName";
+        const rename_file = deleteData.rename_file(filePath, newPath, newFileName);
+        expect(rename_file).toBe("invalid filepath");
+    });  
+
+    it("Valid filepath, Invalid newPath", () =>  {
+        const filePath = "__tests__/sandbox/rename_file_1.txt";
+        const newPath = "invalid_newPath";
+        const newFileName = "invalid_newFileName";
+        const rename_file = deleteData.rename_file(filePath, newPath, newFileName);
+        expect(rename_file).toBe("invalid filepath");
+        FileSystem.writeFile(filePath, "content", function (err) {
+            if (err) throw err; 
+            const rename_file = deleteData.rename_file(filePath, newPath, newFileName);
+            expect(rename_file).toBe("invalid newPath");
+            const unlink_file = deleteData.unlink_file(filePath);
+            expect(unlink_file).toBe("deleting file");
+        });
+    });  
+
+    it("Valid filepath, Valid newPath", () =>  {
+        const filePath = "__tests__/sandbox/rename_file_.txt";
+        const newPath = "__tests__/sandbox";
+        const newFileName = "renamed_2.txt";
+        const rename_file = deleteData.rename_file(filePath, newPath, newFileName);
+        expect(rename_file).toBe("invalid filepath");
+        FileSystem.writeFile(filePath, "content", function (err) {
+            if (err) throw err; 
+            const rename_file = deleteData.rename_file(filePath, newPath, newFileName, () => {
+                const unlink_file = deleteData.unlink_file(`${newPath}/${newFileName}`);
+                expect(unlink_file).toBe("deleting file");
+            });
+            expect(rename_file).toBe("renamed file");
+        });
+    });  
 });
 
 describe("unlink_file", () =>  {    
