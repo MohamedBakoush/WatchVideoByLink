@@ -70,7 +70,7 @@ function deleteAllVideoData(fileName, folderIDPath) {
     return "fileName not string";
   } else if (!Array.isArray(folderIDPath))  {
     return deleteSpecifiedVideoData(fileName); 
-  } else if (availableVideos.getAvailableVideos(folderIDPath) === undefined && folderIDPath.length !== 0) {
+  } else if (availableVideos.getAvailableVideos(availableVideos.availableVideosfolderPath_Array(folderIDPath)) === undefined && folderIDPath.length !== 0) {
     return "invalid folderIDPath";
   } else {
     if (fileName.includes("folder-")) {
@@ -151,17 +151,15 @@ function deleteSpecifiedVideoData(fileName, folderIDPath) {
     return "fileName not string";
   } else {
     // delete availableVideos by id if exist  
-    if (availableVideos.getAvailableVideos(folderIDPath) !== undefined && Array.isArray(folderIDPath)) {
+    if (Array.isArray(folderIDPath)) {
       const availableVideosFolderIDPath = availableVideos.availableVideosfolderPath_Array(folderIDPath);
-      if (availableVideosFolderIDPath !== "folderIDPath array input empty" && availableVideosFolderIDPath !== "invalid folderIDPath") {
-        if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) !== undefined) {
-          availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
-        } else {
-          availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
-        }
-      } else {
+      if (availableVideos.getAvailableVideos(availableVideosFolderIDPath) !== undefined) { 
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName, availableVideosFolderIDPath); 
+      } else if (availableVideos.getAvailableVideos(folderIDPath) !== undefined) { 
         availableVideos.deleteSpecifiedAvailableVideosData(fileName, folderIDPath); 
-      } 
+      } else {
+        availableVideos.deleteSpecifiedAvailableVideosData(fileName); 
+      }
     } else {
       availableVideos.deleteSpecifiedAvailableVideosData(fileName); 
     }
