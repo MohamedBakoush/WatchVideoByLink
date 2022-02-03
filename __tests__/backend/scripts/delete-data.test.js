@@ -1263,7 +1263,7 @@ describe("check_if_file_exits", () =>  {
     });   
 
     it("Invalid filePath", () =>  {
-        const check_if_file_exits = deleteData.check_if_file_exits("test");
+        const check_if_file_exits = deleteData.check_if_file_exits("invalid_filepath");
         expect(check_if_file_exits).toBe(false);
     });   
 
@@ -1294,7 +1294,7 @@ describe("rename_file", () =>  {
     });  
 
     it("Valid filepath, Invalid newPath", () =>  {
-        const filePath = "__tests__/sandbox/rename_file_1.txt";
+        const filePath = `__tests__/sandbox/rename_${uuidv4()}.txt`;        
         const newPath = "invalid_newPath";
         const newFileName = "invalid_newFileName";
         const rename_file = deleteData.rename_file(filePath, newPath, newFileName);
@@ -1309,9 +1309,9 @@ describe("rename_file", () =>  {
     });  
 
     it("Valid filepath, Valid newPath", () =>  {
-        const filePath = "__tests__/sandbox/rename_file_.txt";
+        const filePath = `__tests__/sandbox/rename_${uuidv4()}.txt`;
         const newPath = "__tests__/sandbox";
-        const newFileName = "renamed_2.txt";
+        const newFileName = `renamed_${uuidv4()}.txt`;
         const rename_file = deleteData.rename_file(filePath, newPath, newFileName);
         expect(rename_file).toBe("invalid filepath");
         FileSystem.writeFile(filePath, "content", function (err) {
@@ -1337,7 +1337,7 @@ describe("unlink_file", () =>  {
     });  
 
     it("Valid filepath", () =>  {
-        const filePath = "__tests__/sandbox/unlink_file_1.txt";
+        const filePath = `__tests__/sandbox/unlink_${uuidv4()}.txt`;
         FileSystem.writeFile(filePath, "content", function (err) {
             if (err) throw err;
             const check_if_file_exits = deleteData.check_if_file_exits(filePath);
@@ -1349,7 +1349,7 @@ describe("unlink_file", () =>  {
     });  
 
     it("Valid filepath, callback", () =>  {
-        const filePath = "__tests__/sandbox/unlink_file_2.txt";
+        const filePath = `__tests__/sandbox/unlink_${uuidv4()}.txt`;
         let callback_num = 0;
         expect(callback_num).toBe(0);
         FileSystem.writeFile(filePath, "content", function (err) {
@@ -1378,7 +1378,7 @@ describe("remove_dir", () =>  {
     });  
 
     it("Valid directory", () =>  {
-        const filePath = "__tests__/sandbox/rm_test_dir_1";
+        const filePath = `__tests__/sandbox/rm_test_dir_${uuidv4()}`;
         FileSystem.mkdirSync(filePath);
         const check_if_file_exits = deleteData.check_if_file_exits(filePath);
         expect(check_if_file_exits).toBe(true);
@@ -1387,7 +1387,7 @@ describe("remove_dir", () =>  {
     });  
 
     it("Valid directory, callback", () =>  {
-        const filePath = "__tests__/sandbox/rm_test_dir_2";
+        const filePath = `__tests__/sandbox/rm_test_dir_${uuidv4()}`;
         let callback_num = 0;
         expect(callback_num).toBe(0);
         FileSystem.mkdirSync(filePath);
@@ -1413,14 +1413,14 @@ describe("read_dir", () =>  {
     });  
 
     it("Valid filePath", () =>  {
-        const read_dir = deleteData.read_dir("__tests__/backend/scripts");
+        const read_dir = deleteData.read_dir("__tests__/sandbox");
         expect(read_dir).toBe("valid filepath");
     }); 
     
     it("Valid filePath, callback", () =>  {
         let callback_num = 0;
         expect(callback_num).toBe(0);
-        const read_dir = deleteData.read_dir("__tests__/backend/scripts", () => {
+        const read_dir = deleteData.read_dir("__tests__/sandbox", () => {
             callback_num = callback_num + 1;
             expect(callback_num).toBe(1);
         });
