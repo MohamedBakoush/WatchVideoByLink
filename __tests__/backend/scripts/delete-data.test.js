@@ -23,6 +23,115 @@ afterEach(() => {
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
 
+describe("checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion", () =>  {    
+    it("No Input", () =>  {
+        const checkCompressedBeforeDeletion = deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion();
+        expect(checkCompressedBeforeDeletion).toBe("videoID not string");
+    });    
+
+    it("Invalid videoID", () =>  {
+        const fileName = uuidv4();
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
+    });   
+
+    it("Valid videoID", () =>  {
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");   
+
+        const checkCompressedBeforeDeletion = deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(fileName);
+        expect(checkCompressedBeforeDeletion).toBe(`deleted-${fileName}-permanently`);
+    });   
+
+    it("Valid videoID, empty folderIDPath", () =>  {
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");   
+
+        const checkCompressedBeforeDeletion = deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(fileName, []);
+        expect(checkCompressedBeforeDeletion).toBe(`deleted-${fileName}-permanently`);
+    });   
+
+    it("Valid fileName, Invalid folderIDPath", () =>  {
+        const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+        
+        const checkCompressedBeforeDeletion = deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(fileName, [undefined]);
+        expect(checkCompressedBeforeDeletion).toBe("invalid folderIDPath");
+    });   
+    
+    it("Valid fileName, Valid folderIDPath", () =>  {
+        const createFolder1 = availableVideos.createFolder(undefined, "title_folder_test_1");
+        expect(createFolder1.message).toBe("folder-created"); 
+        expect(createFolder1.availableVideos[createFolder1.folderID]["info"]["title"]).toBe("title_folder_test_1");   
+        const createFolder2 = availableVideos.createFolder([createFolder1.folderID], "title_folder_test_2");
+        expect(createFolder2.message).toBe("folder-created");
+        expect(createFolder2.availableVideos[createFolder1.folderID]["content"][createFolder2.folderID]["info"]["title"]).toBe("title_folder_test_2");   
+
+        const checkCompressedBeforeDeletion = deleteData.checkIfCompressedVideoIsDownloadingBeforeVideoDataDeletion(createFolder2.folderID, [createFolder1.folderID]);
+        expect(checkCompressedBeforeDeletion).toBe(`deleted-${createFolder2.folderID}-permanently`);
+        
+        const getAvailableVideos = availableVideos.getAvailableVideos();
+        expect(getAvailableVideos[createFolder1.folderID]["content"]).toMatchObject({});
+    });   
+});
+
 describe("checkCompressedVideoDownloadStatus", () =>  {    
     it("No Input", () =>  {
         const checkCompressedVideoDownloadStatus = deleteData.checkCompressedVideoDownloadStatus();
@@ -182,20 +291,89 @@ describe("deleteAllVideoData", () =>  {
         expect(deleteSpecifiedVideo).toBe("fileName not string");
     });    
 
+    it("Invalid videoID", () =>  {
+        const fileName = uuidv4();
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
+    });   
+
     it("Valid fileName", () =>  {
         const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");  
+
         const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName);
         expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
     });   
 
     it("Valid fileName, empty folderIDPath", () =>  {
         const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");   
+
         const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName, []);
         expect(deleteSpecifiedVideo).toBe(`deleted-${fileName}-permanently`);
     });   
     
     it("Valid fileName, Invalid folderIDPath", () =>  {
         const fileName = uuidv4();
+        const updateAvailableVideos = availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": `/thumbnail/${fileName}/1`,
+                    "2": `/thumbnail/${fileName}/2`,
+                    "3": `/thumbnail/${fileName}/3`,
+                    "4": `/thumbnail/${fileName}/4`,
+                    "5": `/thumbnail/${fileName}/5`,
+                    "6": `/thumbnail/${fileName}/6`,
+                    "7": `/thumbnail/${fileName}/7`,
+                    "8": `/thumbnail/${fileName}/8`
+                }
+            }
+        });
+        expect(updateAvailableVideos).toBe("updateAvailableVideoData");   
+
         const deleteSpecifiedVideo = deleteData.deleteAllVideoData(fileName, [undefined]);
         expect(deleteSpecifiedVideo).toBe("invalid folderIDPath");
     });   
