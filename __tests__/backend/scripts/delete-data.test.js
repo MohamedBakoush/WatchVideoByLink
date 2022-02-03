@@ -1273,19 +1273,60 @@ describe("check_if_file_exits", () =>  {
     });   
 });
 
+describe("unlink_file", () =>  {    
+    it("No Input", () =>  {
+        const unlink_file = deleteData.unlink_file();
+        expect(unlink_file).toBe("filePath no string");
+    });  
+
+    it("Invalid filepath", () =>  {
+        const unlink_file = deleteData.unlink_file("invalid_path");
+        expect(unlink_file).toBe("invalid filepath");
+    });  
+
+    it("Valid filepath", () =>  {
+        const filePath = "__tests__/sandbox/unlink_file_1.txt";
+        FileSystem.writeFile(filePath, "content", function (err) {
+            if (err) throw err;
+            const check_if_file_exits = deleteData.check_if_file_exits(filePath);
+            expect(check_if_file_exits).toBe(true);
+    
+            const unlink_file = deleteData.unlink_file(filePath);
+            expect(unlink_file).toBe("deleting file");
+        });
+    });  
+
+    it("Valid filepath, callback", () =>  {
+        const filePath = "__tests__/sandbox/unlink_file_2.txt";
+        let callback_num = 0;
+        expect(callback_num).toBe(0);
+        FileSystem.writeFile(filePath, "content", function (err) {
+            if (err) throw err;
+            const check_if_file_exits = deleteData.check_if_file_exits(filePath);
+            expect(check_if_file_exits).toBe(true);
+    
+            const unlink_file = deleteData.unlink_file(filePath, () => {
+                callback_num = callback_num + 1;
+                expect(callback_num).toBe(1);
+            });
+            expect(unlink_file).toBe("deleting file");
+        });
+    });  
+});
+
 describe("remove_dir", () =>  {    
     it("No Input", () =>  {
         const remove_dir = deleteData.remove_dir();
         expect(remove_dir).toBe("filePath no string");
     });  
 
-    it("Invalid dir", () =>  {
+    it("Invalid directorys", () =>  {
         const remove_dir = deleteData.remove_dir("invalid_path");
         expect(remove_dir).toBe("invalid filepath");
     });  
 
-    it("Valid dir", () =>  {
-        const filePath = "__tests__/sandbox/test_dir";
+    it("Valid directory", () =>  {
+        const filePath = "__tests__/sandbox/rm_test_dir_1";
         FileSystem.mkdirSync(filePath);
         const check_if_file_exits = deleteData.check_if_file_exits(filePath);
         expect(check_if_file_exits).toBe(true);
@@ -1293,18 +1334,18 @@ describe("remove_dir", () =>  {
         expect(remove_dir).toBe("removeing folder");
     });  
 
-    it("Valid directory", () =>  {
-        const filePath = "__tests__/sandbox/test_dir";
+    it("Valid directory, callback", () =>  {
+        const filePath = "__tests__/sandbox/rm_test_dir_2";
         let callback_num = 0;
         expect(callback_num).toBe(0);
         FileSystem.mkdirSync(filePath);
         const check_if_file_exits = deleteData.check_if_file_exits(filePath);
         expect(check_if_file_exits).toBe(true);
-        const remove_dir = deleteData.remove_dir(filePath);
-        expect(remove_dir).toBe("removeing folder", () => {
+        const remove_dir = deleteData.remove_dir(filePath, () => {
             callback_num = callback_num + 1;
             expect(callback_num).toBe(1);
         });
+        expect(remove_dir).toBe("removeing folder");
     });  
 });
 
