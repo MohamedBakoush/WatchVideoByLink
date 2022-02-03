@@ -1273,29 +1273,64 @@ describe("check_if_file_exits", () =>  {
     });   
 });
 
+describe("remove_dir", () =>  {    
+    it("No Input", () =>  {
+        const remove_dir = deleteData.remove_dir();
+        expect(remove_dir).toBe("filePath no string");
+    });  
+
+    it("Invalid dir", () =>  {
+        const remove_dir = deleteData.remove_dir("invalid_path");
+        expect(remove_dir).toBe("invalid filepath");
+    });  
+
+    it("Valid dir", () =>  {
+        const filePath = "__tests__/sandbox/test_dir";
+        FileSystem.mkdirSync(filePath);
+        const check_if_file_exits = deleteData.check_if_file_exits(filePath);
+        expect(check_if_file_exits).toBe(true);
+        const remove_dir = deleteData.remove_dir(filePath);
+        expect(remove_dir).toBe("removeing folder");
+    });  
+
+    it("Valid directory", () =>  {
+        const filePath = "__tests__/sandbox/test_dir";
+        let callback_num = 0;
+        expect(callback_num).toBe(0);
+        FileSystem.mkdirSync(filePath);
+        const check_if_file_exits = deleteData.check_if_file_exits(filePath);
+        expect(check_if_file_exits).toBe(true);
+        const remove_dir = deleteData.remove_dir(filePath);
+        expect(remove_dir).toBe("removeing folder", () => {
+            callback_num = callback_num + 1;
+            expect(callback_num).toBe(1);
+        });
+    });  
+});
+
 describe("read_dir", () =>  {    
     it("No Input", () =>  {
-        const dir = deleteData.read_dir();
-        expect(dir).toBe("filePath no string");
+        const read_dir = deleteData.read_dir();
+        expect(read_dir).toBe("filePath no string");
     });  
 
     it("Invalid filePath", () =>  {
-        const dir = deleteData.read_dir("invalid_path");
-        expect(dir).toBe("invalid filepath");
+        const read_dir = deleteData.read_dir("invalid_path");
+        expect(read_dir).toBe("invalid filepath");
     });  
 
     it("Valid filePath", () =>  {
-        const dir = deleteData.read_dir("__tests__/backend/scripts");
-        expect(dir).toBe("valid filepath");
+        const read_dir = deleteData.read_dir("__tests__/backend/scripts");
+        expect(read_dir).toBe("valid filepath");
     }); 
     
     it("Valid filePath, callback", () =>  {
-        let i = 0;
-        expect(i).toBe(0);
-        const dir = deleteData.read_dir("__tests__/backend/scripts", () => {
-            i = i + 1;
-            expect(i).toBe(1);
+        let callback_num = 0;
+        expect(callback_num).toBe(0);
+        const read_dir = deleteData.read_dir("__tests__/backend/scripts", () => {
+            callback_num = callback_num + 1;
+            expect(callback_num).toBe(1);
         });
-        expect(dir).toBe("valid filepath");
+        expect(read_dir).toBe("valid filepath");
     });   
 });
