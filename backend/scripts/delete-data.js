@@ -174,37 +174,46 @@ function deleteSpecifiedVideoData(fileName, folderIDPath) {
   }
 }
 
+const videosBeingDeleted = [];
 // delete specified video from server if exist  
 function deleteSpecifiedVideo(fileName) { 
   if (typeof fileName !== "string") {
     return "fileName not string";
+  } else if (!check_if_file_exits(`./media/video/${fileName}`)){
+    return `folder-${fileName}-dosent-exit`;
+  } else if (!Array.isArray(videosBeingDeleted))  {
+    return "videosBeingDeleted not array";
+  } else if (videosBeingDeleted.includes(fileName)) {
+    return `${fileName}-already-being-deleted`;
   } else {
-    if(check_if_file_exits(`./media/video/${fileName}`)){ 
-      read_dir(`./media/video/${fileName}`, (files) => { 
-        if (!files.length) {
-          remove_dir(`./media/video/${fileName}`);
-        } else { // folder not empty
-          read_dir(`./media/video/${fileName}`, (files) => {
-            let completedCount = 0;
-            for (const file of files) {
-              completedCount += 1;
-              rename_file(`./media/video/${fileName}/${file}`, "media/deleted-videos", `deleted-${file}`, () => {
-                unlink_file(`media/deleted-videos/deleted-${file}`, () => {
-                  if (files.length == completedCount) {
-                    completedCount = 0; // reset completedCount
-                    remove_dir(`./media/video/${fileName}`);
-                  }
-                });
+    videosBeingDeleted.push(fileName);
+    read_dir(`./media/video/${fileName}`, (files) => { 
+      if (!files.length) {
+        remove_dir(`./media/video/${fileName}`);
+      } else { // folder not empty
+        read_dir(`./media/video/${fileName}`, (files) => {
+          let completedCount = 0;
+          for (const file of files) {
+            completedCount += 1;
+            rename_file(`./media/video/${fileName}/${file}`, "media/deleted-videos", `deleted-${file}`, () => {
+              unlink_file(`media/deleted-videos/deleted-${file}`, () => {
+                if (files.length == completedCount) {
+                  completedCount = 0; // reset completedCount
+                  remove_dir(`./media/video/${fileName}`, () => {
+                    const fileName_index = videosBeingDeleted.indexOf(fileName);
+                    if (fileName_index !== -1) {
+                      videosBeingDeleted.splice(fileName_index, 1);
+                    }
+                  });
+                }
               });
-            }
-          });
-        }
-      });
-      return `deleting-video-${fileName}-permanently`;
-    } else{ // folder dosent exit 
-      return `folder-${fileName}-dosent-exit`;
-    }
-  } 
+            });
+          }
+        });
+      }
+    });
+    return `deleting-video-${fileName}-permanently`;
+  }
 }
 
 // delete video file with provided video path
