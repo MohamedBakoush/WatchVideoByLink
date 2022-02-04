@@ -148,7 +148,6 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                 end_compression_VP9(fileName, newFilePath, fileType);       
               })
               .on("error", function(error) {
-                console.log(`Encoding Error: ${error.message}`);
                 if (error.message === "ffmpeg was killed with signal SIGKILL") {
                   if (videoData.getVideoData([`${fileName}`,"compression"])) {       
                     videoData.updateVideoData([`${fileName}`, "compression", "download"], "ffmpeg was killed with signal SIGKILL");
@@ -156,6 +155,8 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                   if (currentDownloadVideos.getCurrentDownloads([`${fileName}`, "compression"])) {      
                     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "ffmpeg was killed with signal SIGKILL");   
                   } 
+                } else {
+                  console.log(`Encoding Error: ${error.message}`);
                 }
               })
               // https://developers.google.com/media/vp9/settings/vod/
