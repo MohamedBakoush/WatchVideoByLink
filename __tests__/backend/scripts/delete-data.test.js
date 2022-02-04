@@ -1206,15 +1206,15 @@ describe("deleteSpecifiedVideo", () =>  {
         const fileName = `test-${uuidv4()}`;
         const filepath = "media/video/";
         FileSystem.mkdirSync(`${filepath}${fileName}/`);
-        FileSystem.writeFile(`${filepath}${fileName}/video.mp4`, "data", (err) => {
+        FileSystem.writeFile(`${filepath}${fileName}/${fileName}.mp4`, "data", (err) => {
             if (err) throw err;  
-            FileSystem.writeFile(`${filepath}${fileName}/thumbnail_1.jpg`, "data", (err) => {
+            FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail001.jpg`, "data", (err) => {
                 if (err) throw err;  
-                FileSystem.writeFile(`${filepath}${fileName}/thumbnail_2.jpg`, "data", (err) => {
+                FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail002.jpg`, "data", (err) => {
                     if (err) throw err;  
-                    FileSystem.writeFile(`${filepath}${fileName}/thumbnail_3.jpg`, "data", (err) => {
+                    FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail003.jpg`, "data", (err) => {
                         if (err) throw err;  
-                        FileSystem.writeFile(`${filepath}${fileName}/thumbnail_4.jpg`, "data", (err) => {
+                        FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail004.jpg`, "data", (err) => {
                             if (err) throw err;  
                             const deleteSpecifiedVideo = deleteData.deleteSpecifiedVideo(fileName);
                             expect(deleteSpecifiedVideo).toBe(`deleting-video-${fileName}-permanently`);
@@ -1223,7 +1223,32 @@ describe("deleteSpecifiedVideo", () =>  {
                 });
             });
         });
-    });     
+    });   
+
+    it("Valid fileName - call function twice", () =>  {
+        const fileName = `test-${uuidv4()}`;
+        const filepath = "media/video/";
+        FileSystem.mkdirSync(`${filepath}${fileName}/`);
+        FileSystem.writeFile(`${filepath}${fileName}/${fileName}.mp4`, "data", (err) => {
+            if (err) throw err;  
+            FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail001.jpg`, "data", (err) => {
+                if (err) throw err;  
+                FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail002.jpg`, "data", (err) => {
+                    if (err) throw err;  
+                    FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail003.jpg`, "data", (err) => {
+                        if (err) throw err;  
+                        FileSystem.writeFile(`${filepath}${fileName}/${fileName}-thumbnail004.jpg`, "data", (err) => {
+                            if (err) throw err;  
+                            const deleteSpecifiedVideo_1 = deleteData.deleteSpecifiedVideo(fileName);
+                            expect(deleteSpecifiedVideo_1).toBe(`deleting-video-${fileName}-permanently`);
+                            const deleteSpecifiedVideo_2 = deleteData.deleteSpecifiedVideo(fileName);
+                            expect(deleteSpecifiedVideo_2).toBe(`${fileName}-already-being-deleted`);
+                        });
+                    });
+                });
+            });
+        });
+    });  
 });
 
 describe("delete_video_with_provided_path", () =>  {    
