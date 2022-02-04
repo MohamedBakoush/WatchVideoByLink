@@ -118,6 +118,7 @@ function deleteAllFolderData(availableVideosFolderIDPath, currentFolderID, start
   }
 }
 
+// delete empty folder, go up one folder if path above exites, stop when current folder id == starting folder id or when inside folder id == main folder id
 function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFolderID, startingFolderID) {
   if (!Array.isArray(availableVideosFolderIDPath)) {
     return "availableVideosFolderIDPath not array";
@@ -147,6 +148,7 @@ function deleteAllFolderData_emptyFolder(availableVideosFolderIDPath, currentFol
   }
 }
 
+// delete all data of specified video 
 function deleteSpecifiedVideoData(fileName, folderIDPath) {
   if (typeof fileName !== "string") {
     return "fileName not string";
@@ -234,6 +236,7 @@ function delete_video_with_provided_path(videofile, fileName) {
   }
 }
 
+// check if a file exits
 function check_if_file_exits(filePath) {
   if (typeof filePath !== "string") {
     return "filePath no string";
@@ -246,6 +249,7 @@ function check_if_file_exits(filePath) {
   }
 }
 
+// rename a file at the given old path to a given new path
 function rename_file(filePath, newPath, newFileName, callback) {
   if (typeof filePath !== "string") {
     return "filePath no string";
@@ -272,6 +276,7 @@ function rename_file(filePath, newPath, newFileName, callback) {
   }
 }
 
+// remove a file from the filesystem
 function unlink_file(filePath, callback) {
   if (typeof filePath !== "string") {
     return "filePath no string";
@@ -290,6 +295,7 @@ function unlink_file(filePath, callback) {
   } 
 }
 
+// delete a directory at the given path
 function remove_dir(filePath, callback) {
   if (typeof filePath !== "string") {
     return "filePath no string";
@@ -308,6 +314,7 @@ function remove_dir(filePath, callback) {
   } 
 }
 
+// read the contents of a given directory
 function read_dir(filePath, callback) {
   if (typeof filePath !== "string") {
     return "filePath no string";
