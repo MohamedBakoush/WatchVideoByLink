@@ -156,3 +156,212 @@ describe("start_downloadUploadedVideo", () =>  {
         });
     });  
 }); 
+
+describe("progress_downloadUploadedVideo", () =>  {   
+    it("No Input", () =>  {
+        const start = ffmpegUploadVideo.progress_downloadUploadedVideo();
+        expect(start).toBe("fileName undefined");
+    });   
+
+    it("fileName undefined", () =>  {
+        const start = ffmpegUploadVideo.progress_downloadUploadedVideo(undefined);
+        expect(start).toBe("fileName undefined");
+    });  
+
+    it("valid fileName, invalid data", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName);
+        expect(progress).toBe("invalid data");
+    });  
+
+    it("valid fileName, empty object", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {});
+        expect(progress).toBe("invalid data.percent");
+    }); 
+
+    it("valid fileName, valid data with start_trimVideo compressTrimedVideo false", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName, fileMimeType);
+        expect(start).toBe("start download");
+        const getCurrentDownloads1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads1).toMatchObject({
+            video : { 
+                "download-status" : "starting uploaded video download"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData1 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData1).toMatchObject({
+            video:{
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : "starting uploaded video download"
+            }
+        });
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
+            percent: 0
+          });
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "0.00%"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : 0
+            }
+        });
+    });   
+
+    it("valid fileName, valid data with start_trimVideo compressTrimedVideo true", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName, fileMimeType, true);
+        expect(start).toBe("start download");
+        const getCurrentDownloads1 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads1).toMatchObject({
+            video : { 
+                "download-status" : "starting uploaded video download"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData1 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData1).toMatchObject({
+            video:{
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : "starting uploaded video download"
+            }
+        });
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
+            percent: 0
+          });
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "0.00%"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : 0
+            }
+        });
+    });   
+
+    it("valid fileName, valid data", () =>  {
+        const fileName = uuidv4();
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
+            percent: 0
+        });
+        expect(progress).toBe("fileMimeType not string"); 
+    });  
+
+    it("valid fileName, valid data, valid fileMimeType", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
+            percent: 0
+        }, fileMimeType);
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "0.00%"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : 0
+            }
+        });
+    }); 
+    
+    it("valid fileName, valid data, valid fileMimeType, compressUploadedVideo false", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
+            percent: 0
+        }, fileMimeType, false);
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "0.00%"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : 0
+            }
+        });
+    }); 
+
+    it("valid fileName, valid data, valid fileMimeType, compressUploadedVideo true", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
+            percent: 0
+        }, fileMimeType, true);
+        expect(progress).toBe("update download progress");
+        const getCurrentDownloads2 = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads2).toMatchObject({
+            video : { 
+                "download-status" : "0.00%"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+            } 
+        });
+        const getVideoData2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData2).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : 0
+            }
+        });
+    });  
+});

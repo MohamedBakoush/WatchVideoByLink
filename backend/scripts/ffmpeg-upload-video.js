@@ -211,6 +211,7 @@ function progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUp
           currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
         }
       }  
+      return "update download progress";
     } else {
       const start_response = start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVideo);
       if (start_response == "start download") {
@@ -224,6 +225,7 @@ function progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUp
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
           }
         }    
+        return "update download progress";
       } else {
         return start_response;
       }
