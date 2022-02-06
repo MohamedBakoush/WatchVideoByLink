@@ -15,16 +15,16 @@ const ffmpegPath = require("./ffmpeg-path");
 function uploadVideoFile(req, res) {
   if(req.files) {
     const file = req.files.file;
-    const filename = uuidv4();
+    const uploadedFilename = `uploaded-${uuidv4()}`;
     const fileMimeType = req.files.file.mimetype; 
     if(req.files.file.truncated){  // file size greater then limit
       res.json("video-size-over-size-limit"); 
     } else { // file size smaller then limit
-      file.mv(`./media/video/${filename}.mp4`, async function(err){
+      file.mv(`./media/video/${uploadedFilename}.mp4`, async function(err){
         if (err) { 
           res.send("error-has-accured");
         } else { 
-          const downloadVideo = await downloadUploadedVideo(`./media/video/${filename}.mp4`, filename, fileMimeType);
+          const downloadVideo = await downloadUploadedVideo(`./media/video/${uploadedFilename}.mp4`, fileMimeType, uploadedFilename);
           if (downloadVideo.message == "initializing") {
             const checkDownloadResponse = setInterval(function(){ 
               const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
@@ -60,82 +60,89 @@ function uploadVideoFile(req, res) {
 }
 
 // download full video
-async function downloadUploadedVideo(videofile, fileName, fileMimeType) {
-  const command = new ffmpeg(); 
-  const compressUploadedVideo = userSettings.checkIfVideoCompress("downloadUploadedVideo");
-  const filepath = "media/video/"; 
-  const fileType = ".mp4";
-  const newFilePath = `${filepath}${fileName}/`;
-  const videoDetails = await videoData.findVideosByID(fileName);
-  const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
-  if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
-    if (videoDetails == undefined) {
-      if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
-          FileSystem.mkdirSync(`${filepath}${fileName}/`);
-      }
-      ffmpegDownloadResponse.updateDownloadResponse([fileName], {
-          "fileName": fileName,
-          "message": "initializing"
-      });
-      command.addInput(videofile)
-        .on("start", function() { 
-          const startDownload = start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVideo);
-          if (startDownload == "start download") {
-            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "downloading-uploaded-video");
-            }
-          } else {
-              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
-              }
-              ffmpegPath.SIGKILL(command);
-              deleteData.deleteAllVideoData(fileName);
-              deleteData.delete_video_with_provided_path(videofile, fileName);
-          }
-        })
-        .on("progress", function(data) { 
-          progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUploadedVideo);
-        })
-        .on("end", function() { 
-          end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo);
-          const path = newFilePath+fileName+fileType; 
-          if (compressUploadedVideo) { // compress video
-            ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
-          }
-          ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
-          deleteData.delete_video_with_provided_path(videofile, fileName);
-        })
-        .on("error", function(error) {
-          console.log(`Encoding Error: ${error.message}`);
-          if (error.message === "Cannot find ffmpeg") {
-              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
-              }
-          } else {
-              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
-              }
-          }
-          deleteData.deleteAllVideoData(fileName);
-          deleteData.delete_video_with_provided_path(videofile, fileName);
-        })
-        .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
-        .output(`${newFilePath}${fileName}${fileType}`)
-        .run();
-      return {
-          "fileName": fileName,
-          "message": "initializing"
-      };
-    } else { 
-      return {
-        "message": "videoDetails already exists"
-      };
-    }   
+async function downloadUploadedVideo(videofile, fileMimeType, uploadedFilename) {
+  if (typeof videofile !== "string") {
+    return "videofile not string";
+  } else if (typeof fileMimeType !== "string") {
+    return "fileMimeType not string";
+  } else if (typeof uploadedFilename !== "string") {
+    return "uploadedFilename not string";
   } else {
-    deleteData.delete_video_with_provided_path(videofile, fileName);
-    return {
-        "message": ffmpegAvaiable
-    };
+    const command = new ffmpeg(); 
+    const compressUploadedVideo = userSettings.checkIfVideoCompress("downloadUploadedVideo");
+    const filepath = "media/video/"; 
+    const fileName = uuidv4();
+    const fileType = ".mp4";
+    const newFilePath = `${filepath}${fileName}/`;
+    const videoDetails = await videoData.findVideosByID(fileName);
+    const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
+    if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
+      if (videoDetails == undefined) {
+        if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
+            FileSystem.mkdirSync(`${filepath}${fileName}/`);
+        }
+        ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+            "fileName": fileName,
+            "message": "initializing"
+        });
+        command.addInput(videofile)
+          .on("start", function() { 
+            const startDownload = start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVideo);
+            if (startDownload == "start download") {
+              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "downloading-uploaded-video");
+              }
+            } else {
+                if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                }
+                ffmpegPath.SIGKILL(command);
+                deleteData.deleteAllVideoData(fileName);
+                deleteData.delete_video_with_provided_path(videofile, uploadedFilename);
+            }
+          })
+          .on("progress", function(data) { 
+            progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUploadedVideo);
+          })
+          .on("end", function() { 
+            end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo);
+            const path = newFilePath+fileName+fileType; 
+            if (compressUploadedVideo) { // compress video
+              ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
+            }
+            ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
+            deleteData.delete_video_with_provided_path(videofile, uploadedFilename);
+          })
+          .on("error", function(error) {
+            console.log(`Encoding Error: ${error.message}`);
+            if (error.message === "Cannot find ffmpeg") {
+                if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+                }
+            } else {
+                if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                    ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+                }
+            }
+            deleteData.deleteAllVideoData(fileName);
+            deleteData.delete_video_with_provided_path(videofile, uploadedFilename);
+          })
+          .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
+          .output(`${newFilePath}${fileName}${fileType}`)
+          .run();
+        return {
+            "fileName": fileName,
+            "message": "initializing"
+        };
+      } else { 
+        return await downloadUploadedVideo(videofile, uploadedFilename, fileMimeType);
+      }   
+    } else {
+      deleteData.delete_video_with_provided_path(videofile, uploadedFilename);
+      return {
+          "message": ffmpegAvaiable
+      };
+    }
   }
 }
 
