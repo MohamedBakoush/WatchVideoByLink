@@ -159,13 +159,13 @@ describe("start_downloadUploadedVideo", () =>  {
 
 describe("progress_downloadUploadedVideo", () =>  {   
     it("No Input", () =>  {
-        const start = ffmpegUploadVideo.progress_downloadUploadedVideo();
-        expect(start).toBe("fileName undefined");
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo();
+        expect(progress).toBe("fileName undefined");
     });   
 
     it("fileName undefined", () =>  {
-        const start = ffmpegUploadVideo.progress_downloadUploadedVideo(undefined);
-        expect(start).toBe("fileName undefined");
+        const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(undefined);
+        expect(progress).toBe("fileName undefined");
     });  
 
     it("valid fileName, invalid data", () =>  {
@@ -365,3 +365,137 @@ describe("progress_downloadUploadedVideo", () =>  {
         });
     });  
 });
+
+describe("end_downloadUploadedVideo", () =>  {   
+    it("No Input", () =>  {
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo();
+        expect(end).toBe("fileName undefined");
+    });   
+
+    it("fileName undefined", () =>  {
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(undefined);
+        expect(end).toBe("fileName undefined");
+    });  
+
+    it("valid fileName", () =>  {
+        const fileName = uuidv4();
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName);
+        expect(end).toBe("newFilePath not string");
+    }); 
+      
+    it("valid fileName, valid newFilePath", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath);
+        expect(end).toBe("fileType not string");
+    });   
+
+    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType);
+        expect(end).toBe("videofile not string");
+    });   
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile);
+        expect(end).toBe("fileMimeType not string");
+    }); 
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType);
+        expect(end).toBe("end download");
+    });
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, compressVideo false", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, false);
+        expect(end).toBe("end download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video: {
+                originalVideoSrc : videofile,
+                originalVideoType: fileMimeType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    }); 
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, compressVideo true", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, true);
+        expect(end).toBe("end download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "starting video compression"
+            },
+            thumbnail : { 
+                "download-status" : "starting thumbnail download"
+            } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video: {
+                originalVideoSrc : videofile,
+                originalVideoType: fileMimeType,
+                path: newFilePath+fileName+fileType,
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting"
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+    }); 
+}); 
