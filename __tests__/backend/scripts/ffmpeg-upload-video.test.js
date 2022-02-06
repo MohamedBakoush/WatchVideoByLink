@@ -276,7 +276,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         });
     });   
 
-    it("valid fileName, valid data", () =>  {
+    it("valid fileName, valid data without start_downloadVideo", () =>  {
         const fileName = uuidv4();
         const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
             percent: 0
@@ -284,7 +284,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         expect(progress).toBe("fileMimeType not string"); 
     });  
 
-    it("valid fileName, valid data, valid fileMimeType", () =>  {
+    it("valid fileName, valid data without start_downloadVideo, valid fileMimeType", () =>  {
         const fileName = uuidv4();
         const fileMimeType = "video/mp4";
         const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
@@ -310,7 +310,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         });
     }); 
     
-    it("valid fileName, valid data, valid fileMimeType, compressUploadedVideo false", () =>  {
+    it("valid fileName, valid data without start_downloadVideo, valid fileMimeType, compressUploadedVideo false", () =>  {
         const fileName = uuidv4();
         const fileMimeType = "video/mp4";
         const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
@@ -336,7 +336,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         });
     }); 
 
-    it("valid fileName, valid data, valid fileMimeType, compressUploadedVideo true", () =>  {
+    it("valid fileName, valid data without start_downloadVideo, valid fileMimeType, compressUploadedVideo true", () =>  {
         const fileName = uuidv4();
         const fileMimeType = "video/mp4";
         const progress = ffmpegUploadVideo.progress_downloadUploadedVideo(fileName, {
