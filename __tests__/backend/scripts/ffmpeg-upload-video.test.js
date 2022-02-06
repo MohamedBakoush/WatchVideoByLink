@@ -16,3 +16,26 @@ afterEach(() => {
     dataVideos.resetVideoData();
     currentDownloadVideos.resetCurrentDownloadVideos();
 }); 
+
+describe("downloadUploadedVideo", () =>  {   
+    it("No Input", async () =>  {
+        const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo();
+        expect(downloadUploadedVideo).toBe("videofile not string");
+    });   
+
+    it("valid videofile", async ()=>  {  
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo(videofile);
+        expect(downloadUploadedVideo).toBe("fileMimeType not string");
+    });   
+
+    it("valid videofile, valid fileMimeType", async ()=>  {  
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo(videofile, fileMimeType);
+        expect(downloadUploadedVideo).toBe("uploadedFilename not string");
+    });    
+});
+
