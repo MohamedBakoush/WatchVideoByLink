@@ -425,7 +425,7 @@ describe("end_trimVideo", () =>  {
         expect(end).toBe("videoSrc not string");
     });
 
-    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
@@ -435,7 +435,7 @@ describe("end_trimVideo", () =>  {
         expect(end).toBe("videoType not string");
     });
 
-    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
@@ -446,7 +446,7 @@ describe("end_trimVideo", () =>  {
         expect(end).toBe("newStartTime not number");
     });
 
-    it("valid fileName, valid newFilePath, valid fileType", () =>  {
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType, valid newStartTime", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
@@ -458,7 +458,7 @@ describe("end_trimVideo", () =>  {
         expect(end).toBe("newEndTime not number");
     });
 
-    it("valid fileName, valid newFilePath, valid fileType, compressVideo false", () =>  {
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType, valid newStartTime, valid newEndTime, compressVideo false", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
@@ -496,7 +496,7 @@ describe("end_trimVideo", () =>  {
         });
     });
 
-    it("valid fileName, valid newFilePath, valid fileType, compressVideo true", () =>  {
+    it("valid fileName, valid newFilePath, valid fileType, valid videoSrc, valid videoType, valid newStartTime, valid newEndTime, compressVideo true", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
