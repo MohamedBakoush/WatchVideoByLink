@@ -2,13 +2,14 @@
 const FileSystem = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const ffmpeg = require("fluent-ffmpeg");
+const deleteData = require("./delete-data");
 const userSettings = require("./user-settings");
 const ffmpegImageDownload = require("./ffmpeg-download-image");
 const currentDownloadVideos = require("./current-download-videos");
+const ffmpegDownloadResponse = require("./ffmpeg-download-response");
 const ffmpegCompressionDownload = require("./ffmpeg-download-compression");
 const videoData = require("./data-videos");
 const ffmpegPath = require("./ffmpeg-path");
-const deleteData = require("./delete-data");
 
 // upload video file to ./media/video then downoald file
 function uploadVideoFile(req, res) {
@@ -19,11 +20,39 @@ function uploadVideoFile(req, res) {
     if(req.files.file.truncated){  // file size greater then limit
       res.json("video-size-over-size-limit"); 
     } else { // file size smaller then limit
-      file.mv(`./media/video/${filename}.mp4`, function(err){
+      file.mv(`./media/video/${filename}.mp4`, async function(err){
         if (err) { 
           res.send("error-has-accured");
         } else { 
-          downloadUploadedVideo(`./media/video/${filename}.mp4`, filename, fileMimeType, res);
+          const downloadVideo = await downloadUploadedVideo(`./media/video/${filename}.mp4`, filename, fileMimeType);
+          if (downloadVideo.message == "initializing") {
+            const checkDownloadResponse = setInterval(function(){ 
+              const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
+              if (getDownloadResponse !== undefined) {
+                if (getDownloadResponse.message !== undefined) {
+                  if (getDownloadResponse.message !== "initializing") {
+                    clearInterval(checkDownloadResponse);
+                    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+                    res.json(getDownloadResponse.message);
+                  }  
+                } else {
+                  clearInterval(checkDownloadResponse);
+                  ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
+                  res.json("response-not-found");
+                }
+              } else {
+                clearInterval(checkDownloadResponse);
+                res.json("response-not-found");
+              }
+            }, 50); 
+          } else {
+            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
+            if (downloadVideo.message !== undefined) {
+              res.json(downloadVideo.message);
+            } else {
+              res.json(downloadVideo);
+            }
+          }
         }
       });
     }
@@ -31,13 +60,12 @@ function uploadVideoFile(req, res) {
 }
 
 // download full video
-async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
+async function downloadUploadedVideo(videofile, fileName, fileMimeType) {
   const command = new ffmpeg(); 
   const compressUploadedVideo = userSettings.checkIfVideoCompress("downloadUploadedVideo");
   const filepath = "media/video/"; 
   const fileType = ".mp4";
   const newFilePath = `${filepath}${fileName}/`;
-  const path = newFilePath+fileName+fileType; 
   const videoDetails = await videoData.findVideosByID(fileName);
   const ffmpegAvaiable = ffmpegPath.checkIfFFmpegFFprobeExits();
   if (ffmpegAvaiable == "ffmpeg-ffprobe-exits") {  
@@ -45,137 +73,222 @@ async function downloadUploadedVideo(videofile, fileName, fileMimeType, res) {
       if (!FileSystem.existsSync(`${filepath}${fileName}/`)){
           FileSystem.mkdirSync(`${filepath}${fileName}/`);
       }
+      ffmpegDownloadResponse.updateDownloadResponse([fileName], {
+          "fileName": fileName,
+          "message": "initializing"
+      });
       command.addInput(videofile)
-        .on("start", function() {  
-          res.json("downloading-uploaded-video");
-          videoData.updateVideoData([`${fileName}`], {
-            video:{
-              originalVideoSrc : "unknown",
-              originalVideoType : fileMimeType,
-              download : "starting uploaded video download"
+        .on("start", function() { 
+          const startDownload = start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVideo);
+          if (startDownload == "start download") {
+            if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "downloading-uploaded-video");
             }
-          });
-          
-          if (compressUploadedVideo) { // addition of compress video data
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-              video : { 
-                "download-status" : "starting uploaded video download"
-              },
-              compression : { 
-                "download-status" : "waiting for video"
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            });
           } else {
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-              video : { 
-                "download-status" : "starting uploaded video download"
-              },
-              thumbnail : { 
-                "download-status" : "waiting for video"
-              } 
-            });
+              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+              }
+              ffmpegPath.SIGKILL(command);
+              deleteData.deleteAllVideoData(fileName);
+              deleteData.delete_video_with_provided_path(videofile, fileName);
           }
-
         })
         .on("progress", function(data) { 
-          console.log("progress", data);
-
-          videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
-
-          if(data.percent < 0){ 
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
-          }else{
-            try {
-              currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
-            } catch (error) {
-              currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
-            }
-          }           
+          progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUploadedVideo);
         })
         .on("end", function() { 
-          /// encoding is complete, so callback or move on at this point
-          if (compressUploadedVideo) { // addition of compress video data
-            videoData.updateVideoData([`${fileName}`], {
-              video: {
-                originalVideoSrc : videofile,
-                originalVideoType: fileMimeType,
-                path: newFilePath+fileName+fileType,
-                videoType : "video/mp4",
-                download : "completed",
-              },
-              compression : {
-                download: "starting"
-              },
-              thumbnail: {
-                path: {},
-                download: "starting"
-              }
-            });
-          } else {
-            videoData.updateVideoData([`${fileName}`], {
-              video: {
-                originalVideoSrc : videofile,
-                originalVideoType: fileMimeType,
-                path: newFilePath+fileName+fileType,
-                videoType : "video/mp4",
-                download : "completed",
-              },
-              thumbnail: {
-                path: {},
-                download: "starting"
-              }
-            });
-          }
-
-          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "completed");
-          if (compressUploadedVideo) { // addition of compress video data
-            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "compression", "download-status"], "starting video compression");              
-          }
-          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "thumbnail", "download-status"], "starting thumbnail download"); 
-
-          console.log("Video Transcoding succeeded !");
+          end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo);
+          const path = newFilePath+fileName+fileType; 
           if (compressUploadedVideo) { // compress video
             ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
           }
           ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
-
           deleteData.delete_video_with_provided_path(videofile, fileName);
         })
         .on("error", function(error) {
-          /// error handling
           console.log(`Encoding Error: ${error.message}`);
           if (error.message === "Cannot find ffmpeg") {
-            deleteData.delete_video_with_provided_path(videofile, fileName);
-            // delete created folder
-            FileSystem.rmdir(`${newFilePath}`, { recursive: true }, (err) => {
-              if (err) throw err;
-              console.log(`\n removed ${newFilePath} dir \n`);
-            });
-            res.json("Cannot-find-ffmpeg");
+              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "Cannot-find-ffmpeg");
+              }
           } else {
-            // there could be diffrent types of errors that exists and some may contain content in the newly created path
-            // due to the uncertainty of what errors may happen i have decided to not delete the newly created path untill further notice
-            deleteData.delete_video_with_provided_path(videofile, fileName);
-            res.json("ffmpeg-failed");
+              if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+                  ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "ffmpeg-failed");
+              }
           }
+          deleteData.deleteAllVideoData(fileName);
+          deleteData.delete_video_with_provided_path(videofile, fileName);
         })
         .outputOptions(["-s hd720", "-bsf:a aac_adtstoasc",  "-vsync 1", "-vcodec copy", "-c copy", "-crf 50"])
         .output(`${newFilePath}${fileName}${fileType}`)
         .run();
-      } else { 
-        console.log("videoDetails already exists");
-      }   
+      return {
+          "fileName": fileName,
+          "message": "initializing"
+      };
+    } else { 
+      return {
+        "message": "videoDetails already exists"
+      };
+    }   
   } else {
     deleteData.delete_video_with_provided_path(videofile, fileName);
-    res.json(ffmpegAvaiable);
+    return {
+        "message": ffmpegAvaiable
+    };
   }
 }
 
+function start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVideo) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if (typeof fileMimeType !== "string") {
+      return "fileMimeType not string";
+  } else {
+    videoData.updateVideoData([`${fileName}`], {
+      video:{
+        originalVideoSrc : "unknown",
+        originalVideoType : fileMimeType,
+        download : "starting uploaded video download"
+      }
+    });
+    if (compressUploadedVideo) { // addition of compress video data
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+        video : { 
+          "download-status" : "starting uploaded video download"
+        },
+        compression : { 
+          "download-status" : "waiting for video"
+        },
+        thumbnail : { 
+          "download-status" : "waiting for video"
+        } 
+      });
+    } else {
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+        video : { 
+          "download-status" : "starting uploaded video download"
+        },
+        thumbnail : { 
+          "download-status" : "waiting for video"
+        } 
+      });
+    }
+    return "start download"; 
+  }
+}
+
+function progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUploadedVideo) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if (typeof data !== "object") {
+      return "invalid data";
+  } else  if (typeof data.percent !== "number") { 
+      return "invalid data.percent";
+  } else {
+    if (videoData.getVideoData([`${fileName}`, "video", "download"]) !== undefined 
+    && currentDownloadVideos.getCurrentDownloads([`${fileName}`, "video", "download-status"]) !== undefined) {
+      videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
+      if(data.percent < 0){ 
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
+      } else{
+        try {
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
+        } catch (error) {
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+        }
+      }  
+    } else {
+      const start_response = start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVideo);
+      if (start_response == "start download") {
+        videoData.updateVideoData([`${fileName}`, "video", "download"], data.percent);
+        if(data.percent < 0){ 
+          currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], "0.00%");
+        } else{
+          try {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent.toFixed(2)}%`);
+          } catch (error) {
+            currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`, "video", "download-status"], `${data.percent}%`);
+          }
+        }    
+      } else {
+        return start_response;
+      }
+    }
+  }
+}
+
+function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo) {
+  if (fileName === undefined) {
+    return "fileName undefined";
+  } else if(typeof newFilePath !== "string") {
+      return "newFilePath not string";
+  } else if(typeof fileType !== "string") {
+      return "fileType not string";
+  } else if (typeof videofile !== "string") {
+      return "videofile not string";
+  } else if (typeof fileMimeType !== "string") {
+      return "fileMimeType not string";
+  } else {
+    if (compressUploadedVideo) { // addition of compress video data
+      videoData.updateVideoData([`${fileName}`], {
+        video: {
+          originalVideoSrc : videofile,
+          originalVideoType: fileMimeType,
+          path: newFilePath+fileName+fileType,
+          videoType : "video/mp4",
+          download : "completed",
+        },
+        compression : {
+          download: "starting"
+        },
+        thumbnail: {
+          path: {},
+          download: "starting"
+        }
+      });
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+          video : { 
+              "download-status" : "completed"
+          },
+          compression : { 
+              "download-status" : "starting video compression"
+          },
+          thumbnail : { 
+              "download-status" : "starting thumbnail download"
+          } 
+      });
+    } else {
+      videoData.updateVideoData([`${fileName}`], {
+        video: {
+          originalVideoSrc : videofile,
+          originalVideoType: fileMimeType,
+          path: newFilePath+fileName+fileType,
+          videoType : "video/mp4",
+          download : "completed",
+        },
+        thumbnail: {
+          path: {},
+          download: "starting"
+        }
+      });
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+          video : { 
+              "download-status" : "completed"
+          },
+          thumbnail : { 
+              "download-status" : "starting thumbnail download"
+          } 
+      });
+    }
+    return "end download";
+  }
+}
 module.exports = { // export modules
   uploadVideoFile,
-  downloadUploadedVideo
+  downloadUploadedVideo,
+  start_downloadUploadedVideo,
+  progress_downloadUploadedVideo,
+  end_downloadUploadedVideo
 };
   
