@@ -53,13 +53,13 @@ describe("favicon", () =>  {
     }); 
 }); 
 
-describe("SearchableVideoDataArray_push", () =>  {    
+describe("pushDataToSearchableVideoDataArray", () =>  {    
     afterAll(() => {   
-        basic.SearchableVideoDataArray_reset(); 
+        basic.resetSearchableVideoDataArray(); 
     });
 
     it("push", () =>  { 
-        const updated = basic.SearchableVideoDataArray_push({
+        const updated = basic.pushDataToSearchableVideoDataArray({
             "info": {
                 "title": "e615e458-855d-44d3-b686-d82f82a43f27",
                 "videoLink": {
@@ -91,9 +91,9 @@ describe("SearchableVideoDataArray_push", () =>  {
     }); 
 }); 
 
-describe("SearchableVideoDataArray_reset", () =>  {    
+describe("resetSearchableVideoDataArray", () =>  {    
     it("reset", () =>  { 
-        const reset = basic.SearchableVideoDataArray_reset();     
+        const reset = basic.resetSearchableVideoDataArray();     
         expect(reset).toBe("reset SearchableVideoDataArray");    
         const searchableVideoDataArray = basic.searchableVideoDataArray;   
         expect(searchableVideoDataArray).toBeDefined();     
@@ -102,12 +102,12 @@ describe("SearchableVideoDataArray_reset", () =>  {
     }); 
 }); 
 
-describe("searchableVideoDataArray_move", () =>  {   
+describe("searchableVideoDataArray_move_before", () =>  {   
     const from_id = "id1";
     const to_id = "id2";
     
     beforeAll(() => {     
-        basic.SearchableVideoDataArray_push({
+        basic.pushDataToSearchableVideoDataArray({
             "info": {
                 "title": "We the best",
                 "videoLink": {
@@ -127,7 +127,7 @@ describe("searchableVideoDataArray_move", () =>  {
                 "id": `${from_id}`
             }
         });
-        basic.SearchableVideoDataArray_push({ 
+        basic.pushDataToSearchableVideoDataArray({ 
             "info": {
                 "title": "2",
                 "videoLink": {
@@ -151,47 +151,142 @@ describe("searchableVideoDataArray_move", () =>  {
     });
 
     afterAll(() => {   
-        basic.SearchableVideoDataArray_reset(); 
+        basic.resetSearchableVideoDataArray(); 
     });
 
     it("from_id && to_id undefined", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move(undefined, undefined);   
+        const moveFromTo = basic.searchableVideoDataArray_move_before(undefined, undefined);   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("from_id && to_id undefined");   
     }); 
     
     it("from_id undefined", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move(undefined, "invaldID2");   
+        const moveFromTo = basic.searchableVideoDataArray_move_before(undefined, "invaldID2");   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("from_id undefined");   
     });  
 
     it("to_id undefined", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move("invaldID1", undefined);   
+        const moveFromTo = basic.searchableVideoDataArray_move_before("invaldID1", undefined);   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("to_id undefined");   
     });
 
     it("from_id && to_id index not found", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move("invaldID1", "invaldID2");   
+        const moveFromTo = basic.searchableVideoDataArray_move_before("invaldID1", "invaldID2");   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("invaldID1 && invaldID2 index not found");   
     }); 
 
     it("from_id index not found", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move("invaldID1", to_id);   
+        const moveFromTo = basic.searchableVideoDataArray_move_before("invaldID1", to_id);   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("invaldID1 index not found");   
     }); 
 
     it("to_id index not found", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move(from_id, "invaldID2");   
+        const moveFromTo = basic.searchableVideoDataArray_move_before(from_id, "invaldID2");   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("invaldID2 index not found");   
     });
     
     it("searchableVideoDataArray updated successfully", () =>  { 
-        const moveFromTo = basic.searchableVideoDataArray_move("id1", "id2");   
+        const moveFromTo = basic.searchableVideoDataArray_move_before("id1", "id2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("searchableVideoDataArray updated successfully");   
+    }); 
+}); 
+
+describe("searchableVideoDataArray_move_after", () =>  {   
+    const from_id = "id1";
+    const to_id = "id2";
+    
+    beforeAll(() => {     
+        basic.pushDataToSearchableVideoDataArray({
+            "info": {
+                "title": "We the best",
+                "videoLink": {
+                    "src": "/video/e615e458-855d-44d3-b686-d82f82a43f27",
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/1",
+                    "2": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/2",
+                    "3": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/3",
+                    "4": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/4",
+                    "5": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/5",
+                    "6": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/6",
+                    "7": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/7",
+                    "8": "/thumbnail/e615e458-855d-44d3-b686-d82f82a43f27/8"
+                },
+                "id": `${from_id}`
+            }
+        });
+        basic.pushDataToSearchableVideoDataArray({ 
+            "info": {
+                "title": "2",
+                "videoLink": {
+                    "src": "/video/77645385-e704-4c16-948a-f9284503dee9",
+                    "type": "video/mp4"
+                },
+                "thumbnailLink": {
+                    "1": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/1",
+                    "2": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/2",
+                    "3": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/3",
+                    "4": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/4",
+                    "5": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/5",
+                    "6": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/6",
+                    "7": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/7",
+                    "8": "/thumbnail/77645385-e704-4c16-948a-f9284503dee9/8"
+                },
+                "id": `${to_id}`
+            } 
+        });
+     
+    });
+
+    afterAll(() => {   
+        basic.resetSearchableVideoDataArray(); 
+    });
+
+    it("from_id && to_id undefined", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after(undefined, undefined);   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("from_id && to_id undefined");   
+    }); 
+    
+    it("from_id undefined", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after(undefined, "invaldID2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("from_id undefined");   
+    });  
+
+    it("to_id undefined", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after("invaldID1", undefined);   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("to_id undefined");   
+    });
+
+    it("from_id && to_id index not found", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after("invaldID1", "invaldID2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("invaldID1 && invaldID2 index not found");   
+    }); 
+
+    it("from_id index not found", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after("invaldID1", to_id);   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("invaldID1 index not found");   
+    }); 
+
+    it("to_id index not found", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after(from_id, "invaldID2");   
+        expect(moveFromTo).toBeDefined();        
+        expect(moveFromTo).toBe("invaldID2 index not found");   
+    });
+    
+    it("searchableVideoDataArray updated successfully", () =>  { 
+        const moveFromTo = basic.searchableVideoDataArray_move_after("id1", "id2");   
         expect(moveFromTo).toBeDefined();        
         expect(moveFromTo).toBe("searchableVideoDataArray updated successfully");   
     }); 

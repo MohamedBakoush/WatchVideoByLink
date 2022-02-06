@@ -116,30 +116,6 @@ describe("stopDownloadVideoStream", () =>  {
         expect(stopDownloadVideoStream).toBe("fileNameID undefined");     
     }); 
     
-    it("stoped video stream download", async () =>  { 
-        global.fetch = jest.fn().mockImplementation(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => "stoped video stream download"  
-            })
-        );  
-        const stopDownloadVideoStream = await videoPlayerButtons.stopDownloadVideoStream();   
-        expect(stopDownloadVideoStream).toBeDefined();       
-        expect(stopDownloadVideoStream).toBe("stoped video stream download");     
-    });  
-
-    it("videoDetails dosnet exists", async () =>  {  
-        global.fetch = jest.fn().mockImplementation(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => "videoDetails dosnet exists"  
-            })
-        );  
-        const stopDownloadVideoStream = await videoPlayerButtons.stopDownloadVideoStream();   
-        expect(stopDownloadVideoStream).toBeDefined();       
-        expect(stopDownloadVideoStream).toBe("videoDetails dosnet exists");     
-    });  
-
     it("stop video stream download failed", async () =>  {  
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({

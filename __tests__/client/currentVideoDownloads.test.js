@@ -623,7 +623,7 @@ describe("deleteVideoDataPermanently", () =>  {
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
-                json: () => `video-id-${videoID}-data-permanently-deleted`  
+                json: () => `deleted-${videoID}-permanently`  
             })
         );
     });
