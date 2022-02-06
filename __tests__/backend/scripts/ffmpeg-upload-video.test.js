@@ -39,3 +39,120 @@ describe("downloadUploadedVideo", () =>  {
     });    
 });
 
+describe("start_downloadUploadedVideo", () =>  {   
+    it("No Input", () =>  {
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo();
+        expect(start).toBe("fileName undefined");
+    });   
+
+    it("fileName undefined", () =>  {
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(undefined);
+        expect(start).toBe("fileName undefined");
+    });  
+
+    it("valid fileName", () =>  {
+        const fileName = uuidv4();
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName);
+        expect(start).toBe("fileMimeType not string");
+    });  
+
+    it("valid fileName, valid fileMimeType", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName, fileMimeType);
+        expect(start).toBe("start download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "starting uploaded video download"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+        });
+        // check curret download 
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : "starting uploaded video download"
+            }
+        });
+    });   
+
+    it("valid fileName, valid fileMimeType, compressUploadedVideo undefined", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName, fileMimeType, undefined);
+        expect(start).toBe("start download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "starting uploaded video download"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : "starting uploaded video download"
+            }
+        });
+    });  
+
+    it("valid fileName, valid fileMimeType, compressUploadedVideo false", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName, fileMimeType, false);
+        expect(start).toBe("start download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "starting uploaded video download"
+              },
+              thumbnail : { 
+                "download-status" : "waiting for video"
+              } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : "starting uploaded video download"
+            }
+        });
+    });  
+
+    it("valid fileName, valid fileMimeTypem, compressUploadedVideo true", () =>  {
+        const fileName = uuidv4();
+        const fileMimeType = "video/mp4";
+        const start = ffmpegUploadVideo.start_downloadUploadedVideo(fileName, fileMimeType, true);
+        expect(start).toBe("start download");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "starting uploaded video download"
+            },
+            compression : { 
+                "download-status" : "waiting for video"
+            },
+            thumbnail : { 
+                "download-status" : "waiting for video"
+             } 
+        });
+        const getVideoData = dataVideos.getVideoData([fileName]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "unknown",
+                originalVideoType : fileMimeType,
+                download : "starting uploaded video download"
+            }
+        });
+    });  
+}); 

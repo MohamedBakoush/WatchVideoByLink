@@ -113,7 +113,7 @@ async function downloadUploadedVideo(videofile, fileMimeType, uploadedFilename) 
           .on("end", function() { 
             end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo);
             const path = newFilePath+fileName+fileType; 
-            if (compressUploadedVideo) { // compress video
+            if (compressUploadedVideo === true) {
               ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
             }
             ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
@@ -165,7 +165,7 @@ function start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVid
         download : "starting uploaded video download"
       }
     });
-    if (compressUploadedVideo) { // addition of compress video data
+    if (compressUploadedVideo === true) {
       currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
         video : { 
           "download-status" : "starting uploaded video download"
@@ -243,7 +243,7 @@ function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, f
   } else if (typeof fileMimeType !== "string") {
       return "fileMimeType not string";
   } else {
-    if (compressUploadedVideo) { // addition of compress video data
+    if (compressUploadedVideo === true) {
       videoData.updateVideoData([`${fileName}`], {
         video: {
           originalVideoSrc : videofile,

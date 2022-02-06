@@ -61,7 +61,7 @@ async function trimVideo(videoSrc, videoType, newStartTime, newEndTime) {
                     .on("end", function() {
                         end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, newStartTime, newEndTime, compressTrimedVideo);
                         const path = newFilePath+fileName+fileType;
-                        if (compressTrimedVideo) { // compress video
+                        if (compressTrimedVideo === true) { // compress video
                             ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
                         }
                         ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
@@ -120,7 +120,7 @@ function start_trimVideo(fileName, videoSrc, videoType, newStartTime, newEndTime
             }
         });
         
-        if (compressTrimedVideo) { // addition of compress video data
+        if (compressTrimedVideo === true) { // addition of compress video data
                 currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
                 video : { 
                     "download-status" : "starting trim video download"
@@ -203,7 +203,7 @@ function end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, new
     } else if (isNaN(newEndTime)) {
         return "newEndTime not number";
     } else {
-        if (compressTrimedVideo) { // addition of compress video data
+        if (compressTrimedVideo === true) { // addition of compress video data
             videoData.updateVideoData([`${fileName}`], {
                 video: {
                     originalVideoSrc: videoSrc,

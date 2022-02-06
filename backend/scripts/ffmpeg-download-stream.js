@@ -119,7 +119,7 @@ async function downloadVideoStream(videoSrc, videoType) {
                     .on("end", function() { // encoding is complete
                         end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, videoType, compressVideoStream);
                         const path = newFilePath+fileName+fileType;
-                        if (compressVideoStream) { // compress video
+                        if (compressVideoStream === true) { // compress video
                             ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
                         }
                         ffmpegImageDownload.createThumbnail(path, newFilePath, fileName);
@@ -170,7 +170,7 @@ function start_downloadVideoStream(fileName, videoSrc, videoType, compressVideoS
                 download : "starting stream download"
             }
         });
-        if (compressVideoStream) { // addition of compress video data
+        if (compressVideoStream === true) { // addition of compress video data
             currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
                 video : { 
                     "download-status" : "starting stream download"
@@ -240,7 +240,7 @@ function end_downloadVideoStream(fileName, newFilePath, fileType, videoSrc, vide
     } else if(typeof videoType !== "string") {
         return "videoType not string";
     } else {
-        if (compressVideoStream) { // addition of compress video data
+        if (compressVideoStream === true) { // addition of compress video data
             videoData.updateVideoData([`${fileName}`], {
                 video : {
                     originalVideoSrc : videoSrc,
