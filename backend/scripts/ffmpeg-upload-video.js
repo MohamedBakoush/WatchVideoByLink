@@ -13,49 +13,55 @@ const ffmpegPath = require("./ffmpeg-path");
 
 // upload video file to ./media/video then downoald file
 function uploadVideoFile(req, res) {
-  if(req.files) {
+  if (req.files == undefined) { 
+    res.json("invalid-files"); 
+  } else if (req.files.file == undefined) {
+    res.json("invalid-files.file"); 
+  } else if (req.files.file.truncated == undefined) {
+    res.json("invalid-files.file.truncated"); 
+  } else if(req.files.file.truncated){ 
+    res.json("video-size-over-size-limit"); 
+  } else {
     const file = req.files.file;
-    const uploadedFilename = `uploaded-${uuidv4()}`;
     const fileMimeType = req.files.file.mimetype; 
-    if(req.files.file.truncated){  // file size greater then limit
-      res.json("video-size-over-size-limit"); 
-    } else { // file size smaller then limit
-      file.mv(`./media/video/${uploadedFilename}.mp4`, async function(err){
-        if (err) { 
-          res.send("error-has-accured");
-        } else { 
-          const downloadVideo = await downloadUploadedVideo(`./media/video/${uploadedFilename}.mp4`, fileMimeType, uploadedFilename);
-          if (downloadVideo.message == "initializing") {
-            const checkDownloadResponse = setInterval(function(){ 
-              const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
-              if (getDownloadResponse !== undefined) {
-                if (getDownloadResponse.message !== undefined) {
-                  if (getDownloadResponse.message !== "initializing") {
-                    clearInterval(checkDownloadResponse);
-                    ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-                    res.json(getDownloadResponse.message);
-                  }  
-                } else {
+    const uploadedFilename = `uploaded-${uuidv4()}`;
+    const videofile = `./media/video/${uploadedFilename}.mp4`;
+    file.mv(videofile, async function(err){
+      if (err) { 
+        deleteData.delete_video_with_provided_path(videofile, uploadedFilename);
+        res.send("error-has-accured");
+      } else { 
+        const downloadVideo = await downloadUploadedVideo(videofile, fileMimeType, uploadedFilename);
+        if (downloadVideo.message == "initializing") {
+          const checkDownloadResponse = setInterval(function(){ 
+            const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
+            if (getDownloadResponse !== undefined) {
+              if (getDownloadResponse.message !== undefined) {
+                if (getDownloadResponse.message !== "initializing") {
                   clearInterval(checkDownloadResponse);
                   ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
-                  res.json("response-not-found");
-                }
+                  res.json(getDownloadResponse.message);
+                }  
               } else {
                 clearInterval(checkDownloadResponse);
+                ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(getDownloadResponse.fileName);
                 res.json("response-not-found");
               }
-            }, 50); 
-          } else {
-            ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
-            if (downloadVideo.message !== undefined) {
-              res.json(downloadVideo.message);
             } else {
-              res.json(downloadVideo);
+              clearInterval(checkDownloadResponse);
+              res.json("response-not-found");
             }
+          }, 50); 
+        } else {
+          ffmpegDownloadResponse.deleteSpecifiedDownloadResponse(downloadVideo.fileName);
+          if (downloadVideo.message !== undefined) {
+            res.json(downloadVideo.message);
+          } else {
+            res.json(downloadVideo);
           }
         }
-      });
-    }
+      }
+    });
   }
 }
 
