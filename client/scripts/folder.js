@@ -97,7 +97,7 @@ export function createFolderOnClick() {
     const create_folder_form = basic.createSection(create_folder_article, "form");
 
     const create_folder_form_title = basic.createSection(create_folder_form, "section");
-    basic.createSection(create_folder_form_title, "h2", "create-folder-form-title", undefined, "Create folder");
+    basic.createSection(create_folder_form_title, "h2", "create-folder-form-title", undefined, "Create Folder");
 
     const create_folder_title_edit_settings_container = basic.createSection(create_folder_form, "section");
     const create_folder_title_edit_settings_ul = basic.createSection(create_folder_title_edit_settings_container, "ul");
@@ -109,14 +109,14 @@ export function createFolderOnClick() {
     create_folder_title_edit_content_input.placeholder = "Folder Name"; 
     create_folder_title_edit_content_input.focus();
 
-    const create_folder_title_edit_button_container = basic.createSection(create_folder_title_edit_settings_container, "section", "createFolderTitleEditButtonsContainer");
-    const create = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Create");  
+    const create_folder_buttons_container = basic.createSection(create_folder_title_edit_settings_container, "section", "createFolderButtonsContainer");
+    const create = basic.createSection(create_folder_buttons_container, "button", "button createFolderButton", undefined, "Create");  
     create.onclick = function(){   
         createFolder(document.getElementById("savedVideosThumbnailContainer"), create_folder_title_edit_content_input.value);
         document.body.style.removeProperty("overflow");
         create_folder_container.remove();
     };
-    const cancelCreateFolder = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Cancel");
+    const cancelCreateFolder = basic.createSection(create_folder_buttons_container, "button", "button cancelCreateFolderButton", undefined, "Cancel");
     cancelCreateFolder.onclick = function(){
         document.body.style.removeProperty("overflow");
         create_folder_container.remove();
