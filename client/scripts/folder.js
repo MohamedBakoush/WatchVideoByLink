@@ -97,7 +97,7 @@ export function createFolderOnClick() {
     const create_folder_form = basic.createSection(create_folder_article, "form");
 
     const create_folder_form_title = basic.createSection(create_folder_form, "section");
-    basic.createSection(create_folder_form_title, "h2", "create-folder-form-title", undefined, "Create folder");
+    basic.createSection(create_folder_form_title, "h2", "create-folder-form-title", undefined, "Create Folder");
 
     const create_folder_title_edit_settings_container = basic.createSection(create_folder_form, "section");
     const create_folder_title_edit_settings_ul = basic.createSection(create_folder_title_edit_settings_container, "ul");
