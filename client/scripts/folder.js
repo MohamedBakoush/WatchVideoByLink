@@ -109,14 +109,14 @@ export function createFolderOnClick() {
     create_folder_title_edit_content_input.placeholder = "Folder Name"; 
     create_folder_title_edit_content_input.focus();
 
-    const create_folder_title_edit_button_container = basic.createSection(create_folder_title_edit_settings_container, "section", "createFolderTitleEditButtonsContainer");
-    const create = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Create");  
+    const create_folder_buttons_container = basic.createSection(create_folder_title_edit_settings_container, "section", "createFolderButtonsContainer");
+    const create = basic.createSection(create_folder_buttons_container, "button", "button createFolderButton", undefined, "Create");  
     create.onclick = function(){   
         createFolder(document.getElementById("savedVideosThumbnailContainer"), create_folder_title_edit_content_input.value);
         document.body.style.removeProperty("overflow");
         create_folder_container.remove();
     };
-    const cancelCreateFolder = basic.createSection(create_folder_title_edit_button_container, "button", "createFolderTitleEditButton", undefined, "Cancel");
+    const cancelCreateFolder = basic.createSection(create_folder_buttons_container, "button", "button cancelCreateFolderButton", undefined, "Cancel");
     cancelCreateFolder.onclick = function(){
         document.body.style.removeProperty("overflow");
         create_folder_container.remove();
