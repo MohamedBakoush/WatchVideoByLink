@@ -15,6 +15,11 @@ async function getVideoLinkFromUrl(url) {
     });
     const options = {
       dumpSingleJson: true,
+      noWarnings: true,
+      noCallHome: true,
+      noCheckCertificate: true,
+      preferFreeFormats: true,
+      youtubeSkipDashManifest: true,
       skipDownload: true,
       referer: url
     };
