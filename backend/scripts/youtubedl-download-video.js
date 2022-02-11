@@ -1,6 +1,6 @@
 "use strict";
 const { v4: uuidv4 } = require("uuid");
-const youtubedl = require("youtube-dl");
+const youtube_dl = require("youtube-dl-exec");
 const ffmpegDownloadResponse = require("./ffmpeg-download-response");
 
 // using youtube-dl it converts url link to video type and video src
@@ -14,9 +14,12 @@ async function getVideoLinkFromUrl(url) {
       "message": "initializing"
     });
     try {
-      // Optional arguments passed to youtube-dl.
-      const options = ["--skip-download"];
-      youtubedl.getInfo(url, options, function(err, info) {
+      const options = {
+        dumpSingleJson: true,
+        skipDownload: true,
+        referer: url
+      };
+      youtube_dl(url, options).then((info) => {  
         const youtubedl_info = youtubedl_get_Info(info, url);
         if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
           ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], youtubedl_info);
@@ -44,27 +47,32 @@ async function getVideoLinkFromUrl(url) {
 function youtubedl_get_Info(info, url) {
   if (typeof info !== "object") {
     return "info not object";
-  } else if (typeof info.protocol !== "string") {
-    return "info.protocol not string";
-  } else if (typeof info.url !== "string") {
-    return "info.url not string";
+  } else if (typeof info.formats !== "object") {
+    return "info.formats not string";
+  } else if (isNaN(info.formats.length)) {
+    return "info.formats.length not number";
   } else if (typeof url !== "string") {
     return "url not string";
   } else {
     let videoFileFormat, videoUrlLink;
-    if (info.protocol == "https" || info.protocol == "http") {
-      videoUrlLink = info.url;
-      videoFileFormat = "video/mp4";
-    } else if (info.protocol == "m3u8") {
-      videoUrlLink = info.url;
-      videoFileFormat = "application/x-mpegURL";
-    } else if (info.protocol == "http_dash_segments") {
-      videoUrlLink = info.url;
-      videoFileFormat = "application/dash+xml";
-    } else {
-      videoUrlLink = "not-supported";
-      videoFileFormat = "not-supported";
-    }
+    for (let i = (info.formats.length - 1); i >= 0; i--) {
+      if (info.formats[i].protocol == "https" || info.formats[i].protocol == "http") {
+        videoUrlLink = info.formats[i].url;
+        videoFileFormat = "video/mp4";
+        break; 
+      } else if (info.formats[i].protocol == "m3u8") {
+        videoUrlLink = info.formats[i].url;
+        videoFileFormat = "application/x-mpegURL";
+        break; 
+      } else if (info.formats[i].protocol == "http_dash_segments") {
+        videoUrlLink = info.formats[i].url;
+        videoFileFormat = "application/dash+xml";
+        break; 
+      } else {
+        videoUrlLink = "not-supported";
+        videoFileFormat = "not-supported";
+      }
+    }  
     if (videoUrlLink !== "not-supported" || videoFileFormat !== "not-supported") {
       return {
         input_url_link: url,
