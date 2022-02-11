@@ -13,31 +13,25 @@ async function getVideoLinkFromUrl(url) {
       "fileName": fileName,
       "message": "initializing"
     });
-    try {
-      const options = {
-        dumpSingleJson: true,
-        skipDownload: true,
-        referer: url
-      };
-      youtube_dl(url, options).then((info) => {  
-        const youtubedl_info = youtubedl_get_Info(info, url);
-        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-          ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], youtubedl_info);
-        }
-      });
-      return {
-          "fileName": fileName,
-          "message": "initializing"
-      };
-    } catch (e) {
+    const options = {
+      dumpSingleJson: true,
+      skipDownload: true,
+      referer: url
+    };
+    youtube_dl(url, options).then((info) => {  
+      const youtubedl_info = youtubedl_get_Info(info, url);
+      if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], youtubedl_info);
+      }
+    }).catch(() => {
       if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
           ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "failed-get-video-url-from-provided-url");
       } 
-      return {
+    });
+    return {
         "fileName": fileName,
-        "message": "failed-get-video-url-from-provided-url"
-      };
-    }
+        "message": "initializing"
+    };
   }
 }
 
