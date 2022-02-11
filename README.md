@@ -7,7 +7,7 @@ WatchVideoByLink is a web-app that allows you to watch, download and organize pu
 
 [**Why WatchVideoByLink?**](#why-watchvideobylink) |
 [**Installation**](#installation) |
-[**Contributing**](#contributing) |
+[**Community and Contributing**](#community-and-contributing) |
 [**License**](#license)
 
 ## Screenshots & Gifs
@@ -54,8 +54,10 @@ WatchVideoByLink provides:
 [Extended documentation for WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink)
 
 
-## Contributing
+## Community and Contributing
 WatchVideoByLink is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features. Check out [CONTRIBUTING.md](CONTRIBUTING.md) to find resources around contributing.
+
+ [Join our Discord](https://discord.gg/83NEXNrQmk)
 
 <hr/>
 
