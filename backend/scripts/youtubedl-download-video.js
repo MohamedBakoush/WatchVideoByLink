@@ -1,6 +1,6 @@
 "use strict";
 const { v4: uuidv4 } = require("uuid");
-const youtubedl = require("youtube-dl");
+const youtube_dl = require("youtube-dl-exec");
 const ffmpegDownloadResponse = require("./ffmpeg-download-response");
 
 // using youtube-dl it converts url link to video type and video src
@@ -13,28 +13,30 @@ async function getVideoLinkFromUrl(url) {
       "fileName": fileName,
       "message": "initializing"
     });
-    try {
-      // Optional arguments passed to youtube-dl.
-      const options = ["--skip-download"];
-      youtubedl.getInfo(url, options, function(err, info) {
-        const youtubedl_info = youtubedl_get_Info(info, url);
-        if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
-          ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], youtubedl_info);
-        }
-      });
-      return {
-          "fileName": fileName,
-          "message": "initializing"
-      };
-    } catch (e) {
+    const options = {
+      dumpSingleJson: true,
+      noWarnings: true,
+      noCallHome: true,
+      noCheckCertificate: true,
+      preferFreeFormats: true,
+      youtubeSkipDashManifest: true,
+      skipDownload: true,
+      referer: url
+    };
+    youtube_dl(url, options).then((info) => {  
+      const youtubedl_info = youtubedl_get_Info(info, url);
+      if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
+        ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], youtubedl_info);
+      }
+    }).catch(() => {
       if (ffmpegDownloadResponse.getDownloadResponse([fileName, "message"]) !== undefined) {
           ffmpegDownloadResponse.updateDownloadResponse([fileName, "message"], "failed-get-video-url-from-provided-url");
       } 
-      return {
+    });
+    return {
         "fileName": fileName,
-        "message": "failed-get-video-url-from-provided-url"
-      };
-    }
+        "message": "initializing"
+    };
   }
 }
 
@@ -44,27 +46,38 @@ async function getVideoLinkFromUrl(url) {
 function youtubedl_get_Info(info, url) {
   if (typeof info !== "object") {
     return "info not object";
-  } else if (typeof info.protocol !== "string") {
-    return "info.protocol not string";
-  } else if (typeof info.url !== "string") {
-    return "info.url not string";
+  } else if (info.formats == undefined) {
+    return "info.formats undefined";
+  } else if (!Array.isArray(info.formats)) {
+    return "info.formats not array";
+  } else if (info.formats.length == 0) {
+    return "info.formats empty";
   } else if (typeof url !== "string") {
     return "url not string";
   } else {
-    let videoFileFormat, videoUrlLink;
-    if (info.protocol == "https" || info.protocol == "http") {
-      videoUrlLink = info.url;
-      videoFileFormat = "video/mp4";
-    } else if (info.protocol == "m3u8") {
-      videoUrlLink = info.url;
-      videoFileFormat = "application/x-mpegURL";
-    } else if (info.protocol == "http_dash_segments") {
-      videoUrlLink = info.url;
-      videoFileFormat = "application/dash+xml";
-    } else {
-      videoUrlLink = "not-supported";
-      videoFileFormat = "not-supported";
-    }
+    let videoUrlLink = "not-supported";
+    let videoFileFormat = "not-supported";
+    for (let i = (info.formats.length - 1); i >= 0; i--) {
+      if (info.formats[i].url == undefined || info.formats[i].protocol == undefined) {
+        videoUrlLink = "not-supported";
+        videoFileFormat = "not-supported";
+      } else if (info.formats[i].protocol == "https" || info.formats[i].protocol == "http") {
+        videoUrlLink = info.formats[i].url;
+        videoFileFormat = "video/mp4";
+        break; 
+      } else if (info.formats[i].protocol == "m3u8") {
+        videoUrlLink = info.formats[i].url;
+        videoFileFormat = "application/x-mpegURL";
+        break; 
+      } else if (info.formats[i].protocol == "http_dash_segments") {
+        videoUrlLink = info.formats[i].url;
+        videoFileFormat = "application/dash+xml";
+        break; 
+      } else {
+        videoUrlLink = "not-supported";
+        videoFileFormat = "not-supported";
+      }
+    }  
     if (videoUrlLink !== "not-supported" || videoFileFormat !== "not-supported") {
       return {
         input_url_link: url,
