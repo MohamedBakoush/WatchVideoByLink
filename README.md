@@ -57,7 +57,7 @@ WatchVideoByLink provides:
 ## Community and Contributing
 WatchVideoByLink is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features. Check out [CONTRIBUTING.md](CONTRIBUTING.md) to find resources around contributing.
 
- [Join our Discord](https://discord.gg/83NEXNrQmk)
+ [Discord](https://discord.gg/83NEXNrQmk)
 
 <hr/>
 
