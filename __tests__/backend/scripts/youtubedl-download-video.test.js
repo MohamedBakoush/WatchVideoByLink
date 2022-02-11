@@ -52,30 +52,92 @@ describe("youtubedl_get_Info", () =>  {
     it("Info Object", () =>  {
         const info = {};
         const getInfo = youtubedl.youtubedl_get_Info(info);
-        expect(getInfo).toBe("info.protocol not string");  
+        expect(getInfo).toBe("info.formats undefined");  
     });
 
-    it("Info.Protocol String", () =>  {
+    it("Info.Formats Array", () =>  {
         const info = {
-            protocol : "https" 
+            formats : true
         };
         const getInfo = youtubedl.youtubedl_get_Info(info);
-        expect(getInfo).toBe("info.url not string");  
+        expect(getInfo).toBe("info.formats not array");  
     });
 
-    it("Info.url String", () =>  {
+    it("info.formats empty array", () =>  {
         const info = {
-            protocol : "https" ,
-            url : "http://localhost:8080/video.mp4" 
+            formats : []
+        };
+        const url = "http://localhost:8080/video";
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toBe("info.formats empty");  
+    });
+
+    it("URL not string", () =>  {
+        const info = {
+            formats : [{}]
         };
         const getInfo = youtubedl.youtubedl_get_Info(info);
         expect(getInfo).toBe("url not string");  
     });
 
+    it("Invalid formats: empty objects", () =>  {
+        const info = {
+            formats : [
+                {},
+                {}
+            ]
+        };
+        const url = "http://localhost:8080/video";
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toBe("failed-get-video-url-from-provided-url");  
+    });
+
+    it("Invalid formats: strings", () =>  {
+        const info = {
+            formats : [
+                "apple",
+                "bannana"
+            ]
+        };
+        const url = "http://localhost:8080/video";
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toBe("failed-get-video-url-from-provided-url");  
+    });
+
+    it("Invalid formats: protocol undefined, valid url", () =>  {
+        const info = {
+            formats : [
+                {
+                    url : "http://localhost:8080/video"
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video2";
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toBe("failed-get-video-url-from-provided-url");  
+    });
+
+    it("Invalid formats: valid protocol, url undefined", () =>  {
+        const info = {
+            formats : [
+                {
+                    protocol : "m3u8" 
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video2";
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toBe("failed-get-video-url-from-provided-url");  
+    });
+
     it("Protocol: Not Supported", () =>  {
         const info = {
-            protocol : "Invalid" ,
-            url : "http://localhost:8080/video1" 
+            formats : [
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video1" 
+                }
+            ]
         };
         const url = "http://localhost:8080/video2";
         const getInfo = youtubedl.youtubedl_get_Info(info, url);
@@ -84,56 +146,218 @@ describe("youtubedl_get_Info", () =>  {
 
     it("Protocol: https", () =>  {
         const info = {
-            protocol : "https" ,
-            url : "http://localhost:8080/video1.mp4" 
+            formats : [
+                {
+                    protocol : "https" ,
+                    url : "http://localhost:8080/video1.mp4" 
+                }
+            ]
         };
         const url = "http://localhost:8080/video2.mp4";
         const getInfo = youtubedl.youtubedl_get_Info(info, url);
         expect(getInfo).toMatchObject({
             input_url_link: url,
-            video_url: info.url,
+            video_url: info.formats[0].url,
             video_file_format: "video/mp4"
           });  
     });
 
     it("Protocol: http", () =>  {
         const info = {
-            protocol : "http" ,
-            url : "http://localhost:8080/video1.mp4" 
+            formats : [
+                {
+                    protocol : "http" ,
+                    url : "http://localhost:8080/video1.mp4" 
+                }
+            ]
         };
         const url = "http://localhost:8080/video2.mp4";
         const getInfo = youtubedl.youtubedl_get_Info(info, url);
         expect(getInfo).toMatchObject({
             input_url_link: url,
-            video_url: info.url,
+            video_url: info.formats[0].url,
             video_file_format: "video/mp4"
           });  
     });
 
     it("Protocol: m3u8", () =>  {
         const info = {
-            protocol : "m3u8" ,
-            url : "http://localhost:8080/video1.m3u8" 
+            formats : [
+                {
+                    protocol : "m3u8" ,
+                    url : "http://localhost:8080/video1.m3u8" 
+                }
+            ]
         };
         const url = "http://localhost:8080/video2.m3u8";
         const getInfo = youtubedl.youtubedl_get_Info(info, url);
         expect(getInfo).toMatchObject({
             input_url_link: url,
-            video_url: info.url,
+            video_url: info.formats[0].url,
             video_file_format: "application/x-mpegURL"
           });  
     });
 
     it("Protocol: http_dash_segments", () =>  {
         const info = {
-            protocol : "http_dash_segments" ,
-            url : "http://localhost:8080/video1.mpd" 
+            formats : [
+                {
+                    protocol : "http_dash_segments" ,
+                    url : "http://localhost:8080/video1.mpd" 
+                }
+            ]
         };
         const url = "http://localhost:8080/video2.mpd";
         const getInfo = youtubedl.youtubedl_get_Info(info, url);
         expect(getInfo).toMatchObject({
             input_url_link: url,
-            video_url: info.url,
+            video_url: info.formats[0].url,
+            video_file_format: "application/dash+xml"
+          });  
+    });
+
+    it("Muiltable formats options: Protocol Not Supported", () =>  {
+        const info = {
+            formats : [
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video1" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video2" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video3" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video4" 
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video" ;
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toBe("failed-get-video-url-from-provided-url");  
+    });
+
+    it("Muiltable formats options: Protocol: https", () =>  {
+        const info = {
+            formats : [
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video1" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video2" 
+                },
+                {
+                    protocol : "https" ,
+                    url : "http://localhost:8080/video3.mp4" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video4" 
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video.mp4" ;
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toMatchObject({
+            input_url_link: url,
+            video_url: info.formats[2].url,
+            video_file_format: "video/mp4"
+          });  
+    });
+
+    it("Muiltable formats options: Protocol: http", () =>  {
+        const info = {
+            formats : [
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video1" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video2" 
+                },
+                {
+                    protocol : "http" ,
+                    url : "http://localhost:8080/video3.mp4" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video4" 
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video.mp4" ;
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toMatchObject({
+            input_url_link: url,
+            video_url: info.formats[2].url,
+            video_file_format: "video/mp4"
+          });  
+    });
+
+    it("Muiltable formats options: Protocol: m3u8", () =>  {
+        const info = {
+            formats : [
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video1" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video2" 
+                },
+                {
+                    protocol : "m3u8" ,
+                    url : "http://localhost:8080/video3.m3u8" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video4" 
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video.m3u8" ;
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toMatchObject({
+            input_url_link: url,
+            video_url: info.formats[2].url,
+            video_file_format: "application/x-mpegURL"
+          });  
+    });
+
+    it("Muiltable formats options: Protocol: http_dash_segments", () =>  {
+        const info = {
+            formats : [
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video1" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video2" 
+                },
+                {
+                    protocol : "http_dash_segments" ,
+                    url : "http://localhost:8080/video3.mpd" 
+                },
+                {
+                    protocol : "Invalid" ,
+                    url : "http://localhost:8080/video4" 
+                }
+            ]
+        };
+        const url = "http://localhost:8080/video.mpd" ;
+        const getInfo = youtubedl.youtubedl_get_Info(info, url);
+        expect(getInfo).toMatchObject({
+            input_url_link: url,
+            video_url: info.formats[2].url,
             video_file_format: "application/dash+xml"
           });  
     });

@@ -41,16 +41,22 @@ async function getVideoLinkFromUrl(url) {
 function youtubedl_get_Info(info, url) {
   if (typeof info !== "object") {
     return "info not object";
-  } else if (typeof info.formats !== "object") {
-    return "info.formats not string";
-  } else if (isNaN(info.formats.length)) {
-    return "info.formats.length not number";
+  } else if (info.formats == undefined) {
+    return "info.formats undefined";
+  } else if (!Array.isArray(info.formats)) {
+    return "info.formats not array";
+  } else if (info.formats.length == 0) {
+    return "info.formats empty";
   } else if (typeof url !== "string") {
     return "url not string";
   } else {
-    let videoFileFormat, videoUrlLink;
+    let videoUrlLink = "not-supported";
+    let videoFileFormat = "not-supported";
     for (let i = (info.formats.length - 1); i >= 0; i--) {
-      if (info.formats[i].protocol == "https" || info.formats[i].protocol == "http") {
+      if (info.formats[i].url == undefined || info.formats[i].protocol == undefined) {
+        videoUrlLink = "not-supported";
+        videoFileFormat = "not-supported";
+      } else if (info.formats[i].protocol == "https" || info.formats[i].protocol == "http") {
         videoUrlLink = info.formats[i].url;
         videoFileFormat = "video/mp4";
         break; 
