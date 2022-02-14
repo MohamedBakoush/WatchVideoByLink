@@ -297,12 +297,12 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
         const renameBadVideoFile = setInterval(function(){ 
           FileSystem.rename(fileName_original_ending, `./media/video/${fileName}/delete_soon.mp4`, () => { 
             clearInterval(renameBadVideoFile); // stop interval
-            if (FileSystem.existsSync(`./media/video/${fileName}/delete_soon.mp4`) == true) { 
+            if (deleteData.check_if_file_exits(`./media/video/${fileName}/delete_soon.mp4`) == true) { 
               //file exists   
               const renameFixedVideoTillOrignialName = setInterval(function(){                        
                 FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  () => { 
                   clearInterval(renameFixedVideoTillOrignialName); // stop interval
-                  if (FileSystem.existsSync(fileName_original_ending)) {
+                  if (deleteData.check_if_file_exits(fileName_original_ending)) {
                     console.log(`\n rename ${fileName_fixed_ending} to ${fileName_original_ending} \n`);
                     /// encoding is complete, so callback or move on at this point
                     videoData.updateVideoData([`${fileName}`], {
