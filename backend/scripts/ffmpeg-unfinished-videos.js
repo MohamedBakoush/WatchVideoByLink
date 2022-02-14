@@ -238,15 +238,16 @@ function completeUnfinnishedVideoDownload(fileName){
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   const working_video_path = ffmpegPath.get_working_video_path();
+  const broken_video_path = `./media/video/${fileName}/${fileName}.mp4`;
   if(deleteData.check_if_file_exits(fileName_original_ending) == true){  
-    untrunc_exce(working_video_path, `./media/video/${fileName}/${fileName}.mp4`, () => {
+    untrunc_exce(working_video_path, broken_video_path, () => {
       downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
     });
   } else if(deleteData.check_if_file_exits(fileName_fixed_ending) == true){ 
     const renameFilePath = setInterval(function(){ 
       FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  () => { 
         clearInterval(renameFilePath);
-        untrunc_exce(working_video_path, `./media/video/${fileName}/${fileName}.mp4`, () => {
+        untrunc_exce(working_video_path, broken_video_path, () => {
           downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
         });
       });
