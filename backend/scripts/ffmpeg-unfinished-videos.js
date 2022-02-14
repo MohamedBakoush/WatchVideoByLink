@@ -332,13 +332,7 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
                     ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
                   }
 
-                  if(FileSystem.existsSync(`./media/video/${fileName}/delete_soon.mp4`) == true){
-                    FileSystem.unlink(`./media/video/${fileName}/delete_soon.mp4`, (err) => {
-                      if (err) throw err;
-                      console.log(`\n unlinked media/video/${fileName}/delete_soon.mp4 video file \n`);
-                    });
-                  }
-         
+                  deleteData.unlink_file(`./media/video/${fileName}/delete_soon.mp4`);
                   deleteData.unlink_file(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`);
                 });        
               }, 50);  
