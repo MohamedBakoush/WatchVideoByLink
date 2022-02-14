@@ -237,42 +237,41 @@ function completeUnfinnishedVideoDownload(fileName){
 
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
-  const untrunc_path = ffmpegPath.get_untrunc_path();
   const working_video_path = ffmpegPath.get_working_video_path();
   if(FileSystem.existsSync(fileName_original_ending) == true){  
-    exec(`${untrunc_path} ${working_video_path} ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
-          return;
-      }
-      console.log(`stdout: ${stdout}`);
-    }); 
+    untrunc_exce(working_video_path, `./media/video/${fileName}/${fileName}.mp4`, () => {
+      downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
+    });
   } else if(FileSystem.existsSync(fileName_fixed_ending) == true){ 
     const renameFilePath = setInterval(function(){ 
       FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  () => { 
         clearInterval(renameFilePath);
-        // if (err) throw err; 
-        exec(`${untrunc_path} ${working_video_path} ./media/video/${fileName}/${fileName}.mp4`, (error, stdout, stderr) => {
-          if (error) {
-              console.log(`error: ${error.message}`);
-              return;
-          }
-          if (stderr) {
-              console.log(`stderr: ${stderr}`);
-              downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
-              return;
-          }
-          console.log(`stdout: ${stdout}`);
-        }); 
+        untrunc_exce(working_video_path, `./media/video/${fileName}/${fileName}.mp4`, () => {
+          downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
+        });
       });
     }, 50);
   } else{ 
     deleteData.deleteAllVideoData(fileName);       
+  }
+}
+
+function untrunc_exce(working_video_path, broken_video_path, callback) {
+  const untrunc_path = ffmpegPath.get_untrunc_path();
+  if (deleteData.check_if_file_exits(untrunc_path) !== true) {
+    return "invalid untrunc_path";
+  } else if (deleteData.check_if_file_exits(working_video_path) !== true) {
+    return "invalid working_video_path";
+  } else if (deleteData.check_if_file_exits(broken_video_path) !== true) {
+    return "invalid broken_video_path";
+  } else {
+    exec(`${untrunc_path} ${working_video_path} ${broken_video_path}`, (err) => {
+      if (err) throw err;
+      if (typeof callback === "function") {
+        callback();
+      }
+    }); 
+    return "executing";
   }
 }
 
