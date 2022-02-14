@@ -238,11 +238,11 @@ function completeUnfinnishedVideoDownload(fileName){
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
 function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
   const working_video_path = ffmpegPath.get_working_video_path();
-  if(FileSystem.existsSync(fileName_original_ending) == true){  
+  if(deleteData.check_if_file_exits(fileName_original_ending) == true){  
     untrunc_exce(working_video_path, `./media/video/${fileName}/${fileName}.mp4`, () => {
       downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);
     });
-  } else if(FileSystem.existsSync(fileName_fixed_ending) == true){ 
+  } else if(deleteData.check_if_file_exits(fileName_fixed_ending) == true){ 
     const renameFilePath = setInterval(function(){ 
       FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  () => { 
         clearInterval(renameFilePath);
