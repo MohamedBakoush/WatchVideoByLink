@@ -338,13 +338,8 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
                       console.log(`\n unlinked media/video/${fileName}/delete_soon.mp4 video file \n`);
                     });
                   }
-
-                  if(FileSystem.existsSync(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`) == true){
-                    FileSystem.unlink(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`, (err) => {
-                      if (err) throw err;
-                      console.log(`\n unlinked media/video/${fileName}/${fileName}.mp4_fixed.mp4 video file \n`);
-                    });
-                  }
+         
+                  deleteData.unlink_file(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`);
                 });        
               }, 50);  
             } 
