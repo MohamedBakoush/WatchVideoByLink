@@ -163,8 +163,6 @@ body, .index-body, .index-websiteContentContainer,
   display: flex;
 }
 
-/* Tablet Friendly */
-
 @media only screen and (max-width: 760px){
   .videoLinkContainer form{    
     display: block !important;
@@ -196,5 +194,11 @@ body, .index-body, .index-websiteContentContainer,
 
   .videoLinkContainer { 
     padding-top: 28.85vh !important;
+  }
+}
+
+@media only screen and (max-width: 379px){
+  .chooseVideoInputLabel { 
+    padding: 14px 16px !important;
   }
 }
