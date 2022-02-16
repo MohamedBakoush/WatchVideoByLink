@@ -521,66 +521,6 @@ describe("createLink", () =>  {
     }); 
 }); 
 
-describe("notify", () =>  {   
-    beforeAll(() => { 
-        window.HTMLDocument.prototype.hasFocus  = jest.fn().mockImplementation(() =>
-            Promise.resolve(true)
-        );
-    });
-
-    it("type, message", () =>  {  
-        const notify = basic.notify("success", "test message"); 
-        expect(notify).toBeDefined();    
-        expect(document.getElementById("notification-area").textContent).toBe("test message");
-        expect(document.getElementById("notification-area").getElementsByClassName("notification")[0].classList[0]).toBe("notification"); 
-        expect(document.getElementById("notification-area").getElementsByClassName("notification")[0].classList[1]).toBe("success");        expect(document.getElementById("notification-area").getElementsByClassName("notification")[0].innerHTML).toBe("test message");
-        expect(notify).toBe("successful notify");  
-    });  
-
-    it("no type, message", () =>  {  
-        const notify = basic.notify( undefined , "test message"); 
-        expect(notify).toBeDefined();    
-        expect(document.getElementById("notification-area").textContent).toBe("test message");
-        expect(document.getElementById("notification-area").getElementsByClassName("notification")[0].classList[0]).toBe("notification"); 
-        expect(document.getElementById("notification-area").getElementsByClassName("notification")[0].classList[1]).toBe("undefined");        expect(document.getElementById("notification-area").getElementsByClassName("notification")[0].innerHTML).toBe("test message");
-        expect(notify).toBe("successful notify");  
-    });  
-
-    it("type, no message", () =>  {  
-        const notify = basic.notify(); 
-        expect(notify).toBeDefined();     
-        expect(notify).toBe("notify message not string");  
-    }); 
-
-    it("no type, no message", () =>  {  
-        const notify = basic.notify(); 
-        expect(notify).toBeDefined();     
-        expect(notify).toBe("notify message not string");  
-    });  
-}); 
-
-describe("Timer", () =>  {
-    function callBackFunction() {
-        return "callBackFunction";
-    } 
-    
-    it("set setTimeout", () =>  {   
-        const Timer = new basic.Timer(callBackFunction(), 5000); 
-        expect(Timer).toBeDefined();
-        expect(Timer.time).toBe(5000); 
-        expect(Timer.callback).toBe(callBackFunction());  
-        expect(Timer.finished).toBe(false);  
-    });   
-
-    it("change setTimeout time", () =>  {   
-        const Timer = new basic.Timer(callBackFunction(), 5000); 
-        Timer.change(10000);
-        expect(Timer).toBeDefined(); 
-        expect(Timer.time).toBe(10000); 
-        expect(Timer.callback).toBe(callBackFunction());   
-    });  
-}); 
-
 describe("originalFavicon", () =>  {  
     it("Favicon href updated", () =>  {  
         const favicon = basic.originalFavicon(); 
