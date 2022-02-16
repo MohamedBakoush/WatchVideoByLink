@@ -36,14 +36,6 @@ describe("websiteContentContainer", () =>  {
     }); 
 }); 
 
-describe("favicon", () =>  {    
-    it("Defined", () =>  { 
-        const favicon = basic.favicon();   
-        expect(favicon).toBeDefined();        
-        expect(favicon).not.toBe(null);   
-    }); 
-}); 
-
 describe("inputType", () =>  {    
     it("valid tagname", () =>  { 
         const input = basic.inputType(container);   
@@ -270,22 +262,6 @@ describe("createLink", () =>  {
         const link = basic.createLink(); 
         expect(link).toBeDefined();
         expect(link).toBe("createLink didnt work");  
-    }); 
-}); 
-
-describe("originalFavicon", () =>  {  
-    it("Favicon href updated", () =>  {  
-        const favicon = basic.originalFavicon(); 
-        expect(favicon).toBeDefined();
-        expect(favicon).toBe("Favicon href updated"); 
-    }); 
-}); 
-
-describe("addFaviconNotificationBadge", () =>  {  
-    it("favicon notification badge added", () =>  {  
-        const badge = basic.addFaviconNotificationBadge(); 
-        expect(badge).toBeDefined();
-        expect(badge).toBe("favicon notification badge added"); 
     }); 
 }); 
 
