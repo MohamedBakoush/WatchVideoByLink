@@ -148,11 +148,11 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
             basic.setNewAvailablevideoDetails(availablevideoDetails);
             let showDetails;  
             if (folderIDPath.length  === 0 || folderIDPath === undefined) { 
-                search.pushDataToSearchableVideoDataArray(availablevideoDetails[requestResponse.folderID]);
+                search.unshiftDataToSearchableVideoDataArray(availablevideoDetails[requestResponse.folderID]);
                 showDetails = showAvailableVideos.showFolderDetails(savedVideosThumbnailContainer, requestResponse.folderID, availablevideoDetails[requestResponse.folderID]);  
             } else { 
                 const availableVideosFolderIDPath = getAvailableVideoDetailsByFolderPath(folderIDPath); 
-                search.pushDataToSearchableVideoDataArray(availableVideosFolderIDPath[requestResponse.folderID]);
+                search.unshiftDataToSearchableVideoDataArray(availableVideosFolderIDPath[requestResponse.folderID]);
                 showDetails = showAvailableVideos.showFolderDetails(savedVideosThumbnailContainer, requestResponse.folderID, availableVideosFolderIDPath[requestResponse.folderID]);  
             }     
             if (showDetails == "showFolderDetails") {  

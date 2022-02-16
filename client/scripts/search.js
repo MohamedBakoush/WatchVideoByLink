@@ -112,6 +112,16 @@ export function pushDataToSearchableVideoDataArray(data) {
     } 
 } 
 
+// unshift data to SearchableVideoDataArray
+export function unshiftDataToSearchableVideoDataArray(data) { 
+    if (data === undefined) { 
+        return "data undefined";
+    }  else {
+        searchableVideoDataArray.unshift(data);
+        return "updated SearchableVideoDataArray";
+    } 
+} 
+
 // delete data from SearchableVideoDataArray by id
 export function deleteIDFromSearchableVideoDataArray(id) { 
     const searchableArrayItemId = getSearchableVideoDataArray().findIndex(x => x.info.id === id);
