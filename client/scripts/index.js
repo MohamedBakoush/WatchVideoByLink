@@ -1,6 +1,7 @@
-import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as basic from "../scripts/basics.js";
+import * as notify from "../scripts/notify.js";
 import * as navigationBar from "../scripts/navigationBar.js";
+import * as videoButton from "../scripts/videoPlayerButtons.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js"; 
 
@@ -120,7 +121,7 @@ export function uploadVideoDetails(videoLink){
         uploadVideoForm.remove();
         uploadVideoDetails(videoLink);
         // error msg
-        basic.notify("error", "Size Error: Unable to upload videos greater then 1 GB");
+        notify.message("error", "Size Error: Unable to upload videos greater then 1 GB");
       } else {
         // remove upload Video container
         uploadVideoForm.remove();  
@@ -146,7 +147,7 @@ export async function uploadFile(data, videoLink, newUploadVideoForm){
   } else { 
     try {
       // notification to user 
-      basic.notify("success", "Uploading: video to server");
+      notify.message("success", "Uploading: video to server");
       // holds file once its been choosen
       const formData = new FormData(); 
       // sends file + file data to server
@@ -165,25 +166,25 @@ export async function uploadFile(data, videoLink, newUploadVideoForm){
         } 
         // notification from response
         if(returnedValue == "downloading-uploaded-video") { 
-          basic.notify("success", "Downloading: uploaded video"); 
+          notify.message("success", "Downloading: uploaded video"); 
           return "downloading-uploaded-video";
         } else if (returnedValue == "video-size-over-size-limit") {  
-          basic.notify("error","Size Error: Attempted video upload has a size greater then 1 GB");
+          notify.message("error","Size Error: Attempted video upload has a size greater then 1 GB");
           return "video-size-over-size-limit";
         } else if (returnedValue == "Cannot-find-ffmpeg-ffprobe") {
-          basic.notify("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
+          notify.message("error","Encoding Error: Cannot find ffmpeg and ffprobe ");
           return "Cannot-find-ffmpeg-ffprobe";
         } else if (returnedValue == "Cannot-find-ffmpeg") {
-          basic.notify("error","Encoding Error: Cannot find ffmpeg");
+          notify.message("error","Encoding Error: Cannot find ffmpeg");
           return "Cannot-find-ffmpeg";
         } else if (returnedValue == "Cannot-find-ffprobe") { 
-          basic.notify("error","Encoding Error: Cannot find ffprobe");
+          notify.message("error","Encoding Error: Cannot find ffprobe");
           return "Cannot-find-ffprobe";
         } else if (returnedValue == "ffmpeg-failed") { 
-          basic.notify("error","Encoding Error: ffmpeg failed");
+          notify.message("error","Encoding Error: ffmpeg failed");
           return "ffmpeg-failed";
         }else { 
-          basic.notify("error", "Encoding Error: " + returnedValue);
+          notify.message("error", "Encoding Error: " + returnedValue);
           return returnedValue;
         }
       } else { 
@@ -193,7 +194,7 @@ export async function uploadFile(data, videoLink, newUploadVideoForm){
           uploadVideoDetails(videoLink);
         } 
         // request error msg 
-        basic.notify("error","Error: Request Error."); 
+        notify.message("error","Error: Request Error."); 
         return "Failed to upload video file";
       }
     } catch (error) {  // when an error occurs
@@ -203,7 +204,7 @@ export async function uploadFile(data, videoLink, newUploadVideoForm){
         uploadVideoDetails(videoLink);
       } 
       // error msg 
-      basic.notify("error","Error: Connection Refused.");
+      notify.message("error","Error: Connection Refused.");
       return error;
     }
   }
@@ -529,7 +530,7 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
         // if url_link provided failed to get required video data
         if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
           // invalid url alert msg
-          basic.notify("error","Invalid Url Link");
+          notify.message("error","Invalid Url Link");
           // change address bar
           history.pushState(null, "", "/");
           // load index details into html

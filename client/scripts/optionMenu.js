@@ -1,6 +1,7 @@
 import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
 import * as search from "../scripts/search.js";
+import * as notify from "../scripts/notify.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 
@@ -241,10 +242,10 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
 export function optionVideoMenuCopyOnClick(videoSrc, videoType, option_menu_copy) { 
     try {
       if (typeof videoSrc !== "string") {
-        basic.notify("error","Copied Video Link: Invalid videoSrc");
+        notify.message("error","Copied Video Link: Invalid videoSrc");
         return "videoSrc not string";
       } else if (typeof videoType !== "string") {
-        basic.notify("error","Copied Video Link: Invalid videoType");
+        notify.message("error","Copied Video Link: Invalid videoType");
         return "videoType not string";
       } else {
         const tempCopyLink = document.createElement("textarea");
@@ -254,11 +255,11 @@ export function optionVideoMenuCopyOnClick(videoSrc, videoType, option_menu_copy
         document.execCommand("copy");
         document.body.removeChild(tempCopyLink);
         option_menu_copy.textContent = "Copied";
-        basic.notify("success","Copied Video Link");
+        notify.message("success","Copied Video Link");
         return "optionVideoMenuCopyOnClick";
       }
     } catch (error) {
-      basic.notify("error","Copied Video Link: Failed to execute function properly");
+      notify.message("error","Copied Video Link: Failed to execute function properly");
       return "optionVideoMenuCopyOnClick didnt work";
     }
 }
@@ -273,10 +274,10 @@ function optionFolderMenuCopyOnClick(fodlerURL, option_menu_copy) {
     document.execCommand("copy");
     document.body.removeChild(tempCopyLink);
     option_menu_copy.textContent = "Copied";
-    basic.notify("success","Copied Folder Link");
+    notify.message("success","Copied Folder Link");
     return "optionFolderMenuCopyOnClick";
   } catch (error) {
-    basic.notify("error","Copied Folder Link: Failed to execute function properly");
+    notify.message("error","Copied Folder Link: Failed to execute function properly");
     return "optionFolderMenuCopyOnClick didnt work";
   }
 }
@@ -346,7 +347,7 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
             video_name = video_title_edit_content_input.value;
             showAvailableVideos.changeVideoTitle(videoInfo_ID, video_name); 
           } else {
-            basic.notify("error",`ID ${videoInfo_ID}-title is Missing`); 
+            notify.message("error",`ID ${videoInfo_ID}-title is Missing`); 
           }
         };
       
@@ -426,10 +427,10 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
         document.body.style.removeProperty("overflow");
         folder_edit_container.remove();
         if (document.getElementById(`${folderInfo_ID}-title`)) { 
-        folder_name = folder_title_edit_content_input.value;
-        showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
+          folder_name = folder_title_edit_content_input.value;
+          showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
         } else {
-        basic.notify("error",`ID ${folderInfo_ID}-title is Missing`); 
+          notify.message("error",`ID ${folderInfo_ID}-title is Missing`); 
         }
     };
 
@@ -573,18 +574,18 @@ export async function deleteVideoDataPermanently(videoID) {
           search.deleteIDFromSearchableVideoDataArray(videoID);
           // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
           search.noAvailableOrSearchableVideoMessage();
-          basic.notify("success",`Deleted: ${videoID}`);
+          notify.message("success",`Deleted: ${videoID}`);
           return `video-id-${videoID}-data-permanently-deleted`;
         } else {
-          basic.notify("error",`Failed Delete: ${videoID}`);
+          notify.message("error",`Failed Delete: ${videoID}`);
           return `video-id-${videoID}-data-failed-to-permanently-deleted`;
         }  
       } else { 
-        basic.notify("error","Failed Fetch: Video Deletion");
+        notify.message("error","Failed Fetch: Video Deletion");
         return "Failed to Complete Request";
       } 
     } catch (error) {  
-      basic.notify("error","Failed Fetch: Video Deletion");
+      notify.message("error","Failed Fetch: Video Deletion");
       return error;
     }
 }

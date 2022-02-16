@@ -1,5 +1,6 @@
 import * as basic from "./basics.js";
 import * as search from "../scripts/search.js";
+import * as notify from "../scripts/notify.js";
 import * as showAvailableVideos from "./showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 
@@ -144,7 +145,7 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
             showAvailableVideos.removeNoAvailableVideosDetails();
             search.removeNoSearchableVideoData();
             const availablevideoDetails = requestResponse.availableVideos; 
-            basic.notify("success", `Created Folder: ${folderTitle}`);     
+            notify.message("success", `Created Folder: ${folderTitle}`);     
             basic.setNewAvailablevideoDetails(availablevideoDetails);
             let showDetails;  
             if (folderIDPath.length  === 0 || folderIDPath === undefined) { 
@@ -159,10 +160,10 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
                 savedVideosThumbnailContainer.insertBefore(document.getElementById(requestResponse.folderID), [...savedVideosThumbnailContainer.children][0]); 
             }       
         } else { 
-            basic.notify("error", "Failed: Create Folder");  
+            notify.message("error", "Failed: Create Folder");  
         }  
     } else { 
-        basic.notify("error","Failed Fetch: Create Folder");
+        notify.message("error","Failed Fetch: Create Folder");
         return "Failed to Complete Request";
     } 
 }
@@ -188,12 +189,12 @@ export async function inputSelectedIDIntoFolderID(selectedID, folderID) {
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
             // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
             search.noAvailableOrSearchableVideoMessage();
-            basic.notify("success", `Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`); 
+            notify.message("success", `Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`); 
         } else {
-            basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);    
+            notify.message("error", `Failed Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);    
         }
     } else { 
-        basic.notify("error",`Failed Fetch: Input ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);
+        notify.message("error",`Failed Fetch: Input ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);
         return "Failed to Complete Request";
     } 
 }
@@ -244,12 +245,12 @@ export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
             // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
             search.noAvailableOrSearchableVideoMessage();
-            basic.notify("success", `Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
+            notify.message("success", `Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
         } else {
-            basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
+            notify.message("error", `Failed Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
         } 
     } else { 
-        basic.notify("error",`Failed Fetch: Input ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);
+        notify.message("error",`Failed Fetch: Input ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);
         return "Failed to Complete Request";
     } 
 }
