@@ -1,7 +1,7 @@
 import * as basic from "../scripts/basics.js";
 import * as favicon from "../scripts/favicon.js";
 
-export function notify(type,message){
+export function message(type,message){
     try {
         if (typeof message === "string") { 
             let notification_area;
