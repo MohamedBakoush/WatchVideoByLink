@@ -1,5 +1,5 @@
 import * as basic from "../scripts/basics.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as search from "../scripts/search.js";
 
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 
@@ -310,10 +310,10 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
               //remove video from /saved/videos
               document.getElementById(video_ID).remove();
               // delete searchable array item 
-              const searchableArrayItemId = basic.searchableVideoDataArray.findIndex(x => x.info.id === video_ID);
-              basic.searchableVideoDataArray.splice(searchableArrayItemId, 1);
+              const searchableArrayItemId = search.searchableVideoDataArray.findIndex(x => x.info.id === video_ID);
+              search.searchableVideoDataArray.splice(searchableArrayItemId, 1);
               // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario if no availabe videos
-              showAvailableVideos.noAvailableOrSearchableVideoMessage();
+              search.noAvailableOrSearchableVideoMessage();
             }
           };
         };
