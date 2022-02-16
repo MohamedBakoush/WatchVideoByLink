@@ -1,6 +1,7 @@
 import * as basic from "../scripts/basics.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 
+// get searchBarContainer 
 export function searchBarContainer() {
     let searchBarContainer = document.getElementById("searchBarContainer");
     if (!searchBarContainer) {
