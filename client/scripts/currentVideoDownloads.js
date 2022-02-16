@@ -1,5 +1,6 @@
 import * as basic from "../scripts/basics.js";
 import * as search from "../scripts/search.js";
+import * as notify from "../scripts/notify.js";
 
 let VideoDownloadDetailsInterval, show_current_downloads_clicked;
 
@@ -203,7 +204,7 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         // action on button click
         untruncUnavailableButton.onclick = (e) => {
           e.preventDefault(); 
-          basic.notify("error", "Untrunc Unavailable");   
+          notify.message("error", "Untrunc Unavailable");   
         }; 
         // delete video button
         const deleteVideoButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
@@ -353,26 +354,26 @@ export async function completeDownloadRequest(filename) {
     if (response.ok) {
       const downloadStatus = await response.json();
       if (downloadStatus == "redownload thumbnails & compression") {
-        basic.notify("success",`Redownload Thumbnails & Compression: ${filename}`);
+        notify.message("success",`Redownload Thumbnails & Compression: ${filename}`);
         return `Redownload Thumbnails & Compression: ${filename}`;
       } else if(downloadStatus == "redownload thumbnails"){
-        basic.notify("success",`Redownload Thumbnails: ${filename}`);
+        notify.message("success",`Redownload Thumbnails: ${filename}`);
         return `Redownload Thumbnails: ${filename}`;
       } else if (downloadStatus == "redownload compression") {
-        basic.notify("success",`Redownload Compression: ${filename}`);
+        notify.message("success",`Redownload Compression: ${filename}`);
         return `Redownload Compression: ${filename}`;
       } else if(downloadStatus == "untrunc broke video"){
-        basic.notify("success",`Untrunc Broke Video: ${filename}`);
+        notify.message("success",`Untrunc Broke Video: ${filename}`);
         return `Untrunc Broke Video: ${filename}`;
       } else if(downloadStatus == "download status: completed"){
-        basic.notify("success",`Download Completed: ${filename}`);
+        notify.message("success",`Download Completed: ${filename}`);
         return `Download Completed: ${filename}`;
       } else { 
-        basic.notify("success","Invalid Current Downlods ID");
+        notify.message("success","Invalid Current Downlods ID");
         return "Invalid Current Downlods ID";
       } 
     } else {
-      basic.notify("error","Failed to Complete Request");
+      notify.message("error","Failed to Complete Request");
       return "Failed to Complete Request";
     }
   } catch (error) {
@@ -418,18 +419,18 @@ export async function deleteVideoDataPermanently(videoID) {
     if (response.ok) {
       const deleteVideoStatus = await response.json(); 
       if (deleteVideoStatus == `deleted-${videoID}-permanently`) {
-        basic.notify("success",`Deleted: ${videoID}`);   
+        notify.message("success",`Deleted: ${videoID}`);   
         const videoDownloadStatusContainer = document.getElementById(`${videoID}-download-status-container`);    
         if(videoDownloadStatusContainer !== null){
           videoDownloadStatusContainer.remove();  
         }
         return "video data permanently deleted";
       } else {
-        basic.notify("error",`Failed Delete: ${videoID}`); 
+        notify.message("error",`Failed Delete: ${videoID}`); 
         return "failed to delete video data permanently";
       }  
     } else { 
-      basic.notify("error",`Failed Delete: ${videoID}`); 
+      notify.message("error",`Failed Delete: ${videoID}`); 
       return "Request Error";
     }
   } catch (error) { 

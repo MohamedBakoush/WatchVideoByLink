@@ -1,7 +1,8 @@
-import * as basic from "../scripts/basics.js";
 import * as folder from "./folder.js";
+import * as basic from "../scripts/basics.js";
 import * as folderPath from "./folderPath.js";
 import * as search from "../scripts/search.js";
+import * as notify from "../scripts/notify.js";
 import * as optionMenu from "../scripts/optionMenu.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
@@ -79,7 +80,7 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
           displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);  
         } else {
           history.replaceState(null, "", "/saved/videos");
-          basic.notify("error", "Invalid Folder Path"); 
+          notify.message("error", "Invalid Folder Path"); 
           // display video details
           displayVideoDetails(savedVideosThumbnailContainer, videoDetails);
         }
@@ -504,13 +505,13 @@ export function dragDropAvailableVideoDetails(section){
 async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, targetID) {
   try {
     if (selectedID === undefined && targetID === undefined) {
-      basic.notify("error", "selectedID & targetID undefined"); 
+      notify.message("error", "selectedID & targetID undefined"); 
       return "selectedID & targetID undefined";
     } else if (selectedID === undefined) {
-      basic.notify("error", "selectedID undefined"); 
+      notify.message("error", "selectedID undefined"); 
       return "selectedID undefined";
     } else if (targetID === undefined) {
-      basic.notify("error", "targetID undefined"); 
+      notify.message("error", "targetID undefined"); 
       return "targetID undefined";
     } else {
       const payload = {
@@ -527,21 +528,21 @@ async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, t
       if (response.ok) { 
         requestResponse = await response.json();   
         if (requestResponse.message === "successfully-moved-selected-before-target"){
-          basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+          notify.message("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
           const availablevideoDetails = requestResponse.availableVideos; 
           basic.setNewAvailablevideoDetails(availablevideoDetails);
           return "successfully-moved-selected-before-target"; 
         } else{
-          basic.notify("error", `Failed Moved: ${selectedID} before ${targetID}`); 
+          notify.message("error", `Failed Moved: ${selectedID} before ${targetID}`); 
           return "failed-to-moved-selected-before-target"; 
         } 
       } else {        
-        basic.notify("error","Failed to update rearanged available video details"); 
+        notify.message("error","Failed to update rearanged available video details"); 
         return "Failed to update rearanged available video details";
       }
     }
   } catch (error) {
-    basic.notify("error","Failed to update rearanged available video details"); 
+    notify.message("error","Failed to update rearanged available video details"); 
     return error;
   } 
 }
@@ -550,13 +551,13 @@ async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, t
 async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, targetID) { 
   try {
     if (selectedID === undefined && targetID === undefined) {
-      basic.notify("error", "selectedID & targetID undefined"); 
+      notify.message("error", "selectedID & targetID undefined"); 
       return "selectedID & targetID undefined";
     } else if (selectedID === undefined) {
-      basic.notify("error", "selectedID undefined"); 
+      notify.message("error", "selectedID undefined"); 
       return "selectedID undefined";
     } else if (targetID === undefined) {
-      basic.notify("error", "targetID undefined"); 
+      notify.message("error", "targetID undefined"); 
       return "targetID undefined";
     } else {
       const payload = {
@@ -573,21 +574,21 @@ async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, ta
       if (response.ok) { 
         requestResponse = await response.json();   
         if (requestResponse.message === "successfully-moved-selected-after-target"){
-          basic.notify("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
+          notify.message("success", `Position updated: ${document.getElementById(`${selectedID}-title`).textContent}`);     
           const availablevideoDetails = requestResponse.availableVideos; 
           basic.setNewAvailablevideoDetails(availablevideoDetails);
           return "successfully-moved-selected-after-target"; 
         } else{
-          basic.notify("error", `Failed Moved: ${selectedID} after ${targetID}`); 
+          notify.message("error", `Failed Moved: ${selectedID} after ${targetID}`); 
           return "failed-to-moved-selected-after-target"; 
         }
       } else {        
-        basic.notify("error","Failed to update rearanged available video details"); 
+        notify.message("error","Failed to update rearanged available video details"); 
         return "Failed to update rearanged available video details";
       }
     }
   } catch (error) {
-    basic.notify("error","Failed to update rearanged available video details"); 
+    notify.message("error","Failed to update rearanged available video details"); 
     return error;
   }
 }
@@ -619,22 +620,22 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
         if (searchableArrayItemId !== -1) {// change video title from old to new
           document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
           search.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
-          basic.notify("success",`Video Title Changed: ${newVideoTitle}`);
+          notify.message("success",`Video Title Changed: ${newVideoTitle}`);
           return "Video Title Changed";
         } else {
-          basic.notify("error", "Video Data ID Unavailable");
+          notify.message("error", "Video Data ID Unavailable");
           return "searchable video data array id unavailable";
         }
       } else {
-        basic.notify("error","Failed to Change Video Title"); 
+        notify.message("error","Failed to Change Video Title"); 
         return "Failed to Change Video Title";
       }
     } else {
-      basic.notify("error","Failed to Change Video Title"); 
+      notify.message("error","Failed to Change Video Title"); 
       return "Failed to Change Video Title";
     } 
   } catch (error) {
-    basic.notify("error","Failed fetch: Change Video Title");  
+    notify.message("error","Failed fetch: Change Video Title");  
     return error;
   }
 }
