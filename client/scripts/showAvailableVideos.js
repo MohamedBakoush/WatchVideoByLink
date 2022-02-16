@@ -1,6 +1,7 @@
 import * as basic from "../scripts/basics.js";
 import * as folder from "./folder.js";
 import * as folderPath from "./folderPath.js";
+import * as search from "../scripts/search.js";
 import * as optionMenu from "../scripts/optionMenu.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
@@ -32,8 +33,7 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
   try {
     if (typeof videoDetails == "object") {
       // search bar
-      const searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
-      searchBar(searchBarContainer); 
+      search.searchBar(); 
       // folder path 
       const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
       folderPath.homepagePath(pathContainer);
@@ -46,18 +46,18 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
         savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
       }
       // make sure searchable video is empty
-      if(basic.getSearchableVideoDataArray().length !== 0){ 
-        basic.resetSearchableVideoDataArray();
+      if(search.getSearchableVideoDataArray().length !== 0){ 
+        search.resetSearchableVideoDataArray();
       } 
       // create folder button 
-      const createFolderButton = basic.createLink(searchBarContainer, "javascript:;", undefined, "button category-link", "Create Folder"); 
+      const createFolderButton = basic.createLink(search.searchBarContainer(), "javascript:;", undefined, "button category-link", "Create Folder"); 
       createFolderButton.onclick = function(e){
         e.preventDefault(); 
         folder.createFolderOnClick();
       };
       folder.resetInsideFolderID();  
       // reset search bar value
-      resetSearchBarValue();
+      search.resetSearchBarValue();
       // activate drag drop for available video details
       dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
       if (initalFolderPath !== undefined) {
@@ -111,52 +111,22 @@ export function removeNoAvailableVideosDetails() {
   }
 }
 
-// display noSearchableVideoData no if exits
-export function noSearchableVideoData() {
-  if (!document.getElementById("noSearchableVideoData")) {
-    const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-    basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
-  }
-}
-
-// remove noSearchableVideoData if exits
-export function removeNoSearchableVideoData() {
-  if (document.getElementById("noSearchableVideoData")) {
-    document.getElementById("noSearchableVideoData").remove();
-  }
-}
-
-// if savedVideosThumbnailContainer is empty, display either noAvailableVideosDetails or noSearchableVideoData depending on the senario 
-export function noAvailableOrSearchableVideoMessage() {
-  if (document.getElementById("savedVideosThumbnailContainer")) {
-    if (document.getElementById("savedVideosThumbnailContainer").childElementCount == 0) {  
-      if(basic.getSearchableVideoDataArray().length == 0){ 
-          noAvailableVideosDetails();
-          return "no avaiable video data";
-      } else {
-          noSearchableVideoData();
-          return "key phrase unavailable";
-      }
-    }
-  } 
-}
-
 // display folder or video details to client
 export function displayVideoDetails(savedVideosThumbnailContainer, videoDetails) { 
   if (Object.keys(videoDetails).length == 0) { // no available videos
     noAvailableVideosDetails();
     return "no available videoDetails";
   } else {
-    basic.resetSearchableVideoDataArray();
+    search.resetSearchableVideoDataArray();
     Object.keys(videoDetails).reverse().forEach(function(videoInfo_ID) {
       if (videoInfo_ID.includes("folder-")) {  
-        basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+        search.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
         showFolderDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
       } else {
         if (videoDetails[videoInfo_ID].hasOwnProperty("info")) {  // eslint-disable-line
           // add video details into searchableVideoDataArray array 
           videoDetails[videoInfo_ID]["info"]["id"] = videoInfo_ID; 
-          basic.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
+          search.pushDataToSearchableVideoDataArray(videoDetails[videoInfo_ID]);
           // display video details
           showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDetails[videoInfo_ID]);
         } 
@@ -258,7 +228,7 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
 export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, videoDetails) {
   let folder_name = videoDetails.info.title;
   videoDetails["info"]["id"] = folderInfoID;
-  basic.pushDataToSearchableVideoDataArray(videoDetails[folderInfoID]); 
+  search.pushDataToSearchableVideoDataArray(videoDetails[folderInfoID]); 
   
   let folderURL;
   if (document.location.search == "") { 
@@ -313,17 +283,10 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
   return "showFolderDetails";
 }
 
-// reset search bar value
-export function resetSearchBarValue() {
-  if (document.getElementById("searchBar")) {
-    document.getElementById("searchBar").value = ""; 
-  }
-}
-
 // when folder element is click on 
 export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
-  basic.resetSearchableVideoDataArray();
-  resetSearchBarValue();
+  search.resetSearchableVideoDataArray();
+  search.resetSearchBarValue();
   savedVideosThumbnailContainer.remove();
   savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
   folder.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
@@ -511,25 +474,25 @@ export function dragDropAvailableVideoDetails(section){
       } else if (dragElTargetPosition == "left") { 
         if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
           section.insertBefore(dragEl, target); 
-          basic.searchableVideoDataArray_move_before(dragEl.id, target.id);
+          search.searchableVideoDataArray_move_before(dragEl.id, target.id);
           moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
         }
       } else if (dragElTargetPosition == "right") { 
         if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) - 1) { 
           section.insertBefore(dragEl, target.nextSibling);  
-          basic.searchableVideoDataArray_move_after(dragEl.id, target.id);
+          search.searchableVideoDataArray_move_after(dragEl.id, target.id);
           moveSelectedIdAfterTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
         }
       } else if (dragElTargetPosition == "top") {
         if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
           section.insertBefore(dragEl, target); 
-          basic.searchableVideoDataArray_move_before(dragEl.id, target.id);
+          search.searchableVideoDataArray_move_before(dragEl.id, target.id);
           moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
         } 
       }  else if (dragElTargetPosition == "bottom") { 
         if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) - 1) { 
           section.insertBefore(dragEl, target.nextSibling); 
-          basic.searchableVideoDataArray_move_after(dragEl.id, target.id);
+          search.searchableVideoDataArray_move_after(dragEl.id, target.id);
           moveSelectedIdAfterTargetIdAtAvailableVideoDetails(dragEl.id, target.id);
         } 
       } 
@@ -652,10 +615,10 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
         const availablevideoDetails = requestResponse.availableVideos; 
         basic.setNewAvailablevideoDetails(availablevideoDetails);
         // find array id of searchableVideoDataArray by videoID
-        const searchableArrayItemId = basic.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
+        const searchableArrayItemId = search.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
         if (searchableArrayItemId !== -1) {// change video title from old to new
           document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
-          basic.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
+          search.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
           basic.notify("success",`Video Title Changed: ${newVideoTitle}`);
           return "Video Title Changed";
         } else {
@@ -676,53 +639,6 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
   }
 }
 
-
-// find video by filtering trough each available video by textinput
-export function searchBar(container){
-  // create search input
-  const searchBar = basic.inputType(container, "text", "searchBar", "searchBar", true);
-  searchBar.name = "searchBar";
-  searchBar.placeholder="Type to search";
-  // filters trough video data by name at every key press
-  searchBar.addEventListener("keyup", (e) => { 
-    const searchString = e.target.value;
-    searchBarKeyUp(searchString);
-  });
-  return "searchBar";
-}
-
-// filters trough video data by searchString input
-export function searchBarKeyUp(searchString) { 
-  if (typeof searchString == "string") {
-    const savedVideosThumbnailContainer = document.getElementById("savedVideosThumbnailContainer");
-    // check from searchableVideoDataArray if any video data title matches input string
-    const filteredsearchableVideoData = basic.getSearchableVideoDataArray().filter((video) => {
-      return (
-        video.info.title.toLowerCase().includes(searchString.toLowerCase())
-      );
-    }); 
-    // clear savedVideosThumbnailContainer
-    savedVideosThumbnailContainer.innerHTML = ""; 
-    // check if inputed key phrase available data is avaiable or not to either display data or state the problem
-    if (filteredsearchableVideoData.length == 0) {
-      noAvailableOrSearchableVideoMessage();
-    } else {
-      removeNoAvailableVideosDetails();
-      removeNoSearchableVideoData();
-      // display filterd details to client
-      filteredsearchableVideoData.forEach(function(data) {   
-        if (data.info.id.includes("folder-")) {
-          showFolderDetails(savedVideosThumbnailContainer, data.info.id, data);
-        } else { 
-          showDetails(savedVideosThumbnailContainer, data.info.id, data);
-        } 
-      });
-      return "Display filterd avaiable video data";
-    } 
-  } else {
-    return "searchString not string";
-  }
-}
 
 // load pageLoaded to html page when requested
 export function pageLoaded(initalFolderPath) {

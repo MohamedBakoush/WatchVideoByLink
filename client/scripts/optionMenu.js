@@ -1,5 +1,6 @@
-import * as basic from "../scripts/basics.js";
 import * as folder from "./folder.js";
+import * as basic from "../scripts/basics.js";
+import * as search from "../scripts/search.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
 
@@ -569,9 +570,9 @@ export async function deleteVideoDataPermanently(videoID) {
           //remove video from /saved/videos
           document.getElementById(videoID).remove();
           // delete searchable array item 
-          basic.deleteIDFromSearchableVideoDataArray(videoID);
+          search.deleteIDFromSearchableVideoDataArray(videoID);
           // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
-          showAvailableVideos.noAvailableOrSearchableVideoMessage();
+          search.noAvailableOrSearchableVideoMessage();
           basic.notify("success",`Deleted: ${videoID}`);
           return `video-id-${videoID}-data-permanently-deleted`;
         } else {

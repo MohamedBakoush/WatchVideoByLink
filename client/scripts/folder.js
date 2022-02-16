@@ -1,7 +1,9 @@
 import * as basic from "./basics.js";
-export let folderIDPath = [];  
+import * as search from "../scripts/search.js";
 import * as showAvailableVideos from "./showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+
+export let folderIDPath = [];  
 
 // get current FolderID path
 export function getFolderIDPath() { 
@@ -140,17 +142,17 @@ export async function createFolder(savedVideosThumbnailContainer, folderTitle) {
         requestResponse = await response.json();     
         if (requestResponse.message == "folder-created") {
             showAvailableVideos.removeNoAvailableVideosDetails();
-            showAvailableVideos.removeNoSearchableVideoData();
+            search.removeNoSearchableVideoData();
             const availablevideoDetails = requestResponse.availableVideos; 
             basic.notify("success", `Created Folder: ${folderTitle}`);     
             basic.setNewAvailablevideoDetails(availablevideoDetails);
             let showDetails;  
             if (folderIDPath.length  === 0 || folderIDPath === undefined) { 
-                basic.pushDataToSearchableVideoDataArray(availablevideoDetails[requestResponse.folderID]);
+                search.pushDataToSearchableVideoDataArray(availablevideoDetails[requestResponse.folderID]);
                 showDetails = showAvailableVideos.showFolderDetails(savedVideosThumbnailContainer, requestResponse.folderID, availablevideoDetails[requestResponse.folderID]);  
             } else { 
                 const availableVideosFolderIDPath = getAvailableVideoDetailsByFolderPath(folderIDPath); 
-                basic.pushDataToSearchableVideoDataArray(availableVideosFolderIDPath[requestResponse.folderID]);
+                search.pushDataToSearchableVideoDataArray(availableVideosFolderIDPath[requestResponse.folderID]);
                 showDetails = showAvailableVideos.showFolderDetails(savedVideosThumbnailContainer, requestResponse.folderID, availableVideosFolderIDPath[requestResponse.folderID]);  
             }     
             if (showDetails == "showFolderDetails") {  
@@ -182,10 +184,10 @@ export async function inputSelectedIDIntoFolderID(selectedID, folderID) {
     if (response.ok) { 
         requestResponse = await response.json();  
         if (requestResponse.message == "successfully-inputed-selected-into-folder") {
-            basic.deleteIDFromSearchableVideoDataArray(selectedID);   
+            search.deleteIDFromSearchableVideoDataArray(selectedID);   
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
             // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
-            showAvailableVideos.noAvailableOrSearchableVideoMessage();
+            search.noAvailableOrSearchableVideoMessage();
             basic.notify("success", `Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`); 
         } else {
             basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} Into ${fileNames.folderIDTitle}`);    
@@ -238,10 +240,10 @@ export async function inputSelectedIDOutOfFolderID(selectedID, folderID) {
     if (response.ok) { 
         requestResponse = await response.json();  
         if (requestResponse.message == "successfully-inputed-selected-out-of-folder") {
-            basic.deleteIDFromSearchableVideoDataArray(selectedID);
+            search.deleteIDFromSearchableVideoDataArray(selectedID);
             basic.setNewAvailablevideoDetails(requestResponse.availableVideos);
             // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
-            showAvailableVideos.noAvailableOrSearchableVideoMessage();
+            search.noAvailableOrSearchableVideoMessage();
             basic.notify("success", `Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    
         } else {
             basic.notify("error", `Failed Moved: ${fileNames.selectedIDTitle} To ${fileNames.folderIDTitle}`);    

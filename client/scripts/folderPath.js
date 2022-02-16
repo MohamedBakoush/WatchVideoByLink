@@ -1,5 +1,6 @@
 import * as basic from "./basics.js";
 import * as folder from "./folder.js";
+import * as search from "../scripts/search.js";
 import * as showAvailableVideos from "./showAvailableVideos.js";
 
 // display / between folder paths 
@@ -64,8 +65,8 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
     path.onclick = function(e){
         e.preventDefault();  
         showAvailableVideos.removeNoAvailableVideosDetails();
-        showAvailableVideos.removeNoSearchableVideoData();
-        showAvailableVideos.resetSearchBarValue();
+        search.removeNoSearchableVideoData();
+        search.resetSearchBarValue();
         path.classList.remove("pathClick");   
         path.classList.remove("dragging-target"); 
         path.classList.add("pathClickLast");  
