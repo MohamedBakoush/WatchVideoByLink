@@ -1,3 +1,5 @@
+import * as favicon from "../scripts/favicon.js";
+
 export let availablevideoDetails;
 
 // get available video details
@@ -14,11 +16,6 @@ export function setNewAvailablevideoDetails(newAvailablevideoDetails) {
 // return websiteContentContainer
 export function websiteContentContainer() {
   return document.getElementById("websiteContentContainer");
-}
-
-// return favicon
-export function favicon() {
-  return document.getElementById("favicon");
 }
 
 // create a input element
@@ -196,7 +193,7 @@ export function notify(type,message){
       const id = Math.random().toString(36).substr(2,10); 
       createSection(notification_area, "section", `notification ${type}`, id, message);
       if(!document.hasFocus()){ // if user is not focued on webpage change favicon
-        addFaviconNotificationBadge();
+        favicon.addFaviconNotificationBadge();
       } 
       // remove notifications after 5 sec
       const timer = new Timer( () => {
@@ -210,7 +207,7 @@ export function notify(type,message){
       // check if user is focued on webpage
       const checkFocus = setInterval( () => {  
         if(document.hasFocus()){
-          originalFavicon();
+          favicon.originalFavicon();
           clearInterval(checkFocus); 
         }else{ // change timer time to 5 sec
           timer.change(5000);  
@@ -251,40 +248,6 @@ export class Timer {
         this.setTimeout(this.callback, time);
     }
   }
-}
-
-// replace favicon with original favicon
-export function originalFavicon() { 
-  favicon().href = "../favicon.ico";
-  return "Favicon href updated";
-}
-
-// change favicon with a red circle bottom at left of favicon
-export function addFaviconNotificationBadge() {  
-  const faviconSize = 32; 
-
-  const canvas = document.createElement("canvas");
-  canvas.width = faviconSize;
-  canvas.height = faviconSize;
-
-  const context = canvas.getContext("2d");
-  const img = document.createElement("img");
-  img.src = favicon().href;
-
-  img.onload = () => {
-    // Draw Original Favicon as Background
-    context.drawImage(img, 0, 0, faviconSize, faviconSize);
-
-    // Draw Notification Circle
-    context.beginPath();
-    context.arc( canvas.width - faviconSize / 4 , canvas.height - faviconSize / 4, faviconSize / 4, 0, 2*Math.PI);
-    context.fillStyle = "#e84545";
-    context.fill();
-
-    // Replace favicon
-    favicon().href = canvas.toDataURL("image/png");
-  };
-  return "favicon notification badge added";
 }
 
 // check for percent encoding
