@@ -112,9 +112,18 @@ function updateDownloadConfirmation(req, res) {
 }
 
 // get video thumbnail by video id and thumbnail number header
-app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
-function streamImageById(req, res){
-  stream.streamThumbnail(req.params.videoID, req.params.thumbnailID, res);
+app.get("/thumbnail/:videoID/:thumbnailID", streamThumbnailById);
+async function streamThumbnailById(req, res){
+  const streamThumbnail = await stream.streamThumbnail(req.params.videoID, req.params.thumbnailID, res);
+  try {
+    if (streamThumbnail.status == 200) {
+      streamThumbnail.message;
+    } else {
+      res.status(streamThumbnail.status).redirect(streamThumbnail.redirect);
+    } 
+  } catch (error) {
+    res.status(404).redirect("/");
+  }
 }
 
 // delete video permently by video id header

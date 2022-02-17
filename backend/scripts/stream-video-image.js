@@ -72,13 +72,35 @@ async function streamVideo(request, response, videoID, displayCompressedVideo){
 // streams available thumbnail images  provided by videoID and thumbnailID
 async function streamThumbnail(videoID, thumbnailID, response) {
   if (typeof videoID !== "string") {
-    return "videoID not string";
+    return {
+      status: 404,
+      redirect: "/",
+      message: "videoID-not-string"
+    };
   } else if (videoData.getVideoData([`${videoID}`]) == undefined) {
-    return "invalid videoID";
+    return {
+      status: 404,
+      redirect: "/",
+      message: "invalid-videoID"
+    };
   } else if (isNaN(thumbnailID)) {
-    return "thumbnailID not number";
+    return {
+      status: 404,
+      redirect: "/",
+      message: "thumbnailID-not-number"
+    };
   } else if (videoData.getVideoData([`${videoID}`, "thumbnail", "path", `${thumbnailID}`]) == undefined) {
-    return "invalid thumbnailID";
+    return {
+      status: 404,
+      redirect: "/",
+      message: "invalid-thumbnailID"
+    };
+  } else if (response == undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "response-undefined"
+    };
   } else {
     try {
       const path = videoData.getVideoData([`${videoID}`, "thumbnail", "path", `${thumbnailID}`]);
@@ -86,12 +108,24 @@ async function streamThumbnail(videoID, thumbnailID, response) {
       const ps = new stream.PassThrough(); // <---- this makes a trick with stream error handling
       stream.pipeline(file, ps, (err) => {
         if (err) {
-          return response.sendStatus(400).redirect("/");
+          return {
+            status: 400,
+            redirect: "/",
+            message: err
+          };
         }
       });
-      return ps.pipe(response); // <---- this makes a trick with stream error handling
-    } catch (e) {
-      return response.status(404).redirect("/");
+      return {
+        status: 200,
+        redirect: undefined,
+        message: ps.pipe(response)
+      };
+    } catch (error) {
+      return {
+        status: 404,
+        redirect: "/",
+        message: "failed-to-stream-image"
+      };
     }
   }
 }

@@ -23,35 +23,70 @@ const dataVideos_data = {
 
 describe("streamThumbnail", () =>  {  
     it("videoID not string", async () =>  {
-        const updated = await streamVideoImage.streamThumbnail();
-        expect(updated).toBe("videoID not string");  
+        const streamImage = await streamVideoImage.streamThumbnail();
+        expect(streamImage.message).toBe("videoID-not-string");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
     });
 
-    it("invalid videoID", async () =>  {
+    it("Invalid videoID", async () =>  {
         const fileName = uuidv4();
-        const updated = await streamVideoImage.streamThumbnail(fileName);
-        expect(updated).toBe("invalid videoID");  
+        const streamImage = await streamVideoImage.streamThumbnail(fileName);
+        expect(streamImage.message).toBe("invalid-videoID");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
     });
 
-    it("thumbnailID not string", async () =>  {
+    it("Valid videoID, thumbnailID not string", async () =>  {
         const fileName = uuidv4();
         const updateVideoData = dataVideos.updateVideoData([fileName], {});
         expect(updateVideoData).toBe("updateVideoData");  
         const get_data = dataVideos.getVideoData([fileName]);
         expect(get_data).toMatchObject({});   
 
-        const updated = await streamVideoImage.streamThumbnail(fileName);
-        expect(updated).toBe("thumbnailID not number");  
+        const streamImage = await streamVideoImage.streamThumbnail(fileName);
+        expect(streamImage.message).toBe("thumbnailID-not-number");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
     });
 
-    it("invalid thumbnailID", async () =>  {
+    it("Valid videoID, Invalid thumbnailID", async () =>  {
         const fileName = uuidv4();
         const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
         expect(updateVideoData).toBe("updateVideoData");  
         const get_data = dataVideos.getVideoData([fileName]);
-        expect(get_data).toMatchObject({});   
+        expect(get_data).toMatchObject(dataVideos_data);   
 
-        const updated = await streamVideoImage.streamThumbnail(fileName, 2020);
-        expect(updated).toBe("invalid thumbnailID");  
+        const streamImage = await streamVideoImage.streamThumbnail(fileName, 2020);
+        expect(streamImage.message).toBe("invalid-thumbnailID");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+
+    it("Valid videoID, Valid thumbnailID, response undefined", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamThumbnail(fileName, 1);
+        expect(streamImage.message).toBe("response-undefined");
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);   
+    });
+    
+    it("Valid videoID, Valid thumbnailID, Invalid response", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamThumbnail(fileName, 1, jest.fn());
+        expect(streamImage.message).toBe("failed-to-stream-image");
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);   
     });
 }); 
