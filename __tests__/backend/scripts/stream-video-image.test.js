@@ -14,14 +14,14 @@ afterEach(() => {
 
 const dataVideos_data = {
     "video": {
-      "originalVideoSrc": "./media/video/uploaded-8cea267c-762c-428d-be43-0143ec0eb557.mp4",
+      "originalVideoSrc": "./media/video/video.mp4",
       "originalVideoType": "video/mp4",
-      "path": "media/video/e37c4829-2601-4b0b-8da4-b4e02afbae16/e37c4829-2601-4b0b-8da4-b4e02afbae16.mp4",
+      "path": "media/video/video.mp4",
       "videoType": "video/mp4",
       "download": "completed"
     },
     "compression" : {
-      "path": "compressionFilePath",
+      "path": "./media/video/video.webm",
       "videoType": "video/webm",
       "download": "completed"
     },
