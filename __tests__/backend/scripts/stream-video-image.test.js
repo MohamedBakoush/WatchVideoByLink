@@ -20,6 +20,11 @@ const dataVideos_data = {
       "videoType": "video/mp4",
       "download": "completed"
     },
+    "compression" : {
+      "path": "compressionFilePath",
+      "videoType": "video/webm",
+      "download": "completed"
+    },
     "thumbnail": {
         "path": {
             "1": "media/video/folder/thumbnail001.jpg"
