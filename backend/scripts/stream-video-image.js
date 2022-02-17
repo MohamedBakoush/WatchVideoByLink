@@ -4,16 +4,41 @@ const stream = require("stream");
 const videoData = require("./data-videos");
 
 // if video videoId is valid then stream video
-async function streamVideo(request, response, videoID, displayCompressedVideo){
-  // check if videoid is valid
-  const videoDetails = await videoData.findVideosByID(videoID);
-  // if video dosent exist redirect to home page
-  if (videoDetails == undefined) {
-    response.status(404).redirect("/");
-  } else { // if videoID is valid
+async function streamVideo(videoID, displayCompressedVideo, request, response){
+  if (typeof videoID !== "string") {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "videoID-not-string"
+    };
+  } else if (videoData.getVideoData([`${videoID}`]) == undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "invalid-videoID"
+    };
+  } else if (typeof displayCompressedVideo !== "boolean") {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "displayCompressedVideo-not-boolean"
+    };
+  } else if (request === undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "request-undefined"
+    };
+  } else if (response === undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "response-undefined"
+    };
+  } else {
     try {
-      // variables
       let videoPath, videoType;
+      const videoDetails = videoData.getVideoData([`${videoID}`]);
       if (displayCompressedVideo) { // update videoPath, videoType with compressed video details
         videoPath = videoDetails.compression.path; 
         videoType = videoDetails.compression.videoType; 
@@ -39,8 +64,11 @@ async function streamVideo(request, response, videoID, displayCompressedVideo){
         // when video start file size is greater or equal to video file Size
         // send 416 error
         if(start >= fileSize) {
-          response.status(416).send("Requested range not satisfiable\n"+start+" >= "+fileSize);
-          return;
+          return {
+            status: 416,
+            redirect: "/",
+            message: "requested-range-not-satisfiable-to-stream-video"
+          };
         }
         // The size of the chunks
         const chunksize = (end-start)+1;
@@ -54,43 +82,88 @@ async function streamVideo(request, response, videoID, displayCompressedVideo){
         };
         // send newly made stream to the client
         response.writeHead(206, head);
-        file.pipe(response);
+        return {
+          status: 206,
+          message: file.pipe(response)
+        };
       } else { // send whole video file
         const head = {
           "Content-Length": fileSize,
           "Content-Type":  videoType,
         };
         response.writeHead(200, head);
-        FileSystem.createReadStream(videoPath).pipe(response);
+        const file = FileSystem.createReadStream(videoPath); 
+        return {
+          status: 200,
+          message: file.pipe(response)
+        };
       }
     } catch (e) { // if error redirect to home page
-      response.status(404).redirect("/");
+      return {
+        status: 404,
+        redirect: "/",
+        message: "failed-to-stream-video"
+      };
     }
   }
 }
 
 // streams available thumbnail images  provided by videoID and thumbnailID
-async function streamThumbnail(request, response, videoID, thumbnailID) {
-  const videoDetails = await videoData.findVideosByID(videoID);
-  if (videoDetails == undefined) {
-    response.status(404).redirect("/");
-  }else {
+async function streamThumbnail(videoID, thumbnailID, response) {
+  if (typeof videoID !== "string") {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "videoID-not-string"
+    };
+  } else if (videoData.getVideoData([`${videoID}`]) == undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "invalid-videoID"
+    };
+  } else if (isNaN(thumbnailID)) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "thumbnailID-not-number"
+    };
+  } else if (videoData.getVideoData([`${videoID}`, "thumbnail", "path", `${thumbnailID}`]) == undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "invalid-thumbnailID"
+    };
+  } else if (response == undefined) {
+    return {
+      status: 404,
+      redirect: "/",
+      message: "response-undefined"
+    };
+  } else {
     try {
-      const path = videoDetails["thumbnail"]["path"][`${thumbnailID}`];
+      const path = videoData.getVideoData([`${videoID}`, "thumbnail", "path", `${thumbnailID}`]);
       const file = FileSystem.createReadStream(path); // or any other way to get a readable stream
       const ps = new stream.PassThrough(); // <---- this makes a trick with stream error handling
-      stream.pipeline(
-       file,
-       ps, // <---- this makes a trick with stream error handling
-       (err) => {
+      stream.pipeline(file, ps, (err) => {
         if (err) {
-          console.log(err); // No such file or any other kind of error
-          return response.sendStatus(400);
+          return {
+            status: 400,
+            redirect: "/",
+            message: "failed-to-stream-image"
+          };
         }
       });
-      ps.pipe(response); // <---- this makes a trick with stream error handling
-    } catch (e) {
-      response.status(404).redirect("/");
+      return {
+        status: 200,
+        message: ps.pipe(response)
+      };
+    } catch (error) {
+      return {
+        status: 404,
+        redirect: "/",
+        message: "failed-to-stream-image"
+      };
     }
   }
 }

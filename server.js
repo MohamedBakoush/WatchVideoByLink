@@ -112,9 +112,18 @@ function updateDownloadConfirmation(req, res) {
 }
 
 // get video thumbnail by video id and thumbnail number header
-app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
-function streamImageById(req, res){
-  stream.streamThumbnail(req, res, req.params.videoID, req.params.thumbnailID);
+app.get("/thumbnail/:videoID/:thumbnailID", streamThumbnailById);
+async function streamThumbnailById(req, res){
+  const streamThumbnail = await stream.streamThumbnail(req.params.videoID, req.params.thumbnailID, res);
+  try {
+    if (streamThumbnail.status == 200) {
+      streamThumbnail.message;
+    } else {
+      res.status(streamThumbnail.status).redirect(streamThumbnail.redirect);
+    } 
+  } catch (error) {
+    res.status(404).redirect("/");
+  }
 }
 
 // delete video permently by video id header
@@ -152,14 +161,36 @@ function deleteAllVideoData(req, res){
 
 // stream original video by video id header
 app.get("/video/:id", streamOriginalVideoById);
-function streamOriginalVideoById(req, res){
-  stream.streamVideo(req, res, req.params.id, false);
+async function streamOriginalVideoById(req, res){
+  const streamVideo = await stream.streamVideo(req.params.id, false, req, res);
+  try {
+    if (streamVideo.status == 200 || streamVideo.status == 206) {
+      streamVideo.message;
+    } else if (streamVideo.status == 416) {
+      res.status(streamVideo.status).send(streamVideo.message);
+    } else {
+      res.status(streamVideo.status).redirect(streamVideo.redirect);
+    }
+  } catch (error) {
+    res.status(404).redirect("/");
+  }
 }
 
 // stream compressed video by video id header
 app.get("/compressed/:id", streamCompressedVideoById);
-function streamCompressedVideoById(req, res){
-  stream.streamVideo(req, res, req.params.id, true);
+async function streamCompressedVideoById(req, res){
+  const streamVideo = await stream.streamVideo(req.params.id, true, req, res);
+  try {
+    if (streamVideo.status == 200 || streamVideo.status == 206) {
+      streamVideo.message;
+    } else if (streamVideo.status == 416) {
+      res.status(streamVideo.status).send(streamVideo.message);
+    } else {
+      res.status(streamVideo.status).redirect(streamVideo.redirect);
+    }
+  } catch (error) {
+    res.status(404).redirect("/");
+  }
 }
 
 // create Folder at availableVideos
