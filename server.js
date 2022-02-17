@@ -161,14 +161,36 @@ function deleteAllVideoData(req, res){
 
 // stream original video by video id header
 app.get("/video/:id", streamOriginalVideoById);
-function streamOriginalVideoById(req, res){
-  stream.streamVideo(req, res, req.params.id, false);
+async function streamOriginalVideoById(req, res){
+  const streamVideo = await stream.streamVideo(req.params.id, false, req, res);
+  try {
+    if (streamVideo.status == 200 || streamVideo.status == 206) {
+      streamVideo.message;
+    } else if (streamVideo.status == 416) {
+      res.status(streamVideo.status).send(streamVideo.message);
+    } else {
+      res.status(streamVideo.status).redirect(streamVideo.redirect);
+    }
+  } catch (error) {
+    res.status(404).redirect("/");
+  }
 }
 
 // stream compressed video by video id header
 app.get("/compressed/:id", streamCompressedVideoById);
-function streamCompressedVideoById(req, res){
-  stream.streamVideo(req, res, req.params.id, true);
+async function streamCompressedVideoById(req, res){
+  const streamVideo = await stream.streamVideo(req.params.id, true, req, res);
+  try {
+    if (streamVideo.status == 200 || streamVideo.status == 206) {
+      streamVideo.message;
+    } else if (streamVideo.status == 416) {
+      res.status(streamVideo.status).send(streamVideo.message);
+    } else {
+      res.status(streamVideo.status).redirect(streamVideo.redirect);
+    }
+  } catch (error) {
+    res.status(404).redirect("/");
+  }
 }
 
 // create Folder at availableVideos

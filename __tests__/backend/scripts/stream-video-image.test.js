@@ -13,6 +13,13 @@ afterEach(() => {
 }); 
 
 const dataVideos_data = {
+    "video": {
+      "originalVideoSrc": "./media/video/uploaded-8cea267c-762c-428d-be43-0143ec0eb557.mp4",
+      "originalVideoType": "video/mp4",
+      "path": "media/video/e37c4829-2601-4b0b-8da4-b4e02afbae16/e37c4829-2601-4b0b-8da4-b4e02afbae16.mp4",
+      "videoType": "video/mp4",
+      "download": "completed"
+    },
     "thumbnail": {
         "path": {
             "1": "media/video/folder/thumbnail001.jpg"
@@ -20,6 +27,88 @@ const dataVideos_data = {
       "download": "completed"
     }
 };
+
+describe("streamVideo", () =>  {    
+    it("videoID not string", async () =>  {
+        const streamImage = await streamVideoImage.streamVideo();
+        expect(streamImage.message).toBe("videoID-not-string");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+    it("Invalid videoID", async () =>  {
+        const fileName = uuidv4();
+        const streamImage = await streamVideoImage.streamVideo(fileName);
+        expect(streamImage.message).toBe("invalid-videoID");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+    it("Valid videoID, displayCompressedVideo not boolean", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamVideo(fileName);
+        expect(streamImage.message).toBe("displayCompressedVideo-not-boolean");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+    it("Valid videoID, valid displayCompressedVideo, request undefined", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamVideo(fileName, false);
+        expect(streamImage.message).toBe("request-undefined");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+    it("Valid videoID, valid displayCompressedVideo, defined request, response undefined", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamVideo(fileName, false, jest.fn());
+        expect(streamImage.message).toBe("response-undefined");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+    it("Valid videoID, valid displayCompressedVideo false, defined request, defined response", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamVideo(fileName, false, jest.fn(), jest.fn());
+        expect(streamImage.message).toBe("failed-to-stream-video");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+
+    it("Valid videoID, valid displayCompressedVideo true, defined request, defined response", async () =>  {
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data);
+        expect(updateVideoData).toBe("updateVideoData");  
+        const get_data = dataVideos.getVideoData([fileName]);
+        expect(get_data).toMatchObject(dataVideos_data);   
+
+        const streamImage = await streamVideoImage.streamVideo(fileName, true, jest.fn(), jest.fn());
+        expect(streamImage.message).toBe("failed-to-stream-video");  
+        expect(streamImage.redirect).toBe("/");  
+        expect(streamImage.status).toBe(404);  
+    });
+}); 
 
 describe("streamThumbnail", () =>  {  
     it("videoID not string", async () =>  {
