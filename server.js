@@ -114,7 +114,7 @@ function updateDownloadConfirmation(req, res) {
 // get video thumbnail by video id and thumbnail number header
 app.get("/thumbnail/:videoID/:thumbnailID", streamImageById);
 function streamImageById(req, res){
-  stream.streamThumbnail(req, res, req.params.videoID, req.params.thumbnailID);
+  stream.streamThumbnail(req.params.videoID, req.params.thumbnailID, res);
 }
 
 // delete video permently by video id header

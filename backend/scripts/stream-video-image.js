@@ -70,27 +70,28 @@ async function streamVideo(request, response, videoID, displayCompressedVideo){
 }
 
 // streams available thumbnail images  provided by videoID and thumbnailID
-async function streamThumbnail(request, response, videoID, thumbnailID) {
-  const videoDetails = await videoData.findVideosByID(videoID);
-  if (videoDetails == undefined) {
-    response.status(404).redirect("/");
-  }else {
+async function streamThumbnail(videoID, thumbnailID, response) {
+  if (typeof videoID !== "string") {
+    return "videoID not string";
+  } else if (videoData.getVideoData([`${videoID}`]) == undefined) {
+    return "invalid videoID";
+  } else if (isNaN(thumbnailID)) {
+    return "thumbnailID not number";
+  } else if (videoData.getVideoData([`${videoID}`, "thumbnail", "path", `${thumbnailID}`]) == undefined) {
+    return "invalid thumbnailID";
+  } else {
     try {
-      const path = videoDetails["thumbnail"]["path"][`${thumbnailID}`];
+      const path = videoData.getVideoData([`${videoID}`, "thumbnail", "path", `${thumbnailID}`]);
       const file = FileSystem.createReadStream(path); // or any other way to get a readable stream
       const ps = new stream.PassThrough(); // <---- this makes a trick with stream error handling
-      stream.pipeline(
-       file,
-       ps, // <---- this makes a trick with stream error handling
-       (err) => {
+      stream.pipeline(file, ps, (err) => {
         if (err) {
-          console.log(err); // No such file or any other kind of error
-          return response.sendStatus(400);
+          return response.sendStatus(400).redirect("/");
         }
       });
-      ps.pipe(response); // <---- this makes a trick with stream error handling
+      return ps.pipe(response); // <---- this makes a trick with stream error handling
     } catch (e) {
-      response.status(404).redirect("/");
+      return response.status(404).redirect("/");
     }
   }
 }
