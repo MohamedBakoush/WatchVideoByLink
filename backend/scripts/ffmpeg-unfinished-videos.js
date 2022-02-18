@@ -228,12 +228,12 @@ function untrunc(fileName, fileType, fileName_path, broken_video_path, fileName_
   const working_video_path = ffmpegPath.get_working_video_path();
   if(deleteData.check_if_file_exits(`${fileName_path}/${fileName_original_ending}`) == true){  
     untrunc_exec(working_video_path, broken_video_path, () => {
-      downloadVideoAfterUntrunc(fileName, fileType, fileName_path, broken_video_path, fileName_original_ending, fileName_fixed_ending);
+      downloadVideoAfterUntrunc(fileName, fileName_path, broken_video_path, fileName_original_ending, fileName_fixed_ending);
     });
   } else if(deleteData.check_if_file_exits(`${fileName_path}/${fileName_fixed_ending}`) == true){ 
     deleteData.rename_file(`${fileName_path}/${fileName_fixed_ending}`, fileName_path, fileName_original_ending,  () => { 
       untrunc_exec(working_video_path, broken_video_path, () => {
-        downloadVideoAfterUntrunc(fileName, fileType, fileName_path, broken_video_path, fileName_original_ending, fileName_fixed_ending);
+        downloadVideoAfterUntrunc(fileName, fileName_path, broken_video_path, fileName_original_ending, fileName_fixed_ending);
       });
     });
   } else{ 
@@ -265,8 +265,8 @@ function untrunc_exec(working_video_path, broken_video_path, callback) {
 }
 
 // Download video after Untrunc
-function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
-  ffmpeg.ffprobe(fileName_fixed_ending, (error, metadata) => {   
+function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending){
+  ffmpeg.ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (error, metadata) => {   
     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
       video : { 
         "download-status" : "Untrunc"
@@ -282,44 +282,38 @@ function downloadVideoAfterUntrunc(fileName,fileType,newFilePath,path, fileName_
         clearInterval(checkIfMetadataExists); // stop check if video finnished restoring  
         // move video file to deleted-videos folder
         // if video is active it will make the video not viewable if someone wants to view it 
-        const renameBadVideoFile = setInterval(function(){ 
-          FileSystem.rename(fileName_original_ending, `./media/video/${fileName}/delete_soon.mp4`, () => { 
-            clearInterval(renameBadVideoFile); // stop interval
-            if (deleteData.check_if_file_exits(`./media/video/${fileName}/delete_soon.mp4`) == true) { 
-              const renameFixedVideoTillOrignialName = setInterval(function(){                        
-                FileSystem.rename(fileName_fixed_ending, fileName_original_ending,  () => { 
-                  clearInterval(renameFixedVideoTillOrignialName); // stop interval
-                  if (deleteData.check_if_file_exits(fileName_original_ending)) {
-                    videoData.updateVideoData([`${fileName}`], {
-                      video : {
-                        originalVideoSrc : "unknown",
-                        originalVideoType : "unknown",
-                        path: newFilePath+fileName+fileType,
-                        videoType : "video/mp4",
-                        download : "completed",
-                      },
-                      thumbnail: {
-                        path: {},
-                        download: "starting"
-                      }
-                    });
-                    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-                      video : { 
-                        "download-status" : "completed"
-                      },
-                      thumbnail : { 
-                        "download-status" : "starting thumbnail download"
-                      } 
-                    });
-                    ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
+        deleteData.rename_file(`${fileName_path}/${fileName_original_ending}`, fileName_path, "delete_soon.mp4",  () => { 
+          if (deleteData.check_if_file_exits(`${fileName_path}/delete_soon.mp4`) == true) { 
+            deleteData.rename_file(`${fileName_path}/${fileName_fixed_ending}`, fileName_path, fileName_original_ending,  () => { 
+              if (deleteData.check_if_file_exits(`${fileName_path}/${fileName_original_ending}`)) {
+                videoData.updateVideoData([`${fileName}`], {
+                  video : {
+                    originalVideoSrc : "unknown",
+                    originalVideoType : "unknown",
+                    path: video_path,
+                    videoType : "video/mp4",
+                    download : "completed",
+                  },
+                  thumbnail: {
+                    path: {},
+                    download: "starting"
                   }
-                  deleteData.unlink_file(`./media/video/${fileName}/delete_soon.mp4`);
-                  deleteData.unlink_file(`./media/video/${fileName}/${fileName}.mp4_fixed.mp4`);
-                });        
-              }, 50);  
-            } 
-          });   
-        }, 50);  
+                });
+                currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+                  video : { 
+                    "download-status" : "completed"
+                  },
+                  thumbnail : { 
+                    "download-status" : "starting thumbnail download"
+                  } 
+                });
+                ffmpegImageDownload.createThumbnail(video_path, `${fileName_path}/`, fileName); 
+              }
+              deleteData.unlink_file(`${fileName_path}/delete_soon.mp4`);
+              deleteData.unlink_file(`${fileName_path}/${fileName_fixed_ending}`);
+            }); 
+          } 
+        });
       }
     }, 50); 
   });
