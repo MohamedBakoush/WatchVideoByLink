@@ -166,10 +166,10 @@ function completeUnfinnishedVideoDownload(fileName){
   } else if (currentDownloadVideos.getCurrentDownloads([fileName]) == undefined) { 
     return "Invalid fileName";
   } else {
-    const filepath = "media/video/";
+    const filepath = "./media/video";
     const fileType = ".mp4";
-    const newFilePath = `${filepath}${fileName}/`; 
-    const path = newFilePath+fileName+fileType;
+    const fileName_path = `${filepath}/${fileName}`; 
+    const video_path = `${fileName_path}/${fileName}${fileType}`; 
     
     let videoProgressCompleted;
     if (currentDownloadVideos.getCurrentDownloads([fileName, "video", "download-status"]) == "completed") {
@@ -201,31 +201,30 @@ function completeUnfinnishedVideoDownload(fileName){
       } else if((!thumbnailProgressCompleted && compressionProgressCompleted) 
               || (!thumbnailProgressCompleted && currentDownloadVideos.getCurrentDownloads([fileName, "compression"]) == undefined)){ // redownload thumbnails
         // thumbnail false, compression true or thumbnail false, compression undefined 
-        ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
+        ffmpegImageDownload.createThumbnail(video_path, `${fileName_path}/`, fileName); 
         return "redownload thumbnails";
       } else if(thumbnailProgressCompleted && !compressionProgressCompleted){ // redownload compression
         // thumbnail true, compression false
-        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
+        ffmpegCompressionDownload.compression_VP9(video_path, `${fileName_path}/`, fileName); 
         return "redownload compression";
       } else { // redownload thumbnails & compression
         // thumbnail false, compression false  
-        ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
-        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
+        ffmpegImageDownload.createThumbnail(video_path, `${fileName_path}/`, fileName); 
+        ffmpegCompressionDownload.compression_VP9(video_path, `${fileName_path}/`, fileName); 
         return "redownload thumbnails & compression";  
       } 
     } else{  
-      const fileName_path = `./media/video/${fileName}/${fileName}`,
-      fileName_original_ending = `${fileName_path}.mp4`,
-      fileName_fixed_ending = `${fileName_path}.mp4_fixed.mp4`;
+      const fileName_original_ending = `${fileName}.mp4`,
+      fileName_fixed_ending = `${fileName}.mp4_fixed.mp4`;
       // untrunc broke video 
-      untrunc(fileName, fileType, newFilePath, path, fileName_original_ending, fileName_fixed_ending);  
+      untrunc(fileName, fileType, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);  
       return "untrunc broke video";
     }
   }
 }
 
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
-function untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending){
+function untrunc(fileName, fileType, newFilePath, path, fileName_original_ending, fileName_fixed_ending){
   const working_video_path = ffmpegPath.get_working_video_path();
   const broken_video_path = `./media/video/${fileName}/${fileName}.mp4`;
   if(deleteData.check_if_file_exits(fileName_original_ending) == true){  
