@@ -266,6 +266,7 @@ function untrunc_exec(working_video_path, broken_video_path, callback) {
 
 // Download video after Untrunc
 function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending){
+  const fileName_delete_soon_ending = "delete_soon.mp4";
   ffmpeg.ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (error, metadata) => {   
     currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
       video : { 
@@ -282,8 +283,8 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
         clearInterval(checkIfMetadataExists); // stop check if video finnished restoring  
         // move video file to deleted-videos folder
         // if video is active it will make the video not viewable if someone wants to view it 
-        deleteData.rename_file(`${fileName_path}/${fileName_original_ending}`, fileName_path, "delete_soon.mp4",  () => { 
-          if (deleteData.check_if_file_exits(`${fileName_path}/delete_soon.mp4`) == true) { 
+        deleteData.rename_file(`${fileName_path}/${fileName_original_ending}`, fileName_path, fileName_delete_soon_ending,  () => { 
+          if (deleteData.check_if_file_exits(`${fileName_path}/${fileName_delete_soon_ending}`) == true) { 
             deleteData.rename_file(`${fileName_path}/${fileName_fixed_ending}`, fileName_path, fileName_original_ending,  () => { 
               if (deleteData.check_if_file_exits(`${fileName_path}/${fileName_original_ending}`)) {
                 videoData.updateVideoData([`${fileName}`], {
@@ -309,7 +310,7 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
                 });
                 ffmpegImageDownload.createThumbnail(video_path, `${fileName_path}/`, fileName); 
               }
-              deleteData.unlink_file(`${fileName_path}/delete_soon.mp4`);
+              deleteData.unlink_file(`${fileName_path}/${fileName_delete_soon_ending}`);
               deleteData.unlink_file(`${fileName_path}/${fileName_fixed_ending}`);
             }); 
           } 
