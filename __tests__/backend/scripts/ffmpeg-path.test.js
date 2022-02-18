@@ -243,6 +243,14 @@ describe("update_working_video_path", () =>  {
     }); 
 }); 
 
+describe("working_video_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.working_video_path_invalid_path();
+        const getWorkingVideoPath = ffmpegPath.get_working_video_path();
+        expect(getWorkingVideoPath).toBe("invalid_path"); 
+    }); 
+}); 
+
 describe("checkIfFFmpegFFprobeExits", () =>  {  
     it("ffmpeg-ffprobe-exits", () =>  {
         const checkIfFFmpegFFprobeExits = ffmpegPath.checkIfFFmpegFFprobeExits();
