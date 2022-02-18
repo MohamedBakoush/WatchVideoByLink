@@ -3,11 +3,13 @@ const ffmpegPath = require("../../../backend/scripts/ffmpeg-path");
 const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 const ffprobe_installer = require("@ffprobe-installer/ffprobe");
 
+const deleteData = require("../../../backend/scripts/delete-data");
 const dataVideos = require("../../../backend/scripts/data-videos");
 const dataVideos_json_path = "__tests__/data/data-videos.test.json";
 const currentDownloadVideos = require("../../../backend/scripts/current-download-videos");
 const currentDownloadVideos_json_path = "__tests__/data/current-download-videos.test.json";
 const { v4: uuidv4 } = require("uuid");
+const FileSystem = require("fs");
 
 const ffprobe_path = ffprobe_installer.path;
 const ffmpeg_path = ffmpeg_installer.path;
@@ -927,3 +929,149 @@ describe("completeUnfinnishedVideoDownload", () =>  {
         expect(getCurrentDownloads).toBe(undefined); 
     }); 
 }); 
+
+describe("untrunc", () =>  {  
+    it("No Input", () =>  {
+        const untrunc = ffmpegUnfinishedVideos.untrunc();
+        expect(untrunc).toBe("fileName not string");  
+    });     
+
+    it("Invalid fileName", () =>  {
+        const filename = `test-${uuidv4()}`;
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename);
+        expect(untrunc).toBe("Invalid fileName");  
+    }); 
+
+    it("fileName_path not string", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename);
+        expect(untrunc).toBe("fileName_path not string");  
+    }); 
+    
+    it("broken_video_path not string", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const filepath = "./media/video"; 
+        const fileName_path = `${filepath}/${filename}`; 
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename, fileName_path);
+        expect(untrunc).toBe("broken_video_path not string");  
+    }); 
+    
+    it("fileName_original_ending not string", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const filepath = "./media/video"; 
+        const fileType = ".mp4";
+        const fileName_path = `${filepath}/${filename}`; 
+        const video_path = `${fileName_path}/${filename}${fileType}`; 
+        
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename, fileName_path, video_path);
+        expect(untrunc).toBe("fileName_original_ending not string");  
+    }); 
+
+    it("fileName_fixed_ending not string", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const filepath = "./media/video"; 
+        const fileType = ".mp4";
+        const fileName_path = `${filepath}/${filename}`; 
+        const video_path = `${fileName_path}/${filename}${fileType}`; 
+
+        const fileName_original_ending = `${filename}.mp4`;
+
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename, fileName_path, video_path, fileName_original_ending);
+        expect(untrunc).toBe("fileName_fixed_ending not string");  
+    }); 
+
+    it("untrunc fileName_original_ending", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const filepath = "./media/video"; 
+        const fileType = ".mp4";
+        const fileName_path = `${filepath}/${filename}`; 
+        const video_path = `${fileName_path}/${filename}${fileType}`; 
+        
+        const fileName_original_ending = `${filename}.mp4`;
+        const fileName_fixed_ending = `${filename}.mp4_fixed.mp4`;
+
+        ffmpegPath.untrunc_path_invalid_path();
+        ffmpegPath.ffmpeg_path_invalid_path();
+        ffmpegPath.ffprobe_path_invalid_path();
+        ffmpegPath.working_video_path_invalid_path();
+        FileSystem.mkdirSync(fileName_path);
+        FileSystem.writeFileSync(`${fileName_path}/${fileName_original_ending}`, "data");
+
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
+        expect(untrunc).toBe("execute untrunc");  
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(filename);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${filename}-permanently`);
+    }); 
+    
+    it("untrunc fileName_fixed_ending", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const filepath = "./media/video"; 
+        const fileType = ".mp4";
+        const fileName_path = `${filepath}/${filename}`; 
+        const video_path = `${fileName_path}/${filename}${fileType}`; 
+        
+        const fileName_original_ending = `${filename}.mp4`;
+        const fileName_fixed_ending = `${filename}.mp4_fixed.mp4`;
+
+        ffmpegPath.untrunc_path_invalid_path();
+        ffmpegPath.ffmpeg_path_invalid_path();
+        ffmpegPath.ffprobe_path_invalid_path();
+        ffmpegPath.working_video_path_invalid_path();
+        FileSystem.mkdirSync(fileName_path);
+        FileSystem.writeFileSync(`${fileName_path}/${fileName_fixed_ending}`, "data");
+
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
+        expect(untrunc).toBe("rename filename then execute untrunc");  
+        const deleteSpecifiedVideo = deleteData.deleteAllVideoData(filename);
+        expect(deleteSpecifiedVideo).toBe(`deleted-${filename}-permanently`);
+    }); 
+
+    it("delete all filename data", () =>  {
+        const filename = `test-${uuidv4()}`;
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const filepath = "./media/video"; 
+        const fileType = ".mp4";
+        const fileName_path = `${filepath}/${filename}`; 
+        const video_path = `${fileName_path}/${filename}${fileType}`; 
+        
+        const fileName_original_ending = `${filename}.mp4`;
+        const fileName_fixed_ending = `${filename}.mp4_fixed.mp4`;
+
+        const untrunc = ffmpegUnfinishedVideos.untrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
+        expect(untrunc).toBe(`${filename} deleted`);  
+    }); 
+});  
