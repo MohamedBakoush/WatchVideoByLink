@@ -125,6 +125,14 @@ describe("update_ffmpeg_path", () =>  {
     }); 
 }); 
 
+describe("ffmpeg_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.ffmpeg_path_invalid_path();
+        const getFFmpegPath = ffmpegPath.get_ffmpeg_path();
+        expect(getFFmpegPath).toBe("invalid_path"); 
+    }); 
+}); 
+
 describe("get_untrunc_path", () =>  {  
     it("Update Path", () =>  {
         const updated = ffmpegPath.update_untrunc_path(ffmpeg_path);
