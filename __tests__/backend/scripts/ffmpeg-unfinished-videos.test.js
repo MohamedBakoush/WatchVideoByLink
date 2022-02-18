@@ -1,5 +1,4 @@
 const ffmpegUnfinishedVideos = require("../../../backend/scripts/ffmpeg-unfinished-videos");
-
 const ffmpegPath = require("../../../backend/scripts/ffmpeg-path");
 const ffmpeg_installer = require("@ffmpeg-installer/ffmpeg");
 const ffprobe_installer = require("@ffprobe-installer/ffprobe");
@@ -9,7 +8,6 @@ const dataVideos_json_path = "__tests__/data/data-videos.test.json";
 const currentDownloadVideos = require("../../../backend/scripts/current-download-videos");
 const currentDownloadVideos_json_path = "__tests__/data/current-download-videos.test.json";
 const { v4: uuidv4 } = require("uuid");
-
 
 const ffprobe_path = ffprobe_installer.path;
 const ffmpeg_path = ffmpeg_installer.path;
@@ -31,7 +29,6 @@ afterEach(() => {
     ffmpegPath.update_untrunc_path(untrunc_path);
     ffmpegPath.update_working_video_path(working_video_path);
 }); 
-
 
 describe("cheackForAvailabeUnFinishedVideoDownloads", () =>  {    
     it("current downloads empty", () =>  {  
