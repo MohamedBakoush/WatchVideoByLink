@@ -295,6 +295,8 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
     return "fileName_fixed_ending not string";
   } else if (typeof fileName_delete_soon_ending !== "string") { 
     return "fileName_delete_soon_ending not string";
+  } else if (deleteData.check_if_file_exits(ffmpegPath.get_ffprobe_path()) !== true) { 
+    return "invalid ffprobe";
   } else {
     ffmpeg.ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (error, metadata) => {   
       currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
@@ -343,6 +345,7 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
         });
       }
     });
+    return "start download after untrunc";
   }
 }
 
