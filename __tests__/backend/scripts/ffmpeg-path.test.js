@@ -66,6 +66,14 @@ describe("update_ffprobe_path", () =>  {
     }); 
 }); 
 
+describe("ffprobe_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.ffprobe_path_invalid_path();
+        const getFFprobePath = ffmpegPath.get_ffprobe_path();
+        expect(getFFprobePath).toBe("invalid_path"); 
+    }); 
+}); 
+
 describe("get_ffmpeg_path", () =>  {  
     it("update path", () =>  {
         const updated = ffmpegPath.update_ffmpeg_path(ffmpeg_path);
