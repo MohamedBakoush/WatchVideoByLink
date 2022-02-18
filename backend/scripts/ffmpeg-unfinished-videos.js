@@ -245,8 +245,12 @@ function untrunc_exec(working_video_path, broken_video_path, callback) {
   const untrunc_path = ffmpegPath.get_untrunc_path();
   if (deleteData.check_if_file_exits(untrunc_path) !== true) {
     return "invalid untrunc_path";
-  } else if (deleteData.check_if_file_exits(working_video_path) !== true) {
+  } else if (typeof working_video_path !== "string") {
+    return "working_video_path not string";
+  }  else if (deleteData.check_if_file_exits(working_video_path) !== true) {
     return "invalid working_video_path";
+  } else if (typeof broken_video_path !== "string") {
+    return "broken_video_path not string";
   } else if (deleteData.check_if_file_exits(broken_video_path) !== true) {
     return "invalid broken_video_path";
   } else {
