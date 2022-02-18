@@ -1075,3 +1075,37 @@ describe("untrunc", () =>  {
         expect(untrunc).toBe(`${filename} deleted`);  
     }); 
 });  
+
+describe("untrunc_exec", () =>  {  
+    it("Invalid untrunc_path", () =>  {
+        ffmpegPath.untrunc_path_invalid_path();
+        const untrunc = ffmpegUnfinishedVideos.untrunc_exec();
+        expect(untrunc).toBe("invalid untrunc_path");  
+    });     
+    
+    it("Valid untrunc_path", () =>  {
+        ffmpegPath.update_untrunc_path(untrunc_path);
+        const untrunc = ffmpegUnfinishedVideos.untrunc_exec();
+        expect(untrunc).toBe("working_video_path not string");  
+    });   
+    
+    it("Valid untrunc_path, invalid working_video_path", () =>  {
+        ffmpegPath.update_untrunc_path(untrunc_path);
+        const working_video_path = "invalid_path";
+        const untrunc = ffmpegUnfinishedVideos.untrunc_exec(working_video_path);
+        expect(untrunc).toBe("invalid working_video_path");  
+    });      
+    
+    it("Valid untrunc_path, valid working_video_path", () =>  {
+        ffmpegPath.update_untrunc_path(untrunc_path);
+        const untrunc = ffmpegUnfinishedVideos.untrunc_exec(working_video_path);
+        expect(untrunc).toBe("broken_video_path not string");  
+    });      
+
+    it("Valid untrunc_path, valid working_video_path, invalid broken_video_path", () =>  {
+        ffmpegPath.update_untrunc_path(untrunc_path);
+        const broken_video_path = "invalid_path";
+        const untrunc = ffmpegUnfinishedVideos.untrunc_exec(working_video_path, broken_video_path);
+        expect(untrunc).toBe("invalid broken_video_path");  
+    });     
+}); 

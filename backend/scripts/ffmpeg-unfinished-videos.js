@@ -274,7 +274,7 @@ function untrunc_exec(working_video_path, broken_video_path, callback) {
         callback();
       }
     }); 
-    return "executing";
+    return "executing untrunc";
   }
 }
 
@@ -350,5 +350,6 @@ module.exports = { // export modules
   cheackForAvailabeUnFinishedVideoDownloads,
   completeUnfinnishedVideoDownload,
   untrunc,
+  untrunc_exec,
   downloadVideoAfterUntrunc
 };
