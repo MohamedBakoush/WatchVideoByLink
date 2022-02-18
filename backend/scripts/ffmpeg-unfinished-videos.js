@@ -213,18 +213,17 @@ function completeUnfinnishedVideoDownload(fileName){
         ffmpegCompressionDownload.compression_VP9(video_path, `${fileName_path}/`, fileName); 
         return "redownload thumbnails & compression";  
       } 
-    } else{  
+    } else{ // untrunc broke video 
       const fileName_original_ending = `${fileName}.mp4`,
       fileName_fixed_ending = `${fileName}.mp4_fixed.mp4`;
-      // untrunc broke video 
-      untrunc(fileName, fileType, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);  
+      untrunc(fileName, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);  
       return "untrunc broke video";
     }
   }
 }
 
 // Restore a damaged (truncated) mp4 provided a similar not broken video is available
-function untrunc(fileName, fileType, fileName_path, broken_video_path, fileName_original_ending, fileName_fixed_ending){
+function untrunc(fileName, fileName_path, broken_video_path, fileName_original_ending, fileName_fixed_ending){
   const working_video_path = ffmpegPath.get_working_video_path();
   if(deleteData.check_if_file_exits(`${fileName_path}/${fileName_original_ending}`) == true){  
     untrunc_exec(working_video_path, broken_video_path, () => {
