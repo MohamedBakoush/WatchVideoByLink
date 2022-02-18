@@ -161,73 +161,64 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
 
 // finnish download video/thumbnail (if not completed) when the application get started 
 function completeUnfinnishedVideoDownload(fileName){ 
-  const videoDetails = currentDownloadVideos.findCurrentDownloadByID(fileName);
-  if (videoDetails == undefined) { 
-    return "invalid current downloads id";
+  if (typeof fileName !== "string") { 
+    return "fileName not string";
+  } else if (currentDownloadVideos.getCurrentDownloads([fileName]) == undefined) { 
+    return "Invalid fileName";
   } else {
     const filepath = "media/video/";
     const fileType = ".mp4";
     const newFilePath = `${filepath}${fileName}/`; 
     const path = newFilePath+fileName+fileType;
-    let videoProgressCompleted, thumbnailProgressCompleted, compressionProgressCompleted;
-    try { // if videoProgress exits and is complete return true else false
-      if (currentDownloadVideos.getCurrentDownloads([fileName, "video", "download-status"]) == "completed") {
-        videoProgressCompleted = true;
-      } else {
-        videoProgressCompleted = false;
-      }
-    } catch (error) {
+    
+    let videoProgressCompleted;
+    if (currentDownloadVideos.getCurrentDownloads([fileName, "video", "download-status"]) == "completed") {
+      videoProgressCompleted = true;
+    } else {
       videoProgressCompleted = false;
     }
-    try { // if thumbnailProgress exits and is complete return true else false
-      if (currentDownloadVideos.getCurrentDownloads([fileName, "thumbnail", "download-status"]) == "completed") {
-        thumbnailProgressCompleted = true;
-      } else {
-        thumbnailProgressCompleted = false;
-      }
-    } catch (error) {
+
+    let thumbnailProgressCompleted;
+    if (currentDownloadVideos.getCurrentDownloads([fileName, "thumbnail", "download-status"]) == "completed") {
+      thumbnailProgressCompleted = true;
+    } else {
       thumbnailProgressCompleted = false;
     }
-    try { // if compressionProgress exits and is complete return true else false
-      if (currentDownloadVideos.getCurrentDownloads([fileName, "compression", "download-status"]) == "completed") {
-        compressionProgressCompleted = true;
-      } else {
-        compressionProgressCompleted = false;
-      }
-    } catch (error) {
+
+    let compressionProgressCompleted;
+    if (currentDownloadVideos.getCurrentDownloads([fileName, "compression", "download-status"]) == "completed") {
+      compressionProgressCompleted = true;
+    } else {
       compressionProgressCompleted = false;
     }
+
     if(videoProgressCompleted){ // when video has already been finnished downloading 
-      if(thumbnailProgressCompleted && compressionProgressCompleted){ // delete data (no longer needed)    
-        // thumbnail true, compression true   
+      if((thumbnailProgressCompleted && compressionProgressCompleted) 
+        || (thumbnailProgressCompleted && currentDownloadVideos.getCurrentDownloads([fileName, "compression"]) == undefined)){ // delete data (no longer needed)    
+        // thumbnail true, compression true or thumbnail true, compression undefined 
         currentDownloadVideos.deleteSpecifiedCurrentDownloadVideosData(fileName);      
         return "download status: completed";
-      } else if(!thumbnailProgressCompleted && compressionProgressCompleted){ // redownload thumbnails
-        // thumbnail false, compression true
+      } else if((!thumbnailProgressCompleted && compressionProgressCompleted) 
+              || (!thumbnailProgressCompleted && currentDownloadVideos.getCurrentDownloads([fileName, "compression"]) == undefined)){ // redownload thumbnails
+        // thumbnail false, compression true or thumbnail false, compression undefined 
         ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
         return "redownload thumbnails";
       } else if(thumbnailProgressCompleted && !compressionProgressCompleted){ // redownload compression
         // thumbnail true, compression false
         ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
         return "redownload compression";
-      } else{ 
-        if (currentDownloadVideos.getCurrentDownloads([fileName, "compression"]) == undefined) { // redownload thumbnails 
-          // thumbnail false, compression undefined  
-          ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
-          return "redownload thumbnails";      
-        } else { // redownload thumbnails & compression
-          // thumbnail false, compression false  
-          ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
-          ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
-          return "redownload thumbnails & compression";  
-        } 
-      }
+      } else { // redownload thumbnails & compression
+        // thumbnail false, compression false  
+        ffmpegImageDownload.createThumbnail(path, newFilePath, fileName); 
+        ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName); 
+        return "redownload thumbnails & compression";  
+      } 
     } else{  
       const fileName_path = `./media/video/${fileName}/${fileName}`,
       fileName_original_ending = `${fileName_path}.mp4`,
       fileName_fixed_ending = `${fileName_path}.mp4_fixed.mp4`;
       // untrunc broke video 
-      untrunc(fileName,fileType,newFilePath,path, fileName_original_ending, fileName_fixed_ending);  
+      untrunc(fileName, fileType, newFilePath, path, fileName_original_ending, fileName_fixed_ending);  
       return "untrunc broke video";
     }
   }

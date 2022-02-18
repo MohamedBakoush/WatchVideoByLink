@@ -802,3 +802,128 @@ describe("cheackForAvailabeUnFinishedVideoDownloads", () =>  {
         expect(thumbnail).toBe(undefined); 
     });
 }); 
+
+describe("completeUnfinnishedVideoDownload", () =>  {  
+    it("No Input", () =>  {
+        const updated = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload();
+        expect(updated).toBe("fileName not string");  
+    });  
+
+    it("Invalid fileName", () =>  {
+        const filename = uuidv4();
+        const updated = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(updated).toBe("Invalid fileName");  
+    });  
+
+    it("video false: untrunc broke video", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("untrunc broke video");    
+    }); 
+
+
+    it("video true, thumbnail false: redownload thumbnails", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("redownload thumbnails");    
+    }); 
+
+    it("video thumbnail true: download status completed", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "completed"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("download status: completed");    
+    }); 
+
+    it("video true, compression thumbnail false: redownload thumbnails & compression", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "unfinished download"
+            },
+            "thumbnail": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("redownload thumbnails & compression");    
+    }); 
+
+
+    it("video compression true, thumbnail false: redownload thumbnails", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "unfinished download"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("redownload thumbnails");    
+    }); 
+
+
+    it("video thumbnail true, compression false: redownload compression", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "unfinished download"
+            },
+            "thumbnail": { 
+                "download-status": "completed"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("redownload compression");    
+    }); 
+    
+    it("video compression thumbnail true: download status completed", () =>  {
+        const filename = uuidv4(); 
+        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
+            "video": { 
+                "download-status": "completed"
+            },
+            "compression": { 
+                "download-status": "completed"
+            },
+            "thumbnail": { 
+                "download-status": "completed"
+            }
+        });
+        const completeUnfinnishedDownload = ffmpegUnfinishedVideos.completeUnfinnishedVideoDownload(filename);
+        expect(completeUnfinnishedDownload).toBe("download status: completed");
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([filename]);
+        expect(getCurrentDownloads).toBe(undefined); 
+    }); 
+}); 
