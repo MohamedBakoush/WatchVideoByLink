@@ -184,6 +184,14 @@ describe("update_untrunc_path", () =>  {
     }); 
 }); 
 
+describe("untrunc_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.untrunc_path_invalid_path();
+        const getUntruncPath = ffmpegPath.get_untrunc_path();
+        expect(getUntruncPath).toBe("invalid_path"); 
+    }); 
+}); 
+
 describe("get_working_video_path", () =>  {  
     it("Update Path", () =>  {
         const updated = ffmpegPath.update_working_video_path(ffmpeg_path);
