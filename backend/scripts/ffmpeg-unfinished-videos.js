@@ -281,20 +281,32 @@ function untrunc_exec(working_video_path, broken_video_path, callback) {
 // Download video after Untrunc
 function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending){
   const fileName_delete_soon_ending = "delete_soon.mp4";
-  ffmpeg.ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (error, metadata) => {   
-    currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
-      video : { 
-        "download-status" : "Untrunc"
-      },
-      thumbnail : { 
-        "download-status" : "waiting for video"
-      } 
-    });   
-    // check if fileName_fixed_ending video has finnished downloading by checking if metadata exits
-    const checkIfMetadataExists = setInterval(function(){ 
-      //code goes here that will be run every intrerval.    
+  if (typeof fileName !== "string") { 
+    return "fileName not string";
+  } else if (currentDownloadVideos.getCurrentDownloads([fileName]) == undefined) { 
+    return "Invalid fileName";
+  } else if (typeof fileName_path !== "string") { 
+    return "fileName_path not string";
+  } else if (typeof video_path !== "string") { 
+    return "video_path not string";
+  } else if (typeof fileName_original_ending !== "string") { 
+    return "fileName_original_ending not string";
+  } else if (typeof fileName_fixed_ending !== "string") { 
+    return "fileName_fixed_ending not string";
+  } else if (typeof fileName_delete_soon_ending !== "string") { 
+    return "fileName_delete_soon_ending not string";
+  } else {
+    ffmpeg.ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (error, metadata) => {   
+      currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+        video : { 
+          "download-status" : "Untrunc"
+        },
+        thumbnail : { 
+          "download-status" : "waiting for video"
+        } 
+      });   
+      // check if fileName_fixed_ending video has finnished downloading by checking if metadata exits
       if(metadata !== "undefined"){ // video finnished restoring
-        clearInterval(checkIfMetadataExists); // stop check if video finnished restoring  
         // move video file to deleted-videos folder
         // if video is active it will make the video not viewable if someone wants to view it 
         deleteData.rename_file(`${fileName_path}/${fileName_original_ending}`, fileName_path, fileName_delete_soon_ending,  () => { 
@@ -330,8 +342,8 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
           } 
         });
       }
-    }, 50); 
-  });
+    });
+  }
 }
 
 module.exports = { // export modules 
