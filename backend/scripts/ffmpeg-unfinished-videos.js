@@ -18,20 +18,16 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
   if(Object.keys(currentDownloadVideos.getCurrentDownloads()).length !== 0){  // if there is available data in currentDownloads()
     Object.keys(currentDownloadVideos.getCurrentDownloads()).forEach(function(fileName) { // for each currentDownloads get id as fileName 
       // assign download status variable if available with correct progress status
-      let videoProgress, thumbnailProgress, compressionProgress;
-      if (currentDownloadVideos.getCurrentDownloads([fileName, "video"])) {
-        videoProgress = currentDownloadVideos.getCurrentDownloads([fileName, "video", "download-status"]);  
-      } else {
+      let videoProgress = currentDownloadVideos.getCurrentDownloads([fileName, "video", "download-status"]);
+      if (videoProgress === undefined) {
         videoProgress = false;
       }
-      if (currentDownloadVideos.getCurrentDownloads([fileName, "thumbnail"])) {
-        thumbnailProgress = currentDownloadVideos.getCurrentDownloads([fileName, "thumbnail", "download-status"]);  
-      } else {
+      let thumbnailProgress = currentDownloadVideos.getCurrentDownloads([fileName, "thumbnail", "download-status"]);
+      if (thumbnailProgress === undefined) {
         thumbnailProgress = false;
       } 
-      if (currentDownloadVideos.getCurrentDownloads([fileName, "compression"])) {
-        compressionProgress = currentDownloadVideos.getCurrentDownloads([fileName, "compression", "download-status"]);  
-      } else {
+      let compressionProgress = currentDownloadVideos.getCurrentDownloads([fileName, "compression", "download-status"]);
+      if (compressionProgress === undefined) {
         compressionProgress = false;
       } 
 
@@ -158,6 +154,8 @@ function cheackForAvailabeUnFinishedVideoDownloads(){
         deleteData.deleteAllVideoData(fileName);    
       }
     });  
+  } else {
+    return "current-downloads-empty";
   }
 }
 
