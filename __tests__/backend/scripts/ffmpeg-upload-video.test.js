@@ -74,7 +74,7 @@ describe("start_downloadUploadedVideo", () =>  {
         const getVideoData = dataVideos.getVideoData([fileName]);
         expect(getVideoData).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : "starting uploaded video download"
             }
@@ -98,7 +98,7 @@ describe("start_downloadUploadedVideo", () =>  {
         const getVideoData = dataVideos.getVideoData([fileName]);
         expect(getVideoData).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : "starting uploaded video download"
             }
@@ -122,7 +122,7 @@ describe("start_downloadUploadedVideo", () =>  {
         const getVideoData = dataVideos.getVideoData([fileName]);
         expect(getVideoData).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : "starting uploaded video download"
             }
@@ -149,7 +149,7 @@ describe("start_downloadUploadedVideo", () =>  {
         const getVideoData = dataVideos.getVideoData([fileName]);
         expect(getVideoData).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : "starting uploaded video download"
             }
@@ -197,7 +197,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData1 = dataVideos.getVideoData([fileName]);
         expect(getVideoData1).toMatchObject({
             video:{
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : "starting uploaded video download"
             }
@@ -218,7 +218,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData2 = dataVideos.getVideoData([fileName]);
         expect(getVideoData2).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : 0
             }
@@ -245,7 +245,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData1 = dataVideos.getVideoData([fileName]);
         expect(getVideoData1).toMatchObject({
             video:{
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : "starting uploaded video download"
             }
@@ -269,7 +269,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData2 = dataVideos.getVideoData([fileName]);
         expect(getVideoData2).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : 0
             }
@@ -303,7 +303,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData2 = dataVideos.getVideoData([fileName]);
         expect(getVideoData2).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : 0
             }
@@ -329,7 +329,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData2 = dataVideos.getVideoData([fileName]);
         expect(getVideoData2).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : 0
             }
@@ -358,7 +358,7 @@ describe("progress_downloadUploadedVideo", () =>  {
         const getVideoData2 = dataVideos.getVideoData([fileName]);
         expect(getVideoData2).toMatchObject({
             video : {
-                originalVideoSrc : "unknown",
+                originalVideoSrc : "uploaded",
                 originalVideoType : fileMimeType,
                 download : 0
             }
