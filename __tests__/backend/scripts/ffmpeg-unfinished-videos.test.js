@@ -1118,9 +1118,6 @@ describe("downloadVideoAfterUntrunc", () =>  {
 
     it("Invalid fileName", () =>  {
         const filename = `test-${uuidv4()}`;
-              
-        ffmpegPath.ffprobe_path_invalid_path();
-        
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename);
         expect(afterUntrunc).toBe("Invalid fileName");  
     }); 
@@ -1132,11 +1129,10 @@ describe("downloadVideoAfterUntrunc", () =>  {
                 "download-status": "unfinished download"
             }
         });
-              
-        ffmpegPath.ffprobe_path_invalid_path();
-
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename);
         expect(afterUntrunc).toBe("fileName_path not string");  
+        const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
+        expect(video).toBe("unfinished download"); 
     }); 
     
     it("valid fileName, vaild fileName_path", () =>  {
@@ -1148,11 +1144,11 @@ describe("downloadVideoAfterUntrunc", () =>  {
         });
         const filepath = "./media/video"; 
         const fileName_path = `${filepath}/${filename}`; 
-              
-        ffmpegPath.ffprobe_path_invalid_path();
-        
+
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path);
         expect(afterUntrunc).toBe("video_path not string");  
+        const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
+        expect(video).toBe("unfinished download"); 
     }); 
     
     it("valid fileName, vaild fileName_path, valid video_path", () =>  {
@@ -1167,10 +1163,10 @@ describe("downloadVideoAfterUntrunc", () =>  {
         const fileName_path = `${filepath}/${filename}`; 
         const video_path = `${fileName_path}/${filename}${fileType}`; 
               
-        ffmpegPath.ffprobe_path_invalid_path();
-        
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path);
         expect(afterUntrunc).toBe("fileName_original_ending not string");  
+        const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
+        expect(video).toBe("unfinished download"); 
     }); 
 
     it("valid fileName, vaild fileName_path, valid video_path, valid fileName_original_ending", () =>  {
@@ -1186,10 +1182,10 @@ describe("downloadVideoAfterUntrunc", () =>  {
         const video_path = `${fileName_path}/${filename}${fileType}`; 
         const fileName_original_ending = `${filename}.mp4`;
               
-        ffmpegPath.ffprobe_path_invalid_path();
-
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path, fileName_original_ending);
         expect(afterUntrunc).toBe("fileName_fixed_ending not string");  
+        const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
+        expect(video).toBe("unfinished download"); 
     }); 
 
     it("valid fileName, vaild fileName_path, valid video_path, valid fileName_original_ending, valid fileName_fixed_ending", () =>  {
@@ -1206,14 +1202,10 @@ describe("downloadVideoAfterUntrunc", () =>  {
         const fileName_original_ending = `${filename}.mp4`;
         const fileName_fixed_ending = `${filename}.mp4_fixed.mp4`;
               
-        ffmpegPath.ffprobe_path_invalid_path();
-
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
         expect(afterUntrunc).toBe("start download after untrunc");  
-        const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
-        expect(video).toBe("Untrunc"); 
-        const thumbnail = currentDownloadVideos.getCurrentDownloads([filename, "thumbnail", "download-status"]);
-        expect(thumbnail).toBe("waiting for video"); 
+        const video = currentDownloadVideos.getCurrentDownloads([filename]);
+        expect(video).toBe(undefined); 
     }); 
 }); 
 
