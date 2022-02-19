@@ -255,6 +255,7 @@ function untrunc(fileName, fileName_path, broken_video_path, fileName_original_e
   }
 }
 
+// execute untrunc
 function untrunc_exec(working_video_path, broken_video_path, callback) {
   const untrunc_path = ffmpegPath.get_untrunc_path();
   if (deleteData.check_if_file_exits(untrunc_path) !== true) {
@@ -349,6 +350,7 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
   }
 }
 
+// ffprobe video path 
 function untrunc_ffprobe(video_path, callback) {
   if (typeof video_path !== "string") {
     return "video_path not string";
