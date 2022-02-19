@@ -66,6 +66,14 @@ describe("update_ffprobe_path", () =>  {
     }); 
 }); 
 
+describe("ffprobe_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.ffprobe_path_invalid_path();
+        const getFFprobePath = ffmpegPath.get_ffprobe_path();
+        expect(getFFprobePath).toBe("invalid_path"); 
+    }); 
+}); 
+
 describe("get_ffmpeg_path", () =>  {  
     it("update path", () =>  {
         const updated = ffmpegPath.update_ffmpeg_path(ffmpeg_path);
@@ -114,6 +122,14 @@ describe("update_ffmpeg_path", () =>  {
     it("Valid: Path", () =>  {
         const updated = ffmpegPath.update_ffmpeg_path(ffmpeg_path);
         expect(updated).toBe(ffmpeg_path);  
+    }); 
+}); 
+
+describe("ffmpeg_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.ffmpeg_path_invalid_path();
+        const getFFmpegPath = ffmpegPath.get_ffmpeg_path();
+        expect(getFFmpegPath).toBe("invalid_path"); 
     }); 
 }); 
 
@@ -168,6 +184,14 @@ describe("update_untrunc_path", () =>  {
     }); 
 }); 
 
+describe("untrunc_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.untrunc_path_invalid_path();
+        const getUntruncPath = ffmpegPath.get_untrunc_path();
+        expect(getUntruncPath).toBe("invalid_path"); 
+    }); 
+}); 
+
 describe("get_working_video_path", () =>  {  
     it("Update Path", () =>  {
         const updated = ffmpegPath.update_working_video_path(ffmpeg_path);
@@ -216,6 +240,14 @@ describe("update_working_video_path", () =>  {
     it("Valid: Path", () =>  {
         const updated = ffmpegPath.update_untrunc_path(working_video_path);
         expect(updated).toBe(working_video_path);  
+    }); 
+}); 
+
+describe("working_video_path_invalid_path", () =>  {  
+    it("update path", () =>  {
+        ffmpegPath.working_video_path_invalid_path();
+        const getWorkingVideoPath = ffmpegPath.get_working_video_path();
+        expect(getWorkingVideoPath).toBe("invalid_path"); 
     }); 
 }); 
 

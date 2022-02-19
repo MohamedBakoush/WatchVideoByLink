@@ -160,7 +160,7 @@ function start_downloadUploadedVideo(fileName, fileMimeType, compressUploadedVid
   } else {
     videoData.updateVideoData([`${fileName}`], {
       video:{
-        originalVideoSrc : "unknown",
+        originalVideoSrc : "uploaded",
         originalVideoType : fileMimeType,
         download : "starting uploaded video download"
       }

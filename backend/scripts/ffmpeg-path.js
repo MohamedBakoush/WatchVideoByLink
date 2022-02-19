@@ -27,6 +27,11 @@ function update_ffprobe_path(newPath){
     } 
 }
 
+// for testing purposes
+function ffprobe_path_invalid_path(){ 
+    ffprobe_path = "invalid_path";
+}
+
 // get ffmpeg path
 function get_ffmpeg_path(){ 
     if (ffmpeg_path !== undefined) {
@@ -47,6 +52,11 @@ function update_ffmpeg_path(newPath){
     } else { 
         return undefined;
     } 
+}
+
+// for testing purposes
+function ffmpeg_path_invalid_path(){ 
+    ffmpeg_path = "invalid_path";
 }
 
 // get untrun path
@@ -72,6 +82,11 @@ function update_untrunc_path(newPath){
     } 
 }
 
+// for testing purposes
+function untrunc_path_invalid_path(){ 
+    untrunc_path = "invalid_path";
+}
+
 // get working video path
 function get_working_video_path(){ 
     if (working_video_path !== undefined) {
@@ -91,6 +106,11 @@ function update_working_video_path(newPath){
     } else { 
         return undefined;
     } 
+}
+
+// for testing purposes
+function working_video_path_invalid_path(){ 
+    working_video_path = "invalid_path";
 }
 
 // check if ffmpeg ffprobe exits
@@ -122,12 +142,16 @@ function SIGKILL(command) {
 module.exports = { // export modules
   get_ffprobe_path,
   update_ffprobe_path,
+  ffprobe_path_invalid_path,
   get_ffmpeg_path, 
   update_ffmpeg_path, 
+  ffmpeg_path_invalid_path,
   get_untrunc_path,
   update_untrunc_path,
+  untrunc_path_invalid_path,
   get_working_video_path,
   update_working_video_path,
+  working_video_path_invalid_path,
   checkIfFFmpegFFprobeExits,
   STOP,
   SIGKILL

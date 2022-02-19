@@ -44,7 +44,15 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                   end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
                 })
                 .on("error", (error) => {
-                    console.log(`Encoding Error: ${error.message}`);
+                  console.log(`Encoding Error: ${error.message}`);
+                  // compression isn't activated if video gets untrunc
+                  if (videoData.getVideoData([`${fileName}`, "video", "originalVideoSrc"]) === "untrunc"
+                  || videoData.getVideoData([`${fileName}`, "video", "originalVideoType"]) === "untrunc") {
+                    // when a bad untrunc gets pushed trough createThumbnail and an error happens,
+                    // it will error out of ffmpeg and no matter how many times createThumbnail gets executed,
+                    // same error is still made
+                    deleteData.deleteAllVideoData(fileName);
+                  }
                 })
                 .outputOptions([`-vf fps=${numberOfImages}/${duration}`])
                 .output(`${newFilePath}${fileName}-${imageFileName}%03d${fileType}`)
