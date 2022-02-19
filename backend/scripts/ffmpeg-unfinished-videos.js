@@ -304,7 +304,7 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
         "download-status" : "waiting for video"
       } 
     });   
-    untrunc_ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (metadata) => {
+    const ffprobe_response = untrunc_ffprobe(`${fileName_path}/${fileName_fixed_ending}`, (metadata) => {
       if (metadata === undefined) {
         deleteData.deleteAllVideoData(fileName);
       } else {
@@ -344,6 +344,7 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
         });
       }
     });
+    if(ffprobe_response !== "start ffprobe") deleteData.deleteAllVideoData(fileName);
     return "start download after untrunc";
   }
 }
