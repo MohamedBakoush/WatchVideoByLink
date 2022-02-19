@@ -317,8 +317,8 @@ function downloadVideoAfterUntrunc(fileName, fileName_path, video_path, fileName
               if (deleteData.check_if_file_exits(`${fileName_path}/${fileName_original_ending}`)) {
                 videoData.updateVideoData([`${fileName}`], {
                   video : {
-                    originalVideoSrc : "unknown",
-                    originalVideoType : "unknown",
+                    originalVideoSrc : "untrunc",
+                    originalVideoType : "untrunc",
                     path: video_path,
                     videoType : "video/mp4",
                     download : "completed",
