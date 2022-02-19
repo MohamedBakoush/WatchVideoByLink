@@ -1203,3 +1203,35 @@ describe("downloadVideoAfterUntrunc", () =>  {
         expect(thumbnail).toBe("waiting for video"); 
     }); 
 }); 
+
+describe("untrunc_ffprobe", () =>  {  
+    it("No Input", () =>  {
+        const afterUntrunc = ffmpegUnfinishedVideos.untrunc_ffprobe();
+        expect(afterUntrunc).toBe("video_path not string");  
+    });      
+
+    it("Invalid video_path", () =>  {
+        const afterUntrunc = ffmpegUnfinishedVideos.untrunc_ffprobe("invalid_path");
+        expect(afterUntrunc).toBe("invalid video_path");  
+    }); 
+
+    it("Valid video_path, invalid ffprobe", () =>  {
+        ffmpegPath.ffprobe_path_invalid_path();
+        const afterUntrunc = ffmpegUnfinishedVideos.untrunc_ffprobe(working_video_path);
+        expect(afterUntrunc).toBe("invalid ffprobe");  
+    }); 
+
+    it("Valid video_path, Valid ffprobe without callback", () =>  {
+        const afterUntrunc = ffmpegUnfinishedVideos.untrunc_ffprobe(working_video_path);
+        expect(afterUntrunc).toBe("start ffprobe");  
+    }); 
+
+    it("Valid video_path, Valid ffprobe with callback", () =>  {
+        let numb = 1;
+        const afterUntrunc = ffmpegUnfinishedVideos.untrunc_ffprobe(working_video_path,  () => { 
+            numb = numb + 1;
+            expect(numb).toBe(2);  
+        });
+        expect(afterUntrunc).toBe("start ffprobe");  
+    }); 
+}); 

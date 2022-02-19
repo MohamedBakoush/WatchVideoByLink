@@ -366,5 +366,6 @@ module.exports = { // export modules
   completeUnfinnishedVideoDownload,
   untrunc,
   untrunc_exec,
+  untrunc_ffprobe,
   downloadVideoAfterUntrunc
 };
