@@ -1118,6 +1118,9 @@ describe("downloadVideoAfterUntrunc", () =>  {
 
     it("Invalid fileName", () =>  {
         const filename = `test-${uuidv4()}`;
+              
+        ffmpegPath.ffprobe_path_invalid_path();
+        
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename);
         expect(afterUntrunc).toBe("Invalid fileName");  
     }); 
@@ -1129,6 +1132,9 @@ describe("downloadVideoAfterUntrunc", () =>  {
                 "download-status": "unfinished download"
             }
         });
+              
+        ffmpegPath.ffprobe_path_invalid_path();
+
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename);
         expect(afterUntrunc).toBe("fileName_path not string");  
     }); 
@@ -1142,6 +1148,9 @@ describe("downloadVideoAfterUntrunc", () =>  {
         });
         const filepath = "./media/video"; 
         const fileName_path = `${filepath}/${filename}`; 
+              
+        ffmpegPath.ffprobe_path_invalid_path();
+        
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path);
         expect(afterUntrunc).toBe("video_path not string");  
     }); 
@@ -1157,6 +1166,8 @@ describe("downloadVideoAfterUntrunc", () =>  {
         const fileType = ".mp4";
         const fileName_path = `${filepath}/${filename}`; 
         const video_path = `${fileName_path}/${filename}${fileType}`; 
+              
+        ffmpegPath.ffprobe_path_invalid_path();
         
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path);
         expect(afterUntrunc).toBe("fileName_original_ending not string");  
@@ -1173,8 +1184,9 @@ describe("downloadVideoAfterUntrunc", () =>  {
         const fileType = ".mp4";
         const fileName_path = `${filepath}/${filename}`; 
         const video_path = `${fileName_path}/${filename}${fileType}`; 
-
         const fileName_original_ending = `${filename}.mp4`;
+              
+        ffmpegPath.ffprobe_path_invalid_path();
 
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path, fileName_original_ending);
         expect(afterUntrunc).toBe("fileName_fixed_ending not string");  
@@ -1191,10 +1203,11 @@ describe("downloadVideoAfterUntrunc", () =>  {
         const fileType = ".mp4";
         const fileName_path = `${filepath}/${filename}`; 
         const video_path = `${fileName_path}/${filename}${fileType}`; 
-
         const fileName_original_ending = `${filename}.mp4`;
         const fileName_fixed_ending = `${filename}.mp4_fixed.mp4`;
-        
+              
+        ffmpegPath.ffprobe_path_invalid_path();
+
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
         expect(afterUntrunc).toBe("start download after untrunc");  
         const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
