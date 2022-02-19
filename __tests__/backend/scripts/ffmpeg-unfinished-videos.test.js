@@ -1180,28 +1180,7 @@ describe("downloadVideoAfterUntrunc", () =>  {
         expect(afterUntrunc).toBe("fileName_fixed_ending not string");  
     }); 
 
-    it("valid fileName, vaild fileName_path, valid video_path, valid fileName_original_ending, valid fileName_fixed_ending, invalid ffprobe", () =>  {
-        const filename = `test-${uuidv4()}`;
-        currentDownloadVideos.updateCurrentDownloadVideos([filename], {
-            "video": { 
-                "download-status": "unfinished download"
-            }
-        });
-        const filepath = "./media/video"; 
-        const fileType = ".mp4";
-        const fileName_path = `${filepath}/${filename}`; 
-        const video_path = `${fileName_path}/${filename}${fileType}`; 
-
-        const fileName_original_ending = `${filename}.mp4`;
-        const fileName_fixed_ending = `${filename}.mp4_fixed.mp4`;
-
-        ffmpegPath.ffprobe_path_invalid_path();
-        
-        const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
-        expect(afterUntrunc).toBe("invalid ffprobe");  
-    }); 
-
-    it("valid fileName, vaild fileName_path, valid video_path, valid fileName_original_ending, valid fileName_fixed_ending, valid ffprobe", () =>  {
+    it("valid fileName, vaild fileName_path, valid video_path, valid fileName_original_ending, valid fileName_fixed_ending", () =>  {
         const filename = `test-${uuidv4()}`;
         currentDownloadVideos.updateCurrentDownloadVideos([filename], {
             "video": { 
@@ -1218,5 +1197,9 @@ describe("downloadVideoAfterUntrunc", () =>  {
         
         const afterUntrunc = ffmpegUnfinishedVideos.downloadVideoAfterUntrunc(filename, fileName_path, video_path, fileName_original_ending, fileName_fixed_ending);
         expect(afterUntrunc).toBe("start download after untrunc");  
+        const video = currentDownloadVideos.getCurrentDownloads([filename, "video", "download-status"]);
+        expect(video).toBe("Untrunc"); 
+        const thumbnail = currentDownloadVideos.getCurrentDownloads([filename, "thumbnail", "download-status"]);
+        expect(thumbnail).toBe("waiting for video"); 
     }); 
 }); 
