@@ -1,7 +1,7 @@
 import * as basic from "../scripts/basics.js";
 import * as notify from "../scripts/notify.js";
 import * as navigationBar from "../scripts/navigationBar.js";
-import * as videoButton from "../scripts/videoPlayerButtons.js";
+import * as videoButton from "../scripts/video-payer-buttons.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
 import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js"; 
 
