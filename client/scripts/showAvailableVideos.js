@@ -1,6 +1,6 @@
 import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
-import * as folderPath from "./folderPath.js";
+import * as folderPath from "./folder-path.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
 import * as optionMenu from "../scripts/option-menu.js";
