@@ -2,7 +2,7 @@ import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
 import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
 // on click video option menu

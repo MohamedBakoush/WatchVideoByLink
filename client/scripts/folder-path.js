@@ -1,7 +1,7 @@
 import * as basic from "./basics.js";
 import * as folder from "./folder.js";
 import * as search from "../scripts/search.js";
-import * as showAvailableVideos from "./showAvailableVideos.js";
+import * as showAvailableVideos from "./show-available-videos.js";
 
 // display / between folder paths 
 export function breakPath(pathContainer, id) { 

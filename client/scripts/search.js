@@ -1,5 +1,5 @@
 import * as basic from "../scripts/basics.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
 
 // get searchBarContainer 
 export function searchBarContainer() {

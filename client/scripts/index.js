@@ -2,7 +2,7 @@ import * as basic from "../scripts/basics.js";
 import * as notify from "../scripts/notify.js";
 import * as navigationBar from "../scripts/navigation-bar.js";
 import * as videoButton from "../scripts/video-payer-buttons.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
 import * as currentVideoDownloads from "../scripts/current-video-downloads.js"; 
 
 // get video link and video type from the url
