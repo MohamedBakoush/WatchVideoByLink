@@ -4,6 +4,7 @@ import * as navigationBar from "../scripts/navigation-bar.js";
 import * as videoButton from "../scripts/video-payer-buttons.js";
 import * as trimVideo from "../scripts/download-trimed-video.js";
 import * as downloadVideo from "../scripts/download-video.js";
+import * as downloadStream from "../scripts/download-stream.js";
 import * as showAvailableVideos from "../scripts/show-available-videos.js";
 import * as currentVideoDownloads from "../scripts/current-video-downloads.js"; 
 
@@ -313,8 +314,8 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     });
 
     // record stream
-    const StopRecButton = videoButton.stopRecStreamButton(player, Button);
-    const RecButton = videoButton.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
+    const StopRecButton = downloadStream.stopRecStreamButton(player, Button);
+    const RecButton = downloadStream.RecStreamButton(player, Button, StopRecButton, videoSrc, videoType);
 
     videojs.registerComponent("RecButton", RecButton);  // eslint-disable-line
     player.getChild("controlBar").addChild("RecButton", {}, 1);
