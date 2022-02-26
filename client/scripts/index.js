@@ -3,6 +3,7 @@ import * as notify from "../scripts/notify.js";
 import * as navigationBar from "../scripts/navigation-bar.js";
 import * as videoButton from "../scripts/video-payer-buttons.js";
 import * as trimVideo from "../scripts/download-trimed-video.js";
+import * as downloadVideo from "../scripts/download-video.js";
 import * as showAvailableVideos from "../scripts/show-available-videos.js";
 import * as currentVideoDownloads from "../scripts/current-video-downloads.js"; 
 
@@ -401,7 +402,7 @@ async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     downloadVideoMenu.style.display = "none";
     const downloadVideoMenuContent = basic.createSection(downloadVideoMenu, "div", "vjs-menu-content");
 
-    videoButton.downloadVideoButton(downloadVideoMenuContent, videoSrc, videoType);
+    downloadVideo.downloadVideoButton(downloadVideoMenuContent, videoSrc, videoType);
     trimVideo.createTrimVideo(player, downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);
 
     downloadVideoContainer.onmouseover = function(){
