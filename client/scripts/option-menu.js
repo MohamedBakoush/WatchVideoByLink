@@ -3,7 +3,7 @@ import * as basic from "../scripts/basics.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
 import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
-import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
 // on click video option menu
 export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer) {

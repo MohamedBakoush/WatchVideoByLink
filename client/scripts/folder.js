@@ -2,7 +2,7 @@ import * as basic from "./basics.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
 import * as showAvailableVideos from "./showAvailableVideos.js";
-import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
 export let folderIDPath = [];  
 
