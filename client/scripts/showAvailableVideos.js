@@ -3,7 +3,7 @@ import * as basic from "../scripts/basics.js";
 import * as folderPath from "./folderPath.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
-import * as optionMenu from "../scripts/optionMenu.js";
+import * as optionMenu from "../scripts/option-menu.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 export async function loadVideoDetails(initalFolderPath) {
