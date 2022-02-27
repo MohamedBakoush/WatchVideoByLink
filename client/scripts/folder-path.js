@@ -1,7 +1,7 @@
-import * as basic from "./basics.js";
-import * as folder from "./folder.js";
+import * as basic from "../scripts/basics.js";
 import * as search from "../scripts/search.js";
-import * as showAvailableVideos from "./show-available-videos.js";
+import * as folderData from "../scripts/folder-data.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
 
 // display / between folder paths 
 export function breakPath(pathContainer, id) { 
@@ -17,8 +17,8 @@ export function homepagePath(pathContainer) {
         path.classList.remove("pathClick");   
         path.classList.remove("dragging-target"); 
         path.classList.add("pathClickLast");  
-        if (folder.getFolderIDPath().length !== 0) { 
-        folder.resetInsideFolderID();  
+        if (folderData.getFolderIDPath().length !== 0) { 
+        folderData.resetInsideFolderID();  
         basic.websiteContentContainer().innerHTML = "";
         document.body.classList = "saved-videos-body";
         basic.websiteContentContainer().classList = "saved-videos-websiteContentContainer";
@@ -27,7 +27,7 @@ export function homepagePath(pathContainer) {
     }; 
     path.onmouseenter = function(e){   
         e.preventDefault();      
-        if (folder.getFolderIDPath().length === 0) {  
+        if (folderData.getFolderIDPath().length === 0) {  
         path.classList.remove("pathClick");  
         path.classList.add("pathClickLast");   
         } else{ 
@@ -49,7 +49,7 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
     document.title = `${folderTitle} - WatchVideoByLink`;
     path.onmouseenter = function(e){   
         e.preventDefault();    
-        if (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] !== fodlerID) { 
+        if (folderData.getFolderIDPath()[folderData.getFolderIDPath().length - 1] !== fodlerID) { 
         path.classList.add("pathClick");  
         path.classList.remove("pathClickLast"); 
         path.classList.add("dragging-target");  
@@ -70,12 +70,12 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
         path.classList.remove("pathClick");   
         path.classList.remove("dragging-target"); 
         path.classList.add("pathClickLast");  
-        const folderIDPath = folder.getFolderIDPath();
+        const folderIDPath = folderData.getFolderIDPath();
         const fodlerIDIndex = folderIDPath.indexOf(fodlerID);   
         if (folderIDPath.length !== fodlerIDIndex + 1) { 
-            const dataToRemove = folder.getFolderIDPath().splice(fodlerIDIndex+1, 9e9); 
+            const dataToRemove = folderData.getFolderIDPath().splice(fodlerIDIndex+1, 9e9); 
             folderIDPath.length = fodlerIDIndex+1;  
-            folder.newfolderIDPath(folderIDPath);   
+            folderData.newfolderIDPath(folderIDPath);   
             for (let i = 0; i < dataToRemove.length; i++) {
                 document.getElementById(`path-break-${dataToRemove[i]}`).remove();
                 document.getElementById(`path-${dataToRemove[i]}`).remove();  
@@ -84,7 +84,7 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
             if (folderIDPath === undefined || folderIDPath.length == 0) {    
                 console.log("availablevideoDetails");
             }else {  
-                const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(folderIDPath);  
+                const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(folderIDPath);  
                 document.getElementById("savedVideosThumbnailContainer").remove();
                 savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
                 showAvailableVideos.dragDropAvailableVideoDetails(savedVideosThumbnailContainer); 

@@ -1,7 +1,7 @@
-import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
+import * as folderData from "../scripts/folder-data.js";
 import * as showAvailableVideos from "../scripts/show-available-videos.js";
 import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
@@ -557,7 +557,7 @@ export async function deleteVideoDataPermanently(videoID) {
     try { 
       const payload = {
         id: videoID,
-        folderIDPath: folder.getFolderIDPath()
+        folderIDPath: folderData.getFolderIDPath()
       };  
       const response = await fetch("../delete-video-data-permanently", {
         method: "POST",

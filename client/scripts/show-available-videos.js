@@ -1,9 +1,10 @@
-import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
-import * as folderPath from "./folder-path.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
 import * as optionMenu from "../scripts/option-menu.js";
+import * as folderData from "../scripts/folder-data.js";
+import * as folderPath from "../scripts/folder-path.js";
+import * as folderCreate from "../scripts/folder-create.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 export async function loadVideoDetails(initalFolderPath) {
@@ -54,17 +55,17 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
       const createFolderButton = basic.createLink(search.searchBarContainer(), "javascript:;", undefined, "button category-link", "Create Folder"); 
       createFolderButton.onclick = function(e){
         e.preventDefault(); 
-        folder.createFolderOnClick();
+        folderCreate.createFolderOnClick();
       };
-      folder.resetInsideFolderID();  
+      folderData.resetInsideFolderID();  
       // reset search bar value
       search.resetSearchBarValue();
       // activate drag drop for available video details
       dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
       if (initalFolderPath !== undefined) {
-        const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(initalFolderPath);
+        const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(initalFolderPath);
         if (availableVideosFolderIDPath !== undefined) {
-          folder.newfolderIDPath(initalFolderPath);
+          folderData.newfolderIDPath(initalFolderPath);
           // get folder contet from specified path
           let folderPathString = "";
           for (let i = 0; i < initalFolderPath.length; i++) {  
@@ -290,9 +291,9 @@ export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
   search.resetSearchBarValue();
   savedVideosThumbnailContainer.remove();
   savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-  folder.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
+  folderData.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
   folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), videoDetails.info.id, videoDetails.info.title); 
-  const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(folder.getFolderIDPath());   
+  const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(folderData.getFolderIDPath());   
   dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
   displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);
 }
@@ -348,8 +349,8 @@ export function dragDropAvailableVideoDetails(section){
       const maxWidth = rect.right - rect.left;
       const maxHight = rect.bottom - rect.top;  
       if (prevtarget !== undefined) { 
-        if ((folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
-          (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
+        if ((folderData.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
+          (folderData.getFolderIDPath()[folderData.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
           (prevtarget.id !== target.id)
         ) {    
           prevtarget.classList.remove("dragging-target");
@@ -463,15 +464,15 @@ export function dragDropAvailableVideoDetails(section){
     
     if (
         (target && target !== dragEl && target.id.includes("path-folder-")) === true &&
-        (folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") === false &&
-        (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) === false
+        (folderData.getFolderIDPath().length == 0 && target.id == "path-folder-main") === false &&
+        (folderData.getFolderIDPath()[folderData.getFolderIDPath().length - 1] === target.id.replace("path-","")) === false
       ) {  
-      folder.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
+      folderData.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
       document.getElementById(dragEl.id).remove();
     } else if( target && target !== dragEl && target.nodeName == "A"){
       if (dragElTargetPosition == "inside-folder") {
         document.getElementById(dragEl.id).remove();
-        folder.inputSelectedIDIntoFolderID(dragEl.id, target.id);
+        folderData.inputSelectedIDIntoFolderID(dragEl.id, target.id);
       } else if (dragElTargetPosition == "left") { 
         if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
           section.insertBefore(dragEl, target); 
@@ -515,7 +516,7 @@ async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, t
       return "targetID undefined";
     } else {
       const payload = {
-        folderIDPath: folder.getFolderIDPath(),
+        folderIDPath: folderData.getFolderIDPath(),
         selectedID: selectedID,
         targetID: targetID
       }; 
@@ -561,7 +562,7 @@ async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, ta
       return "targetID undefined";
     } else {
       const payload = {
-        folderIDPath: folder.getFolderIDPath(),
+        folderIDPath: folderData.getFolderIDPath(),
         selectedID: selectedID,
         targetID: targetID
       }; 
@@ -599,7 +600,7 @@ export async function changeVideoTitle(videoID, newVideoTitle) {
     const payload = {
       videoID: videoID,
       newVideoTitle: newVideoTitle,
-      folderIDPath: folder.getFolderIDPath()
+      folderIDPath: folderData.getFolderIDPath()
     }; 
 
     const response = await fetch("../changeVideoTitle", {
