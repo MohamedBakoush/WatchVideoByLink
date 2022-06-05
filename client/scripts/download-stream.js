@@ -1,21 +1,6 @@
 import * as notify from "../scripts/notify.js";
 import * as videoPlayerButtons from "../scripts/video-payer-buttons.js";
 
-let fileNameID;
-
-// update file name ID variable
-export function updateFileNameID(updateFileNameID) {
-  if(updateFileNameID === null) { 
-    fileNameID = undefined;
-    return fileNameID;
-  } else if (typeof updateFileNameID !== "string" || updateFileNameID === undefined) {
-    return fileNameID;
-  } else {
-    fileNameID = updateFileNameID;
-    return fileNameID;
-  }
-}
-
 // request to start download video stream
 export async function downloadVideoStream(videoSrc, videoType) {
   try {
@@ -35,7 +20,7 @@ export async function downloadVideoStream(videoSrc, videoType) {
       });
       if (response.ok) {
         const fileNameID = await response.json();
-        const file_ID = updateFileNameID(fileNameID);
+        const file_ID = videoPlayerButtons.updateFileNameID(fileNameID);
         return file_ID;
       } else {
         return "failed record video file";
@@ -150,6 +135,7 @@ export function recordingStreamCheck(player, RecButton) {
   notify.message("success","Starting Video Recording");
   const checkRecordingStatus = setInterval( async function(){
     try {
+      const fileNameID = videoPlayerButtons.updateFileNameID();
       const response = await fetch(`../video-data/${fileNameID}`);
       if (response.ok) {
         const downloadStatus = await response.json();
@@ -207,7 +193,7 @@ export function recordingStreamCheck(player, RecButton) {
 
 // request to stop download video srteam
 export async function stopDownloadVideoStream() {
-  const file_ID = updateFileNameID();
+  const file_ID = videoPlayerButtons.updateFileNameID();
   if (file_ID === undefined) {
     return "fileNameID undefined";
   } else {
