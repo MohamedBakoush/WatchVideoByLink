@@ -28,6 +28,40 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("getAvailablevideoDetails", () =>  {    
+    beforeEach(() => {     
+        basic.setNewAvailablevideoDetails(undefined);   
+    });  
+
+    it("undefined", () =>  { 
+        const getAvailablevideoDetails = basic.getAvailablevideoDetails();   
+        expect(getAvailablevideoDetails).toBe(undefined);    
+    });  
+
+    it("Defined", () =>  { 
+        basic.setNewAvailablevideoDetails("Defined");   
+        const getAvailablevideoDetails = basic.getAvailablevideoDetails();   
+        expect(getAvailablevideoDetails).toBe("Defined");  
+    }); 
+}); 
+
+describe("setNewAvailablevideoDetails", () =>  {    
+    beforeEach(() => {     
+        basic.setNewAvailablevideoDetails(undefined);   
+    });  
+
+    it("undefined", () =>  { 
+        const setNewAvailablevideoDetails = basic.setNewAvailablevideoDetails();   
+        expect(setNewAvailablevideoDetails).toBe(undefined);    
+    }); 
+
+    it("Defined", () =>  { 
+        const setNewAvailablevideoDetails = basic.setNewAvailablevideoDetails("Defined");   
+        expect(setNewAvailablevideoDetails).toBeDefined();     
+        expect(setNewAvailablevideoDetails).toBe("Defined");    
+    }); 
+}); 
+
 describe("websiteContentContainer", () =>  {    
     it("Defined", () =>  { 
         const websiteContentContainer = basic.websiteContentContainer();   
@@ -262,6 +296,59 @@ describe("createLink", () =>  {
         const link = basic.createLink(); 
         expect(link).toBeDefined();
         expect(link).toBe("createLink didnt work");  
+    }); 
+}); 
+
+describe("appendImg", () =>  {     
+    it("valid tagname", () =>  { 
+        const appendImg = basic.appendImg(container); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname src", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png");   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+    });  
+
+    it("valid tagname src width", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20);   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+    });    
+
+    it("valid tagname src width height", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20);   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+        expect(appendImg.height).toBe(20);  
+    }); 
+
+    it("valid tagname src width height, id", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20, "test_image");   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+        expect(appendImg.height).toBe(20);  
+        expect(appendImg.id).toBe("test_image");  
+    }); 
+
+    it("valid tagname src width height, id, calss", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20, "test_image", "class_image");   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+        expect(appendImg.height).toBe(20);  
+        expect(appendImg.id).toBe("test_image");
+        expect(appendImg.classList[0]).toBe("class_image");  
     }); 
 }); 
 
