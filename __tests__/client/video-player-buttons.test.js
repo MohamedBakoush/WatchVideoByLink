@@ -73,32 +73,6 @@ describe("backToHomePageButton", () =>  {
     });  
 }); 
 
-describe("downloadVideoButton", () =>  {  
-    it("container undefined", () =>  {   
-        const downloadVideoButton = videoPlayerButtons.downloadVideoButton();   
-        expect(downloadVideoButton).toBeDefined();       
-        expect(downloadVideoButton).toBe("container undefined");     
-    });  
-    
-    it("videoSrc not string", () =>  {   
-        const downloadVideoButton = videoPlayerButtons.downloadVideoButton(container);   
-        expect(downloadVideoButton).toBeDefined();       
-        expect(downloadVideoButton).toBe("videoSrc not string");     
-    });   
-
-    it("videoType not string", () =>  {   
-        const downloadVideoButton = videoPlayerButtons.downloadVideoButton(container, "http://localhost:8080/video.mp4");   
-        expect(downloadVideoButton).toBeDefined();       
-        expect(downloadVideoButton).toBe("videoType not string");     
-    });   
-
-    it("display downloadVideoButton", () =>  {   
-        const downloadVideoButton = videoPlayerButtons.downloadVideoButton(container,  "http://localhost:8080/video.mp4", "video/mp4");   
-        expect(downloadVideoButton).toBeDefined();       
-        expect(downloadVideoButton).toBe("downloadVideoButton");     
-    });  
-}); 
-
 describe("stopDownloadVideoStream", () =>  {  
     beforeEach(() => {     
         videoPlayerButtons.updateFileNameID("newID");
@@ -185,46 +159,4 @@ describe("downloadVideoStream", () =>  {
         expect(downloadVideoStream).toBe("failed record video file");     
     }); 
 });  
-
-describe("downloadVideo", () =>  {  
-    afterAll(() => {     
-        global.fetch = jest.fn(); 
-        videoPlayerButtons.updateFileNameID(null); 
-    });  
-
-
-    it("videoSrc not string", async () =>  { 
-        const downloadVideo = await videoPlayerButtons.downloadVideo();   
-        expect(downloadVideo).toBeDefined();       
-        expect(downloadVideo).toBe("videoSrc not string");     
-    });  
-
-    it("videoType not string", async () =>  { 
-        const downloadVideo = await videoPlayerButtons.downloadVideo("http://localhost:8080/video.mp4");   
-        expect(downloadVideo).toBeDefined();       
-        expect(downloadVideo).toBe("videoType not string");     
-    });  
-
-    it("response ok - downloadVideo", async () =>  { 
-        global.fetch = jest.fn().mockImplementation(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => "video-id"  
-            })
-        );  
-        const downloadVideo = await videoPlayerButtons.downloadVideo("http://localhost:8080/video.mp4", "video/mp4");  
-        expect(downloadVideo).toBeDefined();       
-        expect(downloadVideo).toBe("video-id");     
-    }); 
-
-    it("response not ok - failed download video file", async () =>  { 
-        global.fetch = jest.fn().mockImplementation(() =>
-            Promise.resolve({
-                ok: false 
-            })
-        );  
-        const downloadVideo = await videoPlayerButtons.downloadVideo("http://localhost:8080/video.mp4", "video/mp4");  
-        expect(downloadVideo).toBeDefined();       
-        expect(downloadVideo).toBe("failed download video file");     
-    }); 
-});  
+ 
