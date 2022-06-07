@@ -255,7 +255,8 @@ function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, f
           download : "completed",
         },
         compression : {
-          download: "starting"
+          download: "starting",
+          "temp-path": []
         },
         thumbnail: {
           path: {},

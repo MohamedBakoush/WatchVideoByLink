@@ -215,7 +215,8 @@ function end_trimVideo(fileName, newFilePath, fileType, videoSrc, videoType, new
                     download: "completed"
                 },
                 compression : {
-                    download: "starting"
+                    download: "starting",
+                    "temp-path": []
                 },
                 thumbnail: {
                     path: {},

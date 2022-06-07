@@ -87,6 +87,43 @@ function updateVideoData(path_array, data) {
     }     
 }
 
+// input selected element into temp-path for a downloading video avaiable at avaiable-videos
+function inputSelectedIDIntoFolderID_tempPath(selectedID, folderID) { 
+    if (typeof selectedID == "string" && typeof folderID == "string") {
+        if (getVideoData([`${selectedID}`,"compression", "temp-path"]) !== undefined) {
+            const temp_path_array = getVideoData([`${selectedID}`,"compression", "temp-path"]); 
+            updateVideoData([`${selectedID}`,"compression", "temp-path"], [...temp_path_array, folderID]);
+            return "updated-temp-path";
+        } else {
+            return "failed-updated-temp-path";
+        }
+    } else if (typeof selectedID !== "string" && typeof folderID == "string") {
+       return "invalid selectedID";
+    } else if (typeof selectedID == "string" && typeof folderID !== "string") {
+        return "invalid folderID"; 
+    } else {
+        return "invalid selectedID & folderID"; 
+    }
+}
+
+// input selected element id out of temp-path for a downloading video avaiable at avaiable-videos
+function inputSelectedIDOutOfFolderID_tempPath(selectedID, folderIDPath) { 
+    if (Array.isArray(folderIDPath) && typeof selectedID == "string") {
+        if (getVideoData([`${selectedID}`,"compression", "temp-path"]) !== undefined) {
+            updateVideoData([`${selectedID}`,"compression", "temp-path"], folderIDPath);
+            return "updated-temp-path";
+        } else {
+            return "failed-updated-temp-path";
+        }
+    } else if (!Array.isArray(folderIDPath) && typeof selectedID == "string") {
+        return "invalid folderIDPath";
+    } else if (Array.isArray(folderIDPath) && typeof selectedID !== "string") {
+        return "invalid selectedID";
+    } else {
+        return "invalid selectedID & folderIDPath"; 
+    }
+}
+
 // delete videoData by id if exist
 function deleteSpecifiedVideoData(fileName) {
     if (findVideosByID(fileName) !== undefined) {
@@ -138,6 +175,8 @@ module.exports = { // export modules
     resetVideoData,
     findVideosByID, 
     updateVideoData,
+    inputSelectedIDIntoFolderID_tempPath,
+    inputSelectedIDOutOfFolderID_tempPath,
     deleteSpecifiedVideoData,
     checkIfVideoSrcOriginalPathExits
 };
