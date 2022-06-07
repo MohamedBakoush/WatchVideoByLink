@@ -157,7 +157,7 @@
   margin-bottom: -0.15rem; 
 }  
 
-.option-play, .option-delete{
+.option-one, .option-two, .option-three, .option-play, .option-delete{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -168,22 +168,33 @@
   border: 1px solid #000;
   transition: border-radius .15s linear;
   text-decoration: none;
-  margin: 3.8rem 1em auto 1em;
   background: #fff;
 }
 
-.option-play:hover, .option-delete:hover{
+.option-one, .option-two, .option-three{ 
+  margin: 2.95rem 1em auto 1em; 
+}
+
+.option-play, .option-delete{ 
+  margin: 3.8rem 1em auto 1em; ;
+}
+
+.option-one:hover, .option-two:hover, .option-three:hover, .option-play:hover, .option-delete:hover{
   border-radius: 2em;
 }
 
-.option-play{
+.option-one, .option-play{
   grid-row: 1;
 }
 
-.option-delete{
+.option-two, .option-delete{
     grid-row: 2;
 }
- 
+
+.option-three{
+  grid-row: 3;
+}
+
 .inputNewTitle{
   width: 100%  !important;
   display: block !important;
@@ -213,7 +224,7 @@
     height: 165px !important;
   }
 
-  .option-play, .option-delete{
+  .option-one, .option-two, .option-three, .option-play, .option-delete{
     margin: 3rem 1em auto 1em !important;
   }
 }

@@ -32,8 +32,19 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
         linkContainer.draggable = false;
         // option_menu_container
         const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
+        // Download video
+        const download_file = basic.createSection(option_menu_container, "button", "button option-two", undefined, "Download Locally");
+        download_file.title = "Download Locally"; 
+        download_file.onclick = function(e){
+          e.preventDefault();  
+          const download_video_link = document.createElement("a");
+          download_video_link.href = videoSrc;
+          download_video_link.setAttribute("download", video_name);
+          download_video_link.click();
+          download_video_link.remove(); 
+        };
         // copy video link
-        const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
+        const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-one", undefined, "Get shareable link");
         option_menu_copy.title = "Get shareable link";
         option_menu_copy.onclick = function(e){
           e.preventDefault();
@@ -60,7 +71,7 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
           }
         };
         // show video edit info menu
-        const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
+        const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-three", undefined, "Edit");
         option_menu_edit.title = "Edit";
         option_menu_edit.onclick = function(e){
           e.preventDefault();
