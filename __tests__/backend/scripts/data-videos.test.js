@@ -1,3 +1,4 @@
+const ffmpegDownloadVideo = require("../../../backend/scripts/ffmpeg-download-video");
 const dataVideos = require("../../../backend/scripts/data-videos");
 const dataVideos_json_path = "__tests__/data/data-videos.test.json";
 const { v4: uuidv4 } = require("uuid");
@@ -165,6 +166,89 @@ describe("updateVideoData", () =>  {
         expect(get_data).toMatchObject(dataVideos_data);   
     });
 }); 
+
+describe("inputSelectedIDIntoFolderID_tempPath", () =>  {  
+    it("No Input", () =>  { 
+        const inputSelectedIDIntoFolderID_tempPath = dataVideos.inputSelectedIDIntoFolderID_tempPath();
+        expect(inputSelectedIDIntoFolderID_tempPath).toBe("invalid selectedID & folderID");  
+    }); 
+
+    it("Valid selectedID, Invaldi folderID", () =>  { 
+        const inputSelectedIDIntoFolderID_tempPath = dataVideos.inputSelectedIDIntoFolderID_tempPath("id", undefined);
+        expect(inputSelectedIDIntoFolderID_tempPath).toBe("invalid folderID");  
+    }); 
+
+    it("Invalid selectedID, Valid folderID", () =>  { 
+        const inputSelectedIDIntoFolderID_tempPath = dataVideos.inputSelectedIDIntoFolderID_tempPath(undefined, "id");
+        expect(inputSelectedIDIntoFolderID_tempPath).toBe("invalid selectedID");  
+    }); 
+
+    it("failed-updated-temp-path", () =>  { 
+        const inputSelectedIDIntoFolderID_tempPath = dataVideos.inputSelectedIDIntoFolderID_tempPath("id", "id");
+        expect(inputSelectedIDIntoFolderID_tempPath).toBe("failed-updated-temp-path");  
+    }); 
+
+    it("updated-temp-path", () =>  {  
+        const folder_id = uuidv4();
+
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const end = ffmpegDownloadVideo.end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, true);
+        expect(end).toBe("end download");
+
+        const inputSelectedIDIntoFolderID_tempPath = dataVideos.inputSelectedIDIntoFolderID_tempPath(fileName, folder_id);
+        expect(inputSelectedIDIntoFolderID_tempPath).toBe("updated-temp-path");  
+
+        const getVideoData = dataVideos.getVideoData([fileName, "compression", "temp-path"]);
+        expect(getVideoData).toEqual([folder_id]);
+    }); 
+});
+
+describe("inputSelectedIDOutOfFolderID_tempPath", () =>  {  
+    it("No Input", () =>  { 
+        const inputSelectedIDOutOfFolderID_tempPath = dataVideos.inputSelectedIDOutOfFolderID_tempPath();
+        expect(inputSelectedIDOutOfFolderID_tempPath).toBe("invalid selectedID & folderIDPath");  
+    }); 
+
+    it("Valid selectedID, Invaldid folderIDPath", () =>  { 
+        const inputSelectedIDOutOfFolderID_tempPath = dataVideos.inputSelectedIDOutOfFolderID_tempPath("id", undefined);
+        expect(inputSelectedIDOutOfFolderID_tempPath).toBe("invalid folderIDPath");  
+    }); 
+
+    it("Invalid selectedID, Valid folderIDPath", () =>  { 
+        const inputSelectedIDOutOfFolderID_tempPath = dataVideos.inputSelectedIDOutOfFolderID_tempPath(undefined, ["id"]);
+        expect(inputSelectedIDOutOfFolderID_tempPath).toBe("invalid selectedID");  
+    }); 
+
+    it("failed-updated-temp-path", () =>  { 
+        const inputSelectedIDOutOfFolderID_tempPath = dataVideos.inputSelectedIDOutOfFolderID_tempPath("id", ["id"]);
+        expect(inputSelectedIDOutOfFolderID_tempPath).toBe("failed-updated-temp-path");  
+    }); 
+
+    it("updated-temp-path", () =>  { 
+        const folder_id1 = uuidv4();
+        const folder_id2 = uuidv4();
+ 
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const fileType = ".mp4";
+        const newFilePath = `${filepath}${fileName}/`;
+        const videoSrc = "videoSrc";
+        const videoType = "videoType";
+        const end = ffmpegDownloadVideo.end_downloadVideo(fileName, newFilePath, fileType, videoSrc, videoType, true);
+        expect(end).toBe("end download");
+
+        const inputSelectedIDIntoFolderID_tempPath = dataVideos.inputSelectedIDOutOfFolderID_tempPath(fileName, [folder_id1, folder_id2]);
+        expect(inputSelectedIDIntoFolderID_tempPath).toBe("updated-temp-path");  
+
+        const getVideoData = dataVideos.getVideoData([fileName, "compression", "temp-path"]);
+        expect(getVideoData).toEqual([folder_id1, folder_id2]);
+    }); 
+});
 
 describe("deleteSpecifiedVideoData", () =>  {  
     it("No input", () =>  { 

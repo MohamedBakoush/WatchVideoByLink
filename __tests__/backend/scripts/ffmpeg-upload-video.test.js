@@ -490,7 +490,8 @@ describe("end_downloadUploadedVideo", () =>  {
                 download : "completed",
             },
             compression : {
-                download: "starting"
+                download: "starting",
+                "temp-path": []
             },
             thumbnail: {
                 path: {},
