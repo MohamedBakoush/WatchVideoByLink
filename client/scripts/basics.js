@@ -225,7 +225,6 @@ export function percent_encoding_to_reserved_character(string, checkFor, replace
 // converts seconds to hours:min:sec
 export function secondsToHms(sec, showHMS) { 
   if (isNaN(sec)) {
-    console.log("ok");
     return "Sec Invalid";
   } else {
     let hours = Math.floor(sec/3600);

@@ -169,35 +169,3 @@ describe("backToMainVideoButton", () =>  {
         expect(backToMainVideoButton).toBe("backToMainVideoButton");     
     }); 
 });  
-
-describe("secondsToHms", () =>  {    
-    it("sec undefined", () =>  {  
-        const secondsToHms = downloadTrimedVideo.secondsToHms();   
-        expect(secondsToHms).toBeDefined();       
-        expect(secondsToHms).toBe("sec undefined");     
-    });  
-
-    it("354354 -> 98:25:54", () =>  {  
-        const secondsToHms = downloadTrimedVideo.secondsToHms(354354);   
-        expect(secondsToHms).toBeDefined();       
-        expect(secondsToHms).toBe("98:25:54");     
-    });  
-
-    it("213213 -> 59:13:33", () =>  {  
-        const secondsToHms = downloadTrimedVideo.secondsToHms(213213);   
-        expect(secondsToHms).toBeDefined();       
-        expect(secondsToHms).toBe("59:13:33");     
-    });  
-
-    it("323 -> 00:05:23", () =>  {  
-        const secondsToHms = downloadTrimedVideo.secondsToHms(323);   
-        expect(secondsToHms).toBeDefined();       
-        expect(secondsToHms).toBe("00:05:23");     
-    });  
-
-    it("negative nuber -> 00:00:00", () =>  {  
-        const secondsToHms = downloadTrimedVideo.secondsToHms(-456);   
-        expect(secondsToHms).toBeDefined();       
-        expect(secondsToHms).toBe("00:00:00");     
-    });  
-}); 

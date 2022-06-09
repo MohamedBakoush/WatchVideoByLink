@@ -397,3 +397,71 @@ describe("percent_encoding_to_reserved_character", () =>  {
         expect(encode).toBe("Encoding Failed"); 
     }); 
 }); 
+
+describe("secondsToHms", () =>  {    
+    it("Sec Invalid", () =>  {  
+        const secondsToHms = basic.secondsToHms();   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("Sec Invalid");     
+    });  
+
+    it("354354 -> 98:25:54, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(354354);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("98:25:54");     
+    });  
+
+    it("354354 -> 98:25:54, HMS true", () =>  {  
+        const secondsToHms = basic.secondsToHms(354354, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("98:25:54");     
+    });  
+
+    it("213213 -> 59:13:33, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(213213);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("59:13:33");     
+    });  
+
+    it("213213 -> 59:13:33, HMS true", () =>  {  
+        const secondsToHms = basic.secondsToHms(213213, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("59:13:33");     
+    });  
+
+    it("323 -> 5:23, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(323);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("5:23");     
+    });  
+
+    it("323 -> 00:05:23", () =>  {  
+        const secondsToHms = basic.secondsToHms(323, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("00:05:23");     
+    });  
+
+    it("23 -> 0:23, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(23);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("0:23");     
+    });  
+
+    it("23 -> 0:23, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(23, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("00:00:23");     
+    });  
+
+    it("negative nuber -> 00:00:00", () =>  {  
+        const secondsToHms = basic.secondsToHms(-456);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("0:00");     
+    });  
+
+    it("negative nuber -> 00:00:00", () =>  {  
+        const secondsToHms = basic.secondsToHms(-456, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("00:00:00");     
+    });  
+}); 
