@@ -145,7 +145,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                 }
               })
               .on("end", function() {
-                end_compression_VP9(fileName, newFilePath, fileType);       
+                end_compression_VP9(fileName, newFilePath, fileType, duration);       
               })
               .on("error", function(error) {
                 if (error.message === "ffmpeg was killed with signal SIGKILL") {
@@ -229,7 +229,7 @@ function progress_compression_VP9(fileName, data) {
   }
 }
 
-function end_compression_VP9(fileName, newFilePath, fileType) {
+function end_compression_VP9(fileName, newFilePath, fileType, duration) {
   if (fileName === undefined) {
     return "fileName undefined";
   } else if(typeof newFilePath !== "string") {
@@ -248,6 +248,7 @@ function end_compression_VP9(fileName, newFilePath, fileType) {
         availableVideos.updateAvailableVideoData([...availableVideosFolderIDPath, fileName], {
           info:{
             title: fileName,
+            duration: duration,
             videoLink: {
               src : `/video/${fileName}`,
               type : "video/mp4",
@@ -264,6 +265,7 @@ function end_compression_VP9(fileName, newFilePath, fileType) {
       availableVideos.updateAvailableVideoData([`${fileName}`], {
         info:{
           title: fileName,
+          duration: duration,
           videoLink: {
             src : `/video/${fileName}`,
             type : "video/mp4",

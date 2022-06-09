@@ -183,6 +183,11 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
         e.preventDefault();
         optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
       };
+      // video duration
+      if (videoDetails.info.duration !== undefined && !isNaN(videoDetails.info.duration)) {
+        const video_time = basic.createSection(imageContainer, "section", "thumbnail-video-duration", `${videoInfo_ID}-video-duration`);
+        basic.createSection(video_time, "section", undefined, undefined, basic.secondsToHms(Math.floor(videoDetails.info.duration)));
+      }
       // video title container - if user want to be redirected to video player even if menu is active when onclick
       const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
       basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);

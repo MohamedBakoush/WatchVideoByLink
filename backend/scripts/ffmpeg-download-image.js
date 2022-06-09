@@ -41,7 +41,7 @@ async function createThumbnail(videofile, newFilePath, fileName) {
                   progress_createThumbnail(fileName, data);
                 })
                 .on("end", () => {
-                  end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+                  end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots, duration);
                 })
                 .on("error", (error) => {
                   console.log(`Encoding Error: ${error.message}`);
@@ -130,7 +130,7 @@ function progress_createThumbnail(fileName, data) {
   }
 }
 
-function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots) {
+function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots, duration) {
   if (fileName === undefined) {
     return "fileName undefined";
   } else if(typeof newFilePath !== "string") {
@@ -151,10 +151,12 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
         if (i == 0){
           if (availableVideos.getAvailableVideos([`${fileName}`, "info"]) !== undefined) {
             availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
+            availableVideos.updateAvailableVideoData([`${fileName}`, "info", "duration"], duration);
           } else {            
             availableVideos.updateAvailableVideoData([`${fileName}`], {
               info:{
                 title: fileName,
+                duration: duration,
                 videoLink: {
                   src : `/video/${fileName}`,
                   type : "video/mp4"

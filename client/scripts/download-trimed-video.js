@@ -87,12 +87,12 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
           // selectedVideoTimeStart
           const selectedVideoTimeStart = basic.createSection(selectedVideoTimeContainer, "section", "selectedVideoTimeStart");
           basic.createSection(selectedVideoTimeStart, "label", "StartTime", undefined, "Start Time:");
-          const selectedInputLeft = basic.createInput(selectedVideoTimeStart, "text", secondsToHms(inputLeft.value), "selected-video-time-inputLeft", "timeInput");
+          const selectedInputLeft = basic.createInput(selectedVideoTimeStart, "text", basic.secondsToHms(inputLeft.value, true), "selected-video-time-inputLeft", "timeInput");
           selectedInputLeft.readOnly = true;
           // selectedVideoTimeEnd
           const selectedVideoTimeEnd = basic.createSection(selectedVideoTimeContainer, "section", "selectedVideoTimeEnd");
           basic.createSection(selectedVideoTimeEnd, "label", "EndTime", undefined, "End Time:");
-          const selectedInputRight = basic.createInput(selectedVideoTimeEnd, "text", secondsToHms(inputRight.value), "selected-video-time-inputRight", "timeInput");
+          const selectedInputRight = basic.createInput(selectedVideoTimeEnd, "text", basic.secondsToHms(inputRight.value, true), "selected-video-time-inputRight", "timeInput");
           selectedInputRight.readOnly = true;
           // trimVideoButtonContainer
           const trimVideoButtonBodyContainer = basic.createSection(trimVideoControlsContainer, "section");
@@ -109,19 +109,19 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
               if (downloadConfirmationResponse === true) {
                 downloadConfirm = downloadConfirmationResponse;
               } else {
-                downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
+                downloadConfirm = confirm("Press OK to Download Trimed Video from "  + basic.secondsToHms(inputLeft.value, true) + " to " + basic.secondsToHms(inputRight.value, true));
                 if (downloadConfirm) {
                     videoPlayerButtons.updateDownloadConfirmation("trimVideo", true);
                 }
               }
             } else {
-              downloadConfirm = confirm("Press OK to Download Trimed Video from "  + secondsToHms(inputLeft.value) + " to " + secondsToHms(inputRight.value));
+              downloadConfirm = confirm("Press OK to Download Trimed Video from "  + basic.secondsToHms(inputLeft.value, true) + " to " + basic.secondsToHms(inputRight.value, true));
               if (downloadConfirm) {
                     videoPlayerButtons.updateDownloadConfirmation("trimVideo", true);
               }
             }
             if (downloadConfirm) {
-              notify.message("success",`Start Trimed Video Download: ${secondsToHms(inputLeft.value)} - ${secondsToHms(inputRight.value)}`);
+              notify.message("success",`Start Trimed Video Download: ${basic.secondsToHms(inputLeft.value, true)} - ${basic.secondsToHms(inputRight.value, true)}`);
              //Logic to download video
               trimVideo(videoSrc, videoType, inputLeft.value, inputRight.value).then( (returnValue) => {
                 let number_of_errors = 0;
@@ -153,8 +153,8 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
                            clearInterval(checkDownloadStatus);
                            if (isDownloading) {
                              isDownloading = false;
-                             notify.message("success",`Trimed Video Download Completed: ${secondsToHms(inputLeft.value)} - ${secondsToHms(inputRight.value)}`);
-                             console.log(returnValue, `Trimed Video Download from ${secondsToHms(inputLeft.value)} to ${secondsToHms(inputRight.value)} Completed`);
+                             notify.message("success",`Trimed Video Download Completed: ${basic.secondsToHms(inputLeft.value, true)} - ${basic.secondsToHms(inputRight.value, true)}`);
+                             console.log(returnValue, `Trimed Video Download from ${basic.secondsToHms(inputLeft.value, true)} to ${basic.secondsToHms(inputRight.value, true)} Completed`);
                            }
                          } else if (downloadStatus.thumbnail.download == "starting"){ // starting thumbnail download
                            console.log(returnValue, "Thumbnail Progress: preparing to create thumbnails");
@@ -261,9 +261,8 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
             thumbLeft.classList.add("active");
             // update inputLeft time and video player time
             liveselectedInputLeft = setInterval( function() {
-              // console.log(secondsToHms(inputLeft.value));
               videoPlayer_active.currentTime = inputLeft.value;
-              selectedInputLeft.value = secondsToHms(inputLeft.value);
+              selectedInputLeft.value = basic.secondsToHms(inputLeft.value, true);
             },50);
   
           });
@@ -275,7 +274,7 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
             // one last update for inputLeft time and video player time
             videoPlayer_active.currentTime = inputLeft.value;
             videoPlayer_active.pause();
-            selectedInputLeft.value = secondsToHms(inputLeft.value);
+            selectedInputLeft.value = basic.secondsToHms(inputLeft.value, true);
           });
   
           inputRight.addEventListener("mouseover", function() {
@@ -293,9 +292,8 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
             thumbRight.classList.add("active");
             // update inputRight time and video player time
             liveselectedInputRight = setInterval( function() {
-              // console.log(secondsToHms(inputRight.value));
               videoPlayer_active.currentTime = inputRight.value;
-              selectedInputRight.value = secondsToHms(inputRight.value);
+              selectedInputRight.value = basic.secondsToHms(inputRight.value, true);
             },50);
           });
           inputRight.addEventListener("mouseup", function() {
@@ -306,7 +304,7 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
             // one last update for inputRight time and video player time
             videoPlayer_active.currentTime = inputRight.value;
             videoPlayer_active.pause();
-            selectedInputRight.value = secondsToHms(inputRight.value);
+            selectedInputRight.value = basic.secondsToHms(inputRight.value, true);
           });
       };
     };
@@ -378,22 +376,3 @@ export async function trimVideo(videoSrc, videoType, startTime, endTime) {
     return "failed download trimed video file";
   }
 }
-
-// converts seconds to hours:min:sec
-export function secondsToHms(sec) { 
-    if (sec === undefined) {
-      return "sec undefined";
-    } else {
-      let hours = Math.floor(sec/3600);
-      (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";
-      let min = Math.floor(sec/60);
-      (min >= 1) ? sec = sec - (min*60) : min = "00";
-      (sec < 1) ? sec="00" : void 0;
-    
-      (min.toString().length == 1) ? min = "0"+min : void 0;
-      (sec.toString().length == 1) ? sec = "0"+sec : void 0;
-    
-      return hours+":"+min+":"+sec; 
-    }
-  }
-  
