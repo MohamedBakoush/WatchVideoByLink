@@ -34,6 +34,15 @@
   padding: 0 0.5rem 0 0.5rem;
   transform: translate(-50%, -50%);
 }
+
+.click_to_close{
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  background: transparent;
+}
+
 .deleteVideoButtonContainer, .videoTitleEditButtonContainer{
   justify-content: end;
   display: grid;

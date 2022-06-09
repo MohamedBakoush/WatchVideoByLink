@@ -185,6 +185,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     option_menu_edit.title = "Edit";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
+      folderTitleContainer.style["text-decoration"] = "none";
       optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, inputNewTitle);
     };
     // close video edit info menu
@@ -329,7 +330,29 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
         close_option_menu.remove();
         document.body.style.overflow = "hidden";
         const video_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
-        const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body");
+        // click anywhere but video edit body to close video_edit_container
+        const close_on_click = basic.createSection(video_edit_container, "section", "click_to_close");
+        close_on_click.onmouseover = function(e){
+          e.preventDefault();  
+          close_on_click.onclick = function(e){
+            e.preventDefault();
+            // remove container
+            document.body.style.removeProperty("overflow");
+            video_edit_container.remove();  
+            const close_on_move = basic.createSection(document.body, "section", "click_to_close"); 
+            close_on_move.onmousemove = function(e){
+              e.preventDefault();  
+              close_on_move.remove(); 
+            }; 
+            close_on_move.onclick = function(e){
+              e.preventDefault();  
+              close_on_move.remove();  
+              document.elementFromPoint(e.clientX, e.clientY).click();
+            }; 
+          };
+        };
+        const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body", "video-edit-body"); 
+        video_edit_body.style.zIndex = "1";
         backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu, option_menu_container,close_option_menu);
         const video_edit_article = basic.createSection(video_edit_body, "article", "video-edit-article");
         const video_edit_form = basic.createSection(video_edit_article, "form");
@@ -412,7 +435,29 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
     close_option_menu.remove();
     document.body.style.overflow ="hidden";
     const folder_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
+    // click anywhere but folder edit body to close folder_edit_container
+    const close_on_click = basic.createSection(folder_edit_container, "section", "click_to_close");
+    close_on_click.onmouseover = function(e){
+      e.preventDefault();  
+      close_on_click.onclick = function(e){
+        e.preventDefault();
+        // remove container
+        document.body.style.removeProperty("overflow");
+        folder_edit_container.remove();  
+        const close_on_move = basic.createSection(document.body, "section", "click_to_close"); 
+        close_on_move.onmousemove = function(e){
+          e.preventDefault();  
+          close_on_move.remove(); 
+        }; 
+        close_on_move.onclick = function(e){
+          e.preventDefault();  
+          close_on_move.remove();  
+          document.elementFromPoint(e.clientX, e.clientY).click();
+        }; 
+      };
+    };
     const folder_edit_body = basic.createSection(folder_edit_container, "section", "video-edit-body");
+    folder_edit_body.style.zIndex = "1";
     backToViewAvailableVideoButton(folder_edit_body, folder_edit_container, option_menu, option_menu_container,close_option_menu);
     const folder_edit_article = basic.createSection(folder_edit_body, "article", "video-edit-article");
     const folder_edit_form = basic.createSection(folder_edit_article, "form");
