@@ -185,6 +185,7 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
         }
         if (i == numberOfCreatedScreenshots && videoData.getVideoData([`${fileName}`, "thumbnail", "download"]) !== undefined) {
           videoData.updateVideoData([`${fileName}`, "thumbnail", "download"], "completed");
+          videoData.deleteSpecifiedVideoData([`${fileName}`, "video", "temp-path"]);
         }
       }
       

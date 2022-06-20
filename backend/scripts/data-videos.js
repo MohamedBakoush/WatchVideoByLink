@@ -125,15 +125,35 @@ function inputSelectedIDOutOfFolderID_tempPath(selectedID, folderIDPath) {
 }
 
 // delete videoData by id if exist
-function deleteSpecifiedVideoData(fileName) {
-    if (findVideosByID(fileName) !== undefined) {
-        delete videoData[`${fileName}`]; 
-        const deleteVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync(data_videos_path, deleteVideoData);
-        return `${fileName} deleted`;
+function deleteSpecifiedVideoData(filePath) {
+    if (typeof filePath === "string") {
+        if (findVideosByID(filePath) !== undefined) {
+            delete videoData[`${filePath}`]; 
+            const deleteVideoData = JSON.stringify(videoData, null, 2);
+            FileSystem.writeFileSync(data_videos_path, deleteVideoData);
+            return `${filePath} deleted`;
+        } else {
+            return `${filePath} unavaiable`; 
+        }  
+    } else if (Array.isArray(filePath) && filePath.length !== 0) {
+        if (getVideoData([... filePath]) !== undefined) {
+            let dataPath = "videoData";
+            for (let i = 0; i < filePath.length; i++) { 
+                if (i == filePath.length - 1) { 
+                    eval(dataPath)[filePath[i]] = undefined;
+                    const newVideoData = JSON.stringify(videoData, null, 2);
+                    FileSystem.writeFileSync(data_videos_path, newVideoData);
+                    return `${filePath} deleted`;
+                } else  { 
+                    dataPath += `[filePath[${i}]]`;
+                }
+            }  
+        } else {
+            return `${filePath} unavaiable`; 
+        } 
     } else {
-        return `${fileName} Unavaiable`; 
-    }  
+        return `${filePath} unavaiable`; 
+    }
 }
 
 // check if original video src path exits
