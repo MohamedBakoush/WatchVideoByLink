@@ -76,6 +76,8 @@ async function downloadUploadedVideo(videofile, fileMimeType, uploadedFilename, 
     return "fileMimeType not string";
   } else if (typeof uploadedFilename !== "string") {
     return "uploadedFilename not string";
+  } else if (!Array.isArray(folder_id_path)) {
+    return "folder_id_path not array";
   } else {
     const command = new ffmpeg(); 
     const compressUploadedVideo = userSettings.checkIfVideoCompress("downloadUploadedVideo");

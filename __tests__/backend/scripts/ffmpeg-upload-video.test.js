@@ -37,6 +37,14 @@ describe("downloadUploadedVideo", () =>  {
         const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo(videofile, fileMimeType);
         expect(downloadUploadedVideo).toBe("uploadedFilename not string");
     });    
+
+    it("valid videofile, valid fileMimeType", async ()=>  {  
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo(videofile, fileMimeType, uploadedFilename);
+        expect(downloadUploadedVideo).toBe("folder_id_path not array");
+    });  
 });
 
 describe("start_downloadUploadedVideo", () =>  {   
