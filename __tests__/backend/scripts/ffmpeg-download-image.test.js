@@ -548,6 +548,7 @@ describe("end_createThumbnail", () =>  {
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
                 download : "completed",
+                "temp-path" : []
             },
             thumbnail: {
                 path: {},
@@ -575,7 +576,7 @@ describe("end_createThumbnail", () =>  {
                 originalVideoType : "videoType",
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
-                download : "completed",
+                download : "completed"
             },
             thumbnail: {
                 path: {},
@@ -600,9 +601,11 @@ describe("end_createThumbnail", () =>  {
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
                 download : "completed",
+                "temp-path" : []
             },
             compression : {
-                download: "20.0%"
+                download: "20.0%",
+                "temp-path" : []
             },
             thumbnail: {
                 path: {},
@@ -630,7 +633,7 @@ describe("end_createThumbnail", () =>  {
                 originalVideoType : "videoType",
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
-                download : "completed",
+                download : "completed"
             },
             thumbnail: {
                 path: {},
@@ -663,6 +666,7 @@ describe("end_createThumbnail", () =>  {
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
                 download : "completed",
+                "temp-path" : []
             },
             thumbnail: {
                 path: {},
@@ -690,7 +694,7 @@ describe("end_createThumbnail", () =>  {
                 originalVideoType : "videoType",
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
-                download : "completed",
+                download : "completed"
             },
             thumbnail: {
                 path: {},
@@ -726,9 +730,11 @@ describe("end_createThumbnail", () =>  {
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
                 download : "completed",
+                "temp-path" : []
             },
             compression : {
-                download: "20.0%"
+                download: "20.0%",
+                "temp-path" : []
             },
             thumbnail: {
                 path: {},
@@ -757,6 +763,185 @@ describe("end_createThumbnail", () =>  {
                 path: "newFilePath+fileName+fileType",
                 videoType : "video/mp4",
                 download : "completed",
+            },
+            thumbnail: {
+                path: {},
+                download: "completed"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "20.0%"
+            },
+            thumbnail : { 
+                "download-status" : "completed"
+            } 
+        });
+    }); 
+
+    it("AvaiableVideoData Inside Folder without compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+         
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder");  
+
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            }, 
+            thumbnail : { 
+                "download-status" : "99.9%"
+            } 
+        });
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+                "temp-path" : [createFolder.folderID]
+            }, 
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([createFolder.folderID, "content", fileName]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            }, 
+            thumbnail: {
+                path: {},
+                download: "completed"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toBe(undefined);
+    }); 
+
+    it("AvaiableVideoData Inside Folder with compression: valid fileName, valid newFilePath, valid imageFileName, valid fileType, valid numberOfCreatedScreenshots", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const imageFileName = "thunbnail";
+        const fileType = ".jpg";
+        const numberOfCreatedScreenshots = 8; 
+
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+         
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder");  
+
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "20.0%"
+            },
+            thumbnail : { 
+                "download-status" : "99.9%"
+            } 
+        });
+        dataVideos.updateVideoData([`${fileName}`], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+                "temp-path" : [createFolder.folderID]
+            },
+            compression : {
+                download: "20.0%",
+                "temp-path" : [createFolder.folderID]
+            },
+            thumbnail: {
+                path: {},
+                download: "starting"
+            }
+        });
+        const end = ffmpegDownloadImage.end_createThumbnail(fileName, newFilePath, imageFileName, fileType, numberOfCreatedScreenshots);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([createFolder.folderID, "content", fileName]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+              title: fileName,
+              videoLink: {
+                src : `/video/${fileName}`,
+                type : "video/mp4"
+              },
+              thumbnailLink: {
+              }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "20.0%",
+                "temp-path" : [createFolder.folderID]
             },
             thumbnail: {
                 path: {},
