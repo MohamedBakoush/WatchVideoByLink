@@ -237,32 +237,16 @@ function end_compression_VP9(fileName, newFilePath, fileType, duration) {
   } else if(typeof fileType !== "string") {
       return "fileType not string";
   } else {
-    
+    let filePath = [`${fileName}`];  
     const temp_path_array = videoData.getVideoData([`${fileName}`,"compression", "temp-path"]);
     let availableVideosFolderIDPath =  availableVideos.availableVideosfolderPath_Array(temp_path_array);  
-    if (Array.isArray(availableVideosFolderIDPath) && availableVideos.getAvailableVideos([...availableVideosFolderIDPath, fileName]) !== undefined) {
-      if (availableVideos.getAvailableVideos([...availableVideosFolderIDPath, fileName, "info"]) !== undefined) {
-        availableVideos.updateAvailableVideoData([...availableVideosFolderIDPath, fileName, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
-        availableVideos.updateAvailableVideoData([...availableVideosFolderIDPath, fileName, "info", "videoLink", "compressedType"], "video/webm");
-      } else{
-        availableVideos.updateAvailableVideoData([...availableVideosFolderIDPath, fileName], {
-          info:{
-            title: fileName,
-            duration: duration,
-            videoLink: {
-              src : `/video/${fileName}`,
-              type : "video/mp4",
-              compressdSrc : `/compressed/${fileName}`,
-              compressedType : "video/webm"
-            }
-          }
-        });
-      } 
-    } else if (availableVideos.getAvailableVideos([`${fileName}`,"info"]) !== undefined) {
-      availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
-      availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressedType"], "video/webm");
+    if (Array.isArray(availableVideosFolderIDPath) && availableVideos.getAvailableVideos([...availableVideosFolderIDPath, fileName]) !== undefined) { filePath = [...availableVideosFolderIDPath, fileName]; }  
+
+    if (availableVideos.getAvailableVideos([... filePath, "info"]) !== undefined) {
+      availableVideos.updateAvailableVideoData([... filePath, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
+      availableVideos.updateAvailableVideoData([... filePath, "info", "videoLink", "compressedType"], "video/webm");
     } else{
-      availableVideos.updateAvailableVideoData([`${fileName}`], {
+      availableVideos.updateAvailableVideoData([... filePath], {
         info:{
           title: fileName,
           duration: duration,
