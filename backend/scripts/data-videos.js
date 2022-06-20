@@ -140,7 +140,7 @@ function deleteSpecifiedVideoData(filePath) {
             let dataPath = "videoData";
             for (let i = 0; i < filePath.length; i++) { 
                 if (i == filePath.length - 1) { 
-                    eval(dataPath)[filePath[i]] = undefined;
+                    delete eval(dataPath)[filePath[i]];
                     const newVideoData = JSON.stringify(videoData, null, 2);
                     FileSystem.writeFileSync(data_videos_path, newVideoData);
                     return `${filePath} deleted`;

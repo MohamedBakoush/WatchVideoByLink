@@ -253,13 +253,24 @@ describe("inputSelectedIDOutOfFolderID_tempPath", () =>  {
 describe("deleteSpecifiedVideoData", () =>  {  
     it("No input", () =>  { 
         const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData();
-        expect(deleteSpecifiedVideoData).toBe("undefined Unavaiable");  
+        expect(deleteSpecifiedVideoData).toBe("undefined unavaiable");  
     });
 
     it("Invalid fileName", () =>  { 
         const fileName = uuidv4();
         const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData(fileName);
-        expect(deleteSpecifiedVideoData).toBe(`${fileName} Unavaiable`);  
+        expect(deleteSpecifiedVideoData).toBe(`${fileName} unavaiable`);  
+    });
+
+    it("empty array", () =>  {  
+        const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData([]);
+        expect(deleteSpecifiedVideoData).toBe(" unavaiable");  
+    });
+
+    it("Invalid array", () =>  { 
+        const fileName = uuidv4();
+        const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData([fileName]);
+        expect(deleteSpecifiedVideoData).toBe(`${fileName} unavaiable`);  
     });
 
     it("Delete fileName", () =>  { 
@@ -275,6 +286,37 @@ describe("deleteSpecifiedVideoData", () =>  {
 
         const getVideoData_2 = dataVideos.getVideoData();
         expect(getVideoData_2).toMatchObject({}); 
+    }); 
+
+    it("Delete path_array", () =>  { 
+        const fileName = uuidv4();
+        const updateVideoData = dataVideos.updateVideoData([fileName], dataVideos_data); 
+        expect(updateVideoData).toBe("updateVideoData");  
+
+        const getVideoData_1 = dataVideos.getVideoData();
+        expect(getVideoData_1[fileName]).toMatchObject(dataVideos_data);    
+
+        const deleteSpecifiedVideoData = dataVideos.deleteSpecifiedVideoData([fileName, "video", "download"]);
+        expect(deleteSpecifiedVideoData).toBe(`${fileName},video,download deleted`); 
+
+        const getVideoData_2 = dataVideos.getVideoData([fileName]);
+        expect(getVideoData_2).toMatchObject({
+            "video": {
+                "originalVideoSrc" : "videoSrc",
+                "originalVideoType" : "videoType",
+                "path": "videoFilePath",
+                "videoType" : "video/mp4"
+            },
+            "compression" : {
+                "path": "compressionFilePath",
+                "videoType": "video/webm",
+                "download" : "completed",
+            },
+            "thumbnail": {
+                "path": {},
+                "download": "completed"
+            }
+        }); 
     }); 
 }); 
 
