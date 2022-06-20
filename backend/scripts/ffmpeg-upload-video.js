@@ -247,6 +247,8 @@ function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, f
       return "videofile not string";
   } else if (typeof fileMimeType !== "string") {
       return "fileMimeType not string";
+  } else if (!Array.isArray(folder_id_path)) {
+    return "folder_ID_Path not array";
   } else {
     if (compressUploadedVideo === true) {
       videoData.updateVideoData([`${fileName}`], {
