@@ -147,13 +147,18 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
     } else if (numberOfCreatedScreenshots < 0) {
       return "numberOfCreatedScreenshots less then 0";
     } else  {  
+      let filePath = [fileName];  
+      const temp_path_array = videoData.getVideoData([`${fileName}`, "video", "temp-path"]);
+      let availableVideosFolderIDPath =  availableVideos.availableVideosfolderPath_Array(temp_path_array);  
+      if (Array.isArray(availableVideosFolderIDPath) && availableVideos.getAvailableVideos([...availableVideosFolderIDPath]) !== undefined) { filePath = [...availableVideosFolderIDPath, fileName]; }  
+
       for (let i = 0; i < numberOfCreatedScreenshots + 1; i++) {
         if (i == 0){
-          if (availableVideos.getAvailableVideos([`${fileName}`, "info"]) !== undefined) {
-            availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink"], {});
-            availableVideos.updateAvailableVideoData([`${fileName}`, "info", "duration"], duration);
-          } else {            
-            availableVideos.updateAvailableVideoData([`${fileName}`], {
+          if (availableVideos.getAvailableVideos([... filePath, "info"]) !== undefined) {
+            availableVideos.updateAvailableVideoData([... filePath, "info", "thumbnailLink"], {});
+            availableVideos.updateAvailableVideoData([... filePath, "info", "duration"], duration);
+          } else{         
+            availableVideos.updateAvailableVideoData([... filePath], {
               info:{
                 title: fileName,
                 duration: duration,
@@ -167,7 +172,7 @@ function end_createThumbnail(fileName, newFilePath, imageFileName, fileType, num
             });
           }
         } else {
-          availableVideos.updateAvailableVideoData([`${fileName}`, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
+          availableVideos.updateAvailableVideoData([... filePath, "info", "thumbnailLink", i], `/thumbnail/${fileName}/${i}`);
           if (videoData.getVideoData([`${fileName}`, "thumbnail", "path"]) !== undefined) {
             if (i < 10) {
               videoData.updateVideoData([`${fileName}`, "thumbnail", "path", i], `${newFilePath}${fileName}-${imageFileName}00${i}${fileType}`);

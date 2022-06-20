@@ -1,5 +1,6 @@
 import * as basic from "../scripts/basics.js";
 import * as notify from "../scripts/notify.js";
+import * as folderData from "../scripts/folder-data.js";
 
 // upload video form 
 export function uploadVideoDetails(videoLink){  
@@ -62,10 +63,15 @@ export async function uploadFile(data, videoLink, newUploadVideoForm){
     try {
       // notification to user 
       notify.message("success", "Uploading: video to server");
+      // gather current foler path 
+      let folder_id_path = folderData.getFolderIDPath();
+      // if folder_id_path is not an array retun as empty array
+      if (Array.isArray(folder_id_path) !== true) {folder_id_path = [];}
       // holds file once its been choosen
       const formData = new FormData(); 
       // sends file + file data to server
-      formData.append("file", data.files[0]);
+      formData.append("file", data.files[0]); 
+      formData.append("folder_id_path", JSON.stringify(folder_id_path));  
       const response = await fetch("/uploadVideoFile",{ 
         method: "POST",
         body: formData

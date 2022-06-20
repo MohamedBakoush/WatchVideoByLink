@@ -26,12 +26,15 @@ function uploadVideoFile(req, res) {
     const fileMimeType = req.files.file.mimetype; 
     const uploadedFilename = `uploaded-${uuidv4()}`;
     const videofile = `./media/video/${uploadedFilename}.mp4`;
+    let folder_id_path = JSON.parse(req.body.folder_id_path);  
+    // if folder_id_path is not an array retun as empty array
+    if (Array.isArray(folder_id_path) !== true) {folder_id_path = [];}
     file.mv(videofile, async function(err){
       if (err) { 
         deleteData.delete_video_with_provided_path(videofile, uploadedFilename);
         res.send("error-has-accured");
       } else { 
-        const downloadVideo = await downloadUploadedVideo(videofile, fileMimeType, uploadedFilename);
+        const downloadVideo = await downloadUploadedVideo(videofile, fileMimeType, uploadedFilename, folder_id_path);
         if (downloadVideo.message == "initializing") {
           const checkDownloadResponse = setInterval(function(){ 
             const getDownloadResponse = ffmpegDownloadResponse.getDownloadResponse([downloadVideo.fileName]);
@@ -66,7 +69,7 @@ function uploadVideoFile(req, res) {
 }
 
 // download full video
-async function downloadUploadedVideo(videofile, fileMimeType, uploadedFilename) {
+async function downloadUploadedVideo(videofile, fileMimeType, uploadedFilename, folder_id_path) {
   if (typeof videofile !== "string") {
     return "videofile not string";
   } else if (typeof fileMimeType !== "string") {
@@ -111,7 +114,7 @@ async function downloadUploadedVideo(videofile, fileMimeType, uploadedFilename) 
             progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUploadedVideo);
           })
           .on("end", function() { 
-            end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo);
+            end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, folder_id_path, compressUploadedVideo);
             const path = newFilePath+fileName+fileType; 
             if (compressUploadedVideo === true) {
               ffmpegCompressionDownload.compression_VP9(path, newFilePath, fileName);
@@ -233,7 +236,7 @@ function progress_downloadUploadedVideo(fileName, data, fileMimeType, compressUp
   }
 }
 
-function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, compressUploadedVideo) {
+function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, folder_id_path, compressUploadedVideo) {
   if (fileName === undefined) {
     return "fileName undefined";
   } else if(typeof newFilePath !== "string") {
@@ -253,10 +256,11 @@ function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, f
           path: newFilePath+fileName+fileType,
           videoType : "video/mp4",
           download : "completed",
+          "temp-path": folder_id_path
         },
         compression : {
           download: "starting",
-          "temp-path": []
+          "temp-path": folder_id_path
         },
         thumbnail: {
           path: {},
@@ -282,6 +286,7 @@ function end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, f
           path: newFilePath+fileName+fileType,
           videoType : "video/mp4",
           download : "completed",
+          "temp-path": folder_id_path
         },
         thumbnail: {
           path: {},
