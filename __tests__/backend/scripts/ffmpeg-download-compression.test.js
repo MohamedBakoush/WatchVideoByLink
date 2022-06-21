@@ -758,7 +758,8 @@ describe("end_compression_VP9", () =>  {
                 download : "completed",
             },
             compression : {
-                download: "starting"
+                download: "starting",
+                "temp-path" : []
             },
             thumbnail: {
                 path: {},
@@ -814,7 +815,8 @@ describe("end_compression_VP9", () =>  {
                 download : "completed",
             },
             compression : {
-                download: "starting"
+                download: "starting",
+                "temp-path" : []
             },
             thumbnail: {
                 path: {},
@@ -857,6 +859,7 @@ describe("end_compression_VP9", () =>  {
             },
             compression : {
                 download: "completed"
+                
             },
             thumbnail: {
                 path: {},
@@ -876,4 +879,101 @@ describe("end_compression_VP9", () =>  {
             } 
         });
     });  
+
+    it("AvaiableVideoData Inside Folder: Valid fileName, valid newFilePath, valid fileType", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".webm";
+ 
+        const createFolder = availableVideos.createFolder(undefined, "title_folder_test");
+        expect(createFolder.message).toBe("folder-created"); 
+        expect(createFolder.availableVideos[createFolder.folderID]["info"]["title"]).toBe("title_folder_test");  
+         
+        availableVideos.updateAvailableVideoData([fileName], {
+            "info": {
+                "title": fileName,
+                "videoLink": {
+                    "src": `/video/${fileName}`,
+                    "type": "video/mp4"
+                }
+            }
+        });
+
+        const inputSelectedIDIntoFolderID = availableVideos.inputSelectedIDIntoFolderID(fileName, createFolder.folderID);
+        expect(inputSelectedIDIntoFolderID.message).toBe("successfully-inputed-selected-into-folder");  
+
+        dataVideos.updateVideoData([fileName], {
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "starting",
+                "temp-path" : [createFolder.folderID]
+            },
+            thumbnail: {
+                path: {},
+                download: "20.0%"
+            }
+        });
+
+        currentDownloadVideos.updateCurrentDownloadVideos([`${fileName}`], {
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "99.9%"
+            },
+            thumbnail : { 
+                "download-status" : "20.0%"
+            } 
+        }); 
+        const end = ffmpegDownloadCompression.end_compression_VP9(fileName, newFilePath, fileType);
+        expect(end).toBe("end download");
+        const getAvailableVideos = availableVideos.getAvailableVideos([createFolder.folderID, "content", `${fileName}`]);
+        expect(getAvailableVideos).toMatchObject({
+            info:{
+                title: fileName,
+                videoLink: {
+                    src : `/video/${fileName}`,
+                    type : "video/mp4",
+                    compressdSrc : `/compressed/${fileName}`,
+                    compressedType : "video/webm"
+                }
+            }
+        });
+        const getVideoData = dataVideos.getVideoData([`${fileName}`]);
+        expect(getVideoData).toMatchObject({
+            video : {
+                originalVideoSrc : "videoSrc",
+                originalVideoType : "videoType",
+                path: "newFilePath+fileName+fileType",
+                videoType : "video/mp4",
+                download : "completed",
+            },
+            compression : {
+                download: "completed"
+            },
+            thumbnail: {
+                path: {},
+                download: "20.0%"
+            }
+        });
+        const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([`${fileName}`]);
+        expect(getCurrentDownloads).toMatchObject({
+            video : { 
+                "download-status" : "completed"
+            },
+            compression : { 
+                "download-status" : "completed"
+            },
+            thumbnail : { 
+                "download-status" : "20.0%"
+            } 
+        });
+    }); 
 }); 

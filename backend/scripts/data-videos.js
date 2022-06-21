@@ -87,16 +87,73 @@ function updateVideoData(path_array, data) {
     }     
 }
 
-// delete videoData by id if exist
-function deleteSpecifiedVideoData(fileName) {
-    if (findVideosByID(fileName) !== undefined) {
-        delete videoData[`${fileName}`]; 
-        const deleteVideoData = JSON.stringify(videoData, null, 2);
-        FileSystem.writeFileSync(data_videos_path, deleteVideoData);
-        return `${fileName} deleted`;
+// input selected element into temp-path for a downloading video avaiable at avaiable-videos
+function inputSelectedIDIntoFolderID_tempPath(selectedID, folderID) { 
+    if (typeof selectedID == "string" && typeof folderID == "string") {
+        if (getVideoData([`${selectedID}`,"compression", "temp-path"]) !== undefined) {
+            const temp_path_array = getVideoData([`${selectedID}`,"compression", "temp-path"]); 
+            updateVideoData([`${selectedID}`,"compression", "temp-path"], [...temp_path_array, folderID]);
+            return "updated-temp-path";
+        } else {
+            return "failed-updated-temp-path";
+        }
+    } else if (typeof selectedID !== "string" && typeof folderID == "string") {
+       return "invalid selectedID";
+    } else if (typeof selectedID == "string" && typeof folderID !== "string") {
+        return "invalid folderID"; 
     } else {
-        return `${fileName} Unavaiable`; 
-    }  
+        return "invalid selectedID & folderID"; 
+    }
+}
+
+// input selected element id out of temp-path for a downloading video avaiable at avaiable-videos
+function inputSelectedIDOutOfFolderID_tempPath(selectedID, folderIDPath) { 
+    if (Array.isArray(folderIDPath) && typeof selectedID == "string") {
+        if (getVideoData([`${selectedID}`,"compression", "temp-path"]) !== undefined) {
+            updateVideoData([`${selectedID}`,"compression", "temp-path"], folderIDPath);
+            return "updated-temp-path";
+        } else {
+            return "failed-updated-temp-path";
+        }
+    } else if (!Array.isArray(folderIDPath) && typeof selectedID == "string") {
+        return "invalid folderIDPath";
+    } else if (Array.isArray(folderIDPath) && typeof selectedID !== "string") {
+        return "invalid selectedID";
+    } else {
+        return "invalid selectedID & folderIDPath"; 
+    }
+}
+
+// delete videoData by id if exist
+function deleteSpecifiedVideoData(filePath) {
+    if (typeof filePath === "string") {
+        if (findVideosByID(filePath) !== undefined) {
+            delete videoData[`${filePath}`]; 
+            const deleteVideoData = JSON.stringify(videoData, null, 2);
+            FileSystem.writeFileSync(data_videos_path, deleteVideoData);
+            return `${filePath} deleted`;
+        } else {
+            return `${filePath} unavaiable`; 
+        }  
+    } else if (Array.isArray(filePath) && filePath.length !== 0) {
+        if (getVideoData([... filePath]) !== undefined) {
+            let dataPath = "videoData";
+            for (let i = 0; i < filePath.length; i++) { 
+                if (i == filePath.length - 1) { 
+                    delete eval(dataPath)[filePath[i]];
+                    const newVideoData = JSON.stringify(videoData, null, 2);
+                    FileSystem.writeFileSync(data_videos_path, newVideoData);
+                    return `${filePath} deleted`;
+                } else  { 
+                    dataPath += `[filePath[${i}]]`;
+                }
+            }  
+        } else {
+            return `${filePath} unavaiable`; 
+        } 
+    } else {
+        return `${filePath} unavaiable`; 
+    }
 }
 
 // check if original video src path exits
@@ -138,6 +195,8 @@ module.exports = { // export modules
     resetVideoData,
     findVideosByID, 
     updateVideoData,
+    inputSelectedIDIntoFolderID_tempPath,
+    inputSelectedIDOutOfFolderID_tempPath,
     deleteSpecifiedVideoData,
     checkIfVideoSrcOriginalPathExits
 };

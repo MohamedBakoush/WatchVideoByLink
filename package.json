@@ -6,6 +6,11 @@
   "scripts": {
     "start": "node server",
     "build": "node ./backend/setup/build.js",
+    "build-database-available-videos": "node ./backend/setup/build-database-available-videos.js",
+    "build-database-current-download-videos": "node ./backend/setup/build-database-current-download-videos.js", 
+    "build-database-data-videos": "node ./backend/setup/build-database-data-videos.js", 
+    "build-database-user-settings": "node ./backend/setup/build-database-user-settings.js",
+    "build-untrunc-setup": "node ./backend/setup/build-untrunc-setup.js",
     "test": "jest"
   },
   "repository": {

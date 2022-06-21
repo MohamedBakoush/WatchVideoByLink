@@ -1,5 +1,5 @@
 import * as basic from "../scripts/basics.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
 
 // get searchBarContainer 
 export function searchBarContainer() {
@@ -125,8 +125,12 @@ export function unshiftDataToSearchableVideoDataArray(data) {
 // delete data from SearchableVideoDataArray by id
 export function deleteIDFromSearchableVideoDataArray(id) { 
     const searchableArrayItemId = getSearchableVideoDataArray().findIndex(x => x.info.id === id);
-    searchableVideoDataArray.splice(searchableArrayItemId, 1);
-    return "updated SearchableVideoDataArray";
+    if (searchableArrayItemId !== -1) {
+        searchableVideoDataArray.splice(searchableArrayItemId, 1);
+        return "updated SearchableVideoDataArray";
+    } else {
+        return "invalid id";
+    } 
 }
   
 // return SearchableVideoDataArray to its inital state

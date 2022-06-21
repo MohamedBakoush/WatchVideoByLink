@@ -37,6 +37,14 @@ describe("downloadUploadedVideo", () =>  {
         const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo(videofile, fileMimeType);
         expect(downloadUploadedVideo).toBe("uploadedFilename not string");
     });    
+
+    it("valid videofile, valid fileMimeType", async ()=>  {  
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const downloadUploadedVideo = await ffmpegUploadVideo.downloadUploadedVideo(videofile, fileMimeType, uploadedFilename);
+        expect(downloadUploadedVideo).toBe("folder_id_path not array");
+    });  
 });
 
 describe("start_downloadUploadedVideo", () =>  {   
@@ -420,10 +428,11 @@ describe("end_downloadUploadedVideo", () =>  {
         const videofile = `./media/video/${uploadedFilename}.mp4`;
         const fileMimeType = "video/mp4";
         const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType);
-        expect(end).toBe("end download");
+        expect(end).toBe("folder_ID_Path not array");
     });
 
-    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, compressVideo false", () =>  {
+
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, valid folder_ID_Path", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
@@ -431,7 +440,21 @@ describe("end_downloadUploadedVideo", () =>  {
         const uploadedFilename = `uploaded-${uuidv4()}`;
         const videofile = `./media/video/${uploadedFilename}.mp4`;
         const fileMimeType = "video/mp4";
-        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, false);
+        const folder_ID_Path = [];
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, folder_ID_Path);
+        expect(end).toBe("end download");
+    });
+    
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, valid folder_ID_Path, compressVideo false", () =>  {
+        const fileName = uuidv4();
+        const filepath = "media/video/"; 
+        const newFilePath = `${filepath}${fileName}/`;
+        const fileType = ".mp4";
+        const uploadedFilename = `uploaded-${uuidv4()}`;
+        const videofile = `./media/video/${uploadedFilename}.mp4`;
+        const fileMimeType = "video/mp4";
+        const folder_ID_Path = [];
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, folder_ID_Path, false);
         expect(end).toBe("end download");
         const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
         expect(getCurrentDownloads).toMatchObject({
@@ -450,6 +473,7 @@ describe("end_downloadUploadedVideo", () =>  {
                 path: newFilePath+fileName+fileType,
                 videoType : "video/mp4",
                 download : "completed",
+                "temp-path": folder_ID_Path
             },
             thumbnail: {
                 path: {},
@@ -458,7 +482,7 @@ describe("end_downloadUploadedVideo", () =>  {
         });
     }); 
 
-    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, compressVideo true", () =>  {
+    it("valid fileName, valid newFilePath, valid fileType, valid videofile, valid fileMimeType, valid folder_ID_Path, compressVideo true", () =>  {
         const fileName = uuidv4();
         const filepath = "media/video/"; 
         const newFilePath = `${filepath}${fileName}/`;
@@ -466,7 +490,8 @@ describe("end_downloadUploadedVideo", () =>  {
         const uploadedFilename = `uploaded-${uuidv4()}`;
         const videofile = `./media/video/${uploadedFilename}.mp4`;
         const fileMimeType = "video/mp4";
-        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, true);
+        const folder_ID_Path = [];
+        const end = ffmpegUploadVideo.end_downloadUploadedVideo(fileName, newFilePath, fileType, videofile, fileMimeType, folder_ID_Path, true);
         expect(end).toBe("end download");
         const getCurrentDownloads = currentDownloadVideos.getCurrentDownloads([fileName]);
         expect(getCurrentDownloads).toMatchObject({
@@ -488,9 +513,11 @@ describe("end_downloadUploadedVideo", () =>  {
                 path: newFilePath+fileName+fileType,
                 videoType : "video/mp4",
                 download : "completed",
+                "temp-path": folder_ID_Path
             },
             compression : {
-                download: "starting"
+                download: "starting",
+                "temp-path": folder_ID_Path
             },
             thumbnail: {
                 path: {},

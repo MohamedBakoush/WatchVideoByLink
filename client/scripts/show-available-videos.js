@@ -1,9 +1,10 @@
-import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
-import * as folderPath from "./folderPath.js";
 import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
-import * as optionMenu from "../scripts/optionMenu.js";
+import * as optionMenu from "../scripts/option-menu.js";
+import * as folderData from "../scripts/folder-data.js";
+import * as folderPath from "../scripts/folder-path.js";
+import * as folderCreate from "../scripts/folder-create.js";
 
 // try to fetch for all-available-video-data is successful send data to eachAvailableVideoDetails function else show error msg
 export async function loadVideoDetails(initalFolderPath) {
@@ -54,17 +55,17 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
       const createFolderButton = basic.createLink(search.searchBarContainer(), "javascript:;", undefined, "button category-link", "Create Folder"); 
       createFolderButton.onclick = function(e){
         e.preventDefault(); 
-        folder.createFolderOnClick();
+        folderCreate.createFolderOnClick();
       };
-      folder.resetInsideFolderID();  
+      folderData.resetInsideFolderID();  
       // reset search bar value
       search.resetSearchBarValue();
       // activate drag drop for available video details
       dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
       if (initalFolderPath !== undefined) {
-        const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(initalFolderPath);
+        const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(initalFolderPath);
         if (availableVideosFolderIDPath !== undefined) {
-          folder.newfolderIDPath(initalFolderPath);
+          folderData.newfolderIDPath(initalFolderPath);
           // get folder contet from specified path
           let folderPathString = "";
           for (let i = 0; i < initalFolderPath.length; i++) {  
@@ -182,6 +183,11 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
         e.preventDefault();
         optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
       };
+      // video duration
+      if (videoDetails.info.duration !== undefined && !isNaN(videoDetails.info.duration)) {
+        const video_time = basic.createSection(imageContainer, "section", "thumbnail-video-duration", `${videoInfo_ID}-video-duration`);
+        basic.createSection(video_time, "section", undefined, undefined, basic.secondsToHms(Math.floor(videoDetails.info.duration)));
+      }
       // video title container - if user want to be redirected to video player even if menu is active when onclick
       const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
       basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
@@ -290,9 +296,9 @@ export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
   search.resetSearchBarValue();
   savedVideosThumbnailContainer.remove();
   savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
-  folder.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
+  folderData.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
   folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), videoDetails.info.id, videoDetails.info.title); 
-  const availableVideosFolderIDPath = folder.getAvailableVideoDetailsByFolderPath(folder.getFolderIDPath());   
+  const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(folderData.getFolderIDPath());   
   dragDropAvailableVideoDetails(savedVideosThumbnailContainer);
   displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);
 }
@@ -348,8 +354,8 @@ export function dragDropAvailableVideoDetails(section){
       const maxWidth = rect.right - rect.left;
       const maxHight = rect.bottom - rect.top;  
       if (prevtarget !== undefined) { 
-        if ((folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
-          (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
+        if ((folderData.getFolderIDPath().length == 0 && target.id == "path-folder-main") ||
+          (folderData.getFolderIDPath()[folderData.getFolderIDPath().length - 1] === target.id.replace("path-","")) ||
           (prevtarget.id !== target.id)
         ) {    
           prevtarget.classList.remove("dragging-target");
@@ -463,15 +469,15 @@ export function dragDropAvailableVideoDetails(section){
     
     if (
         (target && target !== dragEl && target.id.includes("path-folder-")) === true &&
-        (folder.getFolderIDPath().length == 0 && target.id == "path-folder-main") === false &&
-        (folder.getFolderIDPath()[folder.getFolderIDPath().length - 1] === target.id.replace("path-","")) === false
+        (folderData.getFolderIDPath().length == 0 && target.id == "path-folder-main") === false &&
+        (folderData.getFolderIDPath()[folderData.getFolderIDPath().length - 1] === target.id.replace("path-","")) === false
       ) {  
-      folder.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
+      folderData.inputSelectedIDOutOfFolderID(dragEl.id, target.id.replace("path-",""));
       document.getElementById(dragEl.id).remove();
     } else if( target && target !== dragEl && target.nodeName == "A"){
       if (dragElTargetPosition == "inside-folder") {
         document.getElementById(dragEl.id).remove();
-        folder.inputSelectedIDIntoFolderID(dragEl.id, target.id);
+        folderData.inputSelectedIDIntoFolderID(dragEl.id, target.id);
       } else if (dragElTargetPosition == "left") { 
         if ([...section.children].indexOf(target) !== [...section.children].indexOf(dragEl) + 1) {
           section.insertBefore(dragEl, target); 
@@ -515,7 +521,7 @@ async function moveSelectedIdBeforeTargetIdAtAvailableVideoDetails(selectedID, t
       return "targetID undefined";
     } else {
       const payload = {
-        folderIDPath: folder.getFolderIDPath(),
+        folderIDPath: folderData.getFolderIDPath(),
         selectedID: selectedID,
         targetID: targetID
       }; 
@@ -561,7 +567,7 @@ async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, ta
       return "targetID undefined";
     } else {
       const payload = {
-        folderIDPath: folder.getFolderIDPath(),
+        folderIDPath: folderData.getFolderIDPath(),
         selectedID: selectedID,
         targetID: targetID
       }; 
@@ -592,54 +598,6 @@ async function moveSelectedIdAfterTargetIdAtAvailableVideoDetails(selectedID, ta
     return error;
   }
 }
-
-// request to stop download video srteam
-export async function changeVideoTitle(videoID, newVideoTitle) { 
-  try {
-    const payload = {
-      videoID: videoID,
-      newVideoTitle: newVideoTitle,
-      folderIDPath: folder.getFolderIDPath()
-    }; 
-
-    const response = await fetch("../changeVideoTitle", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    let requestResponse;
-    if (response.ok) {
-      // get json data from response
-      requestResponse = await response.json(); 
-      if (requestResponse.message == "video-title-changed") { 
-        const availablevideoDetails = requestResponse.availableVideos; 
-        basic.setNewAvailablevideoDetails(availablevideoDetails);
-        // find array id of searchableVideoDataArray by videoID
-        const searchableArrayItemId = search.getSearchableVideoDataArray().findIndex(x => x.info.id === videoID);
-        if (searchableArrayItemId !== -1) {// change video title from old to new
-          document.getElementById(`${videoID}-title`).innerHTML = newVideoTitle;
-          search.searchableVideoDataArray[searchableArrayItemId].info.title = newVideoTitle;
-          notify.message("success",`Video Title Changed: ${newVideoTitle}`);
-          return "Video Title Changed";
-        } else {
-          notify.message("error", "Video Data ID Unavailable");
-          return "searchable video data array id unavailable";
-        }
-      } else {
-        notify.message("error","Failed to Change Video Title"); 
-        return "Failed to Change Video Title";
-      }
-    } else {
-      notify.message("error","Failed to Change Video Title"); 
-      return "Failed to Change Video Title";
-    } 
-  } catch (error) {
-    notify.message("error","Failed fetch: Change Video Title");  
-    return error;
-  }
-}
-
 
 // load pageLoaded to html page when requested
 export function pageLoaded(initalFolderPath) {

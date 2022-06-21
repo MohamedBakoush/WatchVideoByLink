@@ -145,7 +145,7 @@ async function compression_VP9(videofile, newFilePath, fileName) {
                 }
               })
               .on("end", function() {
-                end_compression_VP9(fileName, newFilePath, fileType);       
+                end_compression_VP9(fileName, newFilePath, fileType, duration);       
               })
               .on("error", function(error) {
                 if (error.message === "ffmpeg was killed with signal SIGKILL") {
@@ -229,7 +229,7 @@ function progress_compression_VP9(fileName, data) {
   }
 }
 
-function end_compression_VP9(fileName, newFilePath, fileType) {
+function end_compression_VP9(fileName, newFilePath, fileType, duration) {
   if (fileName === undefined) {
     return "fileName undefined";
   } else if(typeof newFilePath !== "string") {
@@ -237,14 +237,19 @@ function end_compression_VP9(fileName, newFilePath, fileType) {
   } else if(typeof fileType !== "string") {
       return "fileType not string";
   } else {
-    
-    if (availableVideos.getAvailableVideos([`${fileName}`,"info"]) !== undefined) {
-      availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
-      availableVideos.updateAvailableVideoData([`${fileName}`, "info", "videoLink", "compressedType"], "video/webm");
+    let filePath = [`${fileName}`];  
+    const temp_path_array = videoData.getVideoData([`${fileName}`,"compression", "temp-path"]);
+    let availableVideosFolderIDPath =  availableVideos.availableVideosfolderPath_Array(temp_path_array);  
+    if (Array.isArray(availableVideosFolderIDPath) && availableVideos.getAvailableVideos([...availableVideosFolderIDPath, fileName]) !== undefined) { filePath = [...availableVideosFolderIDPath, fileName]; }  
+
+    if (availableVideos.getAvailableVideos([... filePath, "info"]) !== undefined) {
+      availableVideos.updateAvailableVideoData([... filePath, "info", "videoLink", "compressdSrc"], `/compressed/${fileName}`);
+      availableVideos.updateAvailableVideoData([... filePath, "info", "videoLink", "compressedType"], "video/webm");
     } else{
-      availableVideos.updateAvailableVideoData([`${fileName}`], {
+      availableVideos.updateAvailableVideoData([... filePath], {
         info:{
           title: fileName,
+          duration: duration,
           videoLink: {
             src : `/video/${fileName}`,
             type : "video/mp4",

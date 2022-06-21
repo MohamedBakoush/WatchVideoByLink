@@ -202,9 +202,9 @@ export function checkForPercentEncoding(string){
   const str18 = percent_encoding_to_reserved_character(str17, "%3D", "=");
 
   return str18;
- }
+}
 
- export function percent_encoding_to_reserved_character(string, checkFor, replaceby){
+export function percent_encoding_to_reserved_character(string, checkFor, replaceby){
   try {
     const array = string.split(checkFor); 
     const newarray = [];
@@ -220,5 +220,33 @@ export function checkForPercentEncoding(string){
   } catch (error) {
     return "Encoding Failed";
   }
- }
+}
  
+// converts seconds to hours:min:sec
+export function secondsToHms(sec, showHMS) { 
+  if (isNaN(sec)) {
+    return "Sec Invalid";
+  } else {
+    let hours = Math.floor(sec/3600);
+    (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";
+    let min = Math.floor(sec/60);
+    (min >= 1) ? sec = sec - (min*60) : min = "00";
+    (sec < 1) ? sec="00" : void 0;
+  
+    (min.toString().length == 1) ? min = "0"+min : void 0;
+    (sec.toString().length == 1) ? sec = "0"+sec : void 0;
+  
+  
+    if (typeof showHMS !== "boolean") {
+      showHMS = false;
+    }
+    
+    if (hours !== "00" || showHMS == true) {
+      return hours+":"+min+":"+sec; 
+    } else if (min !== "00") {
+      return +min+":"+sec; 
+    } else {
+      return "0:"+sec;
+    }
+  }
+}

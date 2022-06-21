@@ -1,9 +1,9 @@
-import * as folder from "./folder.js";
 import * as basic from "../scripts/basics.js";
-import * as search from "../scripts/search.js";
 import * as notify from "../scripts/notify.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
-import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+import * as optionTitle from "../scripts/option-title.js";
+import * as optionDelete from "../scripts/option-delete.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
+import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
 // on click video option menu
 export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer) {
@@ -32,8 +32,19 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
         linkContainer.draggable = false;
         // option_menu_container
         const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
+        // Download video
+        const download_file = basic.createSection(option_menu_container, "button", "button option-two", undefined, "Download Locally");
+        download_file.title = "Download Locally"; 
+        download_file.onclick = function(e){
+          e.preventDefault();  
+          const download_video_link = document.createElement("a");
+          download_video_link.href = videoSrc;
+          download_video_link.setAttribute("download", video_name);
+          download_video_link.click();
+          download_video_link.remove(); 
+        };
         // copy video link
-        const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-play", undefined, "Get shareable link");
+        const option_menu_copy = basic.createSection(option_menu_container, "button", "button option-one", undefined, "Get shareable link");
         option_menu_copy.title = "Get shareable link";
         option_menu_copy.onclick = function(e){
           e.preventDefault();
@@ -53,14 +64,14 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
           if (keyCode == "Enter"){ 
             if (video_name !== inputNewTitle.value) {
               video_name = inputNewTitle.value;
-              showAvailableVideos.changeVideoTitle(videoInfo_ID, video_name);
+              optionTitle.changeVideoTitle(videoInfo_ID, video_name);
             }
             inputNewTitle.blur();
             return false;
           }
         };
         // show video edit info menu
-        const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-delete", undefined, "Edit");
+        const option_menu_edit = basic.createSection(option_menu_container, "button", "button option-three", undefined, "Edit");
         option_menu_edit.title = "Edit";
         option_menu_edit.onclick = function(e){
           e.preventDefault();
@@ -88,7 +99,7 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
                     if (keyCode == "Enter"){
                       if (video_name !== inputNewTitle.value) {
                         video_name = inputNewTitle.value;
-                        showAvailableVideos.changeVideoTitle(videoInfo_ID, video_name);   
+                        optionTitle.changeVideoTitle(videoInfo_ID, video_name);   
                       }
                       if (hovered  === false) {
                         document.getElementById(`${videoInfo_ID}-title`).remove();
@@ -163,7 +174,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
       if (keyCode == "Enter"){ 
         if (folder_name !== inputNewTitle.value) {
           folder_name = inputNewTitle.value;
-          showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
+          optionTitle.changeVideoTitle(folderInfo_ID, folder_name); 
         }
         inputNewTitle.blur();
         return false;
@@ -174,6 +185,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     option_menu_edit.title = "Edit";
     option_menu_edit.onclick = function(e){
       e.preventDefault();
+      folderTitleContainer.style["text-decoration"] = "none";
       optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, inputNewTitle);
     };
     // close video edit info menu
@@ -198,7 +210,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
                 if (keyCode == "Enter"){
                   if (folder_name !== inputNewTitle.value) {
                     folder_name = inputNewTitle.value;
-                    showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name);   
+                    optionTitle.changeVideoTitle(folderInfo_ID, folder_name);   
                   }   
                   if (hovered  === false) {
                     if (document.getElementById(`${folderInfo_ID}-title`)) {  
@@ -310,7 +322,7 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
         }
         if (video_name !== inputNewTitle.value) {
           video_name = inputNewTitle.value;
-          showAvailableVideos.changeVideoTitle(videoInfo_ID, video_name); 
+          optionTitle.changeVideoTitle(videoInfo_ID, video_name); 
         }
         linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
         option_menu.classList = "thumbnail-option-menu fa fa-bars";
@@ -318,7 +330,29 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
         close_option_menu.remove();
         document.body.style.overflow = "hidden";
         const video_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
-        const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body");
+        // click anywhere but video edit body to close video_edit_container
+        const close_on_click = basic.createSection(video_edit_container, "section", "click_to_close");
+        close_on_click.onmouseover = function(e){
+          e.preventDefault();  
+          close_on_click.onclick = function(e){
+            e.preventDefault();
+            // remove container
+            document.body.style.removeProperty("overflow");
+            video_edit_container.remove();  
+            const close_on_move = basic.createSection(document.body, "section", "click_to_close"); 
+            close_on_move.onmousemove = function(e){
+              e.preventDefault();  
+              close_on_move.remove(); 
+            }; 
+            close_on_move.onclick = function(e){
+              e.preventDefault();  
+              close_on_move.remove();  
+              document.elementFromPoint(e.clientX, e.clientY).click();
+            }; 
+          };
+        };
+        const video_edit_body = basic.createSection(video_edit_container, "section", "video-edit-body", "video-edit-body"); 
+        video_edit_body.style.zIndex = "1";
         backToViewAvailableVideoButton(video_edit_body, video_edit_container, option_menu, option_menu_container,close_option_menu);
         const video_edit_article = basic.createSection(video_edit_body, "article", "video-edit-article");
         const video_edit_form = basic.createSection(video_edit_article, "form");
@@ -345,7 +379,7 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
           video_edit_container.remove();
           if (document.getElementById(`${videoInfo_ID}-title`)) { 
             video_name = video_title_edit_content_input.value;
-            showAvailableVideos.changeVideoTitle(videoInfo_ID, video_name); 
+            optionTitle.changeVideoTitle(videoInfo_ID, video_name); 
           } else {
             notify.message("error",`ID ${videoInfo_ID}-title is Missing`); 
           }
@@ -376,7 +410,7 @@ export function optionVideoMenuEditOnClick(videoSrc, videoType, videoInfo_ID, vi
             document.body.style.removeProperty("overflow");
             video_edit_container.remove();
             //delete data permanently
-            deleteVideoDataPermanently(videoInfo_ID);
+            optionDelete.deleteVideoDataPermanently(videoInfo_ID);
           };
         };
         return "optionVideoMenuEditOnClick";
@@ -394,14 +428,36 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
     }
     if (folder_name !== inputNewTitle.value) {
         folder_name = inputNewTitle.value;
-        showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
+        optionTitle.changeVideoTitle(folderInfo_ID, folder_name); 
     }
     option_menu.classList = "thumbnail-option-menu fa fa-bars";
     option_menu_container.remove();
     close_option_menu.remove();
     document.body.style.overflow ="hidden";
     const folder_edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
+    // click anywhere but folder edit body to close folder_edit_container
+    const close_on_click = basic.createSection(folder_edit_container, "section", "click_to_close");
+    close_on_click.onmouseover = function(e){
+      e.preventDefault();  
+      close_on_click.onclick = function(e){
+        e.preventDefault();
+        // remove container
+        document.body.style.removeProperty("overflow");
+        folder_edit_container.remove();  
+        const close_on_move = basic.createSection(document.body, "section", "click_to_close"); 
+        close_on_move.onmousemove = function(e){
+          e.preventDefault();  
+          close_on_move.remove(); 
+        }; 
+        close_on_move.onclick = function(e){
+          e.preventDefault();  
+          close_on_move.remove();  
+          document.elementFromPoint(e.clientX, e.clientY).click();
+        }; 
+      };
+    };
     const folder_edit_body = basic.createSection(folder_edit_container, "section", "video-edit-body");
+    folder_edit_body.style.zIndex = "1";
     backToViewAvailableVideoButton(folder_edit_body, folder_edit_container, option_menu, option_menu_container,close_option_menu);
     const folder_edit_article = basic.createSection(folder_edit_body, "article", "video-edit-article");
     const folder_edit_form = basic.createSection(folder_edit_article, "form");
@@ -428,7 +484,7 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
         folder_edit_container.remove();
         if (document.getElementById(`${folderInfo_ID}-title`)) { 
           folder_name = folder_title_edit_content_input.value;
-          showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
+          optionTitle.changeVideoTitle(folderInfo_ID, folder_name); 
         } else {
           notify.message("error",`ID ${folderInfo_ID}-title is Missing`); 
         }
@@ -459,7 +515,7 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
         document.body.style.removeProperty("overflow");
         folder_edit_container.remove();
         //delete data permanently
-        deleteVideoDataPermanently(folderInfo_ID);
+        optionDelete.deleteVideoDataPermanently(folderInfo_ID);
       };
     };
 }
@@ -490,7 +546,7 @@ export function closeVideoOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, v
       } else {  
         if (video_name !== inputNewTitle.value) {
           video_name = inputNewTitle.value;
-          showAvailableVideos.changeVideoTitle(videoInfo_ID, video_name); 
+          optionTitle.changeVideoTitle(videoInfo_ID, video_name); 
         }
         document.getElementById(`${videoInfo_ID}-title`).remove();
         document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
@@ -513,7 +569,7 @@ export function closeVideoOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, v
 export function closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL) {
     if (folder_name !== inputNewTitle.value) {
       folder_name = inputNewTitle.value;
-      showAvailableVideos.changeVideoTitle(folderInfo_ID, folder_name); 
+      optionTitle.changeVideoTitle(folderInfo_ID, folder_name); 
     }
     if (document.getElementById(`${folderInfo_ID}-title`)) {  
         document.getElementById(`${folderInfo_ID}-title`).remove();
@@ -549,43 +605,5 @@ export function backToViewAvailableVideoButton(video_edit_body, video_edit_conta
       }
     } catch (error) {
       return "backToViewAvailableVideoButton didnt work";
-    }
-}
-
-// send request to server to delete video and all video data permently from the system
-export async function deleteVideoDataPermanently(videoID) {
-    try { 
-      const payload = {
-        id: videoID,
-        folderIDPath: folder.getFolderIDPath()
-      };  
-      const response = await fetch("../delete-video-data-permanently", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }); 
-      let deleteVideoStatus;
-      if (response.ok) { 
-        deleteVideoStatus = await response.json();
-        if (deleteVideoStatus ==  `deleted-${videoID}-permanently`) {
-          //remove video from /saved/videos
-          document.getElementById(videoID).remove();
-          // delete searchable array item 
-          search.deleteIDFromSearchableVideoDataArray(videoID);
-          // display either noAvailableVideosDetails or noSearchableVideoData depending on the senario
-          search.noAvailableOrSearchableVideoMessage();
-          notify.message("success",`Deleted: ${videoID}`);
-          return `video-id-${videoID}-data-permanently-deleted`;
-        } else {
-          notify.message("error",`Failed Delete: ${videoID}`);
-          return `video-id-${videoID}-data-failed-to-permanently-deleted`;
-        }  
-      } else { 
-        notify.message("error","Failed Fetch: Video Deletion");
-        return "Failed to Complete Request";
-      } 
-    } catch (error) {  
-      notify.message("error","Failed Fetch: Video Deletion");
-      return error;
     }
 }

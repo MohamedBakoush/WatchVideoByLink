@@ -531,7 +531,8 @@ describe("end_trimVideo", () =>  {
                 download : "completed",
             },
             compression : {
-                download: "starting"
+                download: "starting",
+                "temp-path": []
             },
             thumbnail: {
                 path: {},

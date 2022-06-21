@@ -28,6 +28,40 @@ beforeAll(() => {
     spy.mockReturnValue(mockHTML); 
 });
 
+describe("getAvailablevideoDetails", () =>  {    
+    beforeEach(() => {     
+        basic.setNewAvailablevideoDetails(undefined);   
+    });  
+
+    it("undefined", () =>  { 
+        const getAvailablevideoDetails = basic.getAvailablevideoDetails();   
+        expect(getAvailablevideoDetails).toBe(undefined);    
+    });  
+
+    it("Defined", () =>  { 
+        basic.setNewAvailablevideoDetails("Defined");   
+        const getAvailablevideoDetails = basic.getAvailablevideoDetails();   
+        expect(getAvailablevideoDetails).toBe("Defined");  
+    }); 
+}); 
+
+describe("setNewAvailablevideoDetails", () =>  {    
+    beforeEach(() => {     
+        basic.setNewAvailablevideoDetails(undefined);   
+    });  
+
+    it("undefined", () =>  { 
+        const setNewAvailablevideoDetails = basic.setNewAvailablevideoDetails();   
+        expect(setNewAvailablevideoDetails).toBe(undefined);    
+    }); 
+
+    it("Defined", () =>  { 
+        const setNewAvailablevideoDetails = basic.setNewAvailablevideoDetails("Defined");   
+        expect(setNewAvailablevideoDetails).toBeDefined();     
+        expect(setNewAvailablevideoDetails).toBe("Defined");    
+    }); 
+}); 
+
 describe("websiteContentContainer", () =>  {    
     it("Defined", () =>  { 
         const websiteContentContainer = basic.websiteContentContainer();   
@@ -265,6 +299,59 @@ describe("createLink", () =>  {
     }); 
 }); 
 
+describe("appendImg", () =>  {     
+    it("valid tagname", () =>  { 
+        const appendImg = basic.appendImg(container); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname src", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png");   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+    });  
+
+    it("valid tagname src width", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20);   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+    });    
+
+    it("valid tagname src width height", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20);   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+        expect(appendImg.height).toBe(20);  
+    }); 
+
+    it("valid tagname src width height, id", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20, "test_image");   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+        expect(appendImg.height).toBe(20);  
+        expect(appendImg.id).toBe("test_image");  
+    }); 
+
+    it("valid tagname src width height, id, calss", () =>  { 
+        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20, "test_image", "class_image");   
+        expect(appendImg).toBeDefined();
+        expect(appendImg.tagName).toBe("IMG");  
+        expect(appendImg.src).toBe("http://localhost:8080/image.png");    
+        expect(appendImg.width).toBe(20);  
+        expect(appendImg.height).toBe(20);  
+        expect(appendImg.id).toBe("test_image");
+        expect(appendImg.classList[0]).toBe("class_image");  
+    }); 
+}); 
+
 describe("checkForPercentEncoding", () =>  { 
     it("Input %3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D -> :/?#[]@!$&'()*+,;=", () =>  {  
         const encode = basic.checkForPercentEncoding("%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D"); 
@@ -309,4 +396,72 @@ describe("percent_encoding_to_reserved_character", () =>  {
         expect(encode).toBeDefined();
         expect(encode).toBe("Encoding Failed"); 
     }); 
+}); 
+
+describe("secondsToHms", () =>  {    
+    it("Sec Invalid", () =>  {  
+        const secondsToHms = basic.secondsToHms();   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("Sec Invalid");     
+    });  
+
+    it("354354 -> 98:25:54, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(354354);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("98:25:54");     
+    });  
+
+    it("354354 -> 98:25:54, HMS true", () =>  {  
+        const secondsToHms = basic.secondsToHms(354354, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("98:25:54");     
+    });  
+
+    it("213213 -> 59:13:33, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(213213);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("59:13:33");     
+    });  
+
+    it("213213 -> 59:13:33, HMS true", () =>  {  
+        const secondsToHms = basic.secondsToHms(213213, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("59:13:33");     
+    });  
+
+    it("323 -> 5:23, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(323);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("5:23");     
+    });  
+
+    it("323 -> 00:05:23", () =>  {  
+        const secondsToHms = basic.secondsToHms(323, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("00:05:23");     
+    });  
+
+    it("23 -> 0:23, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(23);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("0:23");     
+    });  
+
+    it("23 -> 0:23, HMS false", () =>  {  
+        const secondsToHms = basic.secondsToHms(23, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("00:00:23");     
+    });  
+
+    it("negative nuber -> 00:00:00", () =>  {  
+        const secondsToHms = basic.secondsToHms(-456);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("0:00");     
+    });  
+
+    it("negative nuber -> 00:00:00", () =>  {  
+        const secondsToHms = basic.secondsToHms(-456, true);   
+        expect(secondsToHms).toBeDefined();       
+        expect(secondsToHms).toBe("00:00:00");     
+    });  
 }); 

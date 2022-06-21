@@ -1,7 +1,7 @@
 import * as basic from "../scripts/basics.js";
-import * as showAvailableVideos from "../scripts/showAvailableVideos.js";
+import * as showAvailableVideos from "../scripts/show-available-videos.js";
 import * as index from "../scripts/index.js";
-import * as currentVideoDownloads from "../scripts/currentVideoDownloads.js";
+import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
 // load header details into html using headerContainer id
 export function loadNavigationBar(path) {

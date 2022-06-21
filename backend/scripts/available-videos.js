@@ -1,6 +1,7 @@
 "use strict";
 const FileSystem = require("fs"); 
 const { v4: uuidv4 } = require("uuid");
+const videoData = require("./data-videos");
 const checkPathValidity = require("./check-path-validity");
 
 let available_videos_path = "data/available-videos.json";
@@ -222,6 +223,7 @@ function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {
       tooFolderID.splice(fodlerIDIndex+1, 9e9);  
       tooFolderID.length = fodlerIDIndex+1; 
     }  
+    videoData.inputSelectedIDOutOfFolderID_tempPath(selectedID, tooFolderID);
     if (tooFolderID === undefined || tooFolderID.length == 0) {  
       const availableVideosFromFolderIDPath = availableVideosfolderPath_String(fromFolderID); 
       try {
@@ -291,6 +293,7 @@ function inputSelectedIDOutOfFolderID(selectedID, folderID, folderIDPath) {
 
 // input selected element into folder element at availableVideos
 function inputSelectedIDIntoFolderID(selectedID, folderID, folderIDPath) {   
+  videoData.inputSelectedIDIntoFolderID_tempPath(selectedID, folderID);
   if (folderIDPath === undefined || folderIDPath.length == 0) { 
     if (availableVideos[selectedID] && availableVideos[folderID]) {
       try {

@@ -87,13 +87,9 @@
   background: rgb(0,0,0);
 }
 
-.thumbnail-option-menu{
-  top: 5px;
-  right: 5px;
+.thumbnail-option-menu, .thumbnail-video-duration {
   cursor: pointer;
-  position: absolute ;
-  height: 3em ;
-  width: 3em ;
+  position: absolute;  
   font-size: 16px ;
   background: none;
   border: none;
@@ -105,7 +101,28 @@
   text-decoration: none;
   transition: none;
   color: #ffffff;
+}
+
+.thumbnail-option-menu{
+  top: 5px;
+  right: 5px; 
+  height: 3em ;
+  width: 3em ;
   background-image: radial-gradient( circle closest-side, rgba(0,0,0,0.1), rgba(0,0,0,0) ) !important;
+}
+
+.thumbnail-video-duration {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  display: inline-flex;
+  border-radius: 2px;
+  bottom: 30px;
+  right: 7px;
+  height: 12px;
+  margin: 4px;
+  padding: 3px 4px;
+  background: rgba(0,0,0,0.8) !important;
 }
 
 .thumbnail-option-menu:hover {
@@ -157,7 +174,7 @@
   margin-bottom: -0.15rem; 
 }  
 
-.option-play, .option-delete{
+.option-one, .option-two, .option-three, .option-play, .option-delete{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -168,22 +185,33 @@
   border: 1px solid #000;
   transition: border-radius .15s linear;
   text-decoration: none;
-  margin: 3.8rem 1em auto 1em;
   background: #fff;
 }
 
-.option-play:hover, .option-delete:hover{
+.option-one, .option-two, .option-three{ 
+  margin: 2.95rem 1em auto 1em; 
+}
+
+.option-play, .option-delete{ 
+  margin: 3.8rem 1em auto 1em; ;
+}
+
+.option-one:hover, .option-two:hover, .option-three:hover, .option-play:hover, .option-delete:hover{
   border-radius: 2em;
 }
 
-.option-play{
+.option-one, .option-play{
   grid-row: 1;
 }
 
-.option-delete{
+.option-two, .option-delete{
     grid-row: 2;
 }
- 
+
+.option-three{
+  grid-row: 3;
+}
+
 .inputNewTitle{
   width: 100%  !important;
   display: block !important;
@@ -213,7 +241,7 @@
     height: 165px !important;
   }
 
-  .option-play, .option-delete{
+  .option-one, .option-two, .option-three, .option-play, .option-delete{
     margin: 3rem 1em auto 1em !important;
   }
 }
