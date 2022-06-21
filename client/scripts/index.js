@@ -1,5 +1,6 @@
 import * as basic from "../scripts/basics.js";
 import * as notify from "../scripts/notify.js";
+import * as folderData from "../scripts/folder-data.js";
 import * as videoPlayer from "../scripts/video-player.js";
 import * as uploadVideo from "../scripts/upload-video.js";
 import * as navigationBar from "../scripts/navigation-bar.js";
@@ -83,6 +84,8 @@ export function showDetails() {
       videoPlayer.showVideo(videoLinkInput.value, videoTypeSelect.value);
     }
   };
+  // reset folder path
+  folderData.resetInsideFolderID();
   // Create upload video 
   uploadVideo.uploadVideoDetails(videoLink);
   return "showDetails";
