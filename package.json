@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
+    "electron": "electron ./backend/setup/deploy-electron",
     "build": "node ./backend/setup/build.js",
     "build-database-available-videos": "node ./backend/setup/build-database-available-videos.js",
     "build-database-current-download-videos": "node ./backend/setup/build-database-current-download-videos.js", 
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.15.0",
+    "electron": "^19.0.6",
     "eslint": "^7.18.0",
     "jest": "^27.0.6"
   }

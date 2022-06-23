@@ -382,3 +382,6 @@ app.listen(app.get("port"), function() {
   // cheack for available unfinished video downloads
   ffmpegUnfinishedVideo.cheackForAvailabeUnFinishedVideoDownloads();
 });
+
+// export website url
+exports.url = `http://localhost:${app.get("port")}`;
