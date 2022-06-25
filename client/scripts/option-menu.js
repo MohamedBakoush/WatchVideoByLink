@@ -83,7 +83,7 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
         close_option_menu.title = "Close menu";
         close_option_menu.onclick = function(e){
           e.preventDefault();
-          closeVideoOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
+          closeOptionMenuOnClick(videoInfo_ID, video_name, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
         };
         // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
         const isHover = e => e.parentElement.querySelector(":hover") === e;
@@ -123,7 +123,7 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
                   };
                 } else{
                   if (hovered === false) {
-                    closeVideoOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
+                    closeOptionMenuOnClick(videoInfo_ID, video_name, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
                     document.removeEventListener("mousemove", checkHoverFunction);
                   } 
                   clearInterval(checkIfInputActive);
@@ -194,7 +194,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
     close_option_menu.title = "Close menu";
     close_option_menu.onclick = function(e){
       e.preventDefault();
-      closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL);
+      closeOptionMenuOnClick(folderInfo_ID, folder_name, folderURL, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle);
     };
     // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
     const isHover = e => e.parentElement.querySelector(":hover") === e;
@@ -240,7 +240,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
               };
             } else{
               if (hovered === false) { 
-                closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL);
+                closeOptionMenuOnClick(folderInfo_ID, folder_name, folderURL, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle);
                 document.removeEventListener("mousemove", checkHoverFunction);
               } 
               clearInterval(checkIfInputActive);
@@ -495,70 +495,51 @@ export function optionFolderMenuEditOnClick(folderInfo_ID, folder_name, option_m
     };
 }
 
-// on click close option menu
-export function closeVideoOptionMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle) {
-    try {
-      if (typeof videoSrc !== "string") {  
-        return "videoSrc not string";
-      } else if (typeof videoType !== "string") {  
-        return "videoType not string";
-      } else if (typeof videoInfo_ID !== "string") {  
-        return "videoInfo_ID not string";
-      } else if (typeof video_name !== "string") {  
-        return "video_name not string";
-      } else if (option_menu === undefined) {  
-        return "option_menu undefined";
-      } else if (option_menu_container === undefined) {  
-        return "option_menu_container undefined";
-      } else if (close_option_menu === undefined) {  
-        return "close_option_menu undefined";
-      } else if (linkContainer === undefined) {  
-        return "linkContainer undefined";
-      } else if (thumbnailTitleContainer === undefined) {  
-        return "thumbnailTitleContainer undefined";
-      } else if (inputNewTitle === undefined) {  
-        return "inputNewTitle undefined";
-      } else {  
-        if (video_name !== inputNewTitle.value) {
-          video_name = inputNewTitle.value;
-          optionTitle.changeVideoTitle(videoInfo_ID, video_name); 
-        }
-        document.getElementById(`${videoInfo_ID}-title`).remove();
-        document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-        basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-        option_menu.title = "menu";
-        linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-        option_menu.classList = "thumbnail-option-menu fa fa-bars";
-        linkContainer.draggable = true;
-        option_menu.disabled = false;
-        option_menu_container.remove();
-        close_option_menu.remove(); 
-        return "closeVideoOptionMenuOnClick"; 
+// close edit menu button 
+export function closeOptionMenuOnClick(fileID, fileName, URL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle) {
+  try {
+    if (typeof fileID !== "string") {  
+      return "videoInfo_ID not string";
+    } else if (typeof fileName !== "string") {  
+      return "video_name not string";
+    } else if (typeof URL !== "string") {  
+      return "URL not string";
+    } else if (option_menu === undefined) {  
+      return "option_menu undefined";
+    } else if (option_menu_container === undefined) {  
+      return "option_menu_container undefined";
+    } else if (close_option_menu === undefined) {  
+      return "close_option_menu undefined";
+    } else if (linkContainer === undefined) {  
+      return "linkContainer undefined";
+    } else if (thumbnailTitleContainer === undefined) {  
+      return "thumbnailTitleContainer undefined";
+    } else if (inputNewTitle === undefined) {  
+      return "inputNewTitle undefined";
+    } else {  
+      if (fileName !== inputNewTitle.value) {
+        fileName = inputNewTitle.value;
+        optionTitle.changeVideoTitle(fileID, fileName); 
       }
-    } catch (error) {
-      return "closeVideoOptionMenuOnClick didnt work";
+    
+      if (document.getElementById(`${fileID}-title`)) {  
+          document.getElementById(`${fileID}-title`).remove();
+          document.getElementById(`${fileID}-title-container`).href = URL;
+          basic.createSection(thumbnailTitleContainer, "h1", undefined, `${fileID}-title`, fileName);
+      } 
+      
+      option_menu.title = "menu";
+      linkContainer.href = URL;
+      option_menu.classList = "thumbnail-option-menu fa fa-bars"; 
+      linkContainer.draggable = true;
+      option_menu.disabled = false;
+      option_menu_container.remove();
+      close_option_menu.remove(); 
+      return "closeOptionMenuOnClick"; 
     }
-}
-
-// close folder edit menu button
-export function closeFolderOptionMenuOnClick(folderInfo_ID, folder_name, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, folderURL) {
-    if (folder_name !== inputNewTitle.value) {
-      folder_name = inputNewTitle.value;
-      optionTitle.changeVideoTitle(folderInfo_ID, folder_name); 
-    }
-    if (document.getElementById(`${folderInfo_ID}-title`)) {  
-        document.getElementById(`${folderInfo_ID}-title`).remove();
-        document.getElementById(`${folderInfo_ID}-title-container`).href = folderURL;
-        basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfo_ID}-title`, folder_name);
-    } 
-    option_menu.title = "menu";
-    option_menu.classList = "thumbnail-option-menu fa fa-bars";
-    folderContainerLink.draggable = true;
-    folderContainerLink.href = folderURL;
-    option_menu.disabled = false;
-    option_menu_container.remove();
-    close_option_menu.remove(); 
-    return "closeFolderOptionMenuOnClick"; 
+  } catch (error) {
+    return "closeOptionMenuOnClick didnt work";
+  }
 }
 
 // close video edit menu button
