@@ -84,60 +84,16 @@ export function optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_
         close_option_menu.onclick = function(e){
           e.preventDefault();
           closeOptionMenuOnClick(videoInfo_ID, video_name, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
-        };
-        // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
-        const isHover = e => e.parentElement.querySelector(":hover") === e;
-        const checkHoverFunction = function checkHover() {
-          let hovered = isHover(linkContainer); 
-          if (hovered !== checkHover.hovered) { 
-            checkHover.hovered = hovered;  
-            const checkIfInputActive = setInterval(function(){ 
-                if (document.activeElement.id === `${videoInfo_ID}-title`) {
-                  hovered = checkHover.hovered; 
-                  inputNewTitle.onkeypress = function(e){
-                    if (!e) e = window.event;
-                    var keyCode = e.code || e.key;
-                    if (keyCode == "Enter"){
-                      if (video_name !== inputNewTitle.value) {
-                        video_name = inputNewTitle.value;
-                        optionTitle.changeVideoTitle(videoInfo_ID, video_name);   
-                      }
-                      if (hovered  === false) {
-                        document.getElementById(`${videoInfo_ID}-title`).remove();
-                        basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-                        document.getElementById(`${videoInfo_ID}-title-container`).href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-                        option_menu.title = "menu";
-                        linkContainer.href = `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`;
-                        option_menu.classList = "thumbnail-option-menu fa fa-bars";
-                        linkContainer.draggable = true;
-                        option_menu.disabled = false;
-                        option_menu_container.remove();
-                        close_option_menu.remove();
-                        document.removeEventListener("mousemove", checkHoverFunction);
-                        clearInterval(checkIfInputActive);
-                      } else {
-                        inputNewTitle.blur();
-                      }
-                      return false;
-                    }
-                  };
-                } else{
-                  if (hovered === false) {
-                    closeOptionMenuOnClick(videoInfo_ID, video_name, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
-                    document.removeEventListener("mousemove", checkHoverFunction);
-                  } 
-                  clearInterval(checkIfInputActive);
-              }
-            }, 50); 
-          }
-        };
-        document.addEventListener("mousemove", checkHoverFunction);
+        }; 
+        // Actions to partake in on hover over option menu
+        optionMenuHover(videoInfo_ID, video_name, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
         return "optionVideoMenuOnClick";
       }
     } catch (error) { 
       return "optionVideoMenuOnClick didnt work";
     }  
 }
+
 // on click folder option menu
 export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderInfo_ID, folder_name, option_menu, folderContainerLink, folderContainer, folderTitleContainer, videoDetails) { 
     option_menu.title = ""; 
@@ -196,63 +152,97 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
       e.preventDefault();
       closeOptionMenuOnClick(folderInfo_ID, folder_name, folderURL, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle);
     };
-    // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
-    const isHover = e => e.parentElement.querySelector(":hover") === e;
-    const checkHoverFunction = function checkHover() {
-      let hovered = isHover(folderContainerLink); 
-      if (hovered !== checkHover.hovered) { 
-        checkHover.hovered = hovered;  
-        const checkIfInputActive = setInterval(function(){ 
-            if (document.activeElement.id === `${folderInfo_ID}-title`) {
-              hovered = checkHover.hovered; 
-              inputNewTitle.onkeypress = function(e){
-                if (!e) e = window.event;
-                var keyCode = e.code || e.key;
-                if (keyCode == "Enter"){
-                  if (folder_name !== inputNewTitle.value) {
-                    folder_name = inputNewTitle.value;
-                    optionTitle.changeVideoTitle(folderInfo_ID, folder_name);   
-                  }   
-                  if (hovered  === false) {
-                    if (document.getElementById(`${folderInfo_ID}-title`)) {  
-                        document.getElementById(`${folderInfo_ID}-title`).remove();
-                        basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfo_ID}-title`, folder_name);
-                        document.getElementById(`${folderInfo_ID}-title-container`).href = folderURL;
-                    } 
-                    option_menu.title = "menu";
-                    folderContainerLink.href = folderURL;
-                    option_menu.classList = "thumbnail-option-menu fa fa-bars";
-                    folderContainerLink.onclick = function(e){
-                        e.preventDefault();  
-                        showAvailableVideos.folderOnClick(savedVideosThumbnailContainer, videoDetails);
-                    };
-                    folderContainerLink.draggable = true;
-                    option_menu.disabled = false;
-                    option_menu_container.remove();
-                    close_option_menu.remove(); 
-                    document.removeEventListener("mousemove", checkHoverFunction);
-                    clearInterval(checkIfInputActive);
-                  } else {
-                    inputNewTitle.blur();
+    // Actions to partake in on hover over option menu
+    optionMenuHover(folderInfo_ID, folder_name, folderURL, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle, savedVideosThumbnailContainer, videoDetails);
+}
+
+// On hover over option menu
+function optionMenuHover(fileID, fileName, URL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle, savedVideosThumbnailContainer, videoDetails) {
+  try {
+    if (typeof fileID !== "string") {  
+      return "videoInfo_ID not string";
+    } else if (typeof fileName !== "string") {  
+      return "video_name not string";
+    } else if (typeof URL !== "string") {  
+      return "URL not string";
+    } else if (option_menu === undefined) {  
+      return "option_menu undefined";
+    } else if (option_menu_container === undefined) {  
+      return "option_menu_container undefined";
+    } else if (close_option_menu === undefined) {  
+      return "close_option_menu undefined";
+    } else if (linkContainer === undefined) {  
+      return "linkContainer undefined";
+    } else if (thumbnailTitleContainer === undefined) {  
+      return "thumbnailTitleContainer undefined";
+    } else if (inputNewTitle === undefined) {  
+      return "inputNewTitle undefined";
+    } else {
+      // if hovered removed over linkContainer, remove option_menu_container, close_option_menu
+      const isHover = e => e.parentElement.querySelector(":hover") === e;
+      const checkHoverFunction = function checkHover() {
+        let hovered = isHover(linkContainer); 
+        if (hovered !== checkHover.hovered) { 
+          checkHover.hovered = hovered;  
+          const checkIfInputActive = setInterval(function(){ 
+              if (document.activeElement.id === `${fileID}-title`) {
+                hovered = checkHover.hovered; 
+                inputNewTitle.onkeypress = function(e){
+                  if (!e) e = window.event;
+                  var keyCode = e.code || e.key;
+                  if (keyCode == "Enter"){
+                    if (fileName !== inputNewTitle.value) {
+                      fileName = inputNewTitle.value;
+                      optionTitle.changeVideoTitle(fileID, fileName);   
+                    }
+                    if (hovered  === false) {
+                      if (document.getElementById(`${fileID}-title`)) {  
+                        document.getElementById(`${fileID}-title`).remove();
+                        basic.createSection(thumbnailTitleContainer, "h1", undefined, `${fileID}-title`, fileName);
+                        document.getElementById(`${fileID}-title-container`).href = URL;  
+                      }
+                      if (typeof savedVideosThumbnailContainer == "object" && typeof videoDetails == "object") {
+                        // display folder contents on click
+                        linkContainer.onclick = function(e){
+                          e.preventDefault();  
+                          showAvailableVideos.folderOnClick(savedVideosThumbnailContainer, videoDetails);
+                        };              
+                      }
+                      option_menu.title = "menu";
+                      linkContainer.href = URL;
+                      option_menu.classList = "thumbnail-option-menu fa fa-bars";   
+                      linkContainer.draggable = true;
+                      option_menu.disabled = false;
+                      option_menu_container.remove();
+                      close_option_menu.remove();
+                      document.removeEventListener("mousemove", checkHoverFunction);
+                      clearInterval(checkIfInputActive);
+                    } else {
+                      inputNewTitle.blur();
+                    }
+                    return false;
                   }
-                  return false;
-                }
-              };
-            } else{
-              if (hovered === false) { 
-                closeOptionMenuOnClick(folderInfo_ID, folder_name, folderURL, option_menu, option_menu_container, close_option_menu, folderContainerLink, folderTitleContainer, inputNewTitle);
-                document.removeEventListener("mousemove", checkHoverFunction);
-              } 
-              clearInterval(checkIfInputActive);
-          }
-        }, 50); 
-      }
-    };
-    document.addEventListener("mousemove", checkHoverFunction);
+                };
+              } else{
+                if (hovered === false) {
+                  closeOptionMenuOnClick(fileID, fileName, URL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
+                  document.removeEventListener("mousemove", checkHoverFunction);
+                } 
+                clearInterval(checkIfInputActive);
+            }
+          }, 50); 
+        }
+      };
+      document.addEventListener("mousemove", checkHoverFunction);
+      return "optionMenuHover";
+    }
+  } catch (error) {
+    return "optionMenuHover didnt work";
+  }
 }
 
 // on click option menu copy url link
-function optionMenuCopyURLOnClick(URL, option_menu_copy) {
+export function optionMenuCopyURLOnClick(URL, option_menu_copy) {
   try {
     const tempCopyLink = document.createElement("textarea");
     document.body.appendChild(tempCopyLink);
