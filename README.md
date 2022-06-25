@@ -3,9 +3,10 @@
   <big><strong>WatchVideoByLink</strong></big>
 </h1>
 
-🎥 ⬇️ 📦 is where you watch download organize public video URLs.
+Video Archival and Media Streaming Service for Public Video URLs, WatchVideoByLink, is to facilitate gathering any desired publicly available video in a custom video player with complementary attributes. These attributes maximise the viewing pleasure of a selected video with the ability to store and organise any desired length of video for personal use.
 
 [**Why WatchVideoByLink?**](#why-watchvideobylink) |
+[**Features**](#features) |
 [**Installation**](#installation) |
 [**Contributing**](#contributing) |
 [**License**](#license)
@@ -38,7 +39,15 @@
 
 ## Why WatchVideoByLink?
 
-🎥 ⬇️ 📦 is where you watch download organize public video URLs over a computer network, can also be thought of as a hybrid between VLC + Dropbox.
+There are a variety of video-sharing platforms such as Vimeo (https://vimeo.com/), Gofile (https://gofile.io/), and Youtube (www.youtube.com). These platforms are used for sharing and consuming videos in their own ecosystems. However, all these video sharing platforms lack an essential feature: the ability to organise various videos found on the internet in one location under a topic for ease of consumption or future use. WatchVideoByLink was created to fill this gap.
+
+The majority of these platforms have options to download videos for later offline use. Still, one can’t necessarily share these videos offline without uploading a pre-recorded video to an online storage service that has video sharing capability, such as Google Drive (www.google.com/drive/), Dropbox (www.dropbox.com), and Mega (www.mega.io).
+
+This process is time-consuming and annoying if needed to be done more then once due to the time to download and upload a video and the steps required to complete the tasks is significant.
+
+WatchVideoByLink is designed to make downloading and sharing videos on the internet a seamless experience.
+
+## Features
 
 - Support for MP4/WebM/HLS/MPEG-DASH video types.
 - Testing ground towards checking validity/quality/responsiveness of public videos.
