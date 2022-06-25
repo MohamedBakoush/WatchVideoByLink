@@ -8,8 +8,7 @@
 [**Why WatchVideoByLink?**](#why-watchvideobylink) |
 [**Installation**](#installation) |
 [**Contributing**](#contributing) |
-[**License**](#license) |
-[**Discord**](https://discord.gg/83NEXNrQmk) 
+[**License**](#license)
 
 ## Screenshots & Gifs
 
