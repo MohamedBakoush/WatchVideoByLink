@@ -91,19 +91,25 @@ describe("updateUserSettingsData", () =>  {
         expect(get_videoPlayer).toMatchObject({
             "volume": 1,
             "muted": false,
-            "chromecast": false
+            "chromecast": false,
+            "seekForward": 30,
+            "seekBackward": 10
         });   
         const update = userSettings.updateUserSettingsData(["videoPlayer"], {
             "volume": 0.5,
             "muted": true,
-            "chromecast": true
+            "chromecast": true,
+            "seekForward": 10,
+            "seekBackward": 5
         });
         expect(update).toBe("updateUserSettingsData");  
         const result = userSettings.getUserSettings(["videoPlayer"]); 
         expect(result).toMatchObject({
             "volume": 0.5,
             "muted": true,
-            "chromecast": true
+            "chromecast": true,
+            "seekForward": 10,
+            "seekBackward": 5
         });   
     }); 
 }); 
@@ -129,7 +135,9 @@ describe("getUserSettings", () =>  {
         expect(get_data).toMatchObject({
             "volume": 1,
             "muted": false,
-            "chromecast": false
+            "chromecast": false,
+            "seekForward": 30,
+            "seekBackward": 10
         });   
     });
 
@@ -160,7 +168,9 @@ describe("resetUserSettings", () =>  {
             "videoPlayer": {
                 "volume": 1,
                 "muted": false,
-                "chromecast": false
+                "chromecast": false,
+                "seekForward": 30,
+                "seekBackward": 10
             },
             "download": {
                 "compression": {
@@ -312,7 +322,7 @@ describe("updateCompressVideoDownload", () =>  {
 
     it("trimVideo true", () =>  {
         const updateCompressVideoDownload = userSettings.updateCompressVideoDownload("trimVideo", true);
-        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");;
+        expect(updateCompressVideoDownload).toBe("compress video download trimVideo updated");
     });  
     
     it("trimVideo false", () =>  {
