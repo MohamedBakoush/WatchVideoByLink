@@ -157,7 +157,7 @@ export function  optionFolderMenuOnClick(savedVideosThumbnailContainer, folderIn
 }
 
 // On hover over option menu
-function optionMenuHover(fileID, fileName, URL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle, savedVideosThumbnailContainer, videoDetails) {
+export function optionMenuHover(fileID, fileName, URL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle, savedVideosThumbnailContainer, videoDetails) {
   try {
     if (typeof fileID !== "string") {  
       return "videoInfo_ID not string";
