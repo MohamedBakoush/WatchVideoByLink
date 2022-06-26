@@ -163,11 +163,11 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     let seekForward, seekBackward; 
     // seekForwards
     if (videoPlayerSettings.seekForward === undefined || isNaN(videoPlayerSettings.seekForward)) { seekForward = 30;
-    } else { seekForward = videoPlayerSettings.seekForward ;
+    } else { seekForward = videoPlayerSettings.seekForward;
     }
     // seekBackwards
     if (videoPlayerSettings.seekBackward === undefined || isNaN(videoPlayerSettings.seekBackward)) { seekBackward = 5;
-    } else { seekBackward = videoPlayerSettings.seekBackward ;
+    } else { seekBackward = videoPlayerSettings.seekBackward;
     }
     const player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
