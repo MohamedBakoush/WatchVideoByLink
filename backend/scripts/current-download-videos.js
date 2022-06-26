@@ -1,5 +1,6 @@
 "use strict"; 
 const FileSystem = require("fs"); 
+const jsonData = require("../setup/create-json-data.js");
 const checkPathValidity = require("./check-path-validity");
 
 let current_download_videos_path = "data/current-download-videos.json";
@@ -49,10 +50,14 @@ function getCurrentDownloads(path_array){
 
 // return current video downloads to its inital state
 function resetCurrentDownloadVideos(){
-  currentDownloadVideos = {};
-  const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
-  FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
-  return "resetCurrentDownloadVideos";
+  try {
+    currentDownloadVideos = jsonData.current_download_init_data();
+    const newCurrentDownloadVideos = JSON.stringify(currentDownloadVideos, null, 2);
+    FileSystem.writeFileSync(current_download_videos_path, newCurrentDownloadVideos);
+    return "resetCurrentDownloadVideos";
+  } catch (error) {
+    return error;
+  }
 }
 
 // check if id provided is corresponding to video download

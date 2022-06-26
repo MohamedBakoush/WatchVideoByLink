@@ -1,5 +1,6 @@
 "use strict"; 
 const FileSystem = require("fs"); 
+const jsonData = require("../setup/create-json-data.js");
 const checkPathValidity = require("./check-path-validity");
 
 let data_videos_path = "data/data-videos.json";
@@ -48,11 +49,15 @@ function getVideoData(path_array){
 }
 
 // return video data to its inital state
-function resetVideoData(){
-    videoData = {};
-    const newVideoData = JSON.stringify(videoData, null, 2);
-    FileSystem.writeFileSync(data_videos_path, newVideoData);
-    return "resetVideoData";
+function resetVideoData(){ 
+    try {
+        videoData = jsonData.data_videos_inti_data(); 
+        const newVideoData = JSON.stringify(videoData, null, 2);
+        FileSystem.writeFileSync(data_videos_path, newVideoData);
+        return "resetVideoData";
+    } catch (error) {
+        return error;
+    }
 }
 
 // check if id provided is corresponding to videos
