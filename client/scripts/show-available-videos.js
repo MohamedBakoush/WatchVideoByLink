@@ -181,7 +181,8 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
-        optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
+        //optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
+        optionMenu.optionMenuOnClick(videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer, videoSrc, videoType);
       };
       // video duration
       if (videoDetails.info.duration !== undefined && !isNaN(videoDetails.info.duration)) {
@@ -284,7 +285,7 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
   option_menu.title = "menu";
   option_menu.onclick = function(e){
     e.preventDefault();
-    optionMenu.optionFolderMenuOnClick(savedVideosThumbnailContainer, folderInfoID, folder_name, option_menu, folderContainerLink, folderContainer, folderTitleContainer, videoDetails);
+    optionMenu.optionFolderMenuOnClick(folderInfoID, folder_name, option_menu, folderContainerLink, folderContainer, folderTitleContainer, videoDetails, savedVideosThumbnailContainer);
   };
 
   return "showFolderDetails";

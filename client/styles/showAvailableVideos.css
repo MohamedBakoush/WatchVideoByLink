@@ -174,7 +174,9 @@
   margin-bottom: -0.15rem; 
 }  
 
-.option-one, .option-two, .option-three, .option-play, .option-delete{
+.option-menu-one, .option-menu-two, .option-menu-three,
+.option-menu-one-folder, .option-menu-two-folder,
+.option-play, .option-delete{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -188,27 +190,30 @@
   background: #fff;
 }
 
-.option-one, .option-two, .option-three{ 
+.option-menu-one, .option-menu-two, .option-menu-three{ 
   margin: 2.95rem 1em auto 1em; 
 }
 
-.option-play, .option-delete{ 
+.option-menu-one-folder, .option-menu-two-folder,
+.option-play, .option-delete { 
   margin: 3.8rem 1em auto 1em; ;
 }
 
-.option-one:hover, .option-two:hover, .option-three:hover, .option-play:hover, .option-delete:hover{
+.option-menu-one:hover, .option-menu-two:hover, .option-menu-three:hover,
+.option-menu-one-folder:hover, .option-menu-two-folder:hover,
+.option-play:hover, .option-delete:hover{
   border-radius: 2em;
 }
 
-.option-one, .option-play{
+.option-menu-one, .option-menu-one-folder, .option-play{
   grid-row: 1;
 }
 
-.option-two, .option-delete{
+.option-menu-two, .option-menu-two-folder, .option-delete{
     grid-row: 2;
 }
 
-.option-three{
+.option-menu-three{
   grid-row: 3;
 }
 
@@ -241,7 +246,12 @@
     height: 165px !important;
   }
 
-  .option-one, .option-two, .option-three, .option-play, .option-delete{
+  .option-menu-one, .option-menu-two, .option-menu-three{
+    margin: 1.78rem 1em auto 1em !important;
+  }
+
+  .option-menu-one-folder, .option-menu-two-folder,
+  .option-play, .option-delete{
     margin: 3rem 1em auto 1em !important;
   }
 }
