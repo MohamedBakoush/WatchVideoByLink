@@ -43,7 +43,7 @@ export function optionMenuOnClick(fileID, fileName, option_menu, linkContainer, 
       // copy video link
       optionMenuSharableLink(option_menu_container, fileID, videoURL);
       // Download video
-      optionMenuDownload(option_menu_container, fileName, videoSrc);
+      optionMenuDownload(option_menu_container, fileName, `${window.location.origin}${videoSrc}`);
       // show video edit info menu 
       optionMenuEdit(fileID, fileName, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
       // Actions to partake in on hover over option menu
@@ -154,14 +154,14 @@ export function optionMenuSharableLink(option_menu_container, fileID, URL) {
 }
 
 // Download video
-export function optionMenuDownload(option_menu_container, fileName, videoSrc) {
+export function optionMenuDownload(option_menu_container, fileName, URL) {
   let download_file_css = "option-menu-two"; 
   const download_file = basic.createSection(option_menu_container, "button", `button ${download_file_css}`, undefined, "Download Locally");
   download_file.title = "Download Locally"; 
   download_file.onclick = function(e){
     e.preventDefault();  
     const download_video_link = document.createElement("a");
-    download_video_link.href = `${window.location.origin}${videoSrc}`;
+    download_video_link.href = URL;
     download_video_link.setAttribute("download", fileName);
     download_video_link.click();
     download_video_link.remove(); 
