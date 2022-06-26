@@ -2,6 +2,7 @@
 const FileSystem = require("fs"); 
 const { v4: uuidv4 } = require("uuid");
 const videoData = require("./data-videos");
+const jsonData = require("../setup/create-json-data.js");
 const checkPathValidity = require("./check-path-validity");
 
 let available_videos_path = "data/available-videos.json";
@@ -52,7 +53,7 @@ function getAvailableVideos(path_array){
 // return available Videos to its inital state
 function resetAvailableVideos(){
   try {
-    availableVideos = {}; 
+    availableVideos = jsonData.available_videos_init_data();
     const newAvailableVideo = JSON.stringify(availableVideos, null, 2);
     FileSystem.writeFileSync(available_videos_path, newAvailableVideo);
     return "resetAvailableVideos";

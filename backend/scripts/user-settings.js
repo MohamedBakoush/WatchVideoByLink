@@ -1,5 +1,6 @@
 "use strict"; 
 const FileSystem = require("fs"); 
+const jsonData = require("../setup/create-json-data.js");
 const checkPathValidity = require("./check-path-validity");
 
 let user_settings_path = "data/user-settings.json";
@@ -73,26 +74,7 @@ function getUserSettings(path_array) {
 // return user settings to its inital state
 function resetUserSettings(){
     try {
-        userSettings = {
-            "videoPlayer": {
-                "volume": 1,
-                "muted": false,
-                "chromecast": false
-            },
-            "download": {
-                "compression": {
-                    "downloadVideoStream": false,
-                    "downloadVideo": false,
-                    "trimVideo": false,
-                    "downloadUploadedVideo": false
-                },
-                "confirmation": {
-                    "downloadVideoStream": false,
-                    "trimVideo": false,
-                    "downloadVideo": false
-                }
-            }
-        }; 
+        userSettings = jsonData.user_settings_init_data(); 
         const newUserSettings = JSON.stringify(userSettings, null, 2);
         FileSystem.writeFileSync(user_settings_path, newUserSettings);
         return "resetUserSettings";
