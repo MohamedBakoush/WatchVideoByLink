@@ -159,7 +159,16 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       type: videoType,
       src: videoSrc
     });
-  } else {
+  } else { 
+    let seekForward, seekBackward; 
+    // seekForwards
+    if (videoPlayerSettings.seekForward === undefined || isNaN(videoPlayerSettings.seekForward)) { seekForward = 30;
+    } else { seekForward = videoPlayerSettings.seekForward ;
+    }
+    // seekBackwards
+    if (videoPlayerSettings.seekBackward === undefined || isNaN(videoPlayerSettings.seekBackward)) { seekBackward = 5;
+    } else { seekBackward = videoPlayerSettings.seekBackward ;
+    }
     const player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
@@ -169,8 +178,8 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
           addButtonToControlBar: displayChromecast
         },
         seekButtons: {
-          forward: 30,
-          back: 10
+          forward: seekForward,
+          back: seekBackward
         }
       }
     });

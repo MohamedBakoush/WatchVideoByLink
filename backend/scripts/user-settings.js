@@ -77,7 +77,9 @@ function resetUserSettings(){
             "videoPlayer": {
                 "volume": 1,
                 "muted": false,
-                "chromecast": false
+                "chromecast": false,
+                "seekForward": 30,
+                "seekBackward": 10
             },
             "download": {
                 "compression": {
