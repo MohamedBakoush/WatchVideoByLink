@@ -112,7 +112,7 @@ export function appendImg(container, src, width, height, id, classList, videoID)
   image.onload = container.appendChild(image);
   image.onerror = function () {
     const video_container = document.getElementById(videoID);
-    if (video_container) video_container.remove(); 
+    video_container ? video_container.remove() : null; 
   };
   return image; 
 }
