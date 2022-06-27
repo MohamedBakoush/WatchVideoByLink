@@ -172,11 +172,7 @@ export function secondsToHms(sec, HMS_bool) {
   (min.toString().length == 1) ? min = "0"+min : void 0;
   (sec.toString().length == 1) ? sec = "0"+sec : void 0;
   
-  if (hours !== "00" || HMS_bool == true) {
-    return hours+":"+min+":"+sec; 
-  } else if (min !== "00") {
-    return +min+":"+sec; 
-  } else {
-    return "0:"+sec;
-  } 
+  return hours !== "00" || HMS_bool == true ? hours+":"+min+":"+sec 
+        : min !== "00" ? +min+":"+sec 
+        : "0:"+sec; 
 }
