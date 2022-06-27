@@ -117,9 +117,8 @@ export function appendImg(container, src, width, height, id, classList, videoID)
   return image; 
 }
 
-// check for percent encoding
+// Gather reserved characters after percent-encoding
 export function checkForPercentEncoding(string){ 
-  // reserved characters after percent-encoding
   // gen-delims
   const str1 = percent_encoding_to_reserved_character(string, "%3A", ":");
   const str2 = percent_encoding_to_reserved_character(str1, "%2F", "/");
@@ -128,7 +127,6 @@ export function checkForPercentEncoding(string){
   const str5 = percent_encoding_to_reserved_character(str4, "%5B", "[");
   const str6 = percent_encoding_to_reserved_character(str5, "%5D", "]");
   const str7 = percent_encoding_to_reserved_character(str6, "%40", "@");
-
   // sub-delims  
   const str8 = percent_encoding_to_reserved_character(str7, "%21", "!");
   const str9 = percent_encoding_to_reserved_character(str8, "%24", "$");
@@ -145,49 +143,40 @@ export function checkForPercentEncoding(string){
   return str18;
 }
 
-export function percent_encoding_to_reserved_character(string, checkFor, replaceby){
-  try {
-    const array = string.split(checkFor); 
-    const newarray = [];
-    for(var x = 0; x < array.length; x++){ 
-      if(x == (array.length - 1)){ 
-        newarray.push(array[x]);
-      } else{
-        newarray.push(array[x]+replaceby);
-      }
+export function percent_encoding_to_reserved_character(string, checkFor, replaceby){ 
+  if (typeof string !== "string") return "Encoding Failed";
+  const array = string.split(checkFor); 
+  const newarray = [];
+  for(var x = 0; x < array.length; x++){ 
+    if(x == (array.length - 1)){ 
+      newarray.push(array[x]);
+    } else{
+      newarray.push(array[x]+replaceby);
     }
-    const str = newarray.join(""); 
-    return str;
-  } catch (error) {
-    return "Encoding Failed";
   }
+  const str = newarray.join(""); 
+  return str; 
 }
  
-// converts seconds to hours:min:sec
-export function secondsToHms(sec, showHMS) { 
-  if (isNaN(sec)) {
-    return "Sec Invalid";
+// HMS = Hours Minutes Seconds
+export function secondsToHms(sec, HMS_bool) { 
+  if (isNaN(sec)) return "Sec Invalid";
+  if (typeof HMS_bool !== "boolean") HMS_bool = false;
+
+  let hours = Math.floor(sec/3600);
+  (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";
+  let min = Math.floor(sec/60);
+  (min >= 1) ? sec = sec - (min*60) : min = "00";
+  (sec < 1) ? sec="00" : void 0;
+
+  (min.toString().length == 1) ? min = "0"+min : void 0;
+  (sec.toString().length == 1) ? sec = "0"+sec : void 0;
+  
+  if (hours !== "00" || HMS_bool == true) {
+    return hours+":"+min+":"+sec; 
+  } else if (min !== "00") {
+    return +min+":"+sec; 
   } else {
-    let hours = Math.floor(sec/3600);
-    (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";
-    let min = Math.floor(sec/60);
-    (min >= 1) ? sec = sec - (min*60) : min = "00";
-    (sec < 1) ? sec="00" : void 0;
-  
-    (min.toString().length == 1) ? min = "0"+min : void 0;
-    (sec.toString().length == 1) ? sec = "0"+sec : void 0;
-  
-  
-    if (typeof showHMS !== "boolean") {
-      showHMS = false;
-    }
-    
-    if (hours !== "00" || showHMS == true) {
-      return hours+":"+min+":"+sec; 
-    } else if (min !== "00") {
-      return +min+":"+sec; 
-    } else {
-      return "0:"+sec;
-    }
-  }
+    return "0:"+sec;
+  } 
 }
