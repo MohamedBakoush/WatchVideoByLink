@@ -70,6 +70,50 @@ describe("websiteContentContainer", () =>  {
     }); 
 }); 
 
+describe("isUndefined", () =>  {    
+    it("no input", () =>  { 
+        const isUndefined = basic.isUndefined();   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(true);     
+    });     
+
+    it("string input", () =>  { 
+        const isUndefined = basic.isUndefined("string");   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(false);     
+    });  
+
+    it("number input", () =>  { 
+        const isUndefined = basic.isUndefined(213);   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(false);     
+    });    
+
+    it("array input", () =>  { 
+        const isUndefined = basic.isUndefined([]);   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(false);     
+    });    
+
+    it("object input", () =>  { 
+        const isUndefined = basic.isUndefined({});   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(false);     
+    });    
+
+    it("null input", () =>  { 
+        const isUndefined = basic.isUndefined(null);   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(false);     
+    });    
+    
+    it("undefined input", () =>  { 
+        const isUndefined = basic.isUndefined(undefined);   
+        expect(isUndefined).toBeDefined();
+        expect(isUndefined).toBe(true);     
+    });   
+}); 
+
 describe("inputType", () =>  {    
     it("valid tagname", () =>  { 
         const input = basic.inputType(container);   
