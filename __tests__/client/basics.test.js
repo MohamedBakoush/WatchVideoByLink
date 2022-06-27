@@ -70,48 +70,54 @@ describe("websiteContentContainer", () =>  {
     }); 
 }); 
 
-describe("isUndefined", () =>  {    
+describe("isElement", () =>  {    
     it("no input", () =>  { 
-        const isUndefined = basic.isUndefined();   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(true);     
-    });     
+        const isElement = basic.isElement();   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
+    });   
 
-    it("string input", () =>  { 
-        const isUndefined = basic.isUndefined("string");   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(false);     
+    it("undefined", () =>  { 
+        const isElement = basic.isElement(undefined);   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
     });  
 
-    it("number input", () =>  { 
-        const isUndefined = basic.isUndefined(213);   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(false);     
-    });    
+    it("null", () =>  { 
+        const isElement = basic.isElement(null);   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
+    }); 
 
-    it("array input", () =>  { 
-        const isUndefined = basic.isUndefined([]);   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(false);     
-    });    
-
-    it("object input", () =>  { 
-        const isUndefined = basic.isUndefined({});   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(false);     
-    });    
-
-    it("null input", () =>  { 
-        const isUndefined = basic.isUndefined(null);   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(false);     
-    });    
+    it("string", () =>  { 
+        const isElement = basic.isElement("string");   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
+    }); 
     
-    it("undefined input", () =>  { 
-        const isUndefined = basic.isUndefined(undefined);   
-        expect(isUndefined).toBeDefined();
-        expect(isUndefined).toBe(true);     
-    });   
+    it("number", () =>  { 
+        const isElement = basic.isElement(123);   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
+    }); 
+
+    it("object", () =>  { 
+        const isElement = basic.isElement({});   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
+    }); 
+
+    it("array", () =>  { 
+        const isElement = basic.isElement([]);   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(false);     
+    }); 
+
+    it("vaild element", () =>  { 
+        const isElement = basic.isElement(container);   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(true);     
+    }); 
 }); 
 
 describe("inputType", () =>  {    

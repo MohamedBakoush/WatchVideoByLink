@@ -6,9 +6,8 @@ export function getAvailablevideoDetails() {
 }
 
 // set new FolderID path
-export function setNewAvailablevideoDetails(newAvailablevideoDetails) {  
-  availablevideoDetails = newAvailablevideoDetails;
-  return availablevideoDetails;
+export function setNewAvailablevideoDetails(newAvailablevideoDetails) {
+  return availablevideoDetails = newAvailablevideoDetails;
 } 
 
 // return websiteContentContainer
@@ -16,117 +15,106 @@ export function websiteContentContainer() {
   return document.getElementById("websiteContentContainer");
 }
 
-// check if input value undefined
-export function isUndefined(input) {
-  if (input === undefined) return true;
-  return false;
+// check if input value is an element
+export function isElement(input) {  
+  return input !== undefined && input !== null && input.tagName !== undefined;
 }
 
 // create a input element
-export function inputType(container, type, idHere, classHere, required){
-  try {
-    const inputType = document.createElement("input");
-    if (!isUndefined(type)) inputType.type = type;
-    if (!isUndefined(idHere)) inputType.id = idHere;
-    if (!isUndefined(classHere)) inputType.classList = classHere;
-    if (!isUndefined(required)) inputType.required = required;
-    container.appendChild(inputType);
-    return inputType;
-  } catch (e) { // return fail
-      return "inputType didnt work";
-  }
+export function inputType(container, type, id, classList, required){ 
+  if (!isElement(container)) return "inputType didnt work";
+  const inputType = document.createElement("input");  
+  Object.assign(inputType,
+    type === undefined ? null : {type},
+    id === undefined ? null : {id},
+    classList === undefined ? null : {classList},
+    required === undefined ? null : {required},
+  );
+  container.appendChild(inputType);  
+  return inputType;
 }
 
 // create a label element
-export function createLabel(container, string){  
- try {
-   const label = document.createElement("label");
-   if (!isUndefined(string)) label.textContent = string;
-   container.appendChild(label); 
-   return label;
- } catch (e) { // return fail
-   return "createLabel didnt work";
- }
+export function createLabel(container, textContent){  
+  if (!isElement(container)) return "createLabel didnt work"; 
+  const label = document.createElement("label");
+  Object.assign(label,
+    textContent === undefined ? null : {textContent}, 
+  );
+  container.appendChild(label); 
+  return label;
 }
 
 // create a input element
-export function createInput(container, type, value, idHere, classHere) {
-  try {
-    const input = document.createElement("input"); 
-    if (!isUndefined(type)) input.type = type; 
-    if (!isUndefined(value)) input.value = value; 
-    if (!isUndefined(idHere)) input.id = idHere;
-    if (!isUndefined(classHere)) input.classList = classHere;
-    container.appendChild(input);
-    return input;
-  } catch (e) { // return fail
-    return "createInput didnt work";
-  }
+export function createInput(container, type, value, id, classList) { 
+  if (!isElement(container)) return "createInput didnt work";
+  const input = document.createElement("input");  
+  Object.assign(input,
+    type === undefined ? null : {type}, 
+    value === undefined ? null : {value}, 
+    id === undefined ? null : {id}, 
+    classList === undefined ? null : {classList}, 
+  );
+  container.appendChild(input);
+  return input; 
 }
 
 // create a option element
-export function createOption(container, value, textContent){
-  try {
-    const option = document.createElement("option");
-    if (!isUndefined(value)) option.value = value; 
-    if (!isUndefined(textContent)) option.textContent = textContent; 
-    container.appendChild(option);
-    return option;
-  } catch (e) { // return fail
-    return "createOption didnt work";
-  }
+export function createOption(container, value, textContent){ 
+  if (!isElement(container)) return "createOption didnt work";
+  const option = document.createElement("option"); 
+  Object.assign(option,
+    value === undefined ? null : {value}, 
+    textContent === undefined ? null : {textContent}, 
+  );
+  container.appendChild(option);
+  return option; 
 }
 
 // create a section element
-export function createSection(container, dataType, classHere, idHere, string){
-  try {
-    const section = document.createElement(dataType);
-    if (!isUndefined(classHere)) section.classList = classHere; 
-    if (!isUndefined(idHere)) section.id = idHere; 
-    if (!isUndefined(string)) section.textContent = string; 
-    container.appendChild(section);
-    return section;
-  } catch (e) { // return fail
-    return "createSection didnt work";
-  }
+export function createSection(container, dataType, classList, id, textContent){ 
+  if (!isElement(container)) return "createSection didnt work";
+  const section = document.createElement(dataType); 
+  Object.assign(section,
+    classList === undefined ? null : {classList}, 
+    id === undefined ? null : {id}, 
+    textContent === undefined ? null : {textContent}, 
+  );
+  container.appendChild(section);
+  return section; 
 }
 
 // create an a element
-export function createLink(container, href, idHere, classHere, textContent) {
-  try {
-    const linkContainer = document.createElement("a");
-    if (!isUndefined(href)) linkContainer.href = href;
-    if (!isUndefined(idHere)) linkContainer.id = idHere;
-    if (!isUndefined(classHere)) linkContainer.classList = classHere;
-    if (!isUndefined(textContent)) linkContainer.textContent = textContent;
-    container.appendChild(linkContainer);
-    return linkContainer;
-  } catch (e) { // return fail
-    return "createLink didnt work";
-  }
+export function createLink(container, href, id, classList, textContent) {
+  if (!isElement(container)) return "createLink didnt work";
+  const linkContainer = document.createElement("a"); 
+  Object.assign(linkContainer,
+    href === undefined ? null : {href}, 
+    id === undefined ? null : {id}, 
+    classList === undefined ? null : {classList}, 
+    textContent === undefined ? null : {textContent},  
+  );
+  container.appendChild(linkContainer);
+  return linkContainer; 
 }
 
 // append image to container
-export function appendImg(container, src, width, height, idHere, classHere, videoInfo_ID) {
-  try {
-    const image = document.createElement("img");
-    if (!isUndefined(height)) image.height = height;
-    if (!isUndefined(width)) image.width = width;
-    if (!isUndefined(idHere)) image.id = idHere;
-    if (!isUndefined(classHere)) image.classList = classHere;
-    if (!isUndefined(src)) image.src = src;
-    image.onload = function () { 
-     container.appendChild(image); // append image in container
-    };
-    image.onerror = function () {
-      if (document.getElementById(videoInfo_ID)) { // remove image container
-        document.getElementById(videoInfo_ID).remove(); 
-      }
-    };
-    return image;
-  } catch (e) { // when an error occurs
-    return "appendImg didnt work";
-  }
+export function appendImg(container, src, width, height, id, classList, videoID) {
+  if (!isElement(container)) return "appendImg didnt work"; 
+  const image = document.createElement("img"); 
+  Object.assign(image,
+    height === undefined ? null : {height}, 
+    width === undefined ? null : {width}, 
+    id === undefined ? null : {id}, 
+    classList === undefined ? null : {classList}, 
+    src === undefined ? null : {src}, 
+  );
+  image.onload = container.appendChild(image);
+  image.onerror = function () {
+    const video_container = document.getElementById(videoID);
+    if (video_container) video_container.remove(); 
+  };
+  return image; 
 }
 
 // check for percent encoding
