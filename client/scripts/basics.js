@@ -29,17 +29,6 @@ export function createElement(container, elementType, fields) {
   return container.appendChild(createdElement);
 }
 
-// create a label element
-export function createLabel(container, textContent){  
-  if (!isElement(container)) return "createLabel didnt work"; 
-  const label = document.createElement("label");
-  Object.assign(label,
-    textContent === undefined ? null : {textContent}, 
-  );
-  container.appendChild(label); 
-  return label;
-}
-
 // create a input element
 export function createInput(container, type, value, id, classList) { 
   if (!isElement(container)) return "createInput didnt work";
