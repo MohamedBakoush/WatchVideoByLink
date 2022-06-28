@@ -42,20 +42,6 @@ export function createSection(container, dataType, classList, id, textContent){
   return section; 
 }
 
-// create an a element
-export function createLink(container, href, id, classList, textContent) {
-  if (!isElement(container)) return "createLink didnt work";
-  const linkContainer = document.createElement("a"); 
-  Object.assign(linkContainer,
-    href === undefined ? null : {href}, 
-    id === undefined ? null : {id}, 
-    classList === undefined ? null : {classList}, 
-    textContent === undefined ? null : {textContent},  
-  );
-  container.appendChild(linkContainer);
-  return linkContainer; 
-}
-
 // append image to container
 export function appendImg(container, src, width, height, id, classList, videoID) {
   if (!isElement(container)) return "appendImg didnt work"; 

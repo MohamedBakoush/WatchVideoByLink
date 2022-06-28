@@ -52,7 +52,11 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
         search.resetSearchableVideoDataArray();
       } 
       // create folder button 
-      const createFolderButton = basic.createLink(search.searchBarContainer(), "javascript:;", undefined, "button category-link", "Create Folder"); 
+      const createFolderButton = basic.createElement(search.searchBarContainer(), "a", {
+        href : "javascript:;",
+        classList : "button category-link",
+        textContent : "Create Folder"
+      });
       createFolderButton.onclick = function(e){
         e.preventDefault(); 
         folderCreate.createFolderOnClick();
@@ -164,8 +168,12 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       let video_name = videoDetails.info.title;
       const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
       const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
-      const linkContainer = basic.createLink(savedVideosThumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
-      linkContainer.draggable = true;
+      const linkContainer = basic.createElement(savedVideosThumbnailContainer, "a", {
+        href : `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`,
+        id : videoInfo_ID,
+        classList : "videoThumbnailContainer",
+        draggable : true
+      });
       const thumbnailContainer = basic.createSection(linkContainer, "section", undefined, `${videoInfo_ID}-container`);
       const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
       const thumbnail = basic.appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
@@ -190,7 +198,11 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
         basic.createSection(video_time, "section", undefined, undefined, basic.secondsToHms(Math.floor(videoDetails.info.duration)));
       }
       // video title container - if user want to be redirected to video player even if menu is active when onclick
-      const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
+      const thumbnailTitleContainer = basic.createElement(thumbnailContainer, "a", {
+        href : `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`,
+        id : `${videoInfo_ID}-title-container`,
+        classList : "thumbnailTitleContainer"
+      });
       basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
       
       let loopTroughThumbnails, mainThumbnailNumber = 1;
@@ -245,8 +257,12 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
     folderURL = `${window.location.origin}/saved/videos${document.location.search}&${folderInfoID}`;
   }
 
-  const folderContainerLink = basic.createLink(savedVideosThumbnailContainer, folderURL, folderInfoID, "folderContainer"); 
-  folderContainerLink.draggable = true; 
+  const folderContainerLink = basic.createElement(savedVideosThumbnailContainer, "a", {
+    href : folderURL,
+    id : folderInfoID,
+    classList : "folderContainer",
+    draggable : true
+  });
   folderContainerLink.onclick = function(e){
     e.preventDefault();  
     folderOnClick(savedVideosThumbnailContainer, videoDetails);
@@ -266,7 +282,11 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
 
   const folderContainer = basic.createSection(folderContainerLink, "section", undefined, `${folderInfoID}-container`);
   basic.createSection(folderContainer, "section", "folder-image-container fa fa-folder", `${folderInfoID}-image-container`);
-  const folderTitleContainer = basic.createLink(folderContainer, folderURL, `${folderInfoID}-title-container`, "folderTitleContainer");
+  const folderTitleContainer = basic.createElement(folderContainer, "a", {
+    href : folderURL,
+    id : `${folderInfoID}-title-container`,
+    classList : "folderTitleContainer"
+  });
   basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfoID}-title`, folder_name);   
 
   // menu options
