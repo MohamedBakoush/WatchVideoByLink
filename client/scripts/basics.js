@@ -29,18 +29,6 @@ export function createElement(container, elementType, fields) {
   return container.appendChild(createdElement);
 }
 
-// create a option element
-export function createOption(container, value, textContent){ 
-  if (!isElement(container)) return "createOption didnt work";
-  const option = document.createElement("option"); 
-  Object.assign(option,
-    value === undefined ? null : {value}, 
-    textContent === undefined ? null : {textContent}, 
-  );
-  container.appendChild(option);
-  return option; 
-}
-
 // create a section element
 export function createSection(container, dataType, classList, id, textContent){ 
   if (!isElement(container)) return "createSection didnt work";

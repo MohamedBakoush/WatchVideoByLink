@@ -58,11 +58,26 @@ export function showDetails() {
   basic.createSection(videoLinkTypeContainer, "section", undefined, undefined,  "Video Type: ");
   const videoTypeSelect = basic.createSection(videoLinkTypeContainer, "select", "videoTypeSelect", "select"); 
   // all the diffrent types of video that can be choosen 
-  basic.createOption(videoTypeSelect, "Automatic", "Automatic");
-  basic.createOption(videoTypeSelect, "video/mp4", "MP4 (.mp4)");
-  basic.createOption(videoTypeSelect, "application/x-mpegURL", "HLS (.m3u8)");
-  basic.createOption(videoTypeSelect, "video/webm", "WebM (.webm)"); 
-  basic.createOption(videoTypeSelect, "application/dash+xml", "MPEG-DASH (.mpd)");
+  basic.createElement(videoTypeSelect, "option", {
+    value : "Automatic", 
+    textContent : "Automatic"
+  });
+  basic.createElement(videoTypeSelect, "option", {
+    value : "video/mp4", 
+    textContent : "MP4 (.mp4)"
+  });
+  basic.createElement(videoTypeSelect, "option", {
+    value : "application/x-mpegURL", 
+    textContent : "HLS (.m3u8)"
+  });
+  basic.createElement(videoTypeSelect, "option", {
+    value : "video/webm", 
+    textContent : "WebM (.webm)"
+  });
+  basic.createElement(videoTypeSelect, "option", {
+    value : "application/dash+xml", 
+    textContent :"MPEG-DASH (.mpd)"
+  });
   // submit video button
   const submitVideoButtonContainer = basic.createSection(videoLinkForm, "section", "submitVideoButtonContainer");
   basic.createElement(submitVideoButtonContainer, "input", {
