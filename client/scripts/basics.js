@@ -20,6 +20,16 @@ export function isElement(input) {
   return input !== undefined && input !== null && input.tagName !== undefined;
 }
 
+export function createElement(container, elementType, fields) {
+  if (!isElement(container)) return "invalid container";
+  if (typeof elementType !== "string") return "invalid elementType";
+  if (typeof fields !== "object") return "invalid fields";
+  const createdElement = document.createElement(elementType);  
+  Object.assign(createdElement, fields);
+  container.appendChild(createdElement); 
+  return createdElement;
+}
+
 // create a input element
 export function inputType(container, type, id, classList, required){ 
   if (!isElement(container)) return "inputType didnt work";
