@@ -23,25 +23,10 @@ export function isElement(input) {
 export function createElement(container, elementType, fields) {
   if (!isElement(container)) return "invalid container";
   if (typeof elementType !== "string") return "invalid elementType";
-  if (typeof fields !== "object") return "invalid fields";
+  if (typeof fields !== "object" || Array.isArray(fields) || fields === null) return "invalid fields";
   const createdElement = document.createElement(elementType);  
   Object.assign(createdElement, fields);
-  container.appendChild(createdElement); 
-  return createdElement;
-}
-
-// create a input element
-export function inputType(container, type, id, classList, required){ 
-  if (!isElement(container)) return "inputType didnt work";
-  const inputType = document.createElement("input");  
-  Object.assign(inputType,
-    type === undefined ? null : {type},
-    id === undefined ? null : {id},
-    classList === undefined ? null : {classList},
-    required === undefined ? null : {required},
-  );
-  container.appendChild(inputType);  
-  return inputType;
+  return container.appendChild(createdElement);
 }
 
 // create a label element

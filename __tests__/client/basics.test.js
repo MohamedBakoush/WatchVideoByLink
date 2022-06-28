@@ -120,50 +120,137 @@ describe("isElement", () =>  {
     }); 
 }); 
 
-describe("inputType", () =>  {    
-    it("valid tagname", () =>  { 
-        const input = basic.inputType(container);   
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");     
+describe("createElement", () =>  {   
+    it("No input", () =>  { 
+        const createdElement = basic.createElement();   
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");     
     }); 
-    
-    it("valid tagname type", () =>  { 
-        const input = basic.inputType(container, "text"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");  
-    }); 
-    
-    it("valid tagname type id", () =>  { 
-        const input = basic.inputType(container, "text", "id"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");   
-        expect(input.id).toBe("id");  
-    }); 
-    
-    it("valid tagname type id class", () =>  { 
-        const input = basic.inputType(container, "text", "id", "class"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");   
-        expect(input.classList[0]).toBe("class");  
-    }); 
-    
-    it("valid tagname type id class required", () =>  { 
-        const input = basic.inputType(container, "text", "id", "class", true); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");   
-        expect(input.classList[0]).toBe("class");  
-        expect(input.required).toBe(true);  
+ 
+    it("Undefined", () =>  { 
+        const createdElement = basic.createElement(undefined);
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");       
+    });  
+
+    it("Null", () =>  { 
+        const createdElement = basic.createElement(null);
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");    
     }); 
 
-    it("inputType didnt work", () =>  { 
-        const input = basic.inputType(); 
-        expect(input).toBeDefined();
-        expect(input).toBe("inputType didnt work");  
+    it("String container", () =>  { 
+        const createdElement = basic.createElement("string");
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");    
     }); 
+    
+    it("Number container", () =>  { 
+        const createdElement = basic.createElement(123);
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");         
+    }); 
+
+    it("Object container", () =>  { 
+        const createdElement = basic.createElement({});
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");      
+    }); 
+
+    it("Array container", () =>  { 
+        const createdElement = basic.createElement([]);
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid container");      
+    }); 
+
+    it("valid container", () =>  { 
+        const createdElement = basic.createElement(container);   
+        expect(createdElement).toBeDefined();
+        expect(createdElement).toBe("invalid elementType");     
+    }); 
+    
+    it("valid container, Undefined elementType", () =>  { 
+        const createdElement = basic.createElement(container, undefined); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid elementType");  
+    });  
+    
+    it("valid container, Null elementType", () =>  { 
+        const createdElement = basic.createElement(container, null); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid elementType");  
+    });  
+    
+    it("valid container, String elementType", () =>  { 
+        const createdElement = basic.createElement(container, "input"); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid fields");  
+    });  
+
+    it("valid container, Number elementType", () =>  { 
+        const createdElement = basic.createElement(container, 123); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid elementType");  
+    });  
+
+    it("valid container, Object elementType", () =>  { 
+        const createdElement = basic.createElement(container, {}); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid elementType");  
+    });  
+    
+    it("valid container, Array elementType", () =>  { 
+        const createdElement = basic.createElement(container, []); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid elementType");  
+    });  
+
+    it("valid container, elementType, Undefined fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", undefined); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid fields");  
+    });  
+
+    it("valid container, elementType, Null fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", null); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid fields");  
+    });  
+
+    it("valid container, elementType, String fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", "string"); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid fields");  
+    });  
+
+    it("valid container, elementType, Number fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", 123); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid fields");  
+    });  
+
+    it("valid container, elementType, Array fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", []); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement).toBe("invalid fields");  
+    });  
+
+    it("valid container, elementType, Object fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", {}); 
+        expect(createdElement).toBeDefined(); 
+        expect(createdElement.tagName).toBe("INPUT");   
+    });  
+
+    it("valid container, elementType, fields", () =>  { 
+        const createdElement = basic.createElement(container, "input", {
+            id : "id",
+            classList : "class"
+        }); 
+        expect(createdElement).toBeDefined();   
+        expect(createdElement.tagName).toBe("INPUT");   
+        expect(createdElement.id).toBe("id");  
+        expect(createdElement.classList[0]).toBe("class");   
+    });  
 }); 
 
 describe("createLabel", () =>  {    

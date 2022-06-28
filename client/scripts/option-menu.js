@@ -361,8 +361,12 @@ export function optionMenuEditOnClick(fileID, fileName, URL, option_menu, option
     
       const title_edit_content_container = basic.createSection(title_edit_settings_li, "section");
       basic.createSection(title_edit_content_container, "strong", undefined, undefined, `${fileType.charAt(0).toUpperCase() + fileType.slice(1)} Title`);
-      const title_edit_content_input = basic.inputType(title_edit_content_container, "text", undefined, "videoTitleEditInput", false);
-      title_edit_content_input.placeholder = fileName;
+      const title_edit_content_input = basic.createElement(title_edit_content_container, "input", {
+        type : "text",
+        classList : "videoTitleEditInput",
+        placeholder : fileName,
+        required : false
+      });
       title_edit_content_input.focus();
       const title_edit_button_container = basic.createSection(title_edit_settings_li, "section", "videoTitleEditButtonContainer");
       const titleEditButton = basic.createSection(title_edit_button_container, "button", "videoTitleEditButton", undefined, `Change ${fileType} title`);

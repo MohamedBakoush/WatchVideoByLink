@@ -20,9 +20,14 @@ export function resetSearchBarValue() {
 // find video by filtering trough each available video by textinput
 export function searchBar(){
     // create search input
-    const searchBar = basic.inputType(searchBarContainer(), "text", "searchBar", "searchBar", true);
-    searchBar.name = "searchBar";
-    searchBar.placeholder="Type to search";
+    const searchBar = basic.createElement(searchBarContainer(), "input", {
+        type : "text", 
+        id : "searchBar",
+        classList : "searchBar",
+        placeholder : "Type to search",
+        name : "searchBar",
+        required : true
+    });
     // filters trough video data by name at every key press
     searchBar.addEventListener("keyup", (e) => { 
         const searchString = e.target.value;

@@ -44,8 +44,13 @@ export function showDetails() {
   const videoLinkInputLabel = basic.createSection(videoLinkInputBody, "label", "videoLinkInputLabel");
   const videoLinkInputContainer = basic.createSection(videoLinkInputLabel, "section" , "videoLinkInputContainer");
   basic.createSection(videoLinkInputContainer, "section", undefined, undefined,  "Video Link: ");
-  const videoLinkInput = basic.inputType(videoLinkInputContainer, "text", "videoLinkInput", "videoLinkInput", true);
-  videoLinkInput.placeholder = "Enter Video Link";
+  const videoLinkInput = basic.createElement(videoLinkInputContainer, "input", {
+    type : "text",
+    id : "videoLinkInput",
+    classList : "videoLinkInput",
+    placeholder : "Enter Video Link",
+    required : true
+  });
   //video type
   const videoLinkTypeBody = basic.createSection(videoLinkForm, "section", "videoTypeInputBody");
   const videoLinkTypeLabel = basic.createSection(videoLinkTypeBody, "label", "videoTypeInputLabel");

@@ -36,10 +36,13 @@ export function createFolderOnClick() {
 
     const create_folder_title_edit_content_container = basic.createSection(create_folder_title_edit_settings_li, "section");
     basic.createSection(create_folder_title_edit_content_container, "strong", undefined, undefined, "Name");
-    const create_folder_title_edit_content_input = basic.inputType(create_folder_title_edit_content_container, "text", undefined, "createFolderTitleEditInput", false);
-    create_folder_title_edit_content_input.placeholder = "Folder Name"; 
+    const create_folder_title_edit_content_input =  basic.createElement(create_folder_title_edit_content_container, "input", {
+        type : "text",
+        classList : "createFolderTitleEditInput",
+        placeholder : "Folder Name",
+        required : false
+    });
     create_folder_title_edit_content_input.focus();
-
     const create_folder_buttons_container = basic.createSection(create_folder_title_edit_settings_container, "section", "createFolderButtonsContainer");
     const create = basic.createSection(create_folder_buttons_container, "button", "button createFolderButton", undefined, "Create");  
     create.onclick = function(){   
