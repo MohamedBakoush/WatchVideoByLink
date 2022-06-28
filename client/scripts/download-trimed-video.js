@@ -63,12 +63,18 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
       videoPlayer_active.onloadedmetadata = () => {
           const multiRangeSlider = basic.createSection(videoContainer, "section", "multi-range-slider");
           // left input for slider
-          const inputLeft = basic.createInput(multiRangeSlider, "range", undefined, "input-left");
+          const inputLeft = basic.createElement(multiRangeSlider, "input", {
+            type : "range",
+            id : "input-left"
+          });
           inputLeft.min = 0;
           inputLeft.max = videoPlayer_active.duration;
           inputLeft.value = 0;
           // right input for slider
-          const inputRight = basic.createInput(multiRangeSlider, "range", undefined, "input-right");
+          const inputRight = basic.createElement(multiRangeSlider, "input", {
+            type : "range",
+            id : "input-right"
+          });
           inputRight.min = 0;
           inputRight.max = videoPlayer_active.duration;
           inputRight.value = videoPlayer_active.duration;
@@ -87,20 +93,34 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
           // selectedVideoTimeStart
           const selectedVideoTimeStart = basic.createSection(selectedVideoTimeContainer, "section", "selectedVideoTimeStart");
           basic.createSection(selectedVideoTimeStart, "label", "StartTime", undefined, "Start Time:");
-          const selectedInputLeft = basic.createInput(selectedVideoTimeStart, "text", basic.secondsToHms(inputLeft.value, true), "selected-video-time-inputLeft", "timeInput");
-          selectedInputLeft.readOnly = true;
+          const selectedInputLeft = basic.createElement(selectedVideoTimeStart, "input", {
+            type : "text",
+            value: basic.secondsToHms(inputLeft.value, true),
+            id : "selected-video-time-inputLeft",
+            classList : "timeInput",
+            readOnly : true
+          });
           // selectedVideoTimeEnd
           const selectedVideoTimeEnd = basic.createSection(selectedVideoTimeContainer, "section", "selectedVideoTimeEnd");
           basic.createSection(selectedVideoTimeEnd, "label", "EndTime", undefined, "End Time:");
-          const selectedInputRight = basic.createInput(selectedVideoTimeEnd, "text", basic.secondsToHms(inputRight.value, true), "selected-video-time-inputRight", "timeInput");
-          selectedInputRight.readOnly = true;
+          const selectedInputRight = basic.createElement(selectedVideoTimeEnd, "input", {
+            type : "text",
+            value: basic.secondsToHms(inputRight.value, true),
+            id : "selected-video-time-inputRight",
+            classList : "timeInput",
+            readOnly : true
+          });
           // trimVideoButtonContainer
           const trimVideoButtonBodyContainer = basic.createSection(trimVideoControlsContainer, "section");
           const trimVideoButtonBody = basic.createSection(trimVideoButtonBodyContainer, "section", undefined, "trimVideoButtonBody");
           const trimVideoButtonContainer = basic.createSection(trimVideoButtonBody, "section", "trimVideoButtonContainer");
           // trimVideoButton
-          const trimVideoButton = basic.createInput(trimVideoButtonContainer, "submit", "Trim Video", undefined, "button trimVideoButton");
-          trimVideoButton.title = "Trim Video";
+          const trimVideoButton = basic.createElement(trimVideoButtonContainer, "input", {
+            type : "submit",
+            value: "Trim Video",
+            classList : "button trimVideoButton",
+            title : "Trim Video"
+          });
           trimVideoButton.onclick = async function(){
             const response = await videoPlayerButtons.getDownloadConfirmation();
             const downloadConfirmationResponse = response.trimVideo;

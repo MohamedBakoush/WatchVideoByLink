@@ -253,54 +253,6 @@ describe("createElement", () =>  {
     });  
 });  
 
-describe("createInput", () =>  {    
-    it("valid tagname", () =>  { 
-        const input = basic.createInput(container);   
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");     
-    }); 
-    
-    it("valid tagname type", () =>  { 
-        const input = basic.createInput(container, "text"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");  
-    });  
-    
-    it("valid tagname type value", () =>  { 
-        const input = basic.createInput(container, "text", "value"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");  
-        expect(input.value).toBe("value");     
-    });  
-    
-    it("valid tagname type value id", () =>  { 
-        const input = basic.createInput(container, "text", "value", "id"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");  
-        expect(input.value).toBe("value"); 
-        expect(input.id).toBe("id");  
-    });  
-
-    it("valid tagname type value id class", () =>  { 
-        const input = basic.createInput(container, "text", "value", "id", "class"); 
-        expect(input).toBeDefined();
-        expect(input.tagName).toBe("INPUT");  
-        expect(input.type).toBe("text");  
-        expect(input.value).toBe("value"); 
-        expect(input.id).toBe("id");  
-        expect(input.classList[0]).toBe("class");  
-    });  
-
-    it("createInput didnt work", () =>  { 
-        const input = basic.createInput(); 
-        expect(input).toBeDefined();
-        expect(input).toBe("createInput didnt work");  
-    }); 
-}); 
-
 describe("createOption", () =>  {    
     it("valid tagname", () =>  { 
         const option = basic.createOption(container);   

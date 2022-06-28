@@ -112,8 +112,14 @@ export function optionFolderMenuOnClick(folderInfo_ID, folder_name, option_menu,
 // alter file title text box
 function inputNewFileTitle(fileID, fileName) {
   document.getElementById(`${fileID}-title`).remove();
-  const inputNewTitle = basic.createInput(document.getElementById(`${fileID}-title-container`),"text", fileName, `${fileID}-title`, "inputNewTitle");
-  document.getElementById(`${fileID}-title-container`).removeAttribute("href");
+  const file_title_container = document.getElementById(`${fileID}-title-container`);
+  const inputNewTitle = basic.createElement(file_title_container, "input", { 
+    type : "text",
+    value: fileName,
+    id : `${fileID}-title`,
+    classList : "inputNewTitle"
+  });
+  file_title_container.removeAttribute("href");
   inputNewTitle.onkeypress = function(e){ // on input new title key press
     if (!e) e = window.event;
     var keyCode = e.code || e.key;

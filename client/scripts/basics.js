@@ -29,20 +29,6 @@ export function createElement(container, elementType, fields) {
   return container.appendChild(createdElement);
 }
 
-// create a input element
-export function createInput(container, type, value, id, classList) { 
-  if (!isElement(container)) return "createInput didnt work";
-  const input = document.createElement("input");  
-  Object.assign(input,
-    type === undefined ? null : {type}, 
-    value === undefined ? null : {value}, 
-    id === undefined ? null : {id}, 
-    classList === undefined ? null : {classList}, 
-  );
-  container.appendChild(input);
-  return input; 
-}
-
 // create a option element
 export function createOption(container, value, textContent){ 
   if (!isElement(container)) return "createOption didnt work";

@@ -65,7 +65,11 @@ export function showDetails() {
   basic.createOption(videoTypeSelect, "application/dash+xml", "MPEG-DASH (.mpd)");
   // submit video button
   const submitVideoButtonContainer = basic.createSection(videoLinkForm, "section", "submitVideoButtonContainer");
-  basic.createInput(submitVideoButtonContainer, "submit", "Watch Video", undefined , "button watchVideoButton");
+  basic.createElement(submitVideoButtonContainer, "input", {
+    type : "submit",
+    value : "Watch Video",
+    classList : "button watchVideoButton"
+  });
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
     if(document.getElementById("download-status-container"))  {
