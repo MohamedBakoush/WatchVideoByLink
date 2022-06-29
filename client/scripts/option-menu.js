@@ -37,7 +37,9 @@ export function optionMenuOnClick(fileID, fileName, option_menu, linkContainer, 
       }
       const inputNewTitle = inputNewFileTitle(fileID, fileName);
       // option_menu_container
-      const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
+      const option_menu_container = basic.createElement(option_menu, "section", {
+        classList : "thumbnail-options-container"
+      });
       // close video edit info menu
       const close_option_menu = closeOptionMenu(fileID, fileName, videoURL, option_menu, option_menu_container, linkContainer, thumbnailContainer, thumbnailTitleContainer, inputNewTitle);
       // copy video link
@@ -93,7 +95,9 @@ export function optionFolderMenuOnClick(folderInfo_ID, folder_name, option_menu,
       }
       const inputNewTitle = inputNewFileTitle(folderInfo_ID, folder_name);
       // option_menu_container
-      const option_menu_container = basic.createSection(option_menu, "section", "thumbnail-options-container");
+      const option_menu_container = basic.createElement(option_menu, "section", {
+        classList : "thumbnail-options-container"
+      });
       // close folder edit info menu
       const close_option_menu = closeOptionMenu(folderInfo_ID, folder_name, folderURL, option_menu, option_menu_container, folderContainerLink, folderContainer, folderTitleContainer, inputNewTitle);
       // copy video link
@@ -137,8 +141,10 @@ function inputNewFileTitle(fileID, fileName) {
 
 // close option menu
 export function closeOptionMenu(fileID, fileName, videoURL, option_menu, option_menu_container, linkContainer, thumbnailContainer, thumbnailTitleContainer, inputNewTitle) {
-  const close_option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-times");
-  close_option_menu.title = "Close menu";
+  const close_option_menu = basic.createElement(thumbnailContainer, "button", {
+    classList : "thumbnail-option-menu fa fa-times",
+    title : "Close menu"
+  });
   close_option_menu.onclick = function(e){
     e.preventDefault();
     closeOptionMenuOnClick(fileID, fileName, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle);
@@ -150,8 +156,11 @@ export function closeOptionMenu(fileID, fileName, videoURL, option_menu, option_
 export function optionMenuSharableLink(option_menu_container, fileID, URL) { 
   let option_menu_copy_css = "option-menu-one";
   if (fileID.includes("folder-")) option_menu_copy_css = "option-menu-one-folder"; 
-  const option_menu_copy = basic.createSection(option_menu_container, "button", `button ${option_menu_copy_css}`, undefined, "Get shareable link");
-  option_menu_copy.title = "Get shareable link";
+  const option_menu_copy = basic.createElement(option_menu_container, "button", {
+    classList :  `button ${option_menu_copy_css}`,
+    textContent : "Get shareable link",
+    title : "Get shareable link"
+  });
   option_menu_copy.onclick = function(e){
     e.preventDefault();
     optionMenuCopyURLOnClick(URL, option_menu_copy);
@@ -162,8 +171,11 @@ export function optionMenuSharableLink(option_menu_container, fileID, URL) {
 // Download video
 export function optionMenuDownload(option_menu_container, fileName, URL) {
   let download_file_css = "option-menu-two"; 
-  const download_file = basic.createSection(option_menu_container, "button", `button ${download_file_css}`, undefined, "Download Locally");
-  download_file.title = "Download Locally"; 
+  const download_file = basic.createElement(option_menu_container, "button", {
+    classList :  `button ${download_file_css}`,
+    textContent : "Download Locally",
+    title : "Download Locally"
+  });
   download_file.onclick = function(e){
     e.preventDefault();  
     const download_video_link = document.createElement("a");
@@ -179,8 +191,11 @@ export function optionMenuDownload(option_menu_container, fileName, URL) {
 export function optionMenuEdit(fileID, fileName, videoURL, option_menu, option_menu_container, close_option_menu, linkContainer, thumbnailTitleContainer, inputNewTitle) {
   let edioption_menu_edit_css = "option-menu-three";
   if (fileID.includes("folder-")) edioption_menu_edit_css = "option-menu-two-folder"; 
-  const option_menu_edit = basic.createSection(option_menu_container, "button", `button ${edioption_menu_edit_css}`, undefined, "Edit");
-  option_menu_edit.title = "Edit";
+  const option_menu_edit = basic.createElement(option_menu_container, "button", {
+    classList :  `button ${edioption_menu_edit_css}`,
+    textContent : "Edit",
+    title : "Edit"
+  });
   option_menu_edit.onclick = function(e){
     e.preventDefault();
     thumbnailTitleContainer.style["text-decoration"] = "none";
@@ -231,7 +246,10 @@ export function optionMenuHover(fileID, fileName, URL, option_menu, option_menu_
                     if (hovered  === false) {
                       if (document.getElementById(`${fileID}-title`)) {  
                         document.getElementById(`${fileID}-title`).remove();
-                        basic.createSection(thumbnailTitleContainer, "h1", undefined, `${fileID}-title`, fileName);
+                        basic.createElement(thumbnailTitleContainer, "h1", {
+                          id :  `${fileID}-title`,
+                          textContent : fileName
+                        });
                         document.getElementById(`${fileID}-title-container`).href = URL;  
                       }
                       if (typeof savedVideosThumbnailContainer == "object" && typeof videoDetails == "object") {
@@ -329,9 +347,14 @@ export function optionMenuEditOnClick(fileID, fileName, URL, option_menu, option
       option_menu_container.remove();
       close_option_menu.remove();
       document.body.style.overflow ="hidden";
-      const edit_container = basic.createSection(document.body, "section", "video_edit_container", "video_edit_container");
+      const edit_container = basic.createElement(document.body, "section", {
+        classList : "video_edit_container",
+        id : "video_edit_container"
+      });
       // click anywhere but edit body to close edit_container
-      const close_on_click = basic.createSection(edit_container, "section", "click_to_close");
+      const close_on_click = basic.createElement(edit_container, "section", {
+        classList : "click_to_close"
+      });
       close_on_click.onmouseover = function(e){
         e.preventDefault();  
         close_on_click.onclick = function(e){
@@ -339,7 +362,9 @@ export function optionMenuEditOnClick(fileID, fileName, URL, option_menu, option
           // remove container
           document.body.style.removeProperty("overflow");
           edit_container.remove();  
-          const close_on_move = basic.createSection(document.body, "section", "click_to_close"); 
+          const close_on_move = basic.createElement(document.body, "section", {
+            classList : "click_to_close"
+          });
           close_on_move.onmousemove = function(e){
             e.preventDefault();  
             close_on_move.remove(); 
@@ -351,22 +376,31 @@ export function optionMenuEditOnClick(fileID, fileName, URL, option_menu, option
           }; 
         };
       };
-      const edit_body = basic.createSection(edit_container, "section", "video-edit-body");
-      edit_body.style.zIndex = "1";
+      const edit_body = basic.createElement(edit_container, "section", {
+        classList : "video-edit-body",
+        style : "z-index: 1;"
+      });
       backToViewAvailableVideoButton(edit_body, edit_container, option_menu, option_menu_container,close_option_menu);
-      const edit_article = basic.createSection(edit_body, "article", "video-edit-article");
-      const edit_form = basic.createSection(edit_article, "form");
-    
-      const edit_form_title = basic.createSection(edit_form, "section");
-      basic.createSection(edit_form_title, "h2", "video-edit-form-title", undefined, "Edit mode");
-    
+      const edit_article = basic.createElement(edit_body, "article", {
+        classList : "video-edit-article"
+      });
+      const edit_form = basic.createElement(edit_article, "form");
+      const edit_form_title = basic.createElement(edit_form, "section");
+      basic.createElement(edit_form_title, "h2", {
+        classList : "video-edit-form-title",
+        textContent : "Edit mode"
+      });
       // File title 
-      const title_edit_settings_container = basic.createSection(edit_form_title, "section");
-      const title_edit_settings_ul = basic.createSection(title_edit_settings_container, "ul");
-      const title_edit_settings_li = basic.createSection(title_edit_settings_ul, "li", "videoTitleEditContainer");
+      const title_edit_settings_container = basic.createElement(edit_form_title, "section");
+      const title_edit_settings_ul = basic.createElement(title_edit_settings_container, "ul");
+      const title_edit_settings_li = basic.createElement(title_edit_settings_ul, "li", {
+        classList : "videoTitleEditContainer"
+      });
     
-      const title_edit_content_container = basic.createSection(title_edit_settings_li, "section");
-      basic.createSection(title_edit_content_container, "strong", undefined, undefined, `${fileType.charAt(0).toUpperCase() + fileType.slice(1)} Title`);
+      const title_edit_content_container = basic.createElement(title_edit_settings_li, "section");
+      basic.createElement(title_edit_content_container, "strong", {
+        textContent : `${fileType.charAt(0).toUpperCase() + fileType.slice(1)} Title`
+      });
       const title_edit_content_input = basic.createElement(title_edit_content_container, "input", {
         type : "text",
         classList : "videoTitleEditInput",
@@ -374,9 +408,13 @@ export function optionMenuEditOnClick(fileID, fileName, URL, option_menu, option
         required : false
       });
       title_edit_content_input.focus();
-      const title_edit_button_container = basic.createSection(title_edit_settings_li, "section", "videoTitleEditButtonContainer");
-      const titleEditButton = basic.createSection(title_edit_button_container, "button", "videoTitleEditButton", undefined, `Change ${fileType} title`);
-    
+      const title_edit_button_container = basic.createElement(title_edit_settings_li, "section", {
+        classList : "videoTitleEditButtonContainer"
+      });
+      const titleEditButton = basic.createElement(title_edit_button_container, "button", {
+        classList : "videoTitleEditButton",
+        textContent : `Change ${fileType} title`
+      }); 
       titleEditButton.onclick = function(e){
           e.preventDefault();  
           document.body.style.removeProperty("overflow");
@@ -390,24 +428,42 @@ export function optionMenuEditOnClick(fileID, fileName, URL, option_menu, option
       };
     
       // Danger zone setting 
-      const dangerZone_title_container = basic.createSection(edit_form, "section");
-      basic.createSection(dangerZone_title_container, "h2", "dangerZone-title", undefined, "Danger Zone");
-    
-      const dangerZone_settingsContainer = basic.createSection(edit_form, "section", "dangerZone-settingsContainer");
-      const dangerZone_settings_ul = basic.createSection(dangerZone_settingsContainer, "ul");
-      const dangerZone_settings_li = basic.createSection(dangerZone_settings_ul, "li", "deleteVideoContainer");
+      const dangerZone_title_container = basic.createElement(edit_form, "section");
+      basic.createElement(dangerZone_title_container, "h2", {
+        classList : "dangerZone-title",
+        textContent : "Danger Zone"
+      }); 
+      const dangerZone_settingsContainer = basic.createElement(edit_form, "section", {
+        classList : "dangerZone-settingsContainer"
+      }); 
+      const dangerZone_settings_ul = basic.createElement(dangerZone_settingsContainer, "ul");
+      const dangerZone_settings_li = basic.createElement(dangerZone_settings_ul, "li", {
+        classList : "deleteVideoContainer"
+      }); 
     
       // Delete file
-      const deleteContentContainer = basic.createSection(dangerZone_settings_li, "section");
-      basic.createSection(deleteContentContainer, "strong", undefined, undefined, `Delete this ${fileType}`);
-      basic.createSection(deleteContentContainer, "p", undefined, undefined, `Once you delete a ${fileType}, there is no going back. Please be certain.`);
+      const deleteContentContainer = basic.createElement(dangerZone_settings_li, "section");
+      basic.createElement(deleteContentContainer, "strong", {
+        textContent : `Delete this ${fileType}`
+      }); 
+      basic.createElement(deleteContentContainer, "p", {
+        textContent : `Once you delete a ${fileType}, there is no going back. Please be certain.`
+      }); 
     
-      const deleteButtonContainer = basic.createSection(dangerZone_settings_li, "section", "deleteVideoButtonContainer");
-      const deleteButton = basic.createSection(deleteButtonContainer, "button", "deleteVideoButton", undefined, `Delete this ${fileType}`);
+      const deleteButtonContainer = basic.createElement(dangerZone_settings_li, "section", {
+        classList : "deleteVideoButtonContainer"
+      }); 
+      const deleteButton = basic.createElement(deleteButtonContainer, "button", {
+        classList : "deleteVideoButton",
+        textContent : `Delete this ${fileType}`
+      }); 
       deleteButton.onclick = function(e){
         e.preventDefault();
         deleteButton.remove();
-        const confirmationButton = basic.createSection(deleteButtonContainer, "button", "deleteVideoButton2", undefined, "Confirm Deletion");
+        const confirmationButton = basic.createElement(deleteButtonContainer, "button", {
+          classList : "deleteVideoButton2",
+          textContent : "Confirm Deletion"
+        }); 
         confirmationButton.onclick = function(e){
           e.preventDefault();
           // remove container
@@ -454,7 +510,10 @@ export function closeOptionMenuOnClick(fileID, fileName, URL, option_menu, optio
       if (document.getElementById(`${fileID}-title`)) {  
           document.getElementById(`${fileID}-title`).remove();
           document.getElementById(`${fileID}-title-container`).href = URL;
-          basic.createSection(thumbnailTitleContainer, "h1", undefined, `${fileID}-title`, fileName);
+          basic.createElement(thumbnailTitleContainer, "h1", {
+            id : `${fileID}-title`,
+            textContent : fileName
+          }); 
       } 
       
       option_menu.title = "menu";

@@ -23,23 +23,11 @@ export function isElement(input) {
 export function createElement(container, elementType, fields) {
   if (!isElement(container)) return "invalid container";
   if (typeof elementType !== "string") return "invalid elementType";
+  if (fields === undefined) fields = {};
   if (typeof fields !== "object" || Array.isArray(fields) || fields === null) return "invalid fields";
   const createdElement = document.createElement(elementType);  
   Object.assign(createdElement, fields);
   return container.appendChild(createdElement);
-}
-
-// create a section element
-export function createSection(container, dataType, classList, id, textContent){ 
-  if (!isElement(container)) return "createSection didnt work";
-  const section = document.createElement(dataType); 
-  Object.assign(section,
-    classList === undefined ? null : {classList}, 
-    id === undefined ? null : {id}, 
-    textContent === undefined ? null : {textContent}, 
-  );
-  container.appendChild(section);
-  return section; 
 }
 
 // append image to container

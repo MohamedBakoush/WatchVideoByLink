@@ -19,9 +19,14 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
   } else if (typeof videoType !== "string") {
     return "videoType not string";
   } else {
-    const downloadTrimButton =  basic.createSection(downloadVideoMenuContent, "button", "vjs-menu-item downloadVideoMenuContentItem");
+    const downloadTrimButton = basic.createElement(downloadVideoMenuContent, "button", {
+      classList : "vjs-menu-item downloadVideoMenuContentItem"
+    });  
     downloadTrimButton.title = "Trim Video";
-    basic.createSection(downloadTrimButton, "span", "vjs-menu-item-text", undefined, "Trim Video");
+    basic.createElement(downloadTrimButton, "span", {
+      classList : "vjs-menu-item-text",
+      textContent : "Trim Video"
+    }); 
     downloadTrimButton.onclick = function(){
       // if video player is in fullscreen mode when downloadTrimButton is clicked, exit full screen mode
       if(player.isFullscreen()){
@@ -49,50 +54,89 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
       downloadVideoButton.title = "Trim Video Currently Active";
       // pause main video
       document.getElementById("video_html5_api").pause();
-      const trimVideoBody =  basic.createSection(document.body, "section", "trimVideoBody");
+      const trimVideoBody = basic.createElement(document.body, "section", {
+        classList : "trimVideoBody"
+      }); 
       // close trim video button
       backToMainVideoButton(downloadVideoContainer, downloadVideoButton, downloadVideoMenu, downloadTrimButton, trimVideoBody);
   
-      const trimVideoArticle = basic.createSection(trimVideoBody, "section", "trimVideoArticle");
-      const trimVideoContainer = basic.createSection(trimVideoArticle, "section", "trimVideoContainer");
+      const trimVideoArticle = basic.createElement(trimVideoBody, "section", {
+        classList : "trimVideoArticle"
+      }); 
+      const trimVideoContainer = basic.createElement(trimVideoArticle, "section", {
+        classList : "trimVideoContainer"
+      }); 
       // videoContainer
-      const videoContainer = basic.createSection(trimVideoContainer, "section", "videoContainer");
-      const videoPlayer_active = basic.createSection(videoContainer, "video", "trimVideoPlayer", "video-active");
+      const videoContainer = basic.createElement(trimVideoContainer, "section", {
+        classList : "videoContainer"
+      }); 
+      const videoPlayer_active = basic.createElement(videoContainer, "video", {
+        classList : "trimVideoPlayer",
+        id : "video-active"
+      }); 
       videoPlayer_active.src = videoSrc;
       videoPlayer_active.controls = false;
       videoPlayer_active.onloadedmetadata = () => {
-          const multiRangeSlider = basic.createSection(videoContainer, "section", "multi-range-slider");
+          const multiRangeSlider = basic.createElement(videoContainer, "section", {
+            classList : "multi-range-slider"
+          }); 
           // left input for slider
           const inputLeft = basic.createElement(multiRangeSlider, "input", {
             type : "range",
-            id : "input-left"
+            id : "input-left",
+            min : 0,
+            max : videoPlayer_active.duration,
+            value : 0
           });
-          inputLeft.min = 0;
-          inputLeft.max = videoPlayer_active.duration;
-          inputLeft.value = 0;
           // right input for slider
           const inputRight = basic.createElement(multiRangeSlider, "input", {
             type : "range",
-            id : "input-right"
+            id : "input-right",
+            min : 0,
+            max : videoPlayer_active.duration,
+            value : videoPlayer_active.duration
           });
-          inputRight.min = 0;
-          inputRight.max = videoPlayer_active.duration;
-          inputRight.value = videoPlayer_active.duration;
-          const slider = basic.createSection(multiRangeSlider, "section", "slider");
-          const track = basic.createSection(slider, "section", "track");
-          const range = basic.createSection(slider, "section", "range");
-          const thumbLeft = basic.createSection(slider, "section", "thumb left");
-          const thumbRight = basic.createSection(slider, "section", "thumb right");
+          const slider = basic.createElement(multiRangeSlider, "section", {
+            classList : "slider"
+          }); 
+          const track = basic.createElement(slider, "section", {
+            classList : "track"
+          }); 
+          const range = basic.createElement(slider, "section", {
+            classList : "range"
+          }); 
+          const thumbLeft = basic.createElement(slider, "section", {
+            classList : "thumb left"
+          }); 
+          const thumbRight = basic.createElement(slider, "section", {
+            classList : "thumb right"
+          }); 
           // trimVideoControls
-          const trimVideoControlsBody = basic.createSection(trimVideoContainer, "section", "trimVideoControlsBody");
-          const trimVideoControlsContainer = basic.createSection(trimVideoControlsBody, "section", "trimVideoControlsContainer");
-          const trimVideoControls = basic.createSection(trimVideoControlsContainer, "section", "trimVideoControls");
-          const selectedVideoTimeContainer = basic.createSection(trimVideoControls, "section", "selectedVideoTimeContainer");
+          const trimVideoControlsBody = basic.createElement(trimVideoContainer, "section", {
+            classList : "trimVideoControlsBody"
+          }); 
+          const trimVideoControlsContainer = basic.createElement(trimVideoControlsBody, "section", {
+            classList : "trimVideoControlsContainer"
+          }); 
+          const trimVideoControls = basic.createElement(trimVideoControlsContainer, "section", {
+            classList : "trimVideoControls"
+          }); 
+          const selectedVideoTimeContainer = basic.createElement(trimVideoControls, "section", {
+            classList : "selectedVideoTimeContainer"
+          }); 
           // selectedVideoTimeLabel
-          basic.createSection(selectedVideoTimeContainer, "label", "selectedVideoTimeLabel", undefined, "Selected Video Range");
+          basic.createElement(selectedVideoTimeContainer, "label", {
+            classList : "selectedVideoTimeLabel",
+            textContent : "Selected Video Range"
+          }); 
           // selectedVideoTimeStart
-          const selectedVideoTimeStart = basic.createSection(selectedVideoTimeContainer, "section", "selectedVideoTimeStart");
-          basic.createSection(selectedVideoTimeStart, "label", "StartTime", undefined, "Start Time:");
+          const selectedVideoTimeStart = basic.createElement(selectedVideoTimeContainer, "section", {
+            classList : "selectedVideoTimeStart"
+          }); 
+          basic.createElement(selectedVideoTimeStart, "label", {
+            classList : "StartTime",
+            textContent : "Start Time:"
+          }); 
           const selectedInputLeft = basic.createElement(selectedVideoTimeStart, "input", {
             type : "text",
             value: basic.secondsToHms(inputLeft.value, true),
@@ -101,8 +145,13 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
             readOnly : true
           });
           // selectedVideoTimeEnd
-          const selectedVideoTimeEnd = basic.createSection(selectedVideoTimeContainer, "section", "selectedVideoTimeEnd");
-          basic.createSection(selectedVideoTimeEnd, "label", "EndTime", undefined, "End Time:");
+          const selectedVideoTimeEnd = basic.createElement(selectedVideoTimeContainer, "section", {
+            classList : "selectedVideoTimeEnd"
+          }); 
+          basic.createElement(selectedVideoTimeEnd, "label", {
+            classList : "EndTime",
+            textContent : "End Time:"
+          }); 
           const selectedInputRight = basic.createElement(selectedVideoTimeEnd, "input", {
             type : "text",
             value: basic.secondsToHms(inputRight.value, true),
@@ -111,9 +160,13 @@ export function createTrimVideo(player, downloadVideoContainer, downloadVideoMen
             readOnly : true
           });
           // trimVideoButtonContainer
-          const trimVideoButtonBodyContainer = basic.createSection(trimVideoControlsContainer, "section");
-          const trimVideoButtonBody = basic.createSection(trimVideoButtonBodyContainer, "section", undefined, "trimVideoButtonBody");
-          const trimVideoButtonContainer = basic.createSection(trimVideoButtonBody, "section", "trimVideoButtonContainer");
+          const trimVideoButtonBodyContainer = basic.createElement(trimVideoControlsContainer, "section");
+          const trimVideoButtonBody = basic.createElement(trimVideoButtonBodyContainer, "section", {
+            id : "trimVideoButtonBody"
+          }); 
+          const trimVideoButtonContainer = basic.createElement(trimVideoButtonBody, "section", {
+            classList : "trimVideoButtonContainer"
+          }); 
           // trimVideoButton
           const trimVideoButton = basic.createElement(trimVideoButtonContainer, "input", {
             type : "submit",

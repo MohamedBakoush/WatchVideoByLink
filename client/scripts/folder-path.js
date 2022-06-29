@@ -5,12 +5,20 @@ import * as showAvailableVideos from "../scripts/show-available-videos.js";
 
 // display / between folder paths 
 export function breakPath(pathContainer, id) { 
-    basic.createSection(pathContainer, "section", "path", `path-break-${id}`, "/");
+    basic.createElement(pathContainer, "section", {
+        classList : "path",
+        id : `path-break-${id}`,
+        textContent : "/"
+    }); 
 }
 
 // display homepage folder path by ... 
 export function homepagePath(pathContainer) {
-    const path = basic.createSection(pathContainer, "section", "path pathClick", "path-folder-main", "...");
+    const path = basic.createElement(pathContainer, "section", {
+        classList : "path pathClick",
+        id : "path-folder-main",
+        textContent : "..."
+    }); 
     document.title = "saved videos - WatchVideoByLink";
     path.onclick  = function(e){
         e.preventDefault();      
@@ -45,7 +53,11 @@ export function homepagePath(pathContainer) {
 // display folder path by name 
 export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerID, folderTitle) {
     breakPath(pathContainer, fodlerID);
-    const path = basic.createSection(pathContainer, "section", "path pathClick", `path-${fodlerID}`, folderTitle);
+    const path = basic.createElement(pathContainer, "section", {
+        classList : "path pathClick", 
+        id : `path-${fodlerID}`,
+        textContent : folderTitle
+    }); 
     document.title = `${folderTitle} - WatchVideoByLink`;
     path.onmouseenter = function(e){   
         e.preventDefault();    
@@ -86,7 +98,10 @@ export function folderPath(savedVideosThumbnailContainer, pathContainer, fodlerI
             }else {  
                 const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(folderIDPath);  
                 document.getElementById("savedVideosThumbnailContainer").remove();
-                savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+                savedVideosThumbnailContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+                    classList : "dragDropContainer savedVideosThumbnailContainer", 
+                    id : "savedVideosThumbnailContainer"
+                });
                 showAvailableVideos.dragDropAvailableVideoDetails(savedVideosThumbnailContainer); 
                 showAvailableVideos.displayVideoDetails(savedVideosThumbnailContainer, availableVideosFolderIDPath);
             }

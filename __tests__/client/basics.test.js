@@ -184,7 +184,7 @@ describe("createElement", () =>  {
     it("valid container, String elementType", () =>  { 
         const createdElement = basic.createElement(container, "input"); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement).toBe("invalid fields");  
+        expect(createdElement.tagName).toBe("INPUT");    
     });  
 
     it("valid container, Number elementType", () =>  { 
@@ -208,7 +208,7 @@ describe("createElement", () =>  {
     it("valid container, elementType, Undefined fields", () =>  { 
         const createdElement = basic.createElement(container, "input", undefined); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement).toBe("invalid fields");  
+        expect(createdElement.tagName).toBe("INPUT");   
     });  
 
     it("valid container, elementType, Null fields", () =>  { 
@@ -252,44 +252,6 @@ describe("createElement", () =>  {
         expect(createdElement.classList[0]).toBe("class");   
     });  
 });  
-
-describe("createSection", () =>  {    
-    it("valid tagname", () =>  { 
-        const section = basic.createSection(container, "section");   
-        expect(section).toBeDefined();
-        expect(section.tagName).toBe("SECTION");     
-    });     
-
-    it("valid tagname class", () =>  { 
-        const section = basic.createSection(container, "section", "class");   
-        expect(section).toBeDefined();
-        expect(section.tagName).toBe("SECTION");   
-        expect(section.classList[0]).toBe("class");       
-    });     
-
-    it("valid tagname class id", () =>  { 
-        const section = basic.createSection(container, "section", "class", "id");   
-        expect(section).toBeDefined();
-        expect(section.tagName).toBe("SECTION");   
-        expect(section.classList[0]).toBe("class");    
-        expect(section.id).toBe("id");       
-    });   
- 
-    it("valid tagname class id textContent", () =>  { 
-        const section = basic.createSection(container, "section", "class", "id", "text");   
-        expect(section).toBeDefined();
-        expect(section.tagName).toBe("SECTION");   
-        expect(section.classList[0]).toBe("class");    
-        expect(section.id).toBe("id");        
-        expect(section.textContent).toBe("text");       
-    });   
-
-    it("createSection didnt work", () =>  { 
-        const section = basic.createSection(); 
-        expect(section).toBeDefined();
-        expect(section).toBe("createSection didnt work");  
-    }); 
-}); 
 
 describe("appendImg", () =>  {     
     it("valid tagname", () =>  { 

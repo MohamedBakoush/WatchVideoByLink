@@ -33,17 +33,30 @@ export function showVideoFromUrl(url) {
 // load details into html using video and videoLink id
 export function showDetails() { 
   // input video link container
-  const videoLink = basic.createSection(basic.websiteContentContainer(), "section", "videoLinkContainer", "videoLinkContainer");
+  const videoLink = basic.createElement(basic.websiteContentContainer(), "section", {
+    classList : "videoLinkContainer",
+    id : "videoLinkContainer"
+  }); 
   // create form
-  const videoLinkForm = basic.createSection(videoLink, "form", "videoLinkContainerForm");
+  const videoLinkForm = basic.createElement(videoLink, "form", {
+    classList : "videoLinkContainerForm"
+  }); 
   videoLinkForm.onsubmit = function(){
     return false;
   };
   // video src
-  const videoLinkInputBody = basic.createSection(videoLinkForm, "section", "videoLinkInputBody");
-  const videoLinkInputLabel = basic.createSection(videoLinkInputBody, "label", "videoLinkInputLabel");
-  const videoLinkInputContainer = basic.createSection(videoLinkInputLabel, "section" , "videoLinkInputContainer");
-  basic.createSection(videoLinkInputContainer, "section", undefined, undefined,  "Video Link: ");
+  const videoLinkInputBody = basic.createElement(videoLinkForm, "section", {
+    classList : "videoLinkInputBody"
+  }); 
+  const videoLinkInputLabel = basic.createElement(videoLinkInputBody, "label", {
+    classList : "videoLinkInputLabel"
+  }); 
+  const videoLinkInputContainer = basic.createElement(videoLinkInputLabel, "section", {
+    classList : "videoLinkInputContainer"
+  }); 
+  basic.createElement(videoLinkInputContainer, "section", {
+    textContent : "Video Link: "
+  }); 
   const videoLinkInput = basic.createElement(videoLinkInputContainer, "input", {
     type : "text",
     id : "videoLinkInput",
@@ -52,11 +65,22 @@ export function showDetails() {
     required : true
   });
   //video type
-  const videoLinkTypeBody = basic.createSection(videoLinkForm, "section", "videoTypeInputBody");
-  const videoLinkTypeLabel = basic.createSection(videoLinkTypeBody, "label", "videoTypeInputLabel");
-  const videoLinkTypeContainer = basic.createSection(videoLinkTypeLabel, "section", "videoTypeInputContainer");
-  basic.createSection(videoLinkTypeContainer, "section", undefined, undefined,  "Video Type: ");
-  const videoTypeSelect = basic.createSection(videoLinkTypeContainer, "select", "videoTypeSelect", "select"); 
+  const videoLinkTypeBody = basic.createElement(videoLinkForm, "section", {
+    classList : "videoTypeInputBody"
+  }); 
+  const videoLinkTypeLabel = basic.createElement(videoLinkTypeBody, "label", {
+    classList : "videoTypeInputLabel"
+  }); 
+  const videoLinkTypeContainer = basic.createElement(videoLinkTypeLabel, "section", {
+    classList : "videoTypeInputContainer"
+  }); 
+  basic.createElement(videoLinkTypeContainer, "section", {
+    textContent : "Video Type: "
+  }); 
+  const videoTypeSelect = basic.createElement(videoLinkTypeContainer, "select", {
+    classList : "videoTypeSelect",
+    id: "select"
+  }); 
   // all the diffrent types of video that can be choosen 
   basic.createElement(videoTypeSelect, "option", {
     value : "Automatic", 
@@ -79,7 +103,9 @@ export function showDetails() {
     textContent :"MPEG-DASH (.mpd)"
   });
   // submit video button
-  const submitVideoButtonContainer = basic.createSection(videoLinkForm, "section", "submitVideoButtonContainer");
+  const submitVideoButtonContainer = basic.createElement(videoLinkForm, "section", {
+    classList : "submitVideoButtonContainer"
+  }); 
   basic.createElement(submitVideoButtonContainer, "input", {
     type : "submit",
     value : "Watch Video",
@@ -126,9 +152,14 @@ export function getVideoUrlAuto(url_link) {
     // change css
     document.body.classList = "index-body";
     basic.websiteContentContainer().classList = "index-websiteContentContainer";
-    // searchingForVideoLinkMessage
-    const searchingForVideoLinkMessageContainer = basic.createSection(basic.websiteContentContainer(), "section", "getVideoUrlAutoMessageConatinaer");
-    basic.createSection(searchingForVideoLinkMessageContainer, "h1", "getVideoUrlAutoMessageHeader", undefined,  `Searching for video link: ${url_link}`);
+    // searchingForVideoLinkMessage 
+    const searchingForVideoLinkMessageContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+      classList : "getVideoUrlAutoMessageConatinaer"
+    }); 
+    basic.createElement(searchingForVideoLinkMessageContainer, "h1", {
+      classList : "getVideoUrlAutoMessageHeader",
+      textContent : `Searching for video link: ${url_link}`
+    }); 
     // look for video data from url_link
     getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
     return "getVideoUrlAuto"; 
@@ -170,7 +201,9 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
             navigationBar.loadNavigationBar();
             showDetails();
           } else{ // if headerContainer dosnet exists
-            basic.createSection(document.body, "header", undefined, "headerContainer");
+            basic.createElement(document.body, "header", {
+              id : "headerContainer"
+            }); 
             navigationBar.loadNavigationBar();
             showDetails();
           }
@@ -204,12 +237,19 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
         // change addressbar
         history.pushState(null, "", "/");
         // add back header to document body
-        basic.createSection(document.body, "header", undefined, "headerContainer");
+        basic.createElement(document.body, "header", {
+          id : "headerContainer"
+        }); 
         // naviagtionbar content
         navigationBar.loadNavigationBar();
         // show error msg
-        const responseError = basic.createSection(basic.websiteContentContainer(), "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
-        basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+        const responseError = basic.createElement(basic.websiteContentContainer(), "section", {
+          classList : "responseErrorAvailableVideo",
+          id : "responseErrorAvailableVideo"
+        }); 
+        basic.createElement(responseError, "h1", {
+          textContent : "Error Connection Refused."
+        }); 
       }
       return "Failed fetch video link from URL";
     }

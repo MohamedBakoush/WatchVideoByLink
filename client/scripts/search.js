@@ -5,7 +5,10 @@ import * as showAvailableVideos from "../scripts/show-available-videos.js";
 export function searchBarContainer() {
     let searchBarContainer = document.getElementById("searchBarContainer");
     if (!searchBarContainer) {
-        searchBarContainer = basic.createSection(basic.websiteContentContainer(), "section", "searchBarContainer", "searchBarContainer"); 
+        searchBarContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+            classList : "searchBarContainer",
+            id : "searchBarContainer"
+        });
     }    
     return searchBarContainer;
 }
@@ -73,8 +76,14 @@ export function searchBarKeyUp(searchString) {
 // display noSearchableVideoData no if exits
 export function noSearchableVideoData() {
     if (!document.getElementById("noSearchableVideoData")) {
-        const noSearchableVideoData = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noSearchableVideoData");
-        basic.createSection(noSearchableVideoData, "h1", "noAvailableVideosHeader", undefined,  "No results found: Try different keywords");
+        const noSearchableVideoData = basic.createElement(basic.websiteContentContainer(), "section", {
+            classList : "noAvailableVideosContainer",
+            id : "noSearchableVideoData"
+        });
+        basic.createElement(noSearchableVideoData, "h1", {
+            classList : "noAvailableVideosHeader",
+            textContent : "No results found: Try different keywords"
+        });
     }
 }
 

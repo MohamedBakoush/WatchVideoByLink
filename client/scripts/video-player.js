@@ -23,7 +23,10 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     displayChromecast = false;
   }
   // create video player
-  const videoPlayer = basic.createSection(basic.websiteContentContainer(), "video-js", "vjs-default-skin vjs-big-play-centered", "video");
+  const videoPlayer = basic.createElement(basic.websiteContentContainer(), "video-js", {
+    classList : "vjs-default-skin vjs-big-play-centered", 
+    id : "video"
+  });
   videoPlayer.style.width = "100vw";
   videoPlayer.style.height = "100vh";
   const Button = videojs.getComponent("Button"); // eslint-disable-line
@@ -195,13 +198,21 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     });
 
     const topControls = videoButton.topPageControlBarContainer(player);
-    const downloadVideoContainer = basic.createSection(topControls, "div", "vjs-downloadVideo-container");
-    const downloadVideoButton = basic.createSection(downloadVideoContainer, "button", "vjs-downloadVideo fa fa-download vjs-control vjs-button", "downloadVideoButton");
-    downloadVideoButton.title = "Download Video";
-
-    const downloadVideoMenu = basic.createSection(downloadVideoContainer, "section", "vjs-menu vjs-downloadVideo-menu");
-    downloadVideoMenu.style.display = "none";
-    const downloadVideoMenuContent = basic.createSection(downloadVideoMenu, "div", "vjs-menu-content");
+    const downloadVideoContainer = basic.createElement(topControls, "section", {
+      classList : "vjs-downloadVideo-container"
+    });
+    const downloadVideoButton = basic.createElement(downloadVideoContainer, "button", {
+      classList : "vjs-downloadVideo fa fa-download vjs-control vjs-button", 
+      id : "downloadVideoButton",
+      title : "Download Video"
+    });
+    const downloadVideoMenu = basic.createElement(downloadVideoContainer, "section", {
+      classList : "vjs-menu vjs-downloadVideo-menu",
+      style : "display : none;" 
+    });
+    const downloadVideoMenuContent = basic.createElement(downloadVideoMenu, "section", {
+      classList : "vjs-menu-content"
+    });
 
     downloadVideo.downloadVideoButton(downloadVideoMenuContent, videoSrc, videoType);
     trimVideo.createTrimVideo(player, downloadVideoContainer, downloadVideoMenu,downloadVideoButton, downloadVideoMenuContent, videoSrc, videoType);

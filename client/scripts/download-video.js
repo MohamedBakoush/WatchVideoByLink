@@ -11,9 +11,15 @@ export function downloadVideoButton(container, videoSrc, videoType) {
   } else if (typeof videoType !== "string") {
     return "videoType not string";
   } else {
-    const downloadVideoButton = basic.createSection(container, "button", "vjs-menu-item downloadVideoMenuContentItem", "downloadVideoButton");
-    downloadVideoButton.title = "Download Video";
-    const downloadVideoButtonText = basic.createSection(downloadVideoButton, "span", "vjs-menu-item-text", undefined, "Download Video");
+    const downloadVideoButton = basic.createElement(container, "button", {
+      classList : "vjs-menu-item downloadVideoMenuContentItem",
+      id : "downloadVideoButton",
+      title : "Download Video"
+    });
+    const downloadVideoButtonText = basic.createElement(downloadVideoButton, "span", {
+      classList : "vjs-menu-item-text",
+      textContent : "Download Video"
+    });
     const downloadVideoConfirmation = async function (){
       const response = await videoPlayerButtons.getDownloadConfirmation();
       const downloadConfirmationResponse = response.downloadVideo;

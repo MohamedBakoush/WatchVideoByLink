@@ -6,9 +6,14 @@ import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 // load header details into html using headerContainer id
 export function loadNavigationBar(path) {
   const header = document.getElementById("headerContainer");
-  const navBar = basic.createSection(header, "nav", "NavigationBar", "navBar");
-  const nav = basic.createSection(navBar, "ul", undefined, "headerNav");
-  const item = basic.createSection(nav, "li");
+  const navBar = basic.createElement(header, "nav", {
+    classList : "NavigationBar",
+    id : "navBar"
+  }); 
+  const nav = basic.createElement(navBar, "ul", {
+    id : "headerNav"
+  }); 
+  const item = basic.createElement(nav, "li");
   let homeButton, savedVideosPage, currentDownloads;
   if (path == "/saved/videos") {
     document.title = "saved videos - WatchVideoByLink";
