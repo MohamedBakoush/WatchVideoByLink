@@ -32,7 +32,6 @@ export function createElement(container, elementType, fields) {
   return container.appendChild(createdElement);
 }
 
-// append image to container
 export function appendImg(container, fields, fileID) {
   if (!isElement(container)) return "invalid container";
   if (fields === undefined) fields = {};
@@ -82,19 +81,18 @@ export function percent_encoding_to_reserved_character(string, checkFor, replace
   return newarray.join("");
 }
  
-// HMS = Hours Minutes Seconds
 export function secondsToHms(sec, HMS_bool) { 
   if (isNaN(sec)) return "Sec Invalid";
   if (typeof HMS_bool !== "boolean") HMS_bool = false;
 
   let hours = Math.floor(sec/3600);
-  (hours >= 1) ? sec = sec - (hours*3600) : hours = "00";
+  hours >= 1 ? sec = sec - (hours*3600) : hours = "00";
   let min = Math.floor(sec/60);
-  (min >= 1) ? sec = sec - (min*60) : min = "00";
-  (sec < 1) ? sec="00" : void 0;
+  min >= 1 ? sec = sec - (min*60) : min = "00";
+  sec < 1 ? sec="00" : void 0;
 
-  (min.toString().length == 1) ? min = "0"+min : void 0;
-  (sec.toString().length == 1) ? sec = "0"+sec : void 0;
+  min.toString().length == 1 ? min = "0"+min : void 0;
+  sec.toString().length == 1 ? sec = "0"+sec : void 0;
   
   return hours !== "00" || HMS_bool == true ? hours+":"+min+":"+sec 
         : min !== "00" ? +min+":"+sec 
