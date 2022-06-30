@@ -179,6 +179,11 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     });
 
     const topControls = videoButton.topPageControlBarContainer(player);
+    
+    //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl);
+
+    // download video 
     const downloadVideoContainer = basic.createElement(topControls, "section", {
       classList : "vjs-downloadVideo-container"
     });
@@ -208,10 +213,9 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       downloadVideoMenu.style.display = "none";
     };
 
-    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
-    player.muted(videoPlayerSettings.muted); // set mute video settings on load
-    player.volume(videoPlayerSettings.volume);  // set volume video settings on load 
+    player.muted(typeof videoPlayerSettings.muted === "boolean" ? videoPlayerSettings.muted : false); // set mute video settings on load
+    player.volume(basic.isNum(videoPlayerSettings.volume) ? videoPlayerSettings.volume : 1); // set volume video settings on load 
     document.getElementById("video_html5_api").onvolumechange = () => { // update global video player volume/mute settings
       updateVideoPlayerVolume(player.volume(), player.muted()); 
     };  
