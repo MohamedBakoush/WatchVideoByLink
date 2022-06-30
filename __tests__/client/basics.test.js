@@ -316,7 +316,37 @@ describe("appendImg", () =>  {
         expect(appendImg.tagName).toBe("IMG"); 
     }); 
 
-    it("valid tagname src", () =>  { 
+    it("valid tagname, undefined fields", () =>  { 
+        const appendImg = basic.appendImg(container, undefined); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname, string fields", () =>  { 
+        const appendImg = basic.appendImg(container, "string"); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname, number fields", () =>  { 
+        const appendImg = basic.appendImg(container, 12); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname, array fields", () =>  { 
+        const appendImg = basic.appendImg(container, []); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname, empty object", () =>  { 
+        const appendImg = basic.appendImg(container, {}); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg.tagName).toBe("IMG"); 
+    }); 
+
+    it("valid tagname, src fields", () =>  { 
         const appendImg = basic.appendImg(container, {
             src : "http://localhost:8080/image.png"
         });   
@@ -325,7 +355,7 @@ describe("appendImg", () =>  {
         expect(appendImg.src).toBe("http://localhost:8080/image.png");    
     });  
 
-    it("valid tagname src width", () =>  { 
+    it("valid tagname, src width fields", () =>  { 
         const appendImg = basic.appendImg(container, {
             src : "http://localhost:8080/image.png",
             width : 20
@@ -336,7 +366,7 @@ describe("appendImg", () =>  {
         expect(appendImg.width).toBe(20);  
     });    
 
-    it("valid tagname src width height", () =>  { 
+    it("valid tagname, src width height fields", () =>  { 
         const appendImg = basic.appendImg(container, {
             src : "http://localhost:8080/image.png",
             width : 20,
@@ -349,7 +379,7 @@ describe("appendImg", () =>  {
         expect(appendImg.height).toBe(20);  
     }); 
 
-    it("valid tagname src width height, id", () =>  { 
+    it("valid tagname, src width height id fields", () =>  { 
         const appendImg = basic.appendImg(container, {
             src : "http://localhost:8080/image.png",
             width : 20,
@@ -364,7 +394,7 @@ describe("appendImg", () =>  {
         expect(appendImg.id).toBe("test_image");  
     }); 
 
-    it("valid tagname src width height, id, calss", () =>  { 
+    it("valid tagname, src width height id calss fields", () =>  { 
         const appendImg = basic.appendImg(container, {
             src : "http://localhost:8080/image.png",
             width : 20,

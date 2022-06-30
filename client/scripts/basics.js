@@ -36,7 +36,7 @@ export function createElement(container, elementType, fields) {
 export function appendImg(container, fields, fileID) {
   if (!isElement(container)) return "invalid container";
   if (fields === undefined) fields = {};
-  if (typeof fields !== "object" || Array.isArray(fields) || fields === null) return "invalid fields"; 
+  !isObject(fields) ? fields = {} : null;
   const created_image = document.createElement("img"); 
   Object.assign(created_image, fields);
   created_image.onload = container.appendChild(created_image);
