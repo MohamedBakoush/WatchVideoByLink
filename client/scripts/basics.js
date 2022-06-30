@@ -66,9 +66,7 @@ export function checkForPercentEncoding(string){
   const str15 = percent_encoding_to_reserved_character(str14, "%2B", "+");
   const str16 = percent_encoding_to_reserved_character(str15, "%2C", ",");
   const str17 = percent_encoding_to_reserved_character(str16, "%3B", ";");
-  const str18 = percent_encoding_to_reserved_character(str17, "%3D", "=");
-
-  return str18;
+  return percent_encoding_to_reserved_character(str17, "%3D", "=");
 }
 
 export function percent_encoding_to_reserved_character(string, checkFor, replaceby){ 
