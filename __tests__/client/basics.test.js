@@ -120,6 +120,56 @@ describe("isElement", () =>  {
     }); 
 }); 
 
+describe("isObject", () =>  {    
+    it("no input", () =>  { 
+        const isObject = basic.isObject();   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    });   
+
+    it("undefined", () =>  { 
+        const isObject = basic.isObject(undefined);   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    });  
+
+    it("null", () =>  { 
+        const isObject = basic.isObject(null);   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    }); 
+
+    it("string", () =>  { 
+        const isObject = basic.isObject("string");   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    }); 
+    
+    it("number", () =>  { 
+        const isObject = basic.isObject(123);   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    }); 
+
+    it("array", () =>  { 
+        const isObject = basic.isObject([]);   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    }); 
+
+    it("container", () =>  { 
+        const isObject = basic.isObject(container);   
+        expect(isObject).toBeDefined();  
+        expect(isObject).toBe(false);     
+    }); 
+    
+    it("object", () =>  { 
+        const isElement = basic.isObject({});   
+        expect(isElement).toBeDefined();  
+        expect(isElement).toBe(true);     
+    }); 
+}); 
+
 describe("createElement", () =>  {   
     it("No input", () =>  { 
         const createdElement = basic.createElement();   
@@ -214,31 +264,31 @@ describe("createElement", () =>  {
     it("valid container, elementType, Null fields", () =>  { 
         const createdElement = basic.createElement(container, "input", null); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement).toBe("invalid fields");  
+        expect(createdElement.tagName).toBe("INPUT");   
     });  
 
     it("valid container, elementType, String fields", () =>  { 
         const createdElement = basic.createElement(container, "input", "string"); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement).toBe("invalid fields");  
+        expect(createdElement.tagName).toBe("INPUT");   
     });  
 
     it("valid container, elementType, Number fields", () =>  { 
         const createdElement = basic.createElement(container, "input", 123); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement).toBe("invalid fields");  
+        expect(createdElement.tagName).toBe("INPUT");   
     });  
 
     it("valid container, elementType, Array fields", () =>  { 
         const createdElement = basic.createElement(container, "input", []); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement).toBe("invalid fields");  
+        expect(createdElement.tagName).toBe("INPUT");   
     });  
 
     it("valid container, elementType, Object fields", () =>  { 
         const createdElement = basic.createElement(container, "input", {}); 
         expect(createdElement).toBeDefined(); 
-        expect(createdElement.tagName).toBe("INPUT");   
+        expect(createdElement.tagName).toBe("INPUT"); 
     });  
 
     it("valid container, elementType, fields", () =>  { 

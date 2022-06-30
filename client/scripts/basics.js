@@ -15,16 +15,18 @@ export function websiteContentContainer() {
   return document.getElementById("websiteContentContainer");
 }
 
-// check if input value is an element
 export function isElement(input) {  
   return input !== undefined && input !== null && input.tagName !== undefined;
+}
+
+export function isObject(input) {
+  return typeof input === "object" && !Array.isArray(input) && input !== null && !isElement(input);
 }
 
 export function createElement(container, elementType, fields) {
   if (!isElement(container)) return "invalid container";
   if (typeof elementType !== "string") return "invalid elementType";
-  if (fields === undefined) fields = {};
-  if (typeof fields !== "object" || Array.isArray(fields) || fields === null) return "invalid fields";
+  !isObject(fields) ? fields = {} : null;
   const createdElement = document.createElement(elementType);  
   Object.assign(createdElement, fields);
   return container.appendChild(createdElement);
