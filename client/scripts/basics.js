@@ -31,7 +31,6 @@ export function createElement(container, elementType, fields) {
 
 export function appendImg(container, fields, fileID) {
   if (!isElement(container)) return "invalid container";
-  if (fields === undefined) fields = {};
   !isObject(fields) ? fields = {} : null;
   const created_image = document.createElement("img"); 
   Object.assign(created_image, fields);
