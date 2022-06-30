@@ -1,4 +1,4 @@
-export let AvailableVideoDetails; // containes the nessasary needed data for content to be displayed at /saved/videos
+export let AvailableVideoDetails; // contains the necessary needed data for content to be displayed at /saved/videos
 
 export function getAvailablevideoDetails() {
   return AvailableVideoDetails;
