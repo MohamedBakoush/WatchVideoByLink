@@ -265,33 +265,16 @@ export async function getVideoPlayerSettings() {
 
 // update video player volume settings
 export async function updateVideoPlayerVolume(volume, muted) {
-   if (!isNaN(volume) && typeof muted == "boolean") {
-    try {
-      const payload = {  // data sending in fetch request
-        updatedVideoPlayerVolume : volume,
-        updatedVideoPlayerMuted : muted
-      };
-      const response = await fetch("../updateVideoPlayerVolume", { // look for video data from provided url_link
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    
-      let updatedVideoPlayerVolume;
-      if (response.ok) { 
-        updatedVideoPlayerVolume = await response.json(); 
-        return updatedVideoPlayerVolume;
-      }else { 
-        return "Failed to update video volume messages";
-      }
-    } catch (error) {
-      return "Failed fetch video player volume update";
-    } 
-   } else if (!isNaN(volume) && typeof muted !== "boolean") {
-    return "muted-invaid";
-   } else if (isNaN(volume) && typeof muted == "boolean") {
-    return "volume-invaid";
-   } else{
-    return "volume-muted-invaid";
-   }
+  if (!basic.isNum(volume)) return "volume-invalid";
+  if (typeof muted !== "boolean") return "mute-invalid";
+  const payload = { 
+    updatedVideoPlayerVolume : volume,
+    updatedVideoPlayerMuted : muted
+  };
+  const response = await fetch("../updateVideoPlayerVolume", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return response.ok ? await response.json() : "Fetch Request Failed";
 }
