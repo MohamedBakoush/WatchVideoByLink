@@ -31,22 +31,17 @@ export function createElement(container, elementType, fields) {
 }
 
 // append image to container
-export function appendImg(container, src, width, height, id, classList, videoID) {
-  if (!isElement(container)) return "appendImg didnt work"; 
-  const image = document.createElement("img"); 
-  Object.assign(image,
-    height === undefined ? null : {height}, 
-    width === undefined ? null : {width}, 
-    id === undefined ? null : {id}, 
-    classList === undefined ? null : {classList}, 
-    src === undefined ? null : {src}, 
-  );
-  image.onload = container.appendChild(image);
-  image.onerror = function () {
-    const video_container = document.getElementById(videoID);
-    video_container ? video_container.remove() : null; 
+export function appendImg(container, fields, fileID) {
+  if (!isElement(container)) return "invalid container";
+  if (fields === undefined) fields = {};
+  if (typeof fields !== "object" || Array.isArray(fields) || fields === null) return "invalid fields"; 
+  const created_image = document.createElement("img"); 
+  Object.assign(created_image, fields);
+  created_image.onload = container.appendChild(created_image);
+  created_image.onerror = function () {
+    document.getElementById(fileID) ? document.getElementById(fileID).remove() : null; 
   };
-  return image; 
+  return created_image; 
 }
 
 // Gather reserved characters after percent-encoding

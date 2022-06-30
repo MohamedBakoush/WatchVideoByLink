@@ -254,6 +254,12 @@ describe("createElement", () =>  {
 });  
 
 describe("appendImg", () =>  {     
+    it("No input", () =>  { 
+        const appendImg = basic.appendImg(); 
+        expect(appendImg).toBeDefined(); 
+        expect(appendImg).toBe("invalid container"); 
+    }); 
+
     it("valid tagname", () =>  { 
         const appendImg = basic.appendImg(container); 
         expect(appendImg).toBeDefined(); 
@@ -261,14 +267,19 @@ describe("appendImg", () =>  {
     }); 
 
     it("valid tagname src", () =>  { 
-        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png");   
+        const appendImg = basic.appendImg(container, {
+            src : "http://localhost:8080/image.png"
+        });   
         expect(appendImg).toBeDefined();
         expect(appendImg.tagName).toBe("IMG");  
         expect(appendImg.src).toBe("http://localhost:8080/image.png");    
     });  
 
     it("valid tagname src width", () =>  { 
-        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20);   
+        const appendImg = basic.appendImg(container, {
+            src : "http://localhost:8080/image.png",
+            width : 20
+        });   
         expect(appendImg).toBeDefined();
         expect(appendImg.tagName).toBe("IMG");  
         expect(appendImg.src).toBe("http://localhost:8080/image.png");    
@@ -276,7 +287,11 @@ describe("appendImg", () =>  {
     });    
 
     it("valid tagname src width height", () =>  { 
-        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20);   
+        const appendImg = basic.appendImg(container, {
+            src : "http://localhost:8080/image.png",
+            width : 20,
+            height : 20
+        });   
         expect(appendImg).toBeDefined();
         expect(appendImg.tagName).toBe("IMG");  
         expect(appendImg.src).toBe("http://localhost:8080/image.png");    
@@ -285,7 +300,12 @@ describe("appendImg", () =>  {
     }); 
 
     it("valid tagname src width height, id", () =>  { 
-        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20, "test_image");   
+        const appendImg = basic.appendImg(container, {
+            src : "http://localhost:8080/image.png",
+            width : 20,
+            height : 20,
+            id : "test_image"
+        });   
         expect(appendImg).toBeDefined();
         expect(appendImg.tagName).toBe("IMG");  
         expect(appendImg.src).toBe("http://localhost:8080/image.png");    
@@ -295,7 +315,13 @@ describe("appendImg", () =>  {
     }); 
 
     it("valid tagname src width height, id, calss", () =>  { 
-        const appendImg = basic.appendImg(container, "http://localhost:8080/image.png", 20, 20, "test_image", "class_image");   
+        const appendImg = basic.appendImg(container, {
+            src : "http://localhost:8080/image.png",
+            width : 20,
+            height : 20,
+            id : "test_image",
+            classList : "class_image"
+        });   
         expect(appendImg).toBeDefined();
         expect(appendImg.tagName).toBe("IMG");  
         expect(appendImg.src).toBe("http://localhost:8080/image.png");    

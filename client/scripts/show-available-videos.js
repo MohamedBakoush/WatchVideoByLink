@@ -201,7 +201,11 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
         classList : "thumbnail-image-container",
         id : `${videoInfo_ID}-image-container`
       });
-      const thumbnail = basic.appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
+      const thumbnail = basic.appendImg(imageContainer, {
+        src : mainThumbnail,
+        id : `${videoInfo_ID}-img`,
+        classList : "thumbnail-image"
+      }, videoInfo_ID);
       thumbnail.draggable = false;
       // menu options
       const option_menu = basic.createElement(thumbnailContainer, "button", {
