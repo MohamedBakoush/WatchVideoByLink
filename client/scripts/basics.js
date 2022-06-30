@@ -77,8 +77,7 @@ export function percent_encoding_to_reserved_character(string, checkFor, replace
   for(var x = 0; x < array.length; x++){  
     x == (array.length - 1) ? newarray.push(array[x]) : newarray.push(array[x]+replaceby);
   }
-  const str = newarray.join(""); 
-  return str; 
+  return newarray.join("");
 }
  
 // HMS = Hours Minutes Seconds
