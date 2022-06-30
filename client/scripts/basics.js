@@ -45,7 +45,7 @@ export function appendImg(container, fields, fileID) {
   return created_image; 
 }
 
-// Gather reserved characters after percent-encoding
+// Gather coresponding reserved characters from percent-encoding
 export function checkForPercentEncoding(string){ 
   // gen-delims
   const str1 = percent_encoding_to_reserved_character(string, "%3A", ":");
