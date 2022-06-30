@@ -12,16 +12,6 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   document.title = "Watching Video By Provided Link - WatchVideoByLink"; 
   document.body.classList = "watching-video-body";
   basic.websiteContentContainer().classList = "watching-video-websiteContentContainer";
-  let displayChromecast;
-  try {    
-    if (videoPlayerSettings.chromecast == true) {
-      displayChromecast = true;
-    } else {
-      displayChromecast = false;
-    }
-  } catch (error) {
-    displayChromecast = false;
-  }
   // create video player
   const videoPlayer = basic.createElement(basic.websiteContentContainer(), "video-js", {
     classList : "vjs-default-skin vjs-big-play-centered", 
@@ -163,26 +153,17 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       src: videoSrc
     });
   } else { 
-    let seekForward, seekBackward; 
-    // seekForwards
-    if (videoPlayerSettings.seekForward === undefined || isNaN(videoPlayerSettings.seekForward)) { seekForward = 30;
-    } else { seekForward = videoPlayerSettings.seekForward;
-    }
-    // seekBackwards
-    if (videoPlayerSettings.seekBackward === undefined || isNaN(videoPlayerSettings.seekBackward)) { seekBackward = 5;
-    } else { seekBackward = videoPlayerSettings.seekBackward;
-    }
     const player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
       techOrder: [ "chromecast", "html5" ],
       plugins: {
         chromecast: {
-          addButtonToControlBar: displayChromecast
+          addButtonToControlBar: typeof videoPlayerSettings.chromecast === "boolean" ? videoPlayerSettings.chromecast : false
         },
         seekButtons: {
-          forward: seekForward,
-          back: seekBackward
+          forward: basic.isNum(videoPlayerSettings.seekForward) ? videoPlayerSettings.seekForward : 30,
+          back: basic.isNum(videoPlayerSettings.seekBackward) ? videoPlayerSettings.seekBackward : 5
         }
       }
     });
