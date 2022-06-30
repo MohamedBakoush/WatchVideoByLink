@@ -1,16 +1,13 @@
-export let availablevideoDetails;
+export let AvailableVideoDetails; // containes the nessasary needed data for content to be displayed at /saved/videos
 
-// get available video details
 export function getAvailablevideoDetails() {
-  return availablevideoDetails;
+  return AvailableVideoDetails;
 }
 
-// set new FolderID path
-export function setNewAvailablevideoDetails(newAvailablevideoDetails) {
-  return availablevideoDetails = newAvailablevideoDetails;
+export function setNewAvailablevideoDetails(newAvailableVideoDetails) {
+  return AvailableVideoDetails = newAvailableVideoDetails;
 } 
 
-// return websiteContentContainer
 export function websiteContentContainer() {
   return document.getElementById("websiteContentContainer");
 }
