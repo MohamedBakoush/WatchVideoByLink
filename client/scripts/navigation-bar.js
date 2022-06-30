@@ -6,17 +6,33 @@ import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 // load header details into html using headerContainer id
 export function loadNavigationBar(path) {
   const header = document.getElementById("headerContainer");
-  const navBar = basic.createSection(header, "nav", "NavigationBar", "navBar");
-  const nav = basic.createSection(navBar, "ul", undefined, "headerNav");
-  const item = basic.createSection(nav, "li");
+  const navBar = basic.createElement(header, "nav", {
+    classList : "NavigationBar",
+    id : "navBar"
+  }); 
+  const nav = basic.createElement(navBar, "ul", {
+    id : "headerNav"
+  }); 
+  const item = basic.createElement(nav, "li");
   let homeButton, savedVideosPage, currentDownloads;
   if (path == "/saved/videos") {
     document.title = "saved videos - WatchVideoByLink";
     document.body.classList = "saved-videos-body";
     basic.websiteContentContainer().classList = "saved-videos-websiteContentContainer";
-    homeButton = basic.createLink(item, "/", undefined, "button category-link", "WatchVideoByLink");
-    savedVideosPage = basic.createLink(item, "/saved/videos", undefined, "button savedVideosPageButton is-selected", "/saved/videos");
-    currentDownloads = basic.createLink(item, "javascript:;", undefined, "button current-dowloads-nav fa fa-download");
+    homeButton = basic.createElement(item, "a", {
+      href : "/",
+      classList : "button category-link",
+      textContent : "WatchVideoByLink"
+    });
+    savedVideosPage = basic.createElement(item, "a", {
+      href : "/saved/videos",
+      classList : "button savedVideosPageButton is-selected",
+      textContent : "/saved/videos"
+    });
+    currentDownloads = basic.createElement(item, "a", {
+      href : "javascript:;",
+      classList : "button current-dowloads-nav fa fa-download"
+    });
     homeButton.onclick = (e) => {
       e.preventDefault(); 
       onClickHomeButton(homeButton, savedVideosPage);
@@ -34,9 +50,20 @@ export function loadNavigationBar(path) {
     document.title = "WatchVideoByLink";
     document.body.classList = "index-body";
     basic.websiteContentContainer().classList = "index-websiteContentContainer";
-    homeButton = basic.createLink(item, "/", undefined, "button is-selected", "WatchVideoByLink");
-    savedVideosPage = basic.createLink(item, "/saved/videos", undefined, "button savedVideosPageButton category-link", "/saved/videos");
-    currentDownloads = basic.createLink(item, "javascript:;", undefined, "button current-dowloads-nav fa fa-download");
+    homeButton = basic.createElement(item, "a", {
+      href : "/",
+      classList : "button is-selected",
+      textContent : "WatchVideoByLink"
+    });
+    savedVideosPage = basic.createElement(item, "a", {
+      href : "/saved/videos",
+      classList : "button savedVideosPageButton category-link",
+      textContent : "/saved/videos"
+    });
+    currentDownloads = basic.createElement(item, "a", {
+      href : "javascript:;",
+      classList : "button current-dowloads-nav fa fa-download"
+    });
     homeButton.onclick = (e) => {
       e.preventDefault(); 
       onClickHomeButton(homeButton, savedVideosPage);

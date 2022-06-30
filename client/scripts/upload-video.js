@@ -8,25 +8,42 @@ export function uploadVideoDetails(videoLink){
     return "videoLink undefined";
   } else {
     // upload video container
-    const uploadVideoForm = basic.createSection(videoLink, "form", "uploadVideoContainer", "uploadVideoContainer");  
+    const uploadVideoForm = basic.createElement(videoLink, "form", {
+      classList : "uploadVideoContainer",
+      id : "uploadVideoContainer"
+    });
     uploadVideoForm.onsubmit = function(){
       return false;
     };
     // submit video button container
-    const submitUploadVideoButtonContainer = basic.createSection(uploadVideoForm, "section", "submitUploadVideoButtonContainer");
+    const submitUploadVideoButtonContainer = basic.createElement(uploadVideoForm, "section", {
+      classList : "submitUploadVideoButtonContainer"
+    });
     // choose video input body
-    const chooseVideoInputBody = basic.createSection(submitUploadVideoButtonContainer, "section", "chooseVideoInputBody");
+    const chooseVideoInputBody = basic.createElement(submitUploadVideoButtonContainer, "section", {
+      classList : "chooseVideoInputBody"
+    });
     // choose video input label
-    const chooseVideoInputLabel = basic.createSection(chooseVideoInputBody, "label", "chooseVideoInputLabel");
+    const chooseVideoInputLabel = basic.createElement(chooseVideoInputBody, "label", {
+      classList : "chooseVideoInputLabel"
+    });
     // select video to input
-    const inputUploadVideo = basic.createInput(chooseVideoInputLabel, "file");  
-    inputUploadVideo.accept = "video/*";
-    inputUploadVideo.name = "file";
-    inputUploadVideo.required = true;
+    const inputUploadVideo = basic.createElement(chooseVideoInputLabel, "input", {
+      type : "file",
+      accept : "video/*",
+      name : "file",
+      required : true
+    });
     // submit choosen video button container
-    const submitChoosenVideoButtonContainer = basic.createSection(submitUploadVideoButtonContainer, "section", "submitChoosenVideoButtonContainer");
+    const submitChoosenVideoButtonContainer = basic.createElement(submitUploadVideoButtonContainer, "section", {
+      classList : "submitChoosenVideoButtonContainer"
+    });
     // upload Video button
-    basic.createInput(submitChoosenVideoButtonContainer, "submit", "Upload Video", undefined , "button uploadVideoButton");
+    basic.createElement(submitChoosenVideoButtonContainer, "input", {
+      type : "submit",
+      value : "Upload Video",
+      classList : "button uploadVideoButton",
+    });
     // once upload Video button is clicked
     uploadVideoForm.onsubmit = function(){ 
       const file = inputUploadVideo.files[0]; 
@@ -41,9 +58,15 @@ export function uploadVideoDetails(videoLink){
         // remove upload Video container
         uploadVideoForm.remove();  
         // create new upload Video container
-        const newUploadVideoForm = basic.createSection(videoLink, "section", "uploadVideoContainer", "uploadVideoContainer"); 
+        const newUploadVideoForm = basic.createElement(videoLink, "section", {
+          classList : "uploadVideoContainer",
+          id : "uploadVideoContainer"
+        });
         // create new submit Video button container
-        basic.createSection(newUploadVideoForm, "section", "submitUploadVideoButtonContainer", undefined, `Uploading: ${file.name}`); 
+        basic.createElement(newUploadVideoForm, "section", {
+          classList : "submitUploadVideoButtonContainer",
+          textContent : `Uploading: ${file.name}`
+        });
         // upload video file 
         uploadFile(inputUploadVideo, videoLink, newUploadVideoForm);
       }

@@ -23,7 +23,10 @@ export async function loadVideoDetails() {
   } catch (e) { // when an error occurs  
     let container, videoDownloadStatusContainer; 
     if(!document.getElementById("download-status-container"))  {  
-      container = basic.createSection(basic.websiteContentContainer(), "section", "download-status-container", "download-status-container"); 
+      container = basic.createElement(basic.websiteContentContainer(), "section", {
+        classList : "download-status-container",
+        id : "download-status-container"
+      }); 
     } else {
       container = document.getElementById("download-status-container");
     }   
@@ -41,8 +44,13 @@ export async function loadVideoDetails() {
       // No current downloads msg
       if(!videoDownloadStatusContainer){ 
         container.innerHTML = "";
-        videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "failed-fetch-available-download-details"); 
-        basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "Error: Failed fetch download details");  
+        videoDownloadStatusContainer = basic.createElement(container, "section", {
+          classList : "video-download-status-container",
+          id : "failed-fetch-available-download-details"
+        }); 
+        basic.createElement(videoDownloadStatusContainer, "strong", {
+          textContent : "Error: Failed fetch download details"
+        }); 
       } 
       return "Failed fetch download details";
     }
@@ -58,7 +66,10 @@ export function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
     if(document.getElementById("download-status-container"))  { // assign download-status-container as container
       container = document.getElementById("download-status-container");
     } else {
-      container = basic.createSection(basic.websiteContentContainer(), "section", "download-status-container", "download-status-container"); 
+      container = basic.createElement(basic.websiteContentContainer(), "section", {
+        classList : "download-status-container",
+        id : "download-status-container"
+      }); 
     } 
     if (Object.keys(videoDownloadDetails).length == 0){   
       // assign videoDownloadStatusContainer - No current downloads msg conainer
@@ -66,8 +77,13 @@ export function eachAvailableVideoDownloadDetails(videoDownloadDetails) {
         videoDownloadStatusContainer = document.getElementById("no-current-dowloads-available");
       } else {
         container.innerHTML = "";
-        videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", "no-current-dowloads-available"); 
-        basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined, "No current available dowloads");  
+        videoDownloadStatusContainer = basic.createElement(container, "section", {
+          classList : "video-download-status-container",
+          id : "no-current-dowloads-available"
+        }); 
+        basic.createElement(videoDownloadStatusContainer, "strong", {
+          textContent : "No current available dowloads"
+        }); 
       }
       return "No current available dowloads";
     } else  { // available downloads
@@ -127,18 +143,29 @@ export function forEachVideoDownloadDetails(container, videoDownloadDetails, vid
     // clear videoDownloadStatusContainer 
     videoDownloadStatusContainer.innerHTML = "";
     // video id (title)
-    basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${videoInfo_ID}`); 
+    basic.createElement(videoDownloadStatusContainer, "strong", {
+      textContent : `${videoInfo_ID}`
+    }); 
     // videoProgressContainer
     if(videoDownloadDetails[videoInfo_ID]["video"] !== undefined){
-      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-video`,`Video Progress: ${videoDownloadDetails[videoInfo_ID]["video"]["download-status"]}`);
+      basic.createElement(videoDownloadStatusContainer, "p", {
+        id : `${videoInfo_ID}-video`,
+        textContent : `Video Progress: ${videoDownloadDetails[videoInfo_ID]["video"]["download-status"]}`
+      }); 
     }  
     // thubnailProgressContainer
     if(videoDownloadDetails[videoInfo_ID]["thumbnail"] !== undefined){
-      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-thubnail`,`Thubnail Progress: ${videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"]}`); 
+      basic.createElement(videoDownloadStatusContainer, "p", {
+        id : `${videoInfo_ID}-thubnail`,
+        textContent : `Thubnail Progress: ${videoDownloadDetails[videoInfo_ID]["thumbnail"]["download-status"]}`
+      }); 
     }         
     // compressionProgressContainer
     if(videoDownloadDetails[videoInfo_ID]["compression"] !== undefined){
-      basic.createSection(videoDownloadStatusContainer, "p", undefined, `${videoInfo_ID}-compression`,`Compression Progress: ${videoDownloadDetails[videoInfo_ID]["compression"]["download-status"]}`);  
+      basic.createElement(videoDownloadStatusContainer, "p", {
+        id : `${videoInfo_ID}-compression`,
+        textContent : `Compression Progress: ${videoDownloadDetails[videoInfo_ID]["compression"]["download-status"]}`
+      }); 
     }  
     return "Display Video Download Details";
   } else {
@@ -195,24 +222,41 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         compressionProgressUnfinished = false;
       }
       // container
-      const videoDownloadStatusContainer = basic.createSection(container, "section", "video-download-status-container", `${video_ID}-download-status-container`); 
+      const videoDownloadStatusContainer = basic.createElement(container, "section", {
+        classList : "video-download-status-container",
+        id : `${video_ID}-download-status-container`
+      }); 
       //  title
-      basic.createSection(videoDownloadStatusContainer, "strong", undefined, undefined,`${video_ID}`); 
-      if (videoProgressUnfinished == "untrunc unavailable") {
-        const videoOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "videoOptionsContainer"); 
-        const untruncUnavailableButton = basic.createSection(videoOptionsContainer, "button", "button untruncUnavailableButton", `${video_ID}-untrunc-unavailable-button`, "Restore damaged video");
+      basic.createElement(videoDownloadStatusContainer, "strong", {
+        textContent : `${video_ID}`
+      }); 
+      if (videoProgressUnfinished == "untrunc unavailable") { 
+        const videoOptionsContainer = basic.createElement(videoDownloadStatusContainer, "section", {
+          classList : "videoOptionsContainer"
+        }); 
+        const untruncUnavailableButton = basic.createElement(videoOptionsContainer, "button", {
+          classList : "button untruncUnavailableButton",
+          id : `${video_ID}-untrunc-unavailable-button`,
+          textContent : "Restore damaged video"
+        }); 
         // action on button click
         untruncUnavailableButton.onclick = (e) => {
           e.preventDefault(); 
           notify.message("error", "Untrunc Unavailable");   
         }; 
         // delete video button
-        const deleteVideoButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+        const deleteVideoButton = basic.createElement(videoOptionsContainer, "button", {
+          classList : "deleteVideoButton",
+          textContent : "Delete"
+        }); 
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           deleteVideoButton.remove();
-          const confirmationButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          const confirmationButton = basic.createElement(videoOptionsContainer, "button", {
+            classList : "deleteVideoButton2",
+            textContent : "Confirm"
+          }); 
           confirmationButton.onclick = function(e){
             e.preventDefault();
             deleteVideoDataPermanently(video_ID);
@@ -220,20 +264,32 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         };
         return "untrunc unavailable";
       } else if(videoProgressUnfinished == "unfinished download") {
-        const videoOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "videoOptionsContainer"); 
-        const completeVideoDownloadButton = basic.createSection(videoOptionsContainer, "button", "button completeVideoDownloadButton", `${video_ID}-complete-download-button`, "Restore damaged video");
+        const videoOptionsContainer = basic.createElement(videoDownloadStatusContainer, "section", {
+          classList : "videoOptionsContainer"
+        }); 
+        const completeVideoDownloadButton = basic.createElement(videoOptionsContainer, "button", {
+          classList : "button completeVideoDownloadButton",
+          id : `${video_ID}-complete-download-button`,
+          textContent : "Restore damaged video"
+        }); 
         // action on button click
         completeVideoDownloadButton.onclick = (e) => {
           e.preventDefault(); 
           completeDownloadRequest(video_ID);  
         }; 
         // delete video button
-        const deleteVideoButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+        const deleteVideoButton = basic.createElement(videoOptionsContainer, "button", {
+          classList : "deleteVideoButton",
+          textContent : "Delete"
+        }); 
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           deleteVideoButton.remove();
-          const confirmationButton = basic.createSection(videoOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          const confirmationButton = basic.createElement(videoOptionsContainer, "button", {
+            classList : "deleteVideoButton2",
+            textContent : "Confirm"
+          }); 
           confirmationButton.onclick = function(e){
             e.preventDefault();
             deleteVideoDataPermanently(video_ID);
@@ -242,24 +298,39 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         return "video unfinished";
       } else if(videoProgressUnfinished == "working video for untrunc is unavailable") { 
         // videoProgressContainer
-        basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-untrunc`,"Untrunc: working video.mp4 unavailable");
+        basic.createElement(videoDownloadStatusContainer, "p", {
+          id : `${video_ID}-untrunc`,
+          textContent : "Untrunc: working video.mp4 unavailable"
+        }); 
         return "working video for untrunc is unavailable";
       } else if(thumbnailProgressUnfinished && compressionProgressUnfinished) { 
         // thumbnail and compression unfinished 
-        const tumbnailCompressionOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "tumbnailCompressionOptionsContainer");
-        const completeTumbnailCompressionDownloadButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "button completeTumbnailCompressionDownloadButton", `${video_ID}-complete-download-button`, "Generate thumbnails & video compression");
+        const tumbnailCompressionOptionsContainer = basic.createElement(videoDownloadStatusContainer, "section", {
+          classList : "tumbnailCompressionOptionsContainer"
+        }); 
+        const completeTumbnailCompressionDownloadButton = basic.createElement(tumbnailCompressionOptionsContainer, "button", {
+          classList : "button completeTumbnailCompressionDownloadButton",
+          id : `${video_ID}-complete-download-button`,
+          textContent : "Generate thumbnails & video compression"
+        }); 
         // action on button click
         completeTumbnailCompressionDownloadButton.onclick = (e) => {
           e.preventDefault();  
           completeDownloadRequest(video_ID);  
         }; 
-        // delete video button
-        const deleteVideoButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+        // delete video button 
+        const deleteVideoButton = basic.createElement(tumbnailCompressionOptionsContainer, "button", {
+          classList : "deleteVideoButton",
+          textContent : "Delete"
+        }); 
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();   
           deleteVideoButton.remove();
-          const confirmationButton = basic.createSection(tumbnailCompressionOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          const confirmationButton = basic.createElement(tumbnailCompressionOptionsContainer, "button", {
+            classList : "deleteVideoButton2",
+            textContent : "Confirm"
+          }); 
           confirmationButton.onclick = function(e){
             e.preventDefault();
             deleteVideoDataPermanently(video_ID);
@@ -268,20 +339,32 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         return "thumbnail and compression unfinished";
       } else if(thumbnailProgressUnfinished && !compressionProgressUnfinished) { 
         // thumbnail unfinished, compression finished 
-        const tumbnailOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "tumbnailOptionsContainer");
-        const completeTumbnailDownloadButton = basic.createSection(tumbnailOptionsContainer, "button", "button completeTumbnailDownloadButton", `${video_ID}-complete-download-button`, "Generate thumbnails");
+        const tumbnailOptionsContainer = basic.createElement(videoDownloadStatusContainer, "section", {
+          classList : "tumbnailOptionsContainer"
+        }); 
+        const completeTumbnailDownloadButton = basic.createElement(tumbnailOptionsContainer, "button", {
+          classList : "button completeTumbnailDownloadButton",
+          id : `${video_ID}-complete-download-button`,
+          textContent : "Generate thumbnails"
+        }); 
         // action on button click
         completeTumbnailDownloadButton.onclick = (e) => {
           e.preventDefault();  
           completeDownloadRequest(video_ID);  
         }; 
         // delete video button
-        const deleteVideoButton = basic.createSection(tumbnailOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+        const deleteVideoButton = basic.createElement(tumbnailOptionsContainer, "button", {
+          classList : "deleteVideoButton", 
+          textContent : "Delete"
+        }); 
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           deleteVideoButton.remove();
-          const confirmationButton = basic.createSection(tumbnailOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          const confirmationButton = basic.createElement(tumbnailOptionsContainer, "button", {
+            classList : "deleteVideoButton2", 
+            textContent : "Confirm"
+          }); 
           confirmationButton.onclick = function(e){
             e.preventDefault();
             deleteVideoDataPermanently(video_ID);
@@ -289,21 +372,33 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
         };
         return "thumbnail unfinished";
       } else if(!thumbnailProgressUnfinished && compressionProgressUnfinished) { 
-        // thumbnail finished, compression unfinished
-        const compressionOptionsContainer = basic.createSection(videoDownloadStatusContainer,"section", "compressionOptionsContainer");
-        const completeCompressionDownloadButton = basic.createSection(compressionOptionsContainer, "button", "button completeCompressionDownloadButton", `${video_ID}-complete-download-button`, "Generate video compression");
+        // thumbnail finished, compression unfinished 
+        const compressionOptionsContainer = basic.createElement(videoDownloadStatusContainer, "section", {
+          classList : "compressionOptionsContainer"
+        });  
+        const completeCompressionDownloadButton = basic.createElement(compressionOptionsContainer, "button", {
+          classList : "button completeCompressionDownloadButton",
+          id : `${video_ID}-complete-download-button`,
+          textContent : "Generate video compression"
+        }); 
         // action on button click
         completeCompressionDownloadButton.onclick = (e) => {
           e.preventDefault();  
           completeDownloadRequest(video_ID);  
         };  
         // delete video button
-        const deleteVideoButton = basic.createSection(compressionOptionsContainer, "button", "deleteVideoButton", undefined, "Delete");
+        const deleteVideoButton = basic.createElement(compressionOptionsContainer, "button", {
+          classList : "deleteVideoButton", 
+          textContent : "Delete"
+        }); 
         // action on button click
         deleteVideoButton.onclick = function(e){
           e.preventDefault();
           deleteVideoButton.remove();
-          const confirmationButton = basic.createSection(compressionOptionsContainer, "button", "deleteVideoButton2", undefined, "Confirm");
+          const confirmationButton = basic.createElement(compressionOptionsContainer, "button", {
+            classList : "deleteVideoButton2", 
+            textContent : "Confirm"
+          }); 
           confirmationButton.onclick = function(e){
             e.preventDefault();
             deleteVideoDataPermanently(video_ID);
@@ -322,15 +417,24 @@ export function showDetailsIfDownloadDetailsAvailable(container, video_ID, video
       } else{
         // videoProgressContainer
         if(videoProgress !== undefined){
-          basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-video`,`Video Progress: ${videoProgress["download-status"]}`);
+          basic.createElement(videoDownloadStatusContainer, "p", {
+            id : `${video_ID}-video`, 
+            textContent : `Video Progress: ${videoProgress["download-status"]}`
+          }); 
         }  
         // thubnailProgressContainer
         if(thumbnailProgress !== undefined){
-          basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-thubnail`,`Thubnail Progress: ${thumbnailProgress["download-status"]}`); 
+          basic.createElement(videoDownloadStatusContainer, "p", {
+            id : `${video_ID}-thubnail`, 
+            textContent : `Thubnail Progress: ${thumbnailProgress["download-status"]}`
+          }); 
         }         
         // compressionProgressContainer
         if(compressionProgress !== undefined){
-          basic.createSection(videoDownloadStatusContainer, "p", undefined, `${video_ID}-compression`,`Compression Progress: ${compressionProgress["download-status"]}`);  
+          basic.createElement(videoDownloadStatusContainer, "p", {
+            id : `${video_ID}-compression`, 
+            textContent : `Compression Progress: ${compressionProgress["download-status"]}`
+          });  
         }
         return "Display Video Download Details";
       }   

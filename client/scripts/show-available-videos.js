@@ -22,8 +22,13 @@ export async function loadVideoDetails(initalFolderPath) {
     // if responseErrorAvailableVideo id dosent exist
     if (!document.getElementById("responseErrorAvailableVideo")) {
       // show error msg
-      const responseError = basic.createSection(basic.websiteContentContainer(), "section", "responseErrorAvailableVideo", "responseErrorAvailableVideo");
-      basic.createSection(responseError, "h1", undefined, undefined,  "Error Connection Refused.");
+      const responseError = basic.createElement(basic.websiteContentContainer(), "section", {
+        classList : "responseErrorAvailableVideo",
+        id : "responseErrorAvailableVideo"
+      });
+      basic.createElement(responseError, "h1", {
+        textContent : "Error Connection Refused."
+      });
     }
     return "Fetch Request Failed";
   }
@@ -37,22 +42,35 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
       // search bar
       search.searchBar(); 
       // folder path 
-      const pathContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer pathContainer", "pathContainer"); 
+      const pathContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+        classList : "dragDropContainer pathContainer",
+        id : "pathContainer"
+      });
       folderPath.homepagePath(pathContainer);
       // videos tumbnails contailer 
       let savedVideosThumbnailContainer; 
       if (document.getElementById("savedVideosThumbnailContainer")) { 
         document.getElementById("savedVideosThumbnailContainer").innerHTML = "";
-        savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+        savedVideosThumbnailContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+          classList : "dragDropContainer savedVideosThumbnailContainer",
+          id : "savedVideosThumbnailContainer"
+        });
       } else { 
-        savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+        savedVideosThumbnailContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+          classList : "dragDropContainer savedVideosThumbnailContainer",
+          id : "savedVideosThumbnailContainer"
+        });
       }
       // make sure searchable video is empty
       if(search.getSearchableVideoDataArray().length !== 0){ 
         search.resetSearchableVideoDataArray();
       } 
       // create folder button 
-      const createFolderButton = basic.createLink(search.searchBarContainer(), "javascript:;", undefined, "button category-link", "Create Folder"); 
+      const createFolderButton = basic.createElement(search.searchBarContainer(), "a", {
+        href : "javascript:;",
+        classList : "button category-link",
+        textContent : "Create Folder"
+      });
       createFolderButton.onclick = function(e){
         e.preventDefault(); 
         folderCreate.createFolderOnClick();
@@ -101,8 +119,14 @@ export function eachAvailableVideoDetails(videoDetails, initalFolderPath) {
 // display noAvailableVideosDetails no if exits
 export function noAvailableVideosDetails() {
   if (!document.getElementById("noAvailableVideosContainer")) {
-    const noAvailableVideosContainer = basic.createSection(basic.websiteContentContainer(), "section", "noAvailableVideosContainer", "noAvailableVideosContainer");
-    basic.createSection(noAvailableVideosContainer, "h1", "noAvailableVideosHeader", undefined,  "There has been no recorded/downloaded videos.");
+    const noAvailableVideosContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+      classList : "noAvailableVideosContainer",
+      id : "noAvailableVideosContainer"
+    });
+    basic.createElement(noAvailableVideosContainer, "h1", {
+      classList : "noAvailableVideosHeader",
+      textContent : "There has been no recorded/downloaded videos."
+    });
   } 
 }
 
@@ -164,21 +188,37 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       let video_name = videoDetails.info.title;
       const numberOfThumbnails = Object.keys(videoDetails.info.thumbnailLink).length;
       const mainThumbnail = `${window.location.origin}${videoDetails.info.thumbnailLink[1]}`;
-      const linkContainer = basic.createLink(savedVideosThumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, videoInfo_ID, "videoThumbnailContainer");
-      linkContainer.draggable = true;
-      const thumbnailContainer = basic.createSection(linkContainer, "section", undefined, `${videoInfo_ID}-container`);
-      const imageContainer = basic.createSection(thumbnailContainer, "section", "thumbnail-image-container",  `${videoInfo_ID}-image-container`);
-      const thumbnail = basic.appendImg(imageContainer, mainThumbnail, undefined, undefined, `${videoInfo_ID}-img`, "thumbnail-image", videoInfo_ID);
+      const linkContainer = basic.createElement(savedVideosThumbnailContainer, "a", {
+        href : `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`,
+        id : videoInfo_ID,
+        classList : "videoThumbnailContainer",
+        draggable : true
+      });
+      const thumbnailContainer = basic.createElement(linkContainer, "section", {
+        id : `${videoInfo_ID}-container`
+      });
+      const imageContainer = basic.createElement(thumbnailContainer, "section", {
+        classList : "thumbnail-image-container",
+        id : `${videoInfo_ID}-image-container`
+      });
+      const thumbnail = basic.appendImg(imageContainer, {
+        src : mainThumbnail,
+        id : `${videoInfo_ID}-img`,
+        classList : "thumbnail-image"
+      }, videoInfo_ID);
       thumbnail.draggable = false;
       // menu options
-      const option_menu = basic.createSection(thumbnailContainer, "button", "thumbnail-option-menu fa fa-bars", `${videoInfo_ID}-menu`);
+      const option_menu = basic.createElement(thumbnailContainer, "button", {
+        classList : "thumbnail-option-menu fa fa-bars",
+        id : `${videoInfo_ID}-menu`,
+        title : "menu"
+      });
       option_menu.onmouseenter = () => {
         linkContainer.draggable = false;
       };
       option_menu.onmouseleave = () => {
         linkContainer.draggable = true;
       };
-      option_menu.title = "menu";
       option_menu.onclick = function(e){
         e.preventDefault();
         //optionMenu.optionVideoMenuOnClick(videoSrc, videoType, videoInfo_ID, video_name, option_menu, linkContainer, thumbnailContainer, thumbnailTitleContainer);
@@ -186,13 +226,24 @@ export function showDetails(savedVideosThumbnailContainer, videoInfo_ID, videoDe
       };
       // video duration
       if (videoDetails.info.duration !== undefined && !isNaN(videoDetails.info.duration)) {
-        const video_time = basic.createSection(imageContainer, "section", "thumbnail-video-duration", `${videoInfo_ID}-video-duration`);
-        basic.createSection(video_time, "section", undefined, undefined, basic.secondsToHms(Math.floor(videoDetails.info.duration)));
+        const video_time = basic.createElement(imageContainer, "section", {
+          classList : "thumbnail-video-duration",
+          id : `${videoInfo_ID}-video-duration`
+        });
+        basic.createElement(video_time, "section", {
+          textContent : basic.secondsToHms(Math.floor(videoDetails.info.duration))
+        });
       }
       // video title container - if user want to be redirected to video player even if menu is active when onclick
-      const thumbnailTitleContainer = basic.createLink(thumbnailContainer, `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`, `${videoInfo_ID}-title-container`, "thumbnailTitleContainer");
-      basic.createSection(thumbnailTitleContainer, "h1", undefined, `${videoInfo_ID}-title`, video_name);
-      
+      const thumbnailTitleContainer = basic.createElement(thumbnailContainer, "a", {
+        href : `${window.location.origin}/?t=${videoType}?v=${window.location.origin}${videoSrc}`,
+        id : `${videoInfo_ID}-title-container`,
+        classList : "thumbnailTitleContainer"
+      });
+      basic.createElement(thumbnailTitleContainer, "h1", {
+        id : `${videoInfo_ID}-title`,
+        textContent : video_name
+      });
       let loopTroughThumbnails, mainThumbnailNumber = 1;
       thumbnail.addEventListener("mouseover", ( ) => { 
         if (typeof loopTroughThumbnails != "number"){
@@ -245,8 +296,12 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
     folderURL = `${window.location.origin}/saved/videos${document.location.search}&${folderInfoID}`;
   }
 
-  const folderContainerLink = basic.createLink(savedVideosThumbnailContainer, folderURL, folderInfoID, "folderContainer"); 
-  folderContainerLink.draggable = true; 
+  const folderContainerLink = basic.createElement(savedVideosThumbnailContainer, "a", {
+    href : folderURL,
+    id : folderInfoID,
+    classList : "folderContainer",
+    draggable : true
+  });
   folderContainerLink.onclick = function(e){
     e.preventDefault();  
     folderOnClick(savedVideosThumbnailContainer, videoDetails);
@@ -264,13 +319,28 @@ export function showFolderDetails(savedVideosThumbnailContainer, folderInfoID, v
     folderTitleContainer.style["text-decoration"] = "none";
   };
 
-  const folderContainer = basic.createSection(folderContainerLink, "section", undefined, `${folderInfoID}-container`);
-  basic.createSection(folderContainer, "section", "folder-image-container fa fa-folder", `${folderInfoID}-image-container`);
-  const folderTitleContainer = basic.createLink(folderContainer, folderURL, `${folderInfoID}-title-container`, "folderTitleContainer");
-  basic.createSection(folderTitleContainer, "h1", undefined, `${folderInfoID}-title`, folder_name);   
+  const folderContainer = basic.createElement(folderContainerLink, "section", {
+    id : `${folderInfoID}-container`
+  });
+  basic.createElement(folderContainer, "section", {
+    classList : "folder-image-container fa fa-folder",
+    id : `${folderInfoID}-image-container`
+  });
+  const folderTitleContainer = basic.createElement(folderContainer, "a", {
+    href : folderURL,
+    id : `${folderInfoID}-title-container`,
+    classList : "folderTitleContainer"
+  });
+  basic.createElement(folderTitleContainer, "h1", {
+    id : `${folderInfoID}-title`,
+    textContent : folder_name
+  });
 
   // menu options
-  const option_menu = basic.createSection(folderContainer, "button", "thumbnail-option-menu fa fa-bars", `${folderInfoID}-menu`);
+  const option_menu = basic.createElement(folderContainer, "button", {
+    classList : "thumbnail-option-menu fa fa-bars",
+    id : `${folderInfoID}-menu`
+  });
   option_menu.onmouseenter = () => {
     folderContainerLink.onclick = null;
     folderContainer.draggable = false;
@@ -296,7 +366,10 @@ export function folderOnClick(savedVideosThumbnailContainer, videoDetails) {
   search.resetSearchableVideoDataArray();
   search.resetSearchBarValue();
   savedVideosThumbnailContainer.remove();
-  savedVideosThumbnailContainer = basic.createSection(basic.websiteContentContainer(), "section", "dragDropContainer savedVideosThumbnailContainer", "savedVideosThumbnailContainer");
+  savedVideosThumbnailContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+    classList : "dragDropContainer savedVideosThumbnailContainer",
+    id : "savedVideosThumbnailContainer"
+  });
   folderData.pushNewFolderIDToFolderIDPath(videoDetails.info.id); 
   folderPath.folderPath(savedVideosThumbnailContainer, document.getElementById("pathContainer"), videoDetails.info.id, videoDetails.info.title); 
   const availableVideosFolderIDPath = folderData.getAvailableVideoDetailsByFolderPath(folderData.getFolderIDPath());   

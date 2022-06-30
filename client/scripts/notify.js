@@ -6,7 +6,9 @@ export function message(type,message){
         if (typeof message === "string") { 
             let notification_area;
             if(!document.getElementById("notification-area")){ // create notification_area if not available
-                notification_area = basic.createSection(basic.websiteContentContainer(), "section" , undefined, "notification-area");
+                notification_area = basic.createElement(basic.websiteContentContainer(), "section", {
+                    id : "notification-area"
+                }); 
             } else{
                 notification_area = document.getElementById("notification-area");
             }
@@ -14,7 +16,11 @@ export function message(type,message){
             notification_area.innerHTML = "";
             // create new notification
             const id = Math.random().toString(36).substr(2,10); 
-            basic.createSection(notification_area, "section", `notification ${type}`, id, message);
+            basic.createElement(notification_area, "section", {
+                classList : `notification ${type}`,
+                id : id,
+                textContent : message
+            }); 
             if(!document.hasFocus()){ // if user is not focued on webpage change favicon
                 favicon.addFaviconNotificationBadge();
             } 
