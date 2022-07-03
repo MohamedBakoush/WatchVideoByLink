@@ -141,29 +141,21 @@ export function showDetails() {
   return "showDetails";
 }
 // video type Automatic activated function
-export function getVideoUrlAuto(url_link) {
-  if (typeof url_link !== "string") {
-    return "url_link not string";
-  } else {
-    // change address bar
-    history.pushState(null, "", `?auto=${url_link}`);
-    // change document title
-    document.title = `Searching for video link: ${url_link} - WatchVideoByLink`;
-    // change css
-    document.body.classList = "index-body";
-    basic.websiteContentContainer().classList = "index-websiteContentContainer";
-    // searchingForVideoLinkMessage 
-    const searchingForVideoLinkMessageContainer = basic.createElement(basic.websiteContentContainer(), "section", {
-      classList : "getVideoUrlAutoMessageConatinaer"
-    }); 
-    basic.createElement(searchingForVideoLinkMessageContainer, "h1", {
-      classList : "getVideoUrlAutoMessageHeader",
-      textContent : `Searching for video link: ${url_link}`
-    }); 
-    // look for video data from url_link
-    getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer);
-    return "getVideoUrlAuto"; 
-  }
+export function getVideoUrlAuto(URL) {
+  if (typeof URL !== "string") return "input not string";  
+  history.pushState(null, "", `?auto=${URL}`); 
+  document.title = `Searching for video link: ${URL} - WatchVideoByLink`; 
+  document.body.classList = "index-body";
+  basic.websiteContentContainer().classList = "index-websiteContentContainer"; 
+  const searchVideoTypeContainer = basic.createElement(basic.websiteContentContainer(), "section", {
+    classList : "getVideoUrlAutoMessageConatinaer"
+  }); 
+  basic.createElement(searchVideoTypeContainer, "h1", {
+    classList : "getVideoUrlAutoMessageHeader",
+    textContent : `Searching for video link: ${URL}`
+  }); 
+  getVideoLinkFromUrl(URL, searchVideoTypeContainer);
+  return "getVideoUrlAuto";  
 }
 
 // trys to fetch video data from provided url_link
