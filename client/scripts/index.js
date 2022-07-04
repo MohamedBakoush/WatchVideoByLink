@@ -160,92 +160,43 @@ export function getVideoUrlAuto(URL) {
 
 // trys to fetch video data from provided url_link
 export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessageContainer) {
-  if (typeof url_link !== "string") {
-    return "url_link not string";
-  } else if (searchingForVideoLinkMessageContainer == undefined) {
-    return "searchingForVideoLinkMessageContainer undefined";
-  } else {
-    try {
-      const payload = {  // data sending in fetch request
-        url: url_link
-      };
-      const response = await fetch("../getVideoLinkFromUrl", { // look for video data from provided url_link
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      let getVideoLinkFromUrl;
-      const headerContainer = document.getElementById("headerContainer");
-      // fetch response
-      if (response.ok) {
-        // get json data from response
-        getVideoLinkFromUrl = await response.json();
-        // change document title
-        document.title = "WatchVideoByLink";
-        // if url_link provided failed to get required video data
-        if (getVideoLinkFromUrl == "failed-get-video-url-from-provided-url") {
-          // invalid url alert msg
-          notify.message("error","Invalid Url Link");
-          // change address bar
-          history.pushState(null, "", "/");
-          // load index details into html
-          if(headerContainer){ // if headerContainer exists
-            navigationBar.loadNavigationBar();
-            showDetails();
-          } else{ // if headerContainer dosnet exists
-            basic.createElement(document.body, "header", {
-              id : "headerContainer"
-            }); 
-            navigationBar.loadNavigationBar();
-            showDetails();
-          }
-          // reamove searching for viddeo link msg
-          searchingForVideoLinkMessageContainer.remove();
-          return "Failed to get video link from URL";
-        } else { // if url_link provided is good
-          if (headerContainer) { // if headerContainer exists remove headerContainer
-            headerContainer.remove();
-          }
-          // reamove searching for viddeo link msg
-          searchingForVideoLinkMessageContainer.remove();
-          // make sure that websiteContentContainer is empty
-          basic.websiteContentContainer().innerHTML = "";
-          // change address bar
-          history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
-          // put video src and type in video player
-          videoPlayer.showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
-          return getVideoLinkFromUrl;
-        }
-      } else {
-        return "Failed to get video link from URL";
-      }
-    } catch (e) { // when an error occurs
-      // if responseErrorAvailableVideo id dosent exist
-      if (!document.getElementById("responseErrorAvailableVideo")) {
-        // remove searchingForVideoLinkMessageContainer
-        searchingForVideoLinkMessageContainer.remove();
-        // change document title
-        document.title = "WatchVideoByLink";
-        // change addressbar
-        history.pushState(null, "", "/");
-        // add back header to document body
-        basic.createElement(document.body, "header", {
-          id : "headerContainer"
-        }); 
-        // naviagtionbar content
-        navigationBar.loadNavigationBar();
-        // show error msg
-        const responseError = basic.createElement(basic.websiteContentContainer(), "section", {
-          classList : "responseErrorAvailableVideo",
-          id : "responseErrorAvailableVideo"
-        }); 
-        basic.createElement(responseError, "h1", {
-          textContent : "Error Connection Refused."
-        }); 
-      }
-      return "Failed fetch video link from URL";
-    }
+  if (typeof url_link !== "string") return "url_link not string";
+  if (searchingForVideoLinkMessageContainer == undefined) return "searchingForVideoLinkMessageContainer undefined";
+
+  const payload = {
+    url: url_link
+  };
+  const response = await fetch("../getVideoLinkFromUrl", { // look for video data from provided url_link
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  let getVideoLinkFromUrl;
+  const headerContainer = document.getElementById("headerContainer");
+  getVideoLinkFromUrl = await response.json();
+  document.title = "WatchVideoByLink";
+
+  if (response.ok && getVideoLinkFromUrl !== "failed-get-video-url-from-provided-url") { 
+    if (headerContainer) headerContainer.remove();
+    searchingForVideoLinkMessageContainer.remove();
+    basic.websiteContentContainer().innerHTML = "";
+    history.pushState(null, "", `?t=${getVideoLinkFromUrl.video_file_format}?v=${getVideoLinkFromUrl.video_url}`);
+    videoPlayer.showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
+    return getVideoLinkFromUrl; 
+  } 
+  
+  notify.message("error","Invalid Url Link");
+  history.pushState(null, "", "/");
+  if(!headerContainer){
+    basic.createElement(document.body, "header", {
+      id : "headerContainer"
+    });  
   }
+  navigationBar.loadNavigationBar();
+  showDetails();
+  searchingForVideoLinkMessageContainer.remove();
+  return "Failed to get video link from URL";
 }
 
 // all the functions that are to load when the page loads
