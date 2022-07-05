@@ -163,20 +163,20 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
   if (typeof url_link !== "string") return "url_link not string";
   if (searchingForVideoLinkMessageContainer == undefined) return "searchingForVideoLinkMessageContainer undefined";
 
+  // Fetch Request
   const payload = {
     url: url_link
   };
-  const response = await fetch("../getVideoLinkFromUrl", { // look for video data from provided url_link
+  const response = await fetch("../getVideoLinkFromUrl", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-
-  let getVideoLinkFromUrl;
+  let getVideoLinkFromUrl = await response.json();
   const headerContainer = document.getElementById("headerContainer");
-  getVideoLinkFromUrl = await response.json();
   document.title = "WatchVideoByLink";
 
+  // Valid Response 
   if (response.ok && getVideoLinkFromUrl !== "failed-get-video-url-from-provided-url") { 
     if (headerContainer) headerContainer.remove();
     searchingForVideoLinkMessageContainer.remove();
@@ -185,7 +185,8 @@ export async function getVideoLinkFromUrl(url_link, searchingForVideoLinkMessage
     videoPlayer.showVideo(getVideoLinkFromUrl.video_url, getVideoLinkFromUrl.video_file_format, "Automatic");
     return getVideoLinkFromUrl; 
   } 
-  
+
+  // Invalid Response 
   notify.message("error","Invalid Url Link");
   history.pushState(null, "", "/");
   if(!headerContainer){
