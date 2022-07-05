@@ -170,6 +170,75 @@ describe("isObject", () =>  {
     }); 
 }); 
 
+
+describe("isNum", () =>  {    
+    it("no input", () =>  { 
+        const isNum = basic.isNum();   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    });   
+
+    it("undefined", () =>  { 
+        const isNum = basic.isNum(undefined);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    });  
+
+    it("null", () =>  { 
+        const isNum = basic.isNum(null);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    }); 
+
+    it("string", () =>  { 
+        const isNum = basic.isNum("string");   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    }); 
+
+    it("array", () =>  { 
+        const isNum = basic.isNum([]);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    }); 
+
+    it("container", () =>  { 
+        const isNum = basic.isNum(container);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    }); 
+    
+    it("object", () =>  { 
+        const isNum = basic.isNum({});   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(false);     
+    }); 
+
+    it("number", () =>  { 
+        const isNum = basic.isNum(123);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(true);     
+    }); 
+
+    it("negative number", () =>  { 
+        const isNum = basic.isNum(-123);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(true);     
+    }); 
+
+    it("float number", () =>  { 
+        const isNum = basic.isNum(123.12);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(true);     
+    }); 
+
+    it("float negative number", () =>  { 
+        const isNum = basic.isNum(-123.12);   
+        expect(isNum).toBeDefined();  
+        expect(isNum).toBe(true);     
+    }); 
+}); 
+
 describe("createElement", () =>  {   
     it("No input", () =>  { 
         const createdElement = basic.createElement();   

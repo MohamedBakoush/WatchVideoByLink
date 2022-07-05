@@ -12,16 +12,6 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
   document.title = "Watching Video By Provided Link - WatchVideoByLink"; 
   document.body.classList = "watching-video-body";
   basic.websiteContentContainer().classList = "watching-video-websiteContentContainer";
-  let displayChromecast;
-  try {    
-    if (videoPlayerSettings.chromecast == true) {
-      displayChromecast = true;
-    } else {
-      displayChromecast = false;
-    }
-  } catch (error) {
-    displayChromecast = false;
-  }
   // create video player
   const videoPlayer = basic.createElement(basic.websiteContentContainer(), "video-js", {
     classList : "vjs-default-skin vjs-big-play-centered", 
@@ -163,26 +153,17 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       src: videoSrc
     });
   } else { 
-    let seekForward, seekBackward; 
-    // seekForwards
-    if (videoPlayerSettings.seekForward === undefined || isNaN(videoPlayerSettings.seekForward)) { seekForward = 30;
-    } else { seekForward = videoPlayerSettings.seekForward;
-    }
-    // seekBackwards
-    if (videoPlayerSettings.seekBackward === undefined || isNaN(videoPlayerSettings.seekBackward)) { seekBackward = 5;
-    } else { seekBackward = videoPlayerSettings.seekBackward;
-    }
     const player = videojs(videoPlayer, {  // eslint-disable-line
       "playbackRates":[0.25,0.5, 1, 1.25, 1.5, 2],
       controls: true,
       techOrder: [ "chromecast", "html5" ],
       plugins: {
         chromecast: {
-          addButtonToControlBar: displayChromecast
+          addButtonToControlBar: typeof videoPlayerSettings.chromecast === "boolean" ? videoPlayerSettings.chromecast : false
         },
         seekButtons: {
-          forward: seekForward,
-          back: seekBackward
+          forward: basic.isNum(videoPlayerSettings.seekForward) ? videoPlayerSettings.seekForward : 30,
+          back: basic.isNum(videoPlayerSettings.seekBackward) ? videoPlayerSettings.seekBackward : 5
         }
       }
     });
@@ -198,6 +179,11 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
     });
 
     const topControls = videoButton.topPageControlBarContainer(player);
+    
+    //  closes player
+    videoButton.backToHomePageButton(topControls, videoLinkFromUrl);
+
+    // download video 
     const downloadVideoContainer = basic.createElement(topControls, "section", {
       classList : "vjs-downloadVideo-container"
     });
@@ -227,10 +213,9 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
       downloadVideoMenu.style.display = "none";
     };
 
-    videoButton.backToHomePageButton(topControls, videoLinkFromUrl); //  closes player
     player.play(); // play video on load
-    player.muted(videoPlayerSettings.muted); // set mute video settings on load
-    player.volume(videoPlayerSettings.volume);  // set volume video settings on load 
+    player.muted(typeof videoPlayerSettings.muted === "boolean" ? videoPlayerSettings.muted : false); // set mute video settings on load
+    player.volume(basic.isNum(videoPlayerSettings.volume) ? videoPlayerSettings.volume : 1); // set volume video settings on load 
     document.getElementById("video_html5_api").onvolumechange = () => { // update global video player volume/mute settings
       updateVideoPlayerVolume(player.volume(), player.muted()); 
     };  
@@ -243,55 +228,26 @@ export async function showVideo(videoSrc, videoType, videoLinkFromUrl) {
 
 // get video player settings
 export async function getVideoPlayerSettings() {
-  try {
-    const response = await fetch("../getVideoPlayerSettings");
-    let videoPlayerSettings;
-    if(response.ok){
-      videoPlayerSettings = await response.json();  
-      return videoPlayerSettings;
-    }else {
-      // failed to fetch video settings
-      videoPlayerSettings = {
-        volume: 1.0,
-        muted: false,
-        chromecast: false
-      }; 
-      return videoPlayerSettings; 
-    }
-  } catch (error) {
-    return "Failed fetch video player settings";
-  }
+  const response = await fetch("../getVideoPlayerSettings");
+  return response.ok ? await response.json() : {
+    volume: 1.0,
+    muted: false,
+    chromecast: false
+  };
 }
 
 // update video player volume settings
 export async function updateVideoPlayerVolume(volume, muted) {
-   if (!isNaN(volume) && typeof muted == "boolean") {
-    try {
-      const payload = {  // data sending in fetch request
-        updatedVideoPlayerVolume : volume,
-        updatedVideoPlayerMuted : muted
-      };
-      const response = await fetch("../updateVideoPlayerVolume", { // look for video data from provided url_link
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    
-      let updatedVideoPlayerVolume;
-      if (response.ok) { 
-        updatedVideoPlayerVolume = await response.json(); 
-        return updatedVideoPlayerVolume;
-      }else { 
-        return "Failed to update video volume messages";
-      }
-    } catch (error) {
-      return "Failed fetch video player volume update";
-    } 
-   } else if (!isNaN(volume) && typeof muted !== "boolean") {
-    return "muted-invaid";
-   } else if (isNaN(volume) && typeof muted == "boolean") {
-    return "volume-invaid";
-   } else{
-    return "volume-muted-invaid";
-   }
+  if (!basic.isNum(volume)) return "volume-invalid";
+  if (typeof muted !== "boolean") return "mute-invalid";
+  const payload = { 
+    updatedVideoPlayerVolume : volume,
+    updatedVideoPlayerMuted : muted
+  };
+  const response = await fetch("../updateVideoPlayerVolume", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return response.ok ? await response.json() : "Fetch Request Failed";
 }

@@ -20,6 +20,11 @@ export function isObject(input) {
   return typeof input === "object" && !Array.isArray(input) && input !== null && !isElement(input);
 }
 
+export function isNum(input) {
+  return typeof input === "string" ? false 
+      : !isNaN(parseFloat(input)) ? !isNaN(parseFloat(input)) : false;
+}
+
 export function createElement(container, elementType, fields) {
   if (!isElement(container)) return "invalid container";
   if (typeof elementType !== "string") return "invalid elementType";
