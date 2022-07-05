@@ -9,24 +9,20 @@ import * as currentVideoDownloads from "../scripts/current-video-downloads.js";
 
 // get video link and video type from the url
 export function showVideoFromUrl(url) {
-  try {     
-    if (url.includes("?t=") && url.includes("?v=")) {
-      // split url to get video and video type
-      const hostname_typeVideo = url.split("?t=");
-      const type_video = hostname_typeVideo[1].split("?v=");
-      const type = type_video[0];
-      const video = type_video[1];  
-      history.replaceState(null, "", `?t=${type}?v=${video}`);         
-      // put video src and type in video player
-      videoPlayer.showVideo(video, type);
-      return "showVideoFromUrl";
-    } else {
-      history.replaceState(null, "", "/");
-      navigationBar.loadNavigationBar(); 
-      return "redirect to homepage";
-    }
-  } catch (error) {
-    return "showVideoFromUrl didnt work";
+  if (url.includes("?t=") && url.includes("?v=")) {
+    // split url to get video and video type
+    const hostname_typeVideo = url.split("?t=");
+    const type_video = hostname_typeVideo[1].split("?v=");
+    const type = type_video[0];
+    const video = type_video[1];  
+    history.replaceState(null, "", `?t=${type}?v=${video}`);         
+    // put video src and type in video player
+    videoPlayer.showVideo(video, type);
+    return "showVideoFromUrl";
+  } else {
+    history.replaceState(null, "", "/");
+    navigationBar.loadNavigationBar(); 
+    return "redirect to homepage";
   }
 }
 
