@@ -41,9 +41,6 @@ export function showDetails() {
   const videoLinkForm = basic.createElement(videoLink, "form", {
     classList : "videoLinkContainerForm"
   }); 
-  videoLinkForm.onsubmit = function(){
-    return false;
-  };
   // video src
   const videoLinkInputBody = basic.createElement(videoLinkForm, "section", {
     classList : "videoLinkInputBody"
@@ -113,26 +110,20 @@ export function showDetails() {
   });
   // once sumbitVideo button is clicked
   videoLinkForm.onsubmit = function(){
-    if(document.getElementById("download-status-container"))  {
-      document.getElementById("download-status-container").remove(); 
+    const download_status_container = document.getElementById("download-status-container");
+    if(download_status_container)  {
+      download_status_container.remove(); 
       currentVideoDownloads.stopAvailableVideoDownloadDetails(); 
     }
+    videoLink.remove(); 
+    document.getElementById("headerContainer").remove();
     if (videoTypeSelect.value === "Automatic") {
-      getVideoUrlAuto(videoLinkInput.value);
-      // remove videoLink from client
-      videoLink.remove();
-      // remove navBar
-      document.getElementById("headerContainer").remove();
+      getVideoUrlAuto(videoLinkInput.value); 
     } else {
-      // puts video type and video file in url
       history.pushState(null, "", `?t=${videoTypeSelect.value}?v=${videoLinkInput.value}`);
-      // remove videoLink from client
-      videoLink.remove();
-      // remove navBar
-      document.getElementById("headerContainer").remove();
-      // put video src and type in video player
       videoPlayer.showVideo(videoLinkInput.value, videoTypeSelect.value);
     }
+    return false;
   };
   // reset folder path
   folderData.resetInsideFolderID();
