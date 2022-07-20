@@ -3,6 +3,7 @@
 @import url("showAvailableVideos.css");
 @import url("notify.css");
 @import url("searchBar.css");
+@import url("./fontawesome/css/all.min.css");
 *{
   margin: 0;
   padding: 0;
