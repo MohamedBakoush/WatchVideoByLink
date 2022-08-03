@@ -86,10 +86,10 @@ header{
 .current-dowloads-nav{
   float: right;
   margin: 0px .5rem 0px 0px;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  line-height: 1.44444;
+  line-height: 1.44444 !important;
   padding: 0 1em;
   height: 2.1875rem; 
   border: 1px solid #fff0;
