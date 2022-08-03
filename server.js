@@ -18,7 +18,7 @@ const ffmpegDownloadResponse = require("./backend/scripts/ffmpeg-download-respon
 const ffmpegDownloadtrimedVideo = require("./backend/scripts/ffmpeg-download-trimed-video");
 const app = express();
 app.use(upload({
-  limits: { fileSize: 1024 * 1024 * 1024 },
+  limits: { fileSize: 1024 * 1024 * 1024 * 2 },
 }));
 // show website icon on tab
 app.use(favicon(path.join(__dirname, "client", "images", "favicon", "favicon.ico")));
