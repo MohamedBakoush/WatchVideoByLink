@@ -47,13 +47,13 @@ export function uploadVideoDetails(videoLink){
     // once upload Video button is clicked
     uploadVideoForm.onsubmit = function(){ 
       const file = inputUploadVideo.files[0]; 
-      // file size has to be smaller then 1 GB to be uploaded to server
-      if (file.size > (1024 * 1024 * 1024)) {  
+      // file size has to be smaller then 2 GB to be uploaded to server
+      if (file.size > (1024 * 1024 * 1024* 2)) {  
         // remove upload Video container 
         uploadVideoForm.remove();
         uploadVideoDetails(videoLink);
         // error msg
-        notify.message("error", "Size Error: Unable to upload videos greater then 1 GB");
+        notify.message("error", "Size Error: Unable to upload videos greater then 2 GB");
       } else {
         // remove upload Video container
         uploadVideoForm.remove();  
