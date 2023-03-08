@@ -47,7 +47,7 @@
 
 #### [Install Using Docker](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-locally-using-docker)
 
-#### [Installing From Scratch](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-from-scratch)
+#### [Install From Scratch](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-from-scratch)
 
 ## Contribute
 **WatchVideoByLink** is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features. Check out [CONTRIBUTING.md](CONTRIBUTING.md) to find resources around contributing.
