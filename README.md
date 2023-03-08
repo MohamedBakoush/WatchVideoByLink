@@ -3,50 +3,54 @@
   <big><strong>WatchVideoByLink</strong></big>
 </h1>
 
-Video Archival and Media Streaming Service for Public Video URLs, WatchVideoByLink, is to facilitate gathering any desired publicly available video in a custom video player with complementary attributes. These attributes maximise the viewing pleasure of a selected video with the ability to store and organise any desired length of video for personal use.
-
-[**Why WatchVideoByLink?**](#why-watchvideobylink) |
-[**Features**](#features) |
-[**Installation**](#installation) |
-[**Contributing**](#contributing) |
-[**License**](#license)
-
-## Screenshots & Gifs
-
 <kbd><img src="./media/demo.gif" title="Demo Video"/></kbd> 
 
-## Why WatchVideoByLink?
 
-There are a variety of video-sharing platforms such as Vimeo (https://vimeo.com/), Gofile (https://gofile.io/), and Youtube (www.youtube.com). These platforms are used for sharing and consuming videos in their own ecosystems. However, all these video sharing platforms lack an essential feature: the ability to organise various videos found on the internet in one location under a topic for ease of consumption or future use. WatchVideoByLink was created to fill this gap.
+[**`Our Favorite Features`**](#our-favorite-features)
+[**`Installation`**](#installation)
+[**`Contribute`**](#contribute)
+[**`License`**](#license)
 
-The majority of these platforms have options to download videos for later offline use. Still, one can’t necessarily share these videos offline without uploading a pre-recorded video to an online storage service that has video sharing capability, such as Google Drive (www.google.com/drive/), Dropbox (www.dropbox.com), and Mega (www.mega.io).
+**WatchVideoByLink** is a video archival and media streaming service designed to simplify the process of accessing publicly available videos. By gathering publicly desired video in a custom player to enable users a seamless viewing experience with a range of complementary attributes.
 
-This process is time-consuming and annoying if needed to be done more then once due to the time to download and upload a video and the steps required to complete the tasks is significant.
+> [Inspration Behind WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki#why-watchvideobylink)
 
-WatchVideoByLink is designed to make downloading and sharing videos on the internet a seamless experience.
 
-## Features
+### Our Favorite Features
 
-- Support for MP4/WebM/HLS/MPEG-DASH video types.
-- Testing ground towards checking validity/quality/responsiveness of public videos.
-- Custom video players for consuming streams and videos.
-- Restoring failed video downloads using untrunc and some luck.
-- Automatically detect video files from [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html).
-- Capture time-sensitive videos.
-- Alter video duration.
-- Storage and Search tools. 
+**🕵️‍♂️ Auto Detect** \
+**Say goodbye to the hassle of manually inputting video URLs and types**. WatchVideoByLink's Auto Detect automatically gathers video URLs and video types from the inputted URLs, making the process more efficient and convenient for you. While there is a limited number of [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html), the vast majority of popular websites are covered.
 
-[For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Features)
+**⬇️ Download** \
+**Get ready to elevate your viewing experience with Download**. This feature allows you to effortlessly retrieve HLS Streams or publicly available videos and convert them into MP4 files, providing you with unprecedented flexibility and control over your media consumption. Whether you're on the go or offline, you can easily download and enjoy your favorite videos.
+
+**⬆️ Upload** \
+**With Upload**, you can easily transfer locally stored videos up to `2GB` into WatchVideoByLink, expanding your access to a broader range of videos. No more struggling to find the right file format or constantly switching between different media players.
+
+**✂️ Trim** \
+**Trim videos by altering the start and end times**. With this feature, you can easily remove unwanted portions of a video or highlight specific parts to create personalized clips that perfectly suit your preferences.
+
+**🖼 Thumbnails** \
+**Preview generated video thumbnails**, making it easier for you to identify and select the videos you want to watch. No more guesswork or clicking on random videos – you can now easily find what you're looking for.
+
+**📂 Folders** \
+**Organize your videos into specific folders**, keeping related videos together and helping you stay more organized and efficient. No more searching for specific videos in a sea of clutter – now, you can easily find and access what you need.
+
+**🗿 Download Status** \
+**Check the status of your downloads globally**, so you'll never have to wonder if a download is complete or not. This feature gives you greater control and peace of mind over your media consumption.
+
+
+> [For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Features)
 
 
 ## Installation  
 
-#### [Installing Locally Using Docker](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-locally-using-docker)
+#### [Install Using Docker](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-locally-using-docker)
 
-#### [Installing From Scratch](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-from-scratch)
+#### [Install From Scratch](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-from-scratch)
 
-## Contributing
-WatchVideoByLink is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features. Check out [CONTRIBUTING.md](CONTRIBUTING.md) to find resources around contributing.
+## Contribute
+**WatchVideoByLink** is a free and open source project, and we appreciate any help you're willing to give - whether it's fixing bugs, improving documentation, or suggesting new features. Check out [CONTRIBUTING.md](CONTRIBUTING.md) to find resources around contributing.
 
 <hr/>
 
