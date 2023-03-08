@@ -11,9 +11,9 @@
 [**`Contribute`**](#contribute)
 [**`License`**](#license)
 
-**WatchVideoByLink** is a video archival and media streaming service designed to simplify the process of accessing publicly available videos. By gathering publicly desired video in a custom player to enable users a seamless viewing experience with a range of complementary attribute
+**WatchVideoByLink** is a video archival and media streaming service designed to simplify the process of accessing publicly available videos. By gathering publicly desired video in a custom player to enable users a seamless viewing experience with a range of complementary attributes.
 
-[Inspration Behind WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki#why-watchvideobylink)
+> [Inspration Behind WatchVideoByLink](https://github.com/MohamedBakoush/WatchVideoByLink/wiki#why-watchvideobylink)
 
 
 ### Our Favorite Features
@@ -23,28 +23,33 @@
 **Automatically** gathers video urls and video type from inputed URLs.
 There is a limited number of [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html), but the vast majority of popular websites are covered.
 
-**⬆️ Upload | ⬇️ Download** \
-Upload or Download
+**⬇️ Download** \
+**Download allows for** effortless retrieval of HLS Streams or publicly available videos, into a generated `MP4` file, providing you with unprecedented flexibility and control over your media consumption.
+
+**⬆️ Upload** \
+**With Upload** you can easily transfer locally stored videos up to `2GB` into WatchVideoByLink, expanding your access to a broader range of videos. 
 
 **✂️ Trim** \
-Trim video to 
+**Trim video** by altering video start and end times 
+
+**🖼 Thumbnails** \
+Preview Generated Video Thumbnails
 
 **📂 Folders** \
 Keep related videos together
 
+Folder/Video Drag Drop 
+
 **🗿 Download Status** \
 Globaly check download status 
 
-
-**🖼 Thumbnails** \
-Preview 
 
 > [For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Features)
 
 
 ## Installation  
 
-#### [Installing Locally Using Docker](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-locally-using-docker)
+#### [Install Using Docker](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-locally-using-docker)
 
 #### [Installing From Scratch](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Install-WatchVideoByLink#installing-from-scratch)
 
