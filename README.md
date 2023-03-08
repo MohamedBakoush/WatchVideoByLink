@@ -18,30 +18,26 @@
 
 ### Our Favorite Features
 
-
 **🕵️‍♂️ Auto Detect** \
-**Automatically** gathers video urls and video type from inputed URLs.
-There is a limited number of [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html), but the vast majority of popular websites are covered.
+**Say goodbye to the hassle of manually inputting video URLs and types**. WatchVideoByLink's Auto Detect automatically gathers video URLs and video types from the inputted URLs, making the process more efficient and convenient for you. While there is a limited number of [supported websites](https://ytdl-org.github.io/youtube-dl/supportedsites.html), the vast majority of popular websites are covered.
 
 **⬇️ Download** \
-**Download allows for** effortless retrieval of HLS Streams or publicly available videos, into a generated `MP4` file, providing you with unprecedented flexibility and control over your media consumption.
+**Get ready to elevate your viewing experience with Download**. This feature allows you to effortlessly retrieve HLS Streams or publicly available videos and convert them into MP4 files, providing you with unprecedented flexibility and control over your media consumption. Whether you're on the go or offline, you can easily download and enjoy your favorite videos.
 
 **⬆️ Upload** \
-**With Upload** you can easily transfer locally stored videos up to `2GB` into WatchVideoByLink, expanding your access to a broader range of videos. 
+**With Upload**, you can easily transfer locally stored videos up to `2GB` into WatchVideoByLink, expanding your access to a broader range of videos. No more struggling to find the right file format or constantly switching between different media players.
 
 **✂️ Trim** \
-**Trim video** by altering video start and end times 
+**Trim videos by altering the start and end times**. With this feature, you can easily remove unwanted portions of a video or highlight specific parts to create personalized clips that perfectly suit your preferences.
 
 **🖼 Thumbnails** \
-Preview Generated Video Thumbnails
+**Preview generated video thumbnails**, making it easier for you to identify and select the videos you want to watch. No more guesswork or clicking on random videos – you can now easily find what you're looking for.
 
 **📂 Folders** \
-Keep related videos together
-
-Folder/Video Drag Drop 
+**Organize your videos into specific folders**, keeping related videos together and helping you stay more organized and efficient. No more searching for specific videos in a sea of clutter – now, you can easily find and access what you need.
 
 **🗿 Download Status** \
-Globaly check download status 
+**Check the status of your downloads globally**, so you'll never have to wonder if a download is complete or not. This feature gives you greater control and peace of mind over your media consumption.
 
 
 > [For more features check out the wiki](https://github.com/MohamedBakoush/WatchVideoByLink/wiki/Features)
