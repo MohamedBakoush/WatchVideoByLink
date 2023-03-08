@@ -1,4 +1,7 @@
-# 🎥 WatchVideoByLink
+<h1>
+  <img src="./client/images/favicon/favicon.png" alt="WatchVideoByLink logo left" width="30"/>
+  <big><strong>WatchVideoByLink</strong></big>
+</h1>
 
 <kbd><img src="./media/demo.gif" title="Demo Video"/></kbd> 
 
