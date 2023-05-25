@@ -1,3 +1,7 @@
+<p align="center">
+Repository Archived 
+</p> 
+
 <h1>
   <img src="./client/images/favicon/favicon.png" alt="WatchVideoByLink logo left" width="30"/>
   <big><strong>WatchVideoByLink</strong></big>
